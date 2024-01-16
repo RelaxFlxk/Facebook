@@ -499,6 +499,16 @@ export default new Router({
     path: '/BeChat/Chat',
     name: 'BeChat',
     component: BeChat.Chat
+  },
+  {
+    path: '/BillingPlanA1',
+    name: 'BillingPlanCard',
+    component: Core.BillingPlanCard
+  },
+  {
+    path: '/PricingList',
+    name: 'PricingList',
+    component: ShopPayment.PricingList
   }
   ]
 })

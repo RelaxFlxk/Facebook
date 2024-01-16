@@ -8,6 +8,8 @@ import InstallWizard from './InstallWizard'
 import QrcodeBoot from './QrcodeBoot'
 import GoogleCalendar from './GoogleCalendar'
 import GoogleCalendarCmp from './GoogleCalendarCmp'
+import BillingPlanCard from './BillingPlanCard'
+import BillingPayment from './BillingPayment'
 
 export default {
   Login,
@@ -19,5 +21,7 @@ export default {
   InstallWizard,
   QrcodeBoot,
   GoogleCalendar,
-  GoogleCalendarCmp
+  GoogleCalendarCmp,
+  BillingPlanCard,
+  BillingPayment
 }
