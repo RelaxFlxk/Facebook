@@ -7293,22 +7293,72 @@
                   </v-col>
                 </v-row>
                  <v-row>
-                    <v-col cols="12">
+                    <v-col cols="12" v-if="copyTextStatus === false ">
                       <v-btn
-                        :color="copyTextStatus === false ? '#1B437C' : 'teal'"
+                        color="#1B437C"
                         large
                         block
                         dark
-                        v-clipboard:copy="copyTextBt"
-                        @click="copyTextStatus === false ? FunCopyDeposit() : copyFallback()"
+                        v-clipboard:copy="copyTextBtTH"
+                        @click="FunCopyDeposit()"
                       >
                         <v-icon
                           left
                           dark
                         >
-                          {{copyTextStatus === false ? 'mdi-update' : 'mdi-content-copy'}}
+                          mdi-update
                         </v-icon>
-                        {{copyTextStatus === false ? 'บันทึก' : 'คัดลอกข้อความ'}}
+                        บันทึก
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="5" v-if="copyTextStatus !== false ">
+                      <v-btn
+                        v-if="copyTextStatus !== false "
+                        :color="teal"
+                        large
+                        block
+                        dark
+                        v-clipboard:copy="copyTextBtTH"
+                        @click="copyFallbackTH()"
+                      >
+                        <v-icon
+                          left
+                          dark
+                        >
+                          mdi-content-copy
+                        </v-icon>
+                        คัดลอกข้อความ TH
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="5" v-if="copyTextStatus !== false ">
+                      <v-btn
+                        v-if="copyTextStatus !== false "
+                        :color="teal"
+                        large
+                        block
+                        dark
+                        v-clipboard:copy="copyTextBtEN"
+                        @click="copyFallbackEN()"
+                      >
+                        <v-icon
+                          left
+                          dark
+                        >
+                          mdi-content-copy
+                        </v-icon>
+                        คัดลอกข้อความ EN
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="2" v-if="copyTextStatus !== false ">
+                      <v-btn
+                        v-if="copyTextStatus !== false "
+                        :color="teal"
+                        large
+                        block
+                        dark
+                        @click="copyFallbackClose()"
+                      >
+                        Close
                       </v-btn>
                     </v-col>
                  </v-row>
@@ -8133,7 +8183,8 @@ export default {
       DataFlowNameDefault: [],
       statusGoogleCalendar: '',
       statusGoogleCalendarEmp: '',
-      copyTextBt: '',
+      copyTextBtTH: '',
+      copyTextBtEN: '',
       copyTextStatus: false,
       dialogShowImg: false,
       showImgItem: [],
@@ -8770,10 +8821,12 @@ export default {
     },
     async FunCopyDeposit () {
       let textBookNo = ''
+      let textBookNoEn = ''
       let depositPrice = ''
       let textLink = ''
       let textDepositPrice = ''
-      this.copyTextBt = ''
+      this.copyTextBtTH = ''
+      this.copyTextBtEN = ''
       let dt = {}
       if (this.statusdepositPrice === true) {
         dt = {
@@ -8810,8 +8863,21 @@ export default {
             }
             // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
             let copyText = textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
+
+            textBookNoEn = response.data.messageEn
+            depositPrice = response.data.depositPrice || 0
+            if (depositPrice === '0') {
+              textLink = 'Please click on the link to confirm your booking : ' + this.depositLink + '&languageSelect=1'
+            } else {
+              textLink = 'Please click on the link to proceed with payment. To complete your booking : ' + this.depositLink + '&languageSelect=1'
+              textDepositPrice = `\nTotal Amount : ` + depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            }
+            // console.log('textBookNo', textBookNo + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink)
+            let copyTextEn = textBookNoEn + `\n` + this.datailLinkDeposit + textDepositPrice + `\n------------------------\n` + textLink
+
             console.log('copyText', copyText)
-            this.copyTextBt = copyText
+            this.copyTextBtTH = copyText
+            this.copyTextBtEN = copyTextEn
             this.copyTextStatus = true
             this.updateBookingListByDeposit()
           } else {
@@ -8819,10 +8885,26 @@ export default {
           }
         })
     },
-    copyFallback () {
-      this.dialogShowDeposit = false
+    async copyFallbackTH () {
+      await this.updateBookingLanguage('0')
       this.$swal('สำเร็จ', 'คัดลอกลิงก์สำเร็จ', 'success')
+    },
+    async copyFallbackEN () {
+      await this.updateBookingLanguage('1')
+      this.$swal('สำเร็จ', 'คัดลอกลิงก์สำเร็จ', 'success')
+    },
+    copyFallbackClose () {
+      this.dialogShowDeposit = false
       this.copyTextStatus = false
+    },
+    async updateBookingLanguage (bookingLanguage) {
+      try {
+        let dt = {
+          bookingLanguage: bookingLanguage,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+        await axios.post(this.DNS_IP + '/Booking/edit/' + this.bookNo, dt)
+      } catch (e) { console.log(e) }
     },
     async updateBookingListByDeposit () {
       let urlApi = this.DNS_IP + '/booking_view/get?shopId=' + this.session.data.shopId + '&bookNo=' + this.bookNo
