@@ -630,7 +630,7 @@ export default {
             this.updateProcessOhrichUpdate()
             await this.getBefore()
           } else {
-            if (change.doc.data().active === '1') {
+            if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
               console.log('------------------------')
               console.log(change.doc.id)
               console.log('JSON.parse(localStorage.getItem(\'sessionData\'))', JSON.parse(localStorage.getItem('sessionData')))
@@ -654,7 +654,8 @@ export default {
     },
     updateProcessOhrichUpdate (item) {
       let params = {
-        userName: this.$session.getAll().data.userName
+        userName: this.$session.getAll().data.userName,
+        masBranchID: this.$session.getAll().data.masBranchID
       }
       axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
     },
@@ -726,7 +727,7 @@ export default {
       await this.getDataFlow()
       this.setTime()
       this.getShop()
-      this.checkSearch()
+      // this.checkSearch()
       // this.$root.$on('closeSetTimeBookingListQueue', () => {
       // // your code goes here
       //   this.closeSetTimeBookingListQueue()
@@ -847,8 +848,9 @@ export default {
       }
     },
     checkSearch () {
-      this.validate('SEARCH')
-      setTimeout(() => this.searchBooking('unNoti'), 500)
+      // this.validate('SEARCH')
+      // setTimeout(() => this.searchBooking('unNoti'), 500)
+      this.searchBooking('unNoti')
     },
     async GroupArrayQueue (dataArray) {
       // ใช้ Map เพื่อจัดกลุ่มตาม flowId
@@ -969,6 +971,8 @@ export default {
                 }
               }
             } else {
+              this.itemBooking = []
+              this.datawainingShow = []
               this.overlay = true
             }
           })
