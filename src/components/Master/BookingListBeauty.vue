@@ -7314,7 +7314,7 @@
                     <v-col cols="5" v-if="copyTextStatus !== false ">
                       <v-btn
                         v-if="copyTextStatus !== false "
-                        :color="teal"
+                        color="teal"
                         large
                         block
                         dark
@@ -7333,7 +7333,7 @@
                     <v-col cols="5" v-if="copyTextStatus !== false ">
                       <v-btn
                         v-if="copyTextStatus !== false "
-                        :color="teal"
+                        color="teal"
                         large
                         block
                         dark
