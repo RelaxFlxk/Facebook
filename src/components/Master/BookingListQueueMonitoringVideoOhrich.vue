@@ -1171,7 +1171,8 @@ export default {
             await this.searchBooking()
           } else {
             console.log(change.doc.id)
-            if (change.doc.data().active === '1' && change.doc.id === 'monthon.y@srtforex.com') {
+            let branchId = this.$session.getAll().data.masBranchID || 2185
+            if (change.doc.data().active === '1' && change.doc.data().masBranchID === branchId && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
               console.log(change)
               await this.searchBooking()
               this.updateProcessOhrichUpdate()
@@ -1181,8 +1182,10 @@ export default {
       })
     },
     updateProcessOhrichUpdate (item) {
+      let branchId = this.$session.getAll().data.masBranchID || 2185
       let params = {
-        userName: 'monthon.y@srtforex.com'
+        userName: 'monthon.y@srtforex.com',
+        masBranchID: branchId
       }
       axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
     },
@@ -1377,11 +1380,18 @@ export default {
     },
     async getMessageNoInterval () {
       try {
+        let branchId = this.$session.getAll().data.masBranchID || 2185
+        let url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' + branchId
+        // if (this.$session.getAll().data.shopId) {
+        //   url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
+        // } else {
+        //   url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' +
+        // }
         await axios
           .get(
-            `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
+            url
           ).then(async (response) => {
-            if (response.data.length > 0 && typeof response.data.status === 'undefined') {
+            if (response.data.status !== false) {
               let result = await this.generateSound(response.data[0])
               await this.updateMessage(response.data[0].id, result)
             }
@@ -1413,9 +1423,10 @@ export default {
         if (oldSound.length > 0) {
           item.audioFile = oldSound[0].audioFile
         } else {
+          let branchId = this.$session.getAll().data.masBranchID || 2185
           await axios
             .get(
-              `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull`
+              `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull` + '&masBranchID=' + branchId
             ).then(async (response) => {
               if (response.data.length > 0 && typeof response.data.status === 'undefined') {
                 item.audioFile = response.data[0].audioFile
