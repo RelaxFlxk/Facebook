@@ -1171,7 +1171,7 @@ export default {
             await this.searchBooking()
           } else {
             console.log(change.doc.id)
-            if (change.doc.data().active === '1' && change.doc.id === 'monthon.y@srtforex.com') {
+            if (change.doc.data().active === '1' && change.doc.data().masBranchID === (this.$session.getAll().data.masBranchID || '2185') && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
               console.log(change)
               await this.searchBooking()
               this.updateProcessOhrichUpdate()
@@ -1377,9 +1377,15 @@ export default {
     },
     async getMessageNoInterval () {
       try {
+        let url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' + this.$session.getAll().data.masBranchID || '2185'
+        // if (this.$session.getAll().data.shopId) {
+        //   url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
+        // } else {
+        //   url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' +
+        // }
         await axios
           .get(
-            `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
+            url
           ).then(async (response) => {
             if (response.data.length > 0 && typeof response.data.status === 'undefined') {
               let result = await this.generateSound(response.data[0])
