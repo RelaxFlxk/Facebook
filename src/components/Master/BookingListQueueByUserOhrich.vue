@@ -660,7 +660,8 @@ export default {
     },
     async resetFirebaseUse (item) {
       let params = {
-        userName: this.$session.getAll().data.userName
+        userName: this.$session.getAll().data.userName,
+        masBranchID: this.$session.getAll().data.masBranchID
       }
       await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichNew', params)
     },
