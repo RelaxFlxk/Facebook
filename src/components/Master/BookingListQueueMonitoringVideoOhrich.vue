@@ -1184,7 +1184,7 @@ export default {
     updateProcessOhrichUpdate (item) {
       let branchId = this.$session.getAll().data.masBranchID || 2185
       let params = {
-        userName: 'monthon.y@srtforex.com',
+        userName: this.$session.getAll().data.userName || 'monthon.y@srtforex.com',
         masBranchID: branchId
       }
       axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
@@ -1782,8 +1782,8 @@ export default {
           status: 'confirmJob',
           statusUse: 'use',
           shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: 'monthon.y@srtforex.com',
-          LAST_USER: 'monthon.y@srtforex.com'
+          CREATE_USER: this.$session.getAll().data.userName || 'monthon.y@srtforex.com',
+          LAST_USER: this.$session.getAll().data.userName || 'monthon.y@srtforex.com'
         }
         await axios
           .post(this.DNS_IP + '/booking_transaction/add', dtt)
