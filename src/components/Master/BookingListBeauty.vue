@@ -9379,12 +9379,22 @@ export default {
           }
         })
     },
+    async updateBookingEmpSelect (bookNo, empSelect) {
+      try {
+        let dt = {
+          empSelect: empSelect,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+        await axios.post(this.DNS_IP + '/Booking/edit/' + bookNo, dt)
+      } catch (e) { console.log(e) }
+    },
     async jobChangeOnsite () {
       console.log('this.jobitem', this.jobitem)
       this.swalConfig.title = 'ต้องการ เปลี่ยนพนักงาน ใช่หรือไม่?'
       this.$swal(this.swalConfig)
         .then(async () => {
           if (this.$session.id() !== undefined) {
+            await this.updateBookingEmpSelect(this.jobitem[0].bookNo, this.empSelectJob)
             var updateJob = {
               empStep: this.empSelectJob,
               empSelect: this.empSelectJob,
