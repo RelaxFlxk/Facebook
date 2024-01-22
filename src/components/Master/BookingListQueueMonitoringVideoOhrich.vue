@@ -143,7 +143,7 @@
       height="110vh"
       width="100%"
     >
-      <v-row class="ml-6" v-if="resCol !== '12'">
+      <v-row class="ml-6" v-if="orientation === 'landscape'">
         <v-col :cols="resCol === '12' ? '5' : '4'" :class="resCol === '12' ? 'pr-0 pt-0' : 'pr-0'">
           <v-container>
             <v-row no-gutters >
@@ -423,7 +423,7 @@
         </v-row>
       </v-row>
       <v-row class="ml-6" v-else>
-        <v-col cols="12" :class="resCol === '12' ? 'pr-0 pt-0' : 'pr-0'">
+        <v-col cols="12" :class="resCol === '12' ? 'pr-0 pt-0 mt-10' : 'pr-0 mt-10'">
           <v-container>
             <v-row no-gutters >
               <v-col cols="12">
@@ -440,10 +440,10 @@
                       <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
                         <br>
                         <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + font() + ';line-height: 24px;'" >
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + fontPortrait() + ';line-height: 24px;'" >
                             Number
                           </v-col>
-                          <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size: ' + font() + ';line-height: 24px;'">
+                          <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size: ' + fontPortrait() + ';line-height: 24px;'">
                           <!-- <v-col cols="12" :style="'font-weight: 700;font-size: ' + '5px' + ';line-height: 24px;'"> -->
                             หมายเลขคิว
                           </v-col>
@@ -452,10 +452,10 @@
                       <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
                         <br>
                         <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:'  + font() + ';line-height: 24px;'">
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:'  + fontPortrait() + ';line-height: 24px;'">
                             Counter
                           </v-col>
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + font() + ';line-height: 24px;'">
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + fontPortrait() + ';line-height: 24px;'">
                             ช่องบริการ
                           </v-col>
                         </v-row>
@@ -704,6 +704,11 @@ export default {
     }
   },
   watch: {
+    // orientation (newVal) {
+    //   // ทำสิ่งที่คุณต้องการเมื่อมีการเปลี่ยนแปลงใน orientation
+    //   // this.orientation = newVal
+    //   console.log('เปลี่ยนแปลง orientation เป็น:', newVal)
+    // },
     // whenever question changes, this function will run
     colsWidth (newQuestion, oldQuestion) {
       // console.log('newnewnew', newQuestion, oldQuestion)
@@ -719,6 +724,7 @@ export default {
   },
   data () {
     return {
+      orientation: '',
       statusSound: false,
       dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
@@ -1096,15 +1102,19 @@ export default {
     }
   },
   async mounted () {
+    this.checkOrientation()
+
+    // เพิ่ม event listener เพื่อตรวจสอบการเปลี่ยนแปลงของ orientation
+    window.addEventListener('orientationchange', this.checkOrientation)
     // eslint-disable-next-line no-tabs
     // this.generateSound({storeFrontQueue: 'A200', servicePoint: '	  1'})
     this.isPortrait = window.matchMedia('(orientation: portrait)').matches
 
-    if (!this.isPortrait) {
-      console.log(' หน้าจอเป็นแนวตั้ง')
-    } else {
-      console.log(' หน้าจอเป็นแนวนอน')
-    }
+    // if (!this.isPortrait) {
+    //   console.log(' หน้าจอเป็นแนวตั้ง')
+    // } else {
+    //   console.log(' หน้าจอเป็นแนวนอน')
+    // }
     this.Fontsize = this.colsWidth
     await this.getShop()
     await this.getDataBranch()
@@ -1126,8 +1136,20 @@ export default {
   },
   beforeDestroy () {
     this.$root.$off('dataReturn')
+    // นำออก event listener เมื่อ component ถูกทำลาย
+    // window.removeEventListener('orientationchange', this.checkOrientation)
   },
   methods: {
+    checkOrientation () {
+      // ตรวจสอบ orientation และปรับค่าตัวแปร
+      if (window.matchMedia('(orientation: portrait)').matches) {
+        console.log('portrait')
+        this.orientation = 'portrait'
+      } else if (window.matchMedia('(orientation: landscape)').matches) {
+        console.log('landscape')
+        this.orientation = 'landscape'
+      }
+    },
     replaceFunc (text) {
       let itemText = text.split('')
       let textFill = ''
@@ -1306,6 +1328,14 @@ export default {
     },
     isMobileDevice () {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    },
+    fontPortrait () {
+      if (this.resCol === '12') {
+        return '24px'
+      } else {
+        return '48px'
+      }
+      // console.log('sssss', this.resCol)
     },
     font () {
       if (this.resCol === '12') {
