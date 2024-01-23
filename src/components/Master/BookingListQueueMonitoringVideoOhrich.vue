@@ -424,8 +424,7 @@
       </v-row>
       <v-row class="pt-10" v-else>
         <v-col cols="12" class="test">
-          <v-container>
-            <v-row no-gutters >
+            <v-row no-gutters class="px-6">
               <v-col cols="12">
                 <v-sheet
                   color="#9bd817"
@@ -510,7 +509,6 @@
                 </div>
               </v-col>
             </v-row>
-          </v-container>
         </v-col>
         <v-row class="px-10">
                     <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
@@ -577,7 +575,7 @@
         <v-col cols="12">
           <v-row v-if="videoLinkMonition">
             <v-col cols="12" class="text-center pt-0">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-5'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-10'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
                 <source :src="videoLinkMonition" type="video/webm">
               </video>
               <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
