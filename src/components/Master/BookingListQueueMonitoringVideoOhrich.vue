@@ -814,6 +814,8 @@ export default {
         'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterOne.wav?alt=media&token=0a90f02b-f23b-430c-874c-e476c7701def',
         'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterTwo.wav?alt=media&token=7348068e-b96e-4ce4-a2d8-19b13fb6ce55',
         'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterThree.wav?alt=media&token=fb455275-eac7-4375-9e9b-3ee2f20182b5',
+        'https://storage.googleapis.com/ohrich-sound/PleaseContactCounterFour.wav',
+        'https://storage.googleapis.com/ohrich-sound/PleaseContactCounterFive.wav',
         '',
         ''
       ],
@@ -1453,10 +1455,10 @@ export default {
         if (oldSound.length > 0) {
           item.audioFile = oldSound[0].audioFile
         } else {
-          let branchId = this.$session.getAll().data.masBranchID || 2185
+          // let branchId = this.$session.getAll().data.masBranchID || 2185
           await axios
             .get(
-              `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull` + '&masBranchID=' + branchId
+              `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull`
             ).then(async (response) => {
               if (response.data.length > 0 && typeof response.data.status === 'undefined') {
                 item.audioFile = response.data[0].audioFile
