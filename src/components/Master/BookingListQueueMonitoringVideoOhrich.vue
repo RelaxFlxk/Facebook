@@ -161,7 +161,7 @@
                       <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
                         <br>
                         <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + font() + ';line-height: 24px;'" >
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + font() + ';line-height: 37px;'" >
                             Number
                           </v-col>
                           <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size: ' + font() + ';line-height: 24px;'">
@@ -176,7 +176,7 @@
                           <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:'  + font() + ';line-height: 24px;'">
                             Counter
                           </v-col>
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + font() + ';line-height: 24px;'">
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + font() + ';line-height: 37px;'">
                             ช่องบริการ
                           </v-col>
                         </v-row>
@@ -422,7 +422,7 @@
           </v-col>
         </v-row>
       </v-row>
-      <v-row class="pt-10" v-else>
+      <v-row class="pt-5" v-else>
         <v-col cols="12" class="test">
             <v-row no-gutters class="px-6">
               <v-col cols="12">
@@ -439,10 +439,10 @@
                       <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
                         <br>
                         <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + fontPortrait() + ';line-height: 24px;'" >
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + fontPortrait() + ';line-height: 37px;'" >
                             Number
                           </v-col>
-                          <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size: ' + fontPortrait() + ';line-height: 24px;'">
+                          <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size: ' + fontPortrait() + ';line-height: 37px;'">
                           <!-- <v-col cols="12" :style="'font-weight: 700;font-size: ' + '5px' + ';line-height: 24px;'"> -->
                             หมายเลขคิว
                           </v-col>
@@ -451,10 +451,10 @@
                       <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
                         <br>
                         <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:'  + fontPortrait() + ';line-height: 24px;'">
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:'  + fontPortrait() + ';line-height: 37px;'">
                             Counter
                           </v-col>
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + fontPortrait() + ';line-height: 24px;'">
+                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + fontPortrait() + ';line-height: 37px;'">
                             ช่องบริการ
                           </v-col>
                         </v-row>
@@ -471,16 +471,16 @@
                 >
                   <v-container>
                     <v-row v-for="(items, id) in itemBookingUse" :key="id">
-                      <v-col cols="6" class="pt-2">
+                      <v-col cols="6" class="pt-1">
                         <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: ' + fontPortrait2() + ';color:black'">
+                          <v-col cols="12"  class="p-0" :style="'font-weight: 700;font-size: ' + fontPortrait2() + ';color:black'">
                             {{items.storeFrontQueue}}
                           </v-col>
                         </v-row>
                       </v-col>
-                      <v-col cols="6" class="pt-2" style="border-left: 1px solid #9bd817 !important">
+                      <v-col cols="6" class="pt-1" style="border-left: 1px solid #9bd817 !important">
                         <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: ' + fontPortrait2() + ';color:black'">
+                          <v-col cols="12"  class="p-0" :style="'font-weight: 700;font-size: ' + fontPortrait2() + ';color:black'">
                             {{items.servicePoint === '' ? (items.statusBt === 'confirmJob' ? 'เรียกคิว' : '') : items.servicePoint}}
                           </v-col>
                         </v-row>
@@ -574,7 +574,7 @@
                   </v-row>
         <v-col cols="12">
           <v-row v-if="videoLinkMonition">
-            <v-col cols="12" class="text-center pt-0">
+            <v-col cols="12" class="text-center p-0">
               <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-10'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
                 <source :src="videoLinkMonition" type="video/webm">
               </video>
@@ -582,7 +582,7 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-row class="pt-10 px-10">
+        <v-row class="pt-5 px-10">
               <v-col cols="7">
                 <v-menu
                   ref="menu"
@@ -1340,7 +1340,7 @@ export default {
     },
     fontPortrait () {
       if (this.resCol === '12') {
-        return '48px'
+        return '34px'
       } else {
         return '43px'
       }
@@ -1356,7 +1356,7 @@ export default {
     },
     fontPortrait2 () {
       if (this.resCol === '12') {
-        return '85px'
+        return '55px'
       } else {
         return '85px'
       }
