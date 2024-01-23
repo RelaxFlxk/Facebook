@@ -15,6 +15,7 @@ import Rating from '@/components/Rating'
 import Pepsico from '@/components/Pepsico'
 import Message from '@/components/StepMessage'
 import BeChat from '@/components/BeChat'
+import CalendarGrid from '@/components/CalendarGrid'
 
 Vue.use(Router)
 
@@ -24,6 +25,11 @@ export default new Router({
     path: '*',
     name: 'Login',
     component: Core.Login
+  },
+  {
+    path: '/OnsiteCalendarGrid',
+    name: 'OnsiteCalendarGrid',
+    component: CalendarGrid.OnsiteCalendarGrid
   },
   {
     path: '/ShopList',

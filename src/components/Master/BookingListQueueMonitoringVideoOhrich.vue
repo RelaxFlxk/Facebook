@@ -422,8 +422,8 @@
           </v-col>
         </v-row>
       </v-row>
-      <v-row class="ml-6" v-else>
-        <v-col cols="12" :class="resCol === '12' ? 'pr-0 pt-0 mt-10' : 'pr-0 mt-10'">
+      <v-row class="pt-10" v-else>
+        <v-col cols="12" class="test">
           <v-container>
             <v-row no-gutters >
               <v-col cols="12">
@@ -474,14 +474,14 @@
                     <v-row v-for="(items, id) in itemBookingUse" :key="id">
                       <v-col cols="6" class="pt-2">
                         <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: ' + font2() + ';color:black'">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: ' + fontPortrait2() + ';color:black'">
                             {{items.storeFrontQueue}}
                           </v-col>
                         </v-row>
                       </v-col>
                       <v-col cols="6" class="pt-2" style="border-left: 1px solid #9bd817 !important">
                         <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: ' + font2() + ';color:black'">
+                          <v-col cols="12" :style="'font-weight: 700;font-size: ' + fontPortrait2() + ';color:black'">
                             {{items.servicePoint === '' ? (items.statusBt === 'confirmJob' ? 'เรียกคิว' : '') : items.servicePoint}}
                           </v-col>
                         </v-row>
@@ -510,7 +510,81 @@
                 </div>
               </v-col>
             </v-row>
-            <v-row>
+          </v-container>
+        </v-col>
+        <v-row class="px-10">
+                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
+                      <v-card min-height="160px">
+                        <v-container style="height:120px;">
+                          <v-row class="pa-2">
+                            <v-col v-if="GroupQueueItem.one.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
+                              <strong style="font-size:24px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
+                            </v-col>
+                            <v-col v-else v-for="(item, i) in GroupQueueItem.one" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
+                            </v-col>
+                          </v-row>
+                        </v-container>
+                        <div class="text-center"  style="display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;">
+                          <strong style="font-size:15px;">Estimate Waiting time</strong>
+                          <strong style="font-size:15px;">10 min</strong>
+                        </div>
+                      </v-card>
+                    </v-col>
+                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
+                      <v-card min-height="160px">
+                        <v-container style="height:120px;">
+                          <v-row class="pa-2">
+                            <v-col v-if="GroupQueueItem.two.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
+                              <strong style="font-size:24px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
+                            </v-col>
+                            <v-col v-else v-for="(item, i) in GroupQueueItem.two" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
+                            </v-col>
+                          </v-row>
+                        </v-container>
+                        <div class="text-center"  style="display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;">
+                          <strong style="font-size:15px;">Estimate waiting time</strong>
+                          <strong style="font-size:15px;">10 - 20 min</strong>
+                        </div>
+                      </v-card>
+                    </v-col>
+                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
+                      <v-card min-height="160px">
+                        <v-container style="height:120px;">
+                          <v-row class="pa-2">
+                            <v-col v-if="GroupQueueItem.three.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
+                              <strong style="font-size:24px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
+                            </v-col>
+                            <v-col v-else v-for="(item, i) in GroupQueueItem.three" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
+                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
+                            </v-col>
+                          </v-row>
+                        </v-container>
+                          <div class="text-center" style="display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;">
+                            <strong style="font-size:15px;">Estimate waiting time</strong>
+                            <strong style="font-size:15px;">20 - 30 min</strong>
+                          </div>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+        <v-col cols="12">
+          <v-row v-if="videoLinkMonition">
+            <v-col cols="12" class="text-center pt-0">
+              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-5'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+                <source :src="videoLinkMonition" type="video/webm">
+              </video>
+              <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-row class="pt-10 px-10">
               <v-col cols="7">
                 <v-menu
                   ref="menu"
@@ -565,71 +639,6 @@
                 </v-text-field>
               </v-col>
             </v-row>
-          </v-container>
-        </v-col>
-        <v-col cols="12">
-          <v-row v-if="videoLinkMonition">
-            <v-col cols="12" class="text-center pt-0">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-15'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-                <source :src="videoLinkMonition" type="video/webm">
-              </video>
-              <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </v-col>
-          </v-row>
-            <v-row class="mr-3">
-                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.one.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.one" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                        <div class="text-center">
-                          <strong style="font-size:15px;">Estimate Waiting time 10 min</strong>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.two.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.two" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                        <div class="text-center">
-                          <strong style="font-size:15px;">Estimate waiting time 10 - 20 min</strong>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.three.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.three" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                          <div class="text-center">
-                            <strong style="font-size:15px;">Estimate waiting time 20 - 30 min</strong>
-                          </div>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-        </v-col>
         <v-row v-show="hideSound === true">
           <v-col>
             <audio id="playerPrefix" controls="controls">>
@@ -1331,9 +1340,9 @@ export default {
     },
     fontPortrait () {
       if (this.resCol === '12') {
-        return '24px'
-      } else {
         return '48px'
+      } else {
+        return '43px'
       }
       // console.log('sssss', this.resCol)
     },
@@ -1344,6 +1353,13 @@ export default {
         return '24px'
       }
       // console.log('sssss', this.resCol)
+    },
+    fontPortrait2 () {
+      if (this.resCol === '12') {
+        return '85px'
+      } else {
+        return '85px'
+      }
     },
     font2 () {
       if (this.resCol === '12') {
