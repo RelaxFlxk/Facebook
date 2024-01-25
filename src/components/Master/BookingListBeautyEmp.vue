@@ -11391,7 +11391,7 @@ export default {
             }
             console.log('statusGoogleCalendar', this.statusGoogleCalendar)
             if (this.statusGoogleCalendar === 'True') {
-              await this.connectGoogleCalendar('Edit', Add[0].bookNo)
+              this.connectGoogleCalendar('Edit', Add[0].bookNo)
             }
             // this.getTimesChange('update')
             this.formEdit.radiosRemark = ''
@@ -14670,7 +14670,7 @@ export default {
         .then(async response => {
           // this.getDataCalendaBooking()
           if (this.statusGoogleCalendar === 'True') {
-            await this.connectGoogleCalendar('Add', dt.bookNo)
+            this.connectGoogleCalendar('Add', dt.bookNo)
           }
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
@@ -15459,7 +15459,7 @@ export default {
             if (response.data.status === true) {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               if (this.statusGoogleCalendar === 'True') {
-                await this.connectGoogleCalendar('Add', dt.bookNo)
+                this.connectGoogleCalendar('Add', dt.bookNo)
               }
               await this.updateRemarkAndEmpSelect(item)
               // this.getDataCalendaBooking()
@@ -15662,7 +15662,7 @@ export default {
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
           if (this.statusGoogleCalendar === 'True') {
-            await this.connectGoogleCalendar('Delete', dt.bookNo)
+            this.connectGoogleCalendar('Delete', dt.bookNo)
           }
           await this.updateRemark(this.bookNoRemove)
           this.pushMsglineCancel(this.bookNoRemove)
@@ -15827,14 +15827,14 @@ export default {
                 console.log('*****Edit')
                 // edit
                 if (this.statusGoogleCalendar === 'True') {
-                  await this.connectGoogleCalendar('Edit', dt.bookNo)
+                  this.connectGoogleCalendar('Edit', dt.bookNo)
                 }
               }
               if (item.statusBt === 'wait' && (changeStatus === 'confirm')) {
                 console.log('*****Add')
                 // create
                 if (this.statusGoogleCalendar === 'True') {
-                  await this.connectGoogleCalendar('Add', dt.bookNo)
+                  this.connectGoogleCalendar('Add', dt.bookNo)
                 }
               }
               if (item.statusBt === 'confirm' || item.statusBt === 'confirmJob') {

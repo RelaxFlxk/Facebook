@@ -179,8 +179,12 @@ export default {
       flowItem: [],
       empItem: [],
       evenStatus: '',
+      attendeesEmail: [],
       bookNo: '',
-      statusGoogleCalendarEmp: ''
+      statusGoogleCalendarEmp: '',
+      webHookUrl: 'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/'
+      // webHookUrl: 'https://e661-2403-6200-88a4-e62f-f840-2028-9b38-c913.ngrok-free.app/'
+      // webHookUrl: 'http://127.0.0.1:5003/be-linked-a7cdc/asia-southeast1/'
     }
   },
   async mounted () {
@@ -200,7 +204,7 @@ export default {
           // on success
           console.log('authCode', authCode)
           axios
-            .post('http://127.0.0.1:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
+            .post(this.webHookUrl + 'GoogleCalendar-createToken', {code: authCode}, {timeout: 5000})
             // .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
             .then(async (response) => {
               // this.checkLogin = true
@@ -250,7 +254,7 @@ export default {
       item.Summmary = this.bookingItem[0].flowName + ' - ' + this.bookingData.filter((a) => a.fieldName === 'ชื่อ')[0].fieldValue
       let Description = ''
       this.bookingData.forEach((a) => {
-        Description += a.fieldName + ' : ' + a.fieldValue
+        Description += a.fieldName + ' : ' + (a.fieldValue || ' ')
         Description += '\n'
       })
       Description += 'ชื่อช่าง :' + this.bookingItem[0].bookingEmpFlowName
@@ -260,18 +264,27 @@ export default {
       const dateSelect = moment.tz(`${this.bookingItem[0].dueDateDay} ${this.bookingItem[0].timeDue}`, 'YYYY-MM-DD HH:mm', timezone).format()
       item.StartDate = dateSelect
       item.EndDate = dateSelect
+      await this.getSysUser()
+      console.log('this.attendeesEmail', this.attendeesEmail)
+      item.attendees = this.attendeesEmail
       if (this.statusGoogleCalendarEmp === 'True') {
         if (status === 'Add') {
-          if (this.empItem[0].empEmail !== null) {
-            item.attendees = [
-              {'email': this.empItem[0].empEmail}
-            ]
+          try {
+            if (this.empItem[0].empEmail !== null) {
+              let obj = {'email': this.empItem[0].empEmail}
+              item.attendees.push(obj)
+            }
+          } catch (error) {
+            console.log(error)
           }
         } else if (status === 'Edit') {
-          if (this.empItem[0].empEmail !== null) {
-            item.attendees = [
-              {'email': this.empItem[0].empEmail}
-            ]
+          try {
+            if (this.empItem[0].empEmail !== null) {
+              let obj = {'email': this.empItem[0].empEmail}
+              item.attendees.push(obj)
+            }
+          } catch (error) {
+            console.log(error)
           }
         }
       }
@@ -312,7 +325,7 @@ export default {
       item.Summmary = this.bookingItem[0].flowName + ' - ' + this.bookingData.filter((a) => a.fieldName === 'ชื่อ')[0].fieldValue
       let Description = ''
       this.bookingData.forEach((a) => {
-        Description += a.fieldName + ' : ' + a.fieldValue
+        Description += a.fieldName + ' : ' + (a.fieldValue || ' ')
         Description += '\n'
       })
       //    แปลงเวลานัดหมาย
@@ -393,7 +406,7 @@ export default {
           // on success
           console.log('authCode', authCode)
           axios
-            .post('http://127.0.0.1:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
+            .post(this.webHookUrl + 'GoogleCalendar-createToken', {code: authCode}, {timeout: 5000})
             // .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
             .then(async (response) => {
               // this.checkLogin = true
@@ -436,7 +449,7 @@ export default {
       console.log('item', item)
       try {
         await axios
-          .post('http://127.0.0.1:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createEvent', item)
+          .post(this.webHookUrl + 'GoogleCalendar-createEvent', item)
           .then(async (response) => {
             console.log('createEvent', response.data)
             console.log('response.data.id', response.data.data.id)
@@ -452,7 +465,7 @@ export default {
         eventId: this.eventId
       }
       axios
-        .post('http://127.0.0.1:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-getEvent', dt)
+        .post(this.webHookUrl + 'GoogleCalendar-getEvent', dt, {timeout: 5000})
         .then(async (response) => {
           console.log('getEvent', response.data)
           if (response.data.status === 200) {
@@ -477,7 +490,7 @@ export default {
       }
       let rsData = []
       await axios
-        .post('http://127.0.0.1:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-getEvent', itemGet)
+        .post(this.webHookUrl + 'GoogleCalendar-getEvent', itemGet, {timeout: 5000})
         .then(async (response) => {
           console.log('getEvent', response.data)
           if (response.data.status === 200) {
@@ -510,7 +523,7 @@ export default {
       if (this.bookingItem[0].googleCalendarEventId !== null) {
         try {
           await axios
-            .post('http://127.0.0.1:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-updateEvent', itemUpdate)
+            .post(this.webHookUrl + 'GoogleCalendar-updateEvent', itemUpdate, {timeout: 5000})
             .then(async (response) => {
               console.log('updateEvent11', response.data)
             }).catch((err) => {
@@ -527,19 +540,46 @@ export default {
         eventId: this.bookingItem[0].googleCalendarEventId
       }
       await axios
-        .post('http://127.0.0.1:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-deleteEvent', dt)
+        .post(this.webHookUrl + 'GoogleCalendar-deleteEvent', dt, {timeout: 5000})
         .then(async (response) => {
           console.log('deleteEvent', response.data)
         })
     },
     async getShop () {
-      await axios.get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId).then(response => {
+      await axios.get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId).then(async (response) => {
         let rs = response.data
         if (rs.length > 0) {
+          await this.getAccess_token()
+          // await this.getSysUser()
           console.log('rs', rs)
-          this.refreshToken = rs[0].refreshTokenGoogleCalendar
+          // this.refreshToken = rs[0].refreshTokenGoogleCalendar
+          // saichongot123@gmail.com 1//0g96maaiJcjKnCgYIARAAGBASNwF-L9IrvFA4GuAGtvfLf5ZfmSDxoXxBeym4BpxaJjVoc5SrB176u4FsYYoCCWa7rrwdAh-CZkA
+          // this.refreshToken = '1//0gYwyLYeD179cCgYIARAAGBASNwF-L9Ir4eWR6-pPbjgYzJYPqm74y0-JiXqw5EmCbKduRf5VF0c1BIgD37qsWdtqt7bENC5uBss'
           this.statusGoogleCalendarEmp = rs[0].statusGoogleCalendarEmp
         //   this.expireDate = rs[0].expireDateGoogleCalendar
+        }
+      })
+    },
+    async getAccess_token () {
+      await axios.get(this.DNS_IP + '/GoogleCalendarRefreshToken/get').then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          console.log('GoogleCalendarRefreshToken', rs)
+          this.refreshToken = rs[0].access_token
+        }
+      })
+    },
+    async getSysUser () {
+      await axios.get(this.DNS_IP + '/system_user/get?shopId=' + this.shopId + '&USER_ROLE=admin').then(response => {
+        let rs = response.data
+        if (rs.length > 0) {
+          console.log('system_user', rs)
+          rs.forEach((item) => {
+            let obj = {
+              'email': item.userName
+            }
+            this.attendeesEmail.push(obj)
+          })
         }
       })
     }
