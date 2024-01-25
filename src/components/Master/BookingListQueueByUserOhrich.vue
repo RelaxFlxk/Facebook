@@ -225,10 +225,9 @@
                     class="ma-2 white--text"
                     fab
                     elevation="1"
-                    x-small
                     @click="removeQueue(itemBooking[0])"
                   >
-                    <v-icon color="red">
+                    <v-icon color="red" size="60px">
                       mdi-delete-circle
                     </v-icon>
                   </v-btn>
