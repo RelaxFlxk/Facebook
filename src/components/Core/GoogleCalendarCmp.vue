@@ -334,6 +334,9 @@ export default {
       const dateSelect = moment.tz(`${this.bookingItem[0].dueDateDay} ${this.bookingItem[0].timeDue}`, 'YYYY-MM-DD HH:mm', timezone).format()
       item.StartDate = dateSelect
       item.EndDate = dateSelect
+      await this.getSysUser()
+      console.log('this.attendeesEmail', this.attendeesEmail)
+      item.attendees = this.attendeesEmail
       return item
     },
     async getBooking () {
