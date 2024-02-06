@@ -9,6 +9,15 @@
           </v-col>
           <v-col cols="8" class="v-margit_button text-right">
             <v-btn
+              color="purple"
+              depressed
+              dark
+              @click="(dialogSortEmp = true)"
+            >
+              <v-icon left>mdi-vector-selection</v-icon>
+              จัดลำดับการแสดง
+            </v-btn>
+            <v-btn
               color="primary"
               depressed
               @click=";(dialogAdd = true)"
@@ -27,6 +36,88 @@
           </v-col>
         </v-row>
         <v-row>
+          <v-dialog v-model="dialogSortEmp" persistent max-width="70%">
+            <v-card>
+              <v-card-text v-if="dataReady">
+                <v-container>
+                  <v-row>
+                    <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>จัดลำดับการแสดง</strong></h3>
+                    </v-col>
+                    <v-col cols="2" class="pt-10">
+                      <div style="text-align: end;">
+                          <v-btn
+                          class="mx-2"
+                          fab
+                          small
+                          dark
+                          color="white"
+                          :style="styleCloseBt"
+                          @click="dialogSortEmp = false,getDataGlobal(DNS_IP,path,$session.getAll().data.shopId)"
+                          >
+                          X
+                          </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <draggable
+                        :list="dessertsSort"
+                        :disabled="!enabled"
+                        class="list-group"
+                        ghost-class="ghost"
+                        :move="checkMove"
+                        @start="dragging = true"
+                        @end="dragging = false"
+                      >
+                        <div
+                          class="list-group-item"
+                          v-for="element in dessertsSort"
+                          :key="element.empId"
+                        >
+                          <v-icon>mdi-drag-variant</v-icon>
+                          <!-- {{ element.flowId }} -->
+                          {{ element.empFull_NameTH }}
+                        </div>
+                      </draggable>
+                    </v-col>
+                  </v-row>
+                  <br>
+                  <div class="text-right">
+                      <v-btn
+                      color="teal"
+                      class="button"
+                      dark
+                      large
+                      @click="saveSortEmp()"
+                    >
+                      จัดลำดับการแสดง
+                    </v-btn>
+                    <v-btn
+                      color="error"
+                      class="button"
+                      dark
+                      large
+                      @click="dialogSortEmp = false,getDataGlobal(DNS_IP,path,$session.getAll().data.shopId)"
+                    >
+                      ปิด
+                    </v-btn>
+                  </div>
+                </v-container>
+              </v-card-text>
+              <v-card-text v-else>
+                <v-row>
+                  <v-col cols="10" class="text-left pt-10">
+                    <h3><strong>จัดลำดับการแสดง</strong></h3>
+                  </v-col>
+                </v-row>
+                <div class="text-center">
+                  <waitingAlert></waitingAlert>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           <!-- Dialog export / import -->
           <!-- Import -->
           <v-dialog v-model="dialogImport" persistent max-width="80%">
@@ -1156,9 +1247,11 @@ import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json
 import XLSX from 'xlsx' // import xlsx
 import readXlsxFile from 'read-excel-file'
 import moment from 'moment' // แปลง date
+import draggable from 'vuedraggable'
 
 export default {
   components: {
+    draggable,
     waitingAlert,
     'left-menu-admin': adminLeftMenu,
     downloadExcel: JsonExcel,
@@ -1168,8 +1261,14 @@ export default {
   created () {
     setInterval(this.getNowGlobal, 1000)
   },
+  computed: {
+    draggingInfo () {
+      return this.dragging ? 'under drag' : ''
+    }
+  },
   data () {
     return {
+      dialogSortEmp: false,
       PK: '',
       path: '/empSelect/', // Path Model
       // Menu Config
@@ -1390,7 +1489,10 @@ export default {
       ],
       statusGoogleCalendar: '',
       statusGoogleCalendarEmp: '',
-      ExcelField: null
+      ExcelField: null,
+      enabled: true,
+      dragging: false,
+      dessertsSort: []
       // End Export Config
     }
   },
@@ -1401,14 +1503,67 @@ export default {
     // this.getGetToken(this.DNS_IP)
     this.dataReady = false
     // Get Data
-    this.getDataGlobal(
+    await this.getDataGlobal(
       this.DNS_IP,
       this.path,
       this.$session.getAll().data.shopId
     )
+    if (this.dataItem.length > 0) {
+      this.dessertsSort = []
+      for (let i = 0; i < this.dataItem.length; i++) {
+        let d = this.dataItem[i]
+        let s = {}
+        s.empId = d.empId
+        s.empFull_NameTH = d.empFull_NameTH
+        this.dessertsSort.push(s)
+      }
+    }
     await this.getShop()
   },
   methods: {
+    checkMove: function (e) {
+      window.console.log('Future index: ' + e.draggedContext.futureIndex)
+    },
+    saveSortEmp () {
+      this.$swal({
+        title: 'ต้องการ เปลี่ยนแปลงลำดับการแสดง ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      })
+        .then(async (result) => {
+          this.dataReady = false
+          let dt = {
+            data: this.dessertsSort
+          }
+          await axios
+            .post(this.DNS_IP + '/empSelect/updateSortEmp', dt)
+            .then(async (response) => {
+              this.$swal('เรียบร้อย', 'เปลี่ยนแปลงลำดับการแสดง เรียบร้อย', 'success')
+              this.dialogSortEmp = false
+              this.dataReady = true
+              await this.getDataGlobal(this.DNS_IP, this.path, this.session.data.shopId)
+              if (this.dataItem.length > 0) {
+                this.dessertsSort = []
+                for (let i = 0; i < this.dataItem.length; i++) {
+                  let d = this.dataItem[i]
+                  let s = {}
+                  s.empId = d.empId
+                  s.empFull_NameTH = d.empFull_NameTH
+                  this.dessertsSort.push(s)
+                }
+              }
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+              this.dataReady = true
+            })
+        })
+      // console.log('dataList', JSON.stringify(dataList))
+    },
     presetTimebydayExport () {
       let timeExport = [
         { แสดงเวลา: '08:00', เวลา: '08:00' },
@@ -2208,6 +2363,16 @@ export default {
                   this.path,
                   this.$session.getAll().data.shopId
                 )
+                if (this.dataItem.length > 0) {
+                  this.dessertsSort = []
+                  for (let i = 0; i < this.dataItem.length; i++) {
+                    let d = this.dataItem[i]
+                    let s = {}
+                    s.empId = d.empId
+                    s.empFull_NameTH = d.empFull_NameTH
+                    this.dessertsSort.push(s)
+                  }
+                }
               })
             // eslint-disable-next-line handle-callback-err
               .catch(error => {
@@ -2299,6 +2464,16 @@ export default {
                   PATH,
                   this.$session.getAll().data.shopId
                 )
+                if (this.dataItem.length > 0) {
+                  this.dessertsSort = []
+                  for (let i = 0; i < this.dataItem.length; i++) {
+                    let d = this.dataItem[i]
+                    let s = {}
+                    s.empId = d.empId
+                    s.empFull_NameTH = d.empFull_NameTH
+                    this.dessertsSort.push(s)
+                  }
+                }
               })
             // eslint-disable-next-line handle-callback-err
               .catch(error => {
@@ -2397,7 +2572,16 @@ export default {
                   this.path,
                   this.$session.getAll().data.shopId
                 )
-                console.log('/empSelect/addImport/', response)
+                if (this.dataItem.length > 0) {
+                  this.dessertsSort = []
+                  for (let i = 0; i < this.dataItem.length; i++) {
+                    let d = this.dataItem[i]
+                    let s = {}
+                    s.empId = d.empId
+                    s.empFull_NameTH = d.empFull_NameTH
+                    this.dessertsSort.push(s)
+                  }
+                }
               })
               // eslint-disable-next-line handle-callback-err
               .catch(error => {

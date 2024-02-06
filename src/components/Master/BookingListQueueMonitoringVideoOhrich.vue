@@ -1225,7 +1225,8 @@ export default {
         { 'queue': 'B027', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B027.wav' },
         { 'queue': 'B028', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B028.wav' },
         { 'queue': 'B029', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B029.wav' }
-      ]
+      ],
+      dataListPlay: []
     }
   },
   async mounted () {
@@ -1313,18 +1314,24 @@ export default {
     async getFirestore () {
       this.firestore = this.$firebase.firestore()
       this.firestore.collection('ProcessOhrichUpdate').limit(1000).onSnapshot((snapshot) => {
+        // console.log(snapshot)
         snapshot.docChanges().forEach(async (change) => {
-          if (this.checkRef === false) {
-            this.checkRef = true
-            this.updateProcessOhrichUpdate()
-            await this.searchBooking()
-          } else {
-            console.log(change.doc.id)
-            let branchId = this.$session.getAll().data.masBranchID || 2185
-            if (change.doc.data().active === '1' && change.doc.data().masBranchID === branchId && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
-              console.log(change)
+          let branchId = this.$session.getAll().data.masBranchID || 2185
+          let userName = this.$session.getAll().data.userName
+          if (change.doc.data().masBranchID === branchId && change.doc.id === userName) {
+            console.log('active', change.doc.data().active)
+            if (this.checkRef === false) {
+              console.log('checkRef1')
+              this.checkRef = true
               await this.searchBooking()
               this.updateProcessOhrichUpdate()
+            } else {
+            // console.log(change.doc.id)
+              if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
+                console.log('checkRef2')
+                await this.searchBooking()
+                this.updateProcessOhrichUpdate()
+              }
             }
           }
         })
@@ -1542,10 +1549,10 @@ export default {
         setTimeout(this.getMessage, 10000)
       }
     },
-    async getMessageNoInterval () {
+    async getMessageNoInterval (storeFrontQueue, dueDateDay) {
       try {
         let branchId = this.$session.getAll().data.masBranchID || 2185
-        let url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' + branchId
+        let url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' + branchId + '&storeFrontQueue=' + storeFrontQueue + '&CREATE_DATE=' + dueDateDay
         // if (this.$session.getAll().data.shopId) {
         //   url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
         // } else {
@@ -1613,12 +1620,16 @@ export default {
               params,
               { headers: { 'Botnoi-Token': 'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0' } }
             ).then((res) => {
-              this.playSound(res.data)
+              this.dataListPlay.push(res.data)
+              this.playSound()
               result = res.data
+              console.log('this.dataListPlay Log1', this.dataListPlay)
             })
         } else {
           let res = { text: item.storeFrontQueue, audio_url: item.audioFile }
-          this.playSound(res)
+          this.dataListPlay.push(res)
+          console.log('this.dataListPlay Log2', this.dataListPlay)
+          this.playSound()
           result = res
         }
         return result
@@ -1636,34 +1647,43 @@ export default {
     //   let text = `ขอเชิญ คิว ${storeFrontQueue} ที่ช่อง ${dock} ค่ะ`
     //   return text
     // },
-    playSound (res) {
-      this.audio = res.audio_url
-      this.tableTarget = this.tableAudioList[this.tableId]
-      console.log('tableTarget', this.tableTarget)
-      console.log('tableId', this.tableId)
-      this.timeCount = 1
+    playSound () {
       let playerPrefix = document.getElementById('playerPrefix')
       let playerQueue = document.getElementById('playerQueue')
       // let playerSuffix = document.getElementById('playerSuffix')
       let playerCounter = document.getElementById('playerCounter')
-      playerPrefix.play()
-      playerPrefix.onended = (event) => {
-        playerQueue.load()
-        playerQueue.play()
-        playerQueue.onended = (event) => {
-          playerCounter.load()
-          playerCounter.play()
-          playerCounter.onended = (event) => {
-            if (this.timeCount < this.repeatRound) {
-              this.timeCount++
-              playerPrefix.play()
-              playerPrefix.onended = (event) => {
-                playerQueue.play()
-                playerQueue.onended = (event) => {
-                  playerCounter.play()
-                  playerCounter.onended = (event) => {
-                    var vid = document.getElementById('videoAds')
-                    vid.play()
+      if (playerPrefix.paused && playerQueue.paused && playerCounter.paused) {
+        let res = this.dataListPlay[0]
+        var vid = document.getElementById('videoAds')
+        vid.pause()
+        this.audio = res.audio_url
+        this.tableTarget = this.tableAudioList[this.tableId]
+        console.log('tableTarget', this.tableTarget)
+        console.log('tableId', this.tableId)
+        this.timeCount = 1
+        playerPrefix.play()
+        playerPrefix.onended = (event) => {
+          playerQueue.load()
+          playerQueue.play()
+          playerQueue.onended = (event) => {
+            playerCounter.load()
+            playerCounter.play()
+            playerCounter.onended = (event) => {
+              if (this.timeCount < this.repeatRound) {
+                this.timeCount++
+                playerPrefix.play()
+                playerPrefix.onended = (event) => {
+                  playerQueue.play()
+                  playerQueue.onended = (event) => {
+                    playerCounter.play()
+                    playerCounter.onended = (event) => {
+                      vid.play()
+                      this.dataListPlay = this.dataListPlay.slice(1)
+                      if (this.dataListPlay.length > 0) {
+                        this.playSound()
+                      }
+                      console.log('this.dataListPlay', this.dataListPlay)
+                    }
                   }
                 }
               }
@@ -1763,9 +1783,6 @@ export default {
       this.setTimerCalendar = setInterval(function () { _this.searchBooking() }, 15000)
     },
     async searchBooking () {
-      if (this.statusSound) {
-        this.getMessageNoInterval()
-      }
       if (this.validSearch === true) {
         // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
         this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
@@ -1816,6 +1833,14 @@ export default {
               this.itemBookingUse = [ ...sortDataDataCon, ...dataWain ].filter((el, ind) => { return ind <= 5 })
               let test = dataWain.filter((el, ind) => { return el.storeFrontText === 'A' })
               this.GroupQueue(test)
+              if (dataCon.length > 0) {
+                if (this.statusSound) {
+                  for (let i = 0; i < dataCon.length; i++) {
+                    let d = dataCon[i]
+                    await this.getMessageNoInterval(d.storeFrontQueue, d.dueDateDay)
+                  }
+                }
+              }
             } else {
               this.itemBookingUse = []
               this.countConfirm = 0
