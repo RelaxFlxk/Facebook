@@ -81,20 +81,87 @@
             </v-card>
           </v-dialog>
         </v-row>
-        <v-col cols="6">
-          <v-select
-            :items="branch"
-            v-model="masBranchID"
-            dense
-            outlined
-            hide-details
-            filled
-            label="สาขา"
-            prepend-inner-icon="mdi-map-marker"
+        <v-row>
+          <v-col cols="4">
+            <v-select
+              :items="branch"
+              v-model="masBranchID"
+              dense
+              outlined
+              hide-details
+              filled
+              label="สาขา"
+              prepend-inner-icon="mdi-map-marker"
+              class="ma-2"
+              @change="getRating()"
+            ></v-select>
+          </v-col>
+          <v-col cols="3">
+      <v-menu
+        v-model="menu2"
+        :close-on-content-click="false"
+        :nudge-right="40"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="startDate"
+            label="START DATE"
+            prepend-icon="mdi-calendar"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="startDate"
+          @input="onStartDateInput"
+          :max="endDate"
+          outlined
+        ></v-date-picker>
+      </v-menu>
+    </v-col>
+    <v-col cols="3">
+      <v-menu
+        v-model="menu"
+        :close-on-content-click="false"
+        :nudge-right="40"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="endDate"
+            label="END DATE"
+            prepend-icon="mdi-calendar"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="endDate"
+          :min="startDate"
+          @input="onEndDateInput"
+          outlined
+        ></v-date-picker>
+      </v-menu>
+    </v-col>
+          <v-col cols="2" align="right">
+            <v-btn
+            color="primary"
             class="ma-2"
-            @change="getRating()"
-          ></v-select>
-        </v-col>
+            outlined
+            @click="exportExcel(booking.masBranchName, booking.flowName)"
+            >
+              <v-icon>mdi-calendar-multiselect</v-icon>
+              Export
+            </v-btn>
+          </v-col>
+        </v-row>
         <v-row>
           <v-col cols="12">
             <v-card>
@@ -120,26 +187,30 @@
                 </template>
                 <template v-slot:[`item.rating`]="{ item }">
                   <div v-if="rs.answerId !== null">
-                  <v-rating
-                    v-model="item.rating"
-                    color="yellow darken-3"
-                    background-color="grey darken-1"
-                    empty-icon="$ratingFull"
-                    :length="item.ratingMax === '' || item.ratingMax === null ? 5 : item.ratingMax"
-                    readonly
-                    small
-                  ></v-rating>
+                    <v-rating
+                      v-model="item.rating"
+                      color="yellow darken-3"
+                      background-color="grey darken-1"
+                      empty-icon="$ratingFull"
+                      :length="
+                        item.ratingMax === '' || item.ratingMax === null
+                          ? 5
+                          : item.ratingMax
+                      "
+                      readonly
+                      small
+                    ></v-rating>
                   </div>
                   <div v-else>
-                  <v-rating
-                    v-model="item.rating"
-                    color="yellow darken-3"
-                    background-color="grey darken-1"
-                    empty-icon="$ratingFull"
-                    length="5"
-                    readonly
-                    small
-                  ></v-rating>
+                    <v-rating
+                      v-model="item.rating"
+                      color="yellow darken-3"
+                      background-color="grey darken-1"
+                      empty-icon="$ratingFull"
+                      length="5"
+                      readonly
+                      small
+                    ></v-rating>
                   </div>
                 </template>
                 <template v-slot:[`item.action`]="{ item }">
@@ -242,27 +313,31 @@
                     <div v-for="(data, index) in dataRating" :key="index">
                       <label>{{ data.answer }}</label>
                       <div v-if="rs.answerId !== null">
-                      <v-rating
-                        v-model="data.rating"
-                        color="yellow darken-3"
-                        background-color="grey darken-1"
-                        empty-icon="$ratingFull"
-                        :length="data.ratingMax === '' || data.ratingMax === null ? 5 : data.ratingMax"
-                        readonly
-                        small
-                      ></v-rating>
-                    </div>
-                    <div v-else>
-                      <v-rating
-                        v-model="data.rating"
-                        color="yellow darken-3"
-                        background-color="grey darken-1"
-                        empty-icon="$ratingFull"
-                        length="5"
-                        readonly
-                        small
-                      ></v-rating>
-                    </div>
+                        <v-rating
+                          v-model="data.rating"
+                          color="yellow darken-3"
+                          background-color="grey darken-1"
+                          empty-icon="$ratingFull"
+                          :length="
+                            data.ratingMax === '' || data.ratingMax === null
+                              ? 5
+                              : data.ratingMax
+                          "
+                          readonly
+                          small
+                        ></v-rating>
+                      </div>
+                      <div v-else>
+                        <v-rating
+                          v-model="data.rating"
+                          color="yellow darken-3"
+                          background-color="grey darken-1"
+                          empty-icon="$ratingFull"
+                          length="5"
+                          readonly
+                          small
+                        ></v-rating>
+                      </div>
                     </div>
                   </v-col>
                   <v-col cols="12" style="color:#000000;"
@@ -357,26 +432,30 @@
                       <label>{{ data.answer }}</label>
                       <div v-if="rs.answerId !== null">
                         <v-rating
-                        v-model="data.rating"
-                        color="yellow darken-3"
-                        background-color="grey darken-1"
-                        empty-icon="$ratingFull"
-                        :length="data.ratingMax === '' || data.ratingMax === null ? 5 : data.ratingMax"
-                        readonly
-                        small
-                      ></v-rating>
+                          v-model="data.rating"
+                          color="yellow darken-3"
+                          background-color="grey darken-1"
+                          empty-icon="$ratingFull"
+                          :length="
+                            data.ratingMax === '' || data.ratingMax === null
+                              ? 5
+                              : data.ratingMax
+                          "
+                          readonly
+                          small
+                        ></v-rating>
                       </div>
                       <div v-else>
-                      <v-rating
-                        v-model="data.rating"
-                        color="yellow darken-3"
-                        background-color="grey darken-1"
-                        empty-icon="$ratingFull"
-                        length="5"
-                        readonly
-                        small
-                      ></v-rating>
-                    </div>
+                        <v-rating
+                          v-model="data.rating"
+                          color="yellow darken-3"
+                          background-color="grey darken-1"
+                          empty-icon="$ratingFull"
+                          length="5"
+                          readonly
+                          small
+                        ></v-rating>
+                      </div>
                     </div>
                   </v-col>
                   <v-col cols="12" style="color:#000000;"
@@ -440,11 +519,15 @@
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
+import XLSX from 'xlsx' // import xlsx
+import readXlsxFile from 'read-excel-file'
 
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
-    VuetifyMoney
+    VuetifyMoney,
+    XLSX,
+    readXlsxFile
   },
   data () {
     return {
@@ -499,6 +582,7 @@ export default {
       bookingData: [],
       dataRating: [],
       rs: [],
+      filterdate: [],
       formUpdate: {
         staffCallBack: 'False',
         staffCallBackRemark: '',
@@ -507,7 +591,21 @@ export default {
       DataBranchAll: [],
       branch: [],
       commentsCombined: '',
-      masBranchID: ''
+      masBranchID: '',
+      dates: ['2019-09-10', '2019-09-20'],
+      menu: false,
+      menu2: false,
+      startDate: '',
+      endDate: '',
+      response: ''
+    }
+  },
+  computed: {
+    minEndDate () {
+      return this.startDate
+    },
+    dateRangeText () {
+      return this.dates.join(' ~ ')
     }
   },
   async mounted () {
@@ -577,53 +675,100 @@ export default {
         .get(this.DNS_IP + '/rating/get', { params: payload })
         .then(response => {
           this.rs = response.data
+          this.response = response
           // console.log('response', response)
-          if (this.rs.length > 0) {
-            let tempGroup = this.rs.reduce((acc, d) => {
-              if (d.masBranchID === this.masBranchID) {
-                let refId = d.refId
-                if (!acc[refId]) {
-                  acc[refId] = {
-                    sumRating: 0,
-                    countRating: 0,
-                    data: {
-                      id: d.id,
-                      refId: refId,
-                      rating: parseInt(d.rating),
-                      ratingMax: d.ratingMax,
-                      comment: d.comment,
-                      typeWork: d.typeWork,
-                      displayName: d.displayName,
-                      pictureUrl: d.pictureUrl,
-                      callBackStatus: d.callBackStatus,
-                      staffCallBack: d.staffCallBack,
-                      staffCallBackRemark: d.staffCallBackRemark,
-                      CREATE_DATE: this.format_dateNotime(d.CREATE_DATE)
-                    }
-                  }
-                }
-                acc[refId].sumRating += parseInt(d.rating)
-                acc[refId].countRating += 1
-              }
-              return acc
-            }, {})
+          this.filterItem(this.rs, this.response)
+          // if (this.rs.length > 0) {
+          //   let tempGroup = this.rs.reduce((acc, d) => {
+          //     if (d.masBranchID === this.masBranchID) {
+          //       let refId = d.refId
+          //       if (!acc[refId]) {
+          //         acc[refId] = {
+          //           sumRating: 0,
+          //           countRating: 0,
+          //           data: {
+          //             id: d.id,
+          //             refId: refId,
+          //             rating: parseInt(d.rating),
+          //             ratingMax: d.ratingMax,
+          //             comment: d.comment,
+          //             typeWork: d.typeWork,
+          //             displayName: d.displayName,
+          //             pictureUrl: d.pictureUrl,
+          //             callBackStatus: d.callBackStatus,
+          //             staffCallBack: d.staffCallBack,
+          //             staffCallBackRemark: d.staffCallBackRemark,
+          //             CREATE_DATE: this.format_dateNotime(d.CREATE_DATE)
+          //           }
+          //         }
+          //       }
+          //       acc[refId].sumRating += parseInt(d.rating)
+          //       acc[refId].countRating += 1
+          //     }
+          //     return acc
+          //   }, {})
 
-            for (let refId in tempGroup) {
-              if (refId.refId === response.data.refId) {
-                let averageRating =
-                  tempGroup[refId].sumRating / tempGroup[refId].countRating
-                let s = tempGroup[refId].data
-                s.rating = averageRating
-                this.Ratingitem.push(s)
-              }
-            }
+          //   for (let refId in tempGroup) {
+          //     if (refId.refId === response.data.refId) {
+          //       let averageRating =
+          //         tempGroup[refId].sumRating / tempGroup[refId].countRating
+          //       let s = tempGroup[refId].data
+          //       s.rating = averageRating
+          //       this.Ratingitem.push(s)
+          //     }
+          //   }
 
-            // console.log('this.Ratingitem', this.Ratingitem)
-          }
+          //   // console.log('this.Ratingitem', this.Ratingitem)
+          // }
         })
         .catch(error => {
           console.log('error function addData : ', error)
         })
+    },
+    filterItem (rs, response) {
+      this.Ratingitem = []
+      if (rs.length > 0) {
+        let tempGroup = rs.reduce((acc, d) => {
+          if (d.masBranchID === this.masBranchID) {
+            let refId = d.refId
+            if (!acc[refId]) {
+              acc[refId] = {
+                sumRating: 0,
+                countRating: 0,
+                data: {
+                  id: d.id,
+                  refId: refId,
+                  rating: parseInt(d.rating),
+                  ratingMax: d.ratingMax,
+                  comment: d.comment,
+                  typeWork: d.typeWork,
+                  displayName: d.displayName,
+                  pictureUrl: d.pictureUrl,
+                  callBackStatus: d.callBackStatus,
+                  staffCallBack: d.staffCallBack,
+                  staffCallBackRemark: d.staffCallBackRemark,
+                  CREATE_DATE: this.format_dateNotime(d.CREATE_DATE)
+                }
+              }
+            }
+            acc[refId].sumRating += parseInt(d.rating)
+            acc[refId].countRating += 1
+          }
+          return acc
+        }, {})
+
+        for (let refId in tempGroup) {
+          if (refId.refId === response.data.refId) {
+            let averageRating =
+              tempGroup[refId].sumRating / tempGroup[refId].countRating
+            let s = tempGroup[refId].data
+            s.rating = averageRating
+            this.Ratingitem.push(s)
+          }
+        }
+
+        // console.log('this.Ratingitem', this.Ratingitem)
+      }
     },
     async getBookingData (item) {
       this.booking = []
@@ -667,6 +812,30 @@ export default {
               }
             })
           this.dialogBooking = true
+        }
+      })
+    },
+    async getbranceName (refIds) {
+      let item = { refId: refIds }
+      this.booking = []
+      this.dataRating = this.rs.filter(data => data.refId === item.refId)
+      this.dataRating.map(data => {
+        data.rating = parseInt(data.rating)
+      })
+
+      let urlApi =
+        this.DNS_IP +
+        '/booking_view/get?shopId=' +
+        this.session.data.shopId +
+        '&jobNo=' +
+        item.refId
+      await axios.get(urlApi).then(async response => {
+        // console.log('getBookingData', response.data)
+        if (response.data.status === false) {
+          this.booking = []
+        } else {
+          this.booking = response.data[0]
+          console.log('masBranchNames', this.booking)
         }
       })
     },
@@ -719,6 +888,20 @@ export default {
         }
       })
     },
+    filterByDateRange () {
+      this.filterdate = this.rs.filter(data => {
+        const currentDate = new Date(data.CREATE_DATE)
+        const startDateWithTime = new Date(this.startDate + 'T00:00:00') // Set time to midnight
+        const endDateWithTime = new Date(this.endDate + 'T23:59:59') // Set time to end of the day
+
+        return (
+          currentDate >= startDateWithTime && currentDate <= endDateWithTime
+        )
+      })
+      this.filterItem(this.filterdate, this.response)
+      console.log('rs', this.rs)
+      console.log('filter', this.filterdate)
+    },
     updateStatusCallBack () {
       this.$swal({
         title: 'ต้องการ อัพเดทสถานะการติดต่อ ใช่หรือไม่?',
@@ -749,11 +932,7 @@ export default {
               console.log('error function updateStatusCallBack : ', error)
             })
         } else {
-          this.$swal(
-            'ผิดพลาด',
-            'กรุณาลองใหม่อีกครั้ง',
-            'error'
-          )
+          this.$swal('ผิดพลาด', 'กรุณาลองใหม่อีกครั้ง', 'error')
           this.getRating()
           this.dialogCallBack = false
         }
@@ -816,6 +995,93 @@ export default {
     },
     async clearData () {
       this.timelineitem = []
+    },
+    onStartDateInput () {
+      this.filterByDateRange()
+      this.menu2 = false
+      this.updateEndDateMinDate()
+    },
+    onEndDateInput () {
+      this.filterByDateRange()
+      this.menu = false
+    },
+    updateEndDateMinDate () {
+      this.$refs.endDatePicker.minDate = this.startDate
+    },
+    async exportExcel () {
+      const dataanswer = []
+      const dataUser = []
+
+      for (let i = 0; i < this.rs.length; i++) {
+        // console.log('this.rs.answer', this.rs[i].answer)
+
+        // Add comma before the item except for the first one
+        if (i === 0) {
+          dataanswer.push(' "' + this.rs[i].answer + '"')
+        } else {
+          dataanswer.push(', "' + this.rs[i].answer + '"')
+        }
+
+        // console.log('dataanswer', dataanswer)
+      }
+      let dataA = dataanswer.join('')
+      let dataB = dataA.replace(/"/g, '')
+      let dataBArray = dataB.split(',')
+
+      for (let i = 0; i < this.Ratingitem.length; i++) {
+        // console.log('this.Ratingitem.rating', this.Ratingitem[i])
+        let item = this.Ratingitem[i]
+        await this.getbranceName(item.refId)
+        // console.log('this.booking.flowName', this.booking.flowName)
+        let rowData = [
+          '"' + item.displayName + '"',
+          '"' + item.CREATE_DATE + '"',
+          '"' + item.comment + '"',
+          '"' + item.rating + '"',
+          '"' + this.booking.bookingDataCustomerTel + '"',
+          '"' + this.booking.masBranchName + '"',
+          '"' + this.booking.flowName + '"'
+        ]
+        dataUser.push(rowData.join(','))
+        for (let i = 0; i < this.filterdate.length; i++) {
+          let item = this.filterdate[i]
+          if (i === 0) {
+            dataUser.push(',"' + item.rating + '"')
+          } else {
+            dataUser.push(', "' + item.rating + '"')
+          }
+          // console.log('dataUser2', rating)
+        }
+      }
+      let dataUserA = dataUser.join('')
+      let dataUserBArray = dataUserA.replace(/"/g, '').split(',')
+
+      // for (let i = 0; i < ratingBArray.length; i++) {
+      //   ratingBArray[i] = ratingBArray[i].replace(/"/g, '')
+      // }
+
+      const data = [
+        ['รายงาน ' + 'ความพึงพอใจ ' + 'วันที่ ' + this.startDate + ' ถึง ' + this.endDate],
+        ['ชื่อลูกค้า', 'วันที่นัดหมาย', 'คำชี้แนะ', 'คะแนนโดยรวม', 'เบอร์ติดต่อ', 'สาขา', 'ประเภทบริการ', ...dataBArray],
+        dataUserBArray
+      ]
+
+      // console.log('data', data)
+
+      const ws = XLSX.utils.aoa_to_sheet(data)
+      // Set report title
+      ws['A1'].s = {
+        font: { bold: true, size: 24 }, // Bold and size 18 font
+        alignment: { horizontal: 'center' } // Center align the text
+      }
+      ws['A2'].s = {
+        font: { bold: false, size: 18 }, // Bold and size 18 font
+        alignment: { horizontal: 'center' } // Center align the text
+      }
+
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+      XLSX.writeFile(wb, 'exported_data.xlsx')
     }
   }
 }
