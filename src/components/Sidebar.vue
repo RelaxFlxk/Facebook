@@ -66,6 +66,34 @@
           </template>
         </div>
       <v-spacer></v-spacer>
+        <div v-if="isNewShop" class="progress-mobile d-block d-sm-none" :style="progressMobileStyle"  @click.stop="isOpenSetup = !isOpenSetup">
+          <progress :value="progress" min="0" max="100" style="height:0;width:0;"></progress>
+          <div class="progress-value-mobile">{{ progress }}%</div>
+        </div>
+        <v-card v-if="isNewShop" class="d-none d-sm-block" @click.stop="isOpenSetup = !isOpenSetup">
+          <div class="d-flex flex-row p-1">
+          <div class="col-3 p-0">
+          <div class="progress-desktop" :style="progressDesktopStyle">
+             <progress :value="progress" min="0" max="100" style="height:0;width:0;"></progress>
+             <div class="progress-value">{{ progress }}%</div>
+          </div>
+           </div>
+           <div class="d-flex flex-row justify-content-between align-items-center">
+            <div>
+              <span class="complete-span px-2">Complete Setup</span>
+            </div>
+            <div>
+              <v-icon class="icon-setup">mdi-chevron-right </v-icon>
+            </div>
+           </div>
+          </div>
+        </v-card>
+        <v-btn icon @click.stop="isOpenNoti = !isOpenNoti">
+         <div class="icon-with-badge">
+         <v-icon color="white">mdi-bell</v-icon>
+          <span class="badge"></span>
+         </div>
+      </v-btn>
       <v-avatar class="mr-3" @click="dialogLogOut = true">
         <v-img :src="session.data.shopImge"></v-img>
       </v-avatar>
@@ -659,6 +687,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+     <SidebarNoti :isOpen="isOpenNoti" :closeDrawer="closeDrawer"/>
+     <SidebarSetupGuide :isOpen="isOpenSetup" :closeDrawer="closeSetup" :shopName="session.data.shopName" :progress="progress" :setup="dataSetupGuide" :updateSetUp="updateSetUp"/>
+     <Dialogfinish :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted"/>
   </div>
 </template>
 
@@ -666,9 +697,13 @@
 import axios from 'axios' // api
 import moment from 'moment-timezone'
 import waitingAlert from './waitingAlert.vue'
+import { SidebarNoti, SidebarSetupGuide, Dialogfinish } from './SetupGuide/index'
 export default {
   components: {
-    waitingAlert
+    waitingAlert,
+    SidebarNoti,
+    SidebarSetupGuide,
+    Dialogfinish
   },
   data () {
     return {
@@ -717,7 +752,13 @@ export default {
       packagePlanValue: false,
       paymentStatus: '',
       dateCheckBill: '',
-      lineOaStatus: 'False'
+      lineOaStatus: 'False',
+      isOpenNoti: false,
+      progress: 0,
+      isOpenSetup: false,
+      dataSetupGuide: [],
+      isOpenCompleted: false,
+      isNewShop: false
     }
   },
   // beforeCreate () {
@@ -726,11 +767,37 @@ export default {
   //     this.$router.push('/Core/Login?' + this.$route.query)
   //   }
   // },
-  computed: {},
+  computed: {
+    progressDesktopStyle () {
+      return `background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(#1B437C ${this.progress ? this.progress : 0}%, #E3E6E9 0)`
+    },
+    progressDesktopAfterStyle () {
+      return `
+      content: '${this.progress}%';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #1B437C;
+      font-weight: bold;
+      font-size: 14px;`
+    },
+    progressMobileStyle () {
+      return `background: radial-gradient(closest-side, #1B437C 79%, transparent 80% 100%), conic-gradient(#E3E6E9 ${this.progress ? this.progress : 0}%, #A4C3E3 0);`
+    }
+  },
   async mounted () {
+    document.addEventListener('click', this.closeDrawerOnClickOutside)
     if (this.$session.getAll().data.shopActive === 'inactive') {
       this.$router.push('/Core/Login')
     } else {
+      if (this.$session.getAll().data.IsNewShop === 1) {
+        this.isNewShop = true
+        await this.getShopSetUp()
+      } else {
+        this.isOpenCompleted = false
+        this.isOpenSetup = false
+      }
       if (this.$session.getAll().data.shopId.includes('SD_')) {
         await this.chkConnectLineOa()
       } else {
@@ -762,8 +829,6 @@ export default {
           }
         }
       }
-      console.log('session', this.session)
-      console.log('router', this.$route.fullPath)
       this.billingCustomerId = this.session.data.billingCustomerId || ''
       // this.$root.$refs.BoardControl.closeSetTime()
       this.$root.$emit('closeSetTime')
@@ -790,6 +855,10 @@ export default {
         this.chkSchedule()
       }
     }
+  },
+  beforeDestroy () {
+    // ลบการจัดการคลิกไปยังพื้นหลังหน้าเมื่อคอมโพนентถูกทำลาย
+    document.removeEventListener('click', this.closeDrawerOnClickOutside)
   },
   methods: {
     gotoBilling () {
@@ -1133,7 +1202,6 @@ export default {
         default:
     // code block
       }
-      console.log('textValue', textValue[0].type)
     },
     storeFrontChk () {
       this.booking = [
@@ -1377,6 +1445,81 @@ export default {
         )
         .then(async response => {
         })
+    },
+    closeDrawer () {
+      this.isOpenNoti = false
+    },
+    closeSetup () {
+      this.isOpenSetup = false
+    },
+    onOpenSetup () {
+      console.log('openSetup')
+      this.isOpenSetup = true
+    },
+    async getShopSetUp () {
+      await axios
+        .get('http://localhost:5001' + '/Task_Transaction/getCheck?shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          if (response !== null) {
+            if (response.data !== null) {
+              this.progress = response.data.percentage ? response.data.percentage : 0
+              if (this.progress === 100) {
+                this.isOpenCompleted = true
+                this.isNewShop = false
+                this.isOpenSetup = false
+                // update session IsNewShop
+                let session = JSON.parse(localStorage.getItem('sessionData'))
+                session.IsNewShop = 0
+                this.$session.start()
+                this.$session.set('data', session)
+                console.log('session', this.$session.getAll())
+                localStorage.clear()
+                localStorage.setItem('sessionData', JSON.stringify(session))
+              } else {
+                if (response.data.setupGuide && response.data.setupGuide.length > 0) {
+                  this.dataSetupGuide = response.data.setupGuide
+                  this.isOpenSetup = true
+                } else {
+                  this.dataSetupGuide = []
+                }
+              }
+            }
+          }
+        })
+    },
+    closeDrawerOnClickOutside (event) {
+      if (!this.$el.contains(event.target) && (this.isOpenSetup || this.isOpenNoti)) {
+        this.isOpenNoti = false
+        this.isOpenSetup = false
+      }
+    },
+    closeCompleted () {
+      this.isOpenCompleted = false
+    },
+    async updateSetUp (taskid) {
+      try {
+        const body = { shopId: this.$session.getAll().data.shopId, taskId: taskid }
+        await axios
+          .post(
+            'http://localhost:5001/Task_Transaction/add', body)
+          .then(async response => {
+            console.log('updateSetUpres -> ', response)
+            if (response.data) {
+              if (response.data.status) {
+                this.isOpenSetup = false
+                console.log('taskid', taskid)
+                if (taskid === 1) {
+                  this.$router.push('/Master/Flow')
+                } else if (taskid === 2) {
+                  this.$router.push('/Master/Branch')
+                }
+                await this.getShopSetUp()
+              }
+            }
+          })
+      } catch (error) {
+        console.log('Error updateSetUp', error)
+      }
     }
   }
 }
@@ -1396,5 +1539,56 @@ export default {
   width: 50px;
   height: 50px;
 }
+.icon-with-badge {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.icon-with-badge .badge {
+  position: absolute;
+  top: 0px;
+  right: -1px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  min-width: 10px;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.complete-span, .icon-setup{
+  font-size: 0.70rem;
+  color: #1B437C;
+}
+
+.progress-desktop, .progress-mobile {
+  width: 41px;
+  height: 41px;
+  border-radius: 50%;
+  position: relative;
+}
+.progress-value-mobile{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ddd;
+  font-weight: bold;
+  font-size: 13px;
+}
+.progress-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #1B437C;
+  font-weight: bold;
+  font-size: 13px;
+}
 </style>
