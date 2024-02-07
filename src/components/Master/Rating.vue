@@ -600,6 +600,18 @@ export default {
       response: ''
     }
   },
+  async created () {
+    const today = new Date()
+    const firstDayOfMonth = new Date(today)
+    firstDayOfMonth.setDate(1)
+    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1)
+
+    this.startDate = firstDayOfMonth.toISOString().slice(0, 10)
+    this.endDate = lastDayOfMonth.toISOString().slice(0, 10)
+
+    await this.onStartDateInput()
+    await this.onEndDateInput()
+  },
   computed: {
     minEndDate () {
       return this.startDate
@@ -673,59 +685,16 @@ export default {
       }
       await axios
         .get(this.DNS_IP + '/rating/get', { params: payload })
-        .then(response => {
+        .then(async response => {
           this.rs = response.data
           this.response = response
-          // console.log('response', response)
-          this.filterItem(this.rs, this.response)
-          // if (this.rs.length > 0) {
-          //   let tempGroup = this.rs.reduce((acc, d) => {
-          //     if (d.masBranchID === this.masBranchID) {
-          //       let refId = d.refId
-          //       if (!acc[refId]) {
-          //         acc[refId] = {
-          //           sumRating: 0,
-          //           countRating: 0,
-          //           data: {
-          //             id: d.id,
-          //             refId: refId,
-          //             rating: parseInt(d.rating),
-          //             ratingMax: d.ratingMax,
-          //             comment: d.comment,
-          //             typeWork: d.typeWork,
-          //             displayName: d.displayName,
-          //             pictureUrl: d.pictureUrl,
-          //             callBackStatus: d.callBackStatus,
-          //             staffCallBack: d.staffCallBack,
-          //             staffCallBackRemark: d.staffCallBackRemark,
-          //             CREATE_DATE: this.format_dateNotime(d.CREATE_DATE)
-          //           }
-          //         }
-          //       }
-          //       acc[refId].sumRating += parseInt(d.rating)
-          //       acc[refId].countRating += 1
-          //     }
-          //     return acc
-          //   }, {})
-
-          //   for (let refId in tempGroup) {
-          //     if (refId.refId === response.data.refId) {
-          //       let averageRating =
-          //         tempGroup[refId].sumRating / tempGroup[refId].countRating
-          //       let s = tempGroup[refId].data
-          //       s.rating = averageRating
-          //       this.Ratingitem.push(s)
-          //     }
-          //   }
-
-          //   // console.log('this.Ratingitem', this.Ratingitem)
-          // }
+          await this.filterByDateRange()
         })
         .catch(error => {
           console.log('error function addData : ', error)
         })
     },
-    filterItem (rs, response) {
+    async filterItem (rs, response) {
       this.Ratingitem = []
       if (rs.length > 0) {
         let tempGroup = rs.reduce((acc, d) => {
@@ -766,8 +735,6 @@ export default {
             this.Ratingitem.push(s)
           }
         }
-
-        // console.log('this.Ratingitem', this.Ratingitem)
       }
     },
     async getBookingData (item) {
@@ -888,19 +855,17 @@ export default {
         }
       })
     },
-    filterByDateRange () {
+    async filterByDateRange () {
       this.filterdate = this.rs.filter(data => {
         const currentDate = new Date(data.CREATE_DATE)
-        const startDateWithTime = new Date(this.startDate + 'T00:00:00') // Set time to midnight
-        const endDateWithTime = new Date(this.endDate + 'T23:59:59') // Set time to end of the day
+        const startDateWithTime = new Date(this.startDate + 'T00:00:00')
+        const endDateWithTime = new Date(this.endDate + 'T23:59:59')
 
         return (
           currentDate >= startDateWithTime && currentDate <= endDateWithTime
         )
       })
       this.filterItem(this.filterdate, this.response)
-      console.log('rs', this.rs)
-      console.log('filter', this.filterdate)
     },
     updateStatusCallBack () {
       this.$swal({
