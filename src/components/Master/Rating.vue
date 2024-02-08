@@ -597,7 +597,9 @@ export default {
       menu2: false,
       startDate: '',
       endDate: '',
-      response: ''
+      response: '',
+      dateNow: new Date(),
+      ArrayData: []
     }
   },
   async created () {
@@ -803,6 +805,7 @@ export default {
         } else {
           this.booking = response.data[0]
           console.log('masBranchNames', this.booking)
+          // await this.ArrayData.push(this.booking + ',')
         }
       })
     },
@@ -978,13 +981,13 @@ export default {
       const dataUser = []
 
       for (let i = 0; i < this.rs.length; i++) {
-        // console.log('this.rs.answer', this.rs[i].answer)
+        console.log('this.rs.answer', this.rs[i].answer)
 
         // Add comma before the item except for the first one
         if (i === 0) {
-          dataanswer.push(' "' + this.rs[i].answer + '"')
+          dataanswer.push(' "' + (this.rs[i].answer ? this.rs[i].answer : '') + '"')
         } else {
-          dataanswer.push(', "' + this.rs[i].answer + '"')
+          dataanswer.push(', "' + (this.rs[i].answer ? this.rs[i].answer : '') + '"')
         }
 
         // console.log('dataanswer', dataanswer)
@@ -992,46 +995,40 @@ export default {
       let dataA = dataanswer.join('')
       let dataB = dataA.replace(/"/g, '')
       let dataBArray = dataB.split(',')
-
-      for (let i = 0; i < this.Ratingitem.length; i++) {
-        // console.log('this.Ratingitem.rating', this.Ratingitem[i])
-        let item = this.Ratingitem[i]
-        await this.getbranceName(item.refId)
-        // console.log('this.booking.flowName', this.booking.flowName)
-        let rowData = [
-          '"' + item.displayName + '"',
-          '"' + item.CREATE_DATE + '"',
-          '"' + item.comment + '"',
-          '"' + item.rating + '"',
-          '"' + this.booking.bookingDataCustomerTel + '"',
-          '"' + this.booking.masBranchName + '"',
-          '"' + this.booking.flowName + '"'
-        ]
-        dataUser.push(rowData.join(','))
-        for (let i = 0; i < this.filterdate.length; i++) {
-          let item = this.filterdate[i]
-          if (i === 0) {
-            dataUser.push(',"' + item.rating + '"')
-          } else {
-            dataUser.push(', "' + item.rating + '"')
-          }
-          // console.log('dataUser2', rating)
-        }
-      }
-      let dataUserA = dataUser.join('')
-      let dataUserBArray = dataUserA.replace(/"/g, '').split(',')
-
-      // for (let i = 0; i < ratingBArray.length; i++) {
-      //   ratingBArray[i] = ratingBArray[i].replace(/"/g, '')
-      // }
+      console.log('dataBArray', dataBArray)
 
       const data = [
         ['รายงาน ' + 'ความพึงพอใจ ' + 'วันที่ ' + this.startDate + ' ถึง ' + this.endDate],
-        ['ชื่อลูกค้า', 'วันที่นัดหมาย', 'คำชี้แนะ', 'คะแนนโดยรวม', 'เบอร์ติดต่อ', 'สาขา', 'ประเภทบริการ', ...dataBArray],
-        dataUserBArray
+        ['ชื่อลูกค้า', 'วันที่ทำแบบสอบถาม', 'คำชี้แนะ', 'คะแนนโดยรวม', 'เบอร์ติดต่อ', 'ประเภทบริการ', ...dataBArray]
       ]
+      for (let i = 0; i < this.Ratingitem.length; i++) {
+        dataUser[i] = []
+        let item = this.Ratingitem[i]
+        await this.getbranceName(item.refId)
+        let rowData = [
+          '"' + item.displayName ? item.displayName : '-' + '"',
+          '"' + item.CREATE_DATE ? item.CREATE_DATE : '-' + '"',
+          '"' + item.comment ? item.comment : '-' + '"',
+          '"' + item.rating ? item.rating : '-' + '"',
+          '"' + this.booking.bookingDataCustomerTel ? this.booking.bookingDataCustomerTel : '-' + '"',
+          '"' + this.booking.flowName ? this.booking.flowName : '-' + '"'
+        ]
+        dataUser[i].push(rowData.join(','))
+        for (let n = 0; n < this.filterdate.length; n++) {
+          let item = this.filterdate[n]
+          if (n === 0) {
+            dataUser[i].push(', "' + item.rating + '"')
+          } else {
+            dataUser[i].push(', "' + item.rating + '"')
+          }
+        }
+        let dataUserA = dataUser[i].join('')
+        let dataUserBArray = dataUserA.replace(/"/g, '').split(',')
+        console.log('dataUserBArray', dataUserBArray)
+        data.push(dataUserBArray)
+      }
 
-      // console.log('data', data)
+      console.log('data', data)
 
       const ws = XLSX.utils.aoa_to_sheet(data)
       // Set report title
@@ -1046,7 +1043,7 @@ export default {
 
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
-      XLSX.writeFile(wb, 'exported_data.xlsx')
+      XLSX.writeFile(wb, 'สาขา' + this.booking.masBranchName + '_' + this.dateNow + '.xlsx')
     }
   }
 }
