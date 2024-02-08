@@ -979,9 +979,8 @@ export default {
     async exportExcel () {
       const dataanswer = []
       const dataUser = []
-
       for (let i = 0; i < this.rs.length; i++) {
-        console.log('this.rs.answer', this.rs[i].answer)
+        // console.log('this.rs.answer', this.rs[i].answer)
 
         // Add comma before the item except for the first one
         if (i === 0) {
@@ -995,7 +994,7 @@ export default {
       let dataA = dataanswer.join('')
       let dataB = dataA.replace(/"/g, '')
       let dataBArray = dataB.split(',')
-      console.log('dataBArray', dataBArray)
+      // console.log('dataBArray', dataBArray)
 
       const data = [
         ['รายงาน ' + 'ความพึงพอใจ ' + 'วันที่ ' + this.startDate + ' ถึง ' + this.endDate],
@@ -1024,11 +1023,11 @@ export default {
         }
         let dataUserA = dataUser[i].join('')
         let dataUserBArray = dataUserA.replace(/"/g, '').split(',')
-        console.log('dataUserBArray', dataUserBArray)
+        // console.log('dataUserBArray', dataUserBArray)
         data.push(dataUserBArray)
       }
 
-      console.log('data', data)
+      // console.log('data', data)
 
       const ws = XLSX.utils.aoa_to_sheet(data)
       // Set report title
@@ -1041,9 +1040,19 @@ export default {
         alignment: { horizontal: 'center' } // Center align the text
       }
 
+      let NameBranch = this.branch.filter(data => data.value === this.masBranchID)
+      const today = new Date()
+      const year = today.getFullYear()
+      const month = (today.getMonth() + 1).toString().padStart(2, '0') // +1 เพราะเดือนเริ่มที่ 0
+      const day = today.getDate().toString().padStart(2, '0')
+      const hours = today.getHours().toString().padStart(2, '0')
+      const minutes = today.getMinutes().toString().padStart(2, '0')
+      const seconds = today.getSeconds().toString().padStart(2, '0')
+
+      const formattedDate = `${year}-${month}-${day} เวลา ${hours}-${minutes}-${seconds}`
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
-      XLSX.writeFile(wb, 'สาขา' + this.booking.masBranchName + '_' + this.dateNow + '.xlsx')
+      XLSX.writeFile(wb, 'สาขา' + NameBranch[0].text + ' ' + formattedDate + '.xlsx')
     }
   }
 }
