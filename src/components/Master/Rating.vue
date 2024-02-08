@@ -1017,9 +1017,9 @@ export default {
         for (let n = 0; n < this.filterdate.length; n++) {
           let item = this.filterdate[n]
           if (n === 0) {
-            dataUser[i].push(', "' + item.rating + '"')
+            dataUser[i].push(', "' + (item.rating ? item.rating : '') + '"')
           } else {
-            dataUser[i].push(', "' + item.rating + '"')
+            dataUser[i].push(', "' + (item.rating ? item.rating : '') + '"')
           }
         }
         let dataUserA = dataUser[i].join('')
