@@ -9389,6 +9389,20 @@ export default {
         await axios.post(this.DNS_IP + '/Booking/edit/' + bookNo, dt)
       } catch (e) { console.log(e) }
     },
+    async ChangeOnsiteCalendarGridTime (bookNo, empId) {
+      let obj = {
+        'bookNo': bookNo,
+        'empId': empId
+      }
+      await axios
+        .post(this.DNS_IP + '/CalendarGridTime/ChangEmp', obj)
+        .then(async response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     async jobChangeOnsite () {
       console.log('this.jobitem', this.jobitem)
       this.swalConfig.title = 'ต้องการ เปลี่ยนพนักงาน ใช่หรือไม่?'
@@ -9404,6 +9418,7 @@ export default {
             await axios
               .post(this.DNS_IP + '/job/updateJobNo/' + this.jobitem[0].jobNo, updateJob)
               .then(async response => {
+                this.ChangeOnsiteCalendarGridTime(this.jobitem[0].bookNo, this.empSelectJob)
                 this.$swal('เรียบร้อย', 'เปลี่ยนพนักงาน เรียบร้อย', 'success')
                 if (parseInt(this.jobitem[0].empStepId) !== this.empSelectJob) {
                   if (this.jobitem[0].lineUserId !== '') {
