@@ -120,6 +120,7 @@
           @input="onStartDateInput"
           :max="endDate"
           outlined
+          @change="getRating()"
         ></v-date-picker>
       </v-menu>
     </v-col>
@@ -147,6 +148,7 @@
           :min="startDate"
           @input="onEndDateInput"
           outlined
+          @change="getRating()"
         ></v-date-picker>
       </v-menu>
     </v-col>
@@ -597,7 +599,7 @@ export default {
       menu2: false,
       startDate: '',
       endDate: '',
-      response: '',
+      response: [],
       dateNow: new Date(),
       ArrayData: []
     }
@@ -683,14 +685,19 @@ export default {
       this.Ratingitem = []
       const payload = {
         shopId: this.shopId,
-        masBranchID: this.masBranchID
+        masBranchID: this.masBranchID,
+        create_date_start: this.startDate,
+        create_date_end: this.endDate
       }
       await axios
         .get(this.DNS_IP + '/rating/get', { params: payload })
         .then(async response => {
-          this.rs = response.data
-          this.response = response
-          await this.filterByDateRange()
+          if (response.data.status !== false) {
+            console.log('getRating', response.data)
+            this.rs = response.data
+            this.response = response
+            this.filterByDateRange()
+          }
         })
         .catch(error => {
           console.log('error function addData : ', error)
@@ -727,7 +734,7 @@ export default {
           }
           return acc
         }, {})
-
+        console.log('tempGroup', tempGroup)
         for (let refId in tempGroup) {
           if (refId.refId === response.data.refId) {
             let averageRating =
@@ -813,6 +820,7 @@ export default {
       // console.log('getBookingDataCallBack', item)
       this.booking = []
       this.bookingData = []
+      console.log('this.rs', this.rs)
       this.dataRating = this.rs.filter(data => data.refId === item.refId)
       this.dataRating.map(data => {
         data.rating = parseInt(data.rating)
@@ -868,6 +876,7 @@ export default {
           currentDate >= startDateWithTime && currentDate <= endDateWithTime
         )
       })
+      console.log('this.filterdate', this.filterdate)
       this.filterItem(this.filterdate, this.response)
     },
     updateStatusCallBack () {
