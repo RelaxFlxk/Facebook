@@ -514,6 +514,12 @@
           </v-card>
         </v-dialog>
       </div>
+      <v-overlay :value="overlay">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
     </v-main>
   </div>
 </template>
@@ -601,7 +607,8 @@ export default {
       endDate: '',
       response: [],
       dateNow: new Date(),
-      ArrayData: []
+      ArrayData: [],
+      overlay: false
     }
   },
   async created () {
@@ -986,6 +993,7 @@ export default {
       this.$refs.endDatePicker.minDate = this.startDate
     },
     async exportExcel () {
+      this.overlay = true
       const dataanswer = []
       const dataUser = []
       for (let i = 0; i < this.rs.length; i++) {
@@ -993,9 +1001,9 @@ export default {
 
         // Add comma before the item except for the first one
         if (i === 0) {
-          dataanswer.push(' "' + (this.rs[i].answer ? this.rs[i].answer : '') + '"')
+          dataanswer.push(' "' + (this.rs[i].answer ? this.rs[i].answer : 'ประเมินแบบเก่า') + '"')
         } else {
-          dataanswer.push(', "' + (this.rs[i].answer ? this.rs[i].answer : '') + '"')
+          dataanswer.push(', "' + (this.rs[i].answer ? this.rs[i].answer : 'ประเมินแบบเก่า') + '"')
         }
 
         // console.log('dataanswer', dataanswer)
@@ -1023,11 +1031,13 @@ export default {
         ]
         dataUser[i].push(rowData.join(','))
         for (let n = 0; n < this.filterdate.length; n++) {
-          let item = this.filterdate[n]
+          let item2 = this.filterdate[n]
+          console.log('this.booking', this.booking)
+          console.log('item2', item2)
           if (n === 0) {
-            dataUser[i].push(', "' + (item.rating ? item.rating : '') + '"')
+            dataUser[i].push(', "' + (item2.refId === this.booking.jobNo ? item2.rating : '') + '"')
           } else {
-            dataUser[i].push(', "' + (item.rating ? item.rating : '') + '"')
+            dataUser[i].push(', "' + (item2.refId === this.booking.jobNo ? item2.rating : '') + '"')
           }
         }
         let dataUserA = dataUser[i].join('')
@@ -1062,6 +1072,7 @@ export default {
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
       XLSX.writeFile(wb, 'สาขา' + NameBranch[0].text + ' ' + formattedDate + '.xlsx')
+      this.overlay = false
     }
   }
 }
