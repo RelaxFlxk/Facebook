@@ -732,6 +732,8 @@ export default {
                   callBackStatus: d.callBackStatus,
                   staffCallBack: d.staffCallBack,
                   staffCallBackRemark: d.staffCallBackRemark,
+                  flowName: d.flowName,
+                  bookingDataCustomerTel: d.bookingDataCustomerTel,
                   CREATE_DATE: this.format_dateNotime(d.CREATE_DATE)
                 }
               }
@@ -994,50 +996,64 @@ export default {
     },
     async exportExcel () {
       this.overlay = true
-      const dataanswer = []
+      const dataAnswerId = []
       const dataUser = []
       for (let i = 0; i < this.rs.length; i++) {
-        // console.log('this.rs.answer', this.rs[i].answer)
-
-        // Add comma before the item except for the first one
-        if (i === 0) {
-          dataanswer.push(' "' + (this.rs[i].answer ? this.rs[i].answer : 'ประเมินแบบเก่า') + '"')
-        } else {
-          dataanswer.push(', "' + (this.rs[i].answer ? this.rs[i].answer : 'ประเมินแบบเก่า') + '"')
+        let d = this.rs[i]
+        let v = {}
+        d.answerId = d.answerId || 'old'
+        v.answerId = d.answerId
+        v.answer = d.answer || 'ประเมินแบบเก่า'
+        if (dataAnswerId.filter(el => { return el.answerId === d.answerId }).length === 0) {
+          dataAnswerId.push(v)
         }
 
         // console.log('dataanswer', dataanswer)
       }
-      let dataA = dataanswer.join('')
-      let dataB = dataA.replace(/"/g, '')
-      let dataBArray = dataB.split(',')
+      // let dataA = dataanswer.join('')
+      // let dataB = dataA.replace(/"/g, '')
+      // let dataBArray = dataB.split(',')
       // console.log('dataBArray', dataBArray)
-
+      let answerHeaders = dataAnswerId.map(el => el.answer)
       const data = [
         ['รายงาน ' + 'ความพึงพอใจ ' + 'วันที่ ' + this.startDate + ' ถึง ' + this.endDate],
-        ['ชื่อลูกค้า', 'วันที่ทำแบบสอบถาม', 'คำชี้แนะ', 'คะแนนโดยรวม', 'เบอร์ติดต่อ', 'ประเภทบริการ', ...dataBArray]
+        ['ชื่อลูกค้า', 'วันที่ทำแบบสอบถาม', 'คำชี้แนะ', 'คะแนนโดยรวม', 'เบอร์ติดต่อ', 'ประเภทบริการ', ...answerHeaders]
       ]
       for (let i = 0; i < this.Ratingitem.length; i++) {
         dataUser[i] = []
         let item = this.Ratingitem[i]
-        await this.getbranceName(item.refId)
+        item.answerId = item.answerId || 'old'
+        console.log('Ratingitem', item)
+        // await this.getbranceName(item.refId)
         let rowData = [
           '"' + item.displayName ? item.displayName : '-' + '"',
           '"' + item.CREATE_DATE ? item.CREATE_DATE : '-' + '"',
           '"' + item.comment ? item.comment : '-' + '"',
           '"' + item.rating ? item.rating : '-' + '"',
-          '"' + this.booking.bookingDataCustomerTel ? this.booking.bookingDataCustomerTel : '-' + '"',
-          '"' + this.booking.flowName ? this.booking.flowName : '-' + '"'
+          '"' + item.bookingDataCustomerTel ? item.bookingDataCustomerTel : '-' + '"',
+          '"' + item.flowName ? item.flowName : '-' + '"'
         ]
         dataUser[i].push(rowData.join(','))
-        for (let n = 0; n < this.filterdate.length; n++) {
-          let item2 = this.filterdate[n]
-          console.log('this.booking', this.booking)
-          console.log('item2', item2)
-          if (n === 0) {
-            dataUser[i].push(', "' + (item2.refId === this.booking.jobNo ? item2.rating : '') + '"')
-          } else {
-            dataUser[i].push(', "' + (item2.refId === this.booking.jobNo ? item2.rating : '') + '"')
+        let checkAnswer = this.filterdate.filter(el => { return el.refId === item.refId })
+        if (checkAnswer.length > 0) {
+          for (let n = 0; n < checkAnswer.length; n++) {
+            let item2 = checkAnswer[n]
+            item2.answerId = item2.answerId || 'old'
+            for (let x = 0; x < dataAnswerId.length; x++) {
+              let dataAnswer = dataAnswerId[x]
+              if (item2.answerId === 'old') {
+                if (dataAnswer.answerId !== 'old') {
+                  dataUser[i].push(', ')
+                } else {
+                  dataUser[i].push(', "' + item2.rating + '"')
+                }
+              } else {
+                if (item2.answerId === dataAnswer.answerId) {
+                  dataUser[i].push(', "' + item2.rating + '"')
+                }
+              }
+            }
+            // }
           }
         }
         let dataUserA = dataUser[i].join('')
