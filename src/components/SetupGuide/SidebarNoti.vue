@@ -10,28 +10,28 @@
     <v-card class="slide-card-style">
       <div class="p-3">
         <div class="mb-5"><h3 class="slide-font">แจ้งเตือน</h3></div>
-        <div class="d-flex flex-row div-slide mb-3">
+        <div v-for="(item, index) in listData" :key="index" class="d-flex flex-row div-slide mb-3">
           <div class="col-2 d-flex align-items-center">
            <v-icon class="slide-icon" size="50">mdi-calendar-alert</v-icon>
           </div>
           <div class="col-10 d-flex flex-column ">
             <div>
-              <span class="font-time-slide">26 ม.ค. 2567 - 16:30</span>
+              <span class="font-time-slide">{{item.CREATE_DATE}}</span>
             </div>
             <div>
-              <span class="font-title-slide">ต่อขนตา</span>
+              <span class="font-title-slide">{{item.flowName}}</span>
             </div>
             <div>
-              <span class="font-detail-slide">สาขา : สำนักงานใหญ่</span>
+              <span class="font-detail-slide">สาขา : {{ item.masBranchName }}</span>
             </div>
             <div>
-              <span class="font-detail-slide">วันที่นัดหมาย: 27 ม.ค. 2567 เวลา 17: 00 น.</span>
+              <span class="font-detail-slide">วันที่นัดหมาย: {{item.dueDateText}} น.</span>
             </div>
             <div>
-              <span class="font-detail-slide">ชื่อลูกค้า : อมรรัตน์</span>
+              <span class="font-detail-slide">ชื่อลูกค้า : {{ item.bookingDataCustomerName }}</span>
             </div>
-            <div>
-              <span class="font-detail-slide">ชำระเงิน: มัดจำ 500.00 บาท</span>
+            <div v-if="item.depositPrice !== null">
+              <span class="font-detail-slide">ชำระเงิน: มัดจำ {{ item.depositPrice }} บาท</span>
             </div>
             <div>
             </div>
@@ -64,7 +64,8 @@
 export default {
   props: {
     isOpen: {type: Boolean, default: false},
-    closeDrawer: Function
+    closeDrawer: Function,
+    listData: {type: Array, default: () => []}
   }
 }
 </script>

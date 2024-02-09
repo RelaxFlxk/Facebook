@@ -12,7 +12,7 @@
               <span class="font-title">Great news, you’re all setup!</span>
             </div>
             <div class="text-center">
-              <span class="font-detail">เริ่มใช้งานร้าน MyLift(Test) ของท่านได้เลย</span>
+              <span class="font-detail">เริ่มใช้งานร้าน {{ shopName }} ของท่านได้เลย</span>
             </div>
             <div class="text-center mb-2">
               <span class="font-detail">สามารถสแกน Qr Code หรือ Copy Link ได้ด้านล่างที่นี้</span>
@@ -22,7 +22,7 @@
             </div>
             <div class="text-center">
               <v-text-field
-               v-model="qrValue"
+               v-model="url"
                label="URL"
                outlined
                prepend-inner-icon="mdi-paperclip"
@@ -59,7 +59,9 @@ export default {
   },
   props: {
     isOpenCompleted: {type: Boolean, default: false},
-    closeCompleted: Function
+    closeCompleted: Function,
+    shopName: {type: String, default: ''},
+    url: {type: String, default: ''}
   },
   methods: {
     async copyLink () {

@@ -88,10 +88,10 @@
            </div>
           </div>
         </v-card>
-        <v-btn icon @click.stop="isOpenNoti = !isOpenNoti">
+        <v-btn icon @click.stop="onOpenNoti">
          <div class="icon-with-badge">
          <v-icon color="white">mdi-bell</v-icon>
-          <span class="badge"></span>
+          <span :class="isNoti ? 'badge' :''"></span>
          </div>
       </v-btn>
       <v-avatar class="mr-3" @click="dialogLogOut = true">
@@ -687,9 +687,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-     <SidebarNoti :isOpen="isOpenNoti" :closeDrawer="closeDrawer"/>
+     <SidebarNoti :isOpen="isOpenNoti" :closeDrawer="closeDrawer" :listData="listNoti"/>
      <SidebarSetupGuide :isOpen="isOpenSetup" :closeDrawer="closeSetup" :shopName="session.data.shopName" :progress="progress" :setup="dataSetupGuide" :updateSetUp="updateSetUp"/>
-     <Dialogfinish :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted"/>
+     <Dialogfinish :shopName="session.data.shopName" :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted" :url="session.data.timeSlotStatus ? "/>
   </div>
 </template>
 
@@ -758,7 +758,9 @@ export default {
       isOpenSetup: false,
       dataSetupGuide: [],
       isOpenCompleted: false,
-      isNewShop: false
+      isNewShop: false,
+      isNoti: false,
+      listNoti: []
     }
   },
   // beforeCreate () {
@@ -791,6 +793,8 @@ export default {
     if (this.$session.getAll().data.shopActive === 'inactive') {
       this.$router.push('/Core/Login')
     } else {
+      this.GetNotiBooking()
+      this.getFirestore()
       if (this.$session.getAll().data.IsNewShop === 1) {
         this.isNewShop = true
         await this.getShopSetUp()
@@ -1452,13 +1456,16 @@ export default {
     closeSetup () {
       this.isOpenSetup = false
     },
+    onOpenNoti () {
+      this.updateReadNoti()
+      this.isOpenNoti = true
+    },
     onOpenSetup () {
-      console.log('openSetup')
       this.isOpenSetup = true
     },
     async getShopSetUp () {
       await axios
-        .get('http://localhost:5001' + '/Task_Transaction/getCheck?shopId=' + this.$session.getAll().data.shopId)
+        .get(this.DNS_IP + '/Task_Transaction/getCheck?shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           if (response !== null) {
             if (response.data !== null) {
@@ -1472,7 +1479,6 @@ export default {
                 session.IsNewShop = 0
                 this.$session.start()
                 this.$session.set('data', session)
-                console.log('session', this.$session.getAll())
                 localStorage.clear()
                 localStorage.setItem('sessionData', JSON.stringify(session))
               } else {
@@ -1501,13 +1507,12 @@ export default {
         const body = { shopId: this.$session.getAll().data.shopId, taskId: taskid }
         await axios
           .post(
-            'http://localhost:5001/Task_Transaction/add', body)
+            this.DNS_IP + '/Task_Transaction/add', body)
           .then(async response => {
             console.log('updateSetUpres -> ', response)
             if (response.data) {
               if (response.data.status) {
                 this.isOpenSetup = false
-                console.log('taskid', taskid)
                 if (taskid === 1) {
                   this.$router.push('/Master/Flow')
                 } else if (taskid === 2) {
@@ -1520,7 +1525,55 @@ export default {
       } catch (error) {
         console.log('Error updateSetUp', error)
       }
+    },
+    async getFirestore () {
+      this.firestore = this.$firebase.firestore()
+      const FieldPath = this.$firebase.firestore.FieldPath
+      this.firestore.collection('BetaskLinked')
+        .where(FieldPath.documentId(), '==', this.$session.getAll().data.shopId)
+        .onSnapshot((snapshot) => {
+          snapshot.forEach((doc) => {
+            console.log(doc.data())
+            if (doc.data().activeBooking === '1') {
+              this.isNoti = true
+              this.GetNotiBooking()
+            } else {
+              this.isNoti = false
+            }
+          })
+        })
+    },
+    async GetNotiBooking () {
+      try {
+        await axios
+          .get(
+            this.DNS_IP + '/booking_view/get?shopId=SD_1707125636530&IsNotify=False')
+          .then(async response => {
+            if (response.data) {
+              console.log('GetNotiBooking ->', response.data)
+              this.listNoti = response.data
+            }
+          })
+      } catch (error) {
+        console.log('Error updateSetUp', error)
+      }
+    },
+    async updateReadNoti () {
+      try {
+        let body = {shopId: this.$session.getAll().data.shopId}
+        await axios
+          .post(
+            'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/BetaskNotify-ProcessBookingNotify', body)
+          .then(async response => {
+            if (response.data) {
+              console.log('GetNotiBooking ->', response.data)
+            }
+          })
+      } catch (error) {
+        console.log('Error updateSetUp', error)
+      }
     }
+
   }
 }
 </script>
