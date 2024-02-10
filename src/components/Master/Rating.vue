@@ -1029,7 +1029,7 @@ export default {
           '"' + item.displayName ? item.displayName : '-' + '"',
           '"' + item.CREATE_DATE ? item.CREATE_DATE : '-' + '"',
           '"' + item.comment ? item.comment : '-' + '"',
-          '"' + item.rating ? item.rating : '-' + '"',
+          '"' + item.rating ? item.rating.toFixed(1) : '-' + '"',
           '"' + item.bookingDataCustomerTel ? item.bookingDataCustomerTel : '-' + '"',
           '"' + item.flowName ? item.flowName : '-' + '"'
         ]
