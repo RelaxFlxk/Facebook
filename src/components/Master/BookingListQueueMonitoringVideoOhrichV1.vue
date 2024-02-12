@@ -28,24 +28,48 @@
             <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
        </div>
         <div :class="`d-flex flex-row justify-content-between mx-3 ${isPortrait ? '' : 'mt-3'}`">
-            <div class="col-6 py-0">  <v-icon
+            <div class="col-6 py-0">
+              <v-icon class="mr-3" large>
+               {{ wifiIcon }}
+               </v-icon>
+               <v-btn icon
                         large
                         color="#695988"
                         @click="changeStatusSound('off')"
                         v-if="statusSound === true"
                       >
-                        mdi-volume-high
-                      </v-icon>
-                      <v-icon
+                      <v-icon>mdi-volume-high</v-icon>
+                      </v-btn>
+                      <v-btn icon
                         large
                         color="#695988"
                         @click="changeStatusSound('on')"
                         v-else
                       >
-                         mdi-volume-off
-                      </v-icon></div>
+                      <v-icon>mdi-volume-off</v-icon>
+                      </v-btn>
+                    </div>
             <div class="col-6 py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span></div>
         </div>
+        <v-row v-show="hideSound === true">
+          <v-col>
+            <audio id="playerPrefix" controls="controls">>
+              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
+              Your browser does not support the audio format.
+            </audio>
+            <audio id="playerQueue" controls="controls">>
+              <source :src="audio">
+              Your browser does not support the audio format.
+            </audio>
+            <audio id="playerCounter" controls="controls">>
+              <source :src="tableTarget">
+              Your browser does not support the audio format.
+            </audio>
+          </v-col>
+          <v-col>
+            {{history}}
+          </v-col>
+        </v-row>
     </div>
   </template>
 <script>
@@ -68,11 +92,24 @@ export default {
       return this.$refs.video
     },
     formattedDateTime () {
-      return this.currentTime // เวลาที่จัดรูปแบบแล้ว
+      return this.currentTime
+    },
+    wifiIcon () {
+      switch (this.wifiStatus) {
+        case 'connected':
+          return 'mdi-wifi'
+        case 'disconnected':
+          return 'mdi-wifi-off'
+        default:
+          return 'mdi-wifi-strength-alert-outline'
+      }
     }
   },
   created () {
     setInterval(this.getNow, 1000)
+    this.checkWiFiStatus()
+    window.addEventListener('online', () => { this.wifiStatus = 'connected' })
+    window.addEventListener('offline', () => { this.wifiStatus = 'disconnected' })
   },
   data () {
     return {
@@ -159,6 +196,7 @@ export default {
       checkRef: false,
       currentTime: moment().format('DD/MMM/YYYY HH:mm'),
       isPortrait: true,
+      wifiStatus: 'unknown',
       soundQueneNo: [
         { 'queue': 'A001', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A001.wav' },
         { 'queue': 'A002', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A002.wav' },
@@ -617,10 +655,10 @@ export default {
           textFill = textFill + ' nine'
         }
       }
-      if (itemText[0] === 'B') {
-        return itemText[0] + ' ' + textFill
-      } else {
+      if (itemText[0] === 'เ') {
         return itemText[0] + itemText[1] + ' ' + textFill
+      } else {
+        return itemText[0] + ' ' + textFill
       }
     },
     async getFirestore () {
@@ -745,73 +783,8 @@ export default {
     //   })
     //   return sortedArray
     // },
-    columCardMain () {
-      // this.resCol ===
-      if (this.resCol === '3') {
-        return '4'
-      } else if (this.resCol === '6') {
-        return '4'
-      } else {
-        return this.resCol
-      }
-    },
-    columCardMainMobile () {
-      if (this.resCol === '3') {
-        return '4'
-      } else if (this.resCol === '6') {
-        return '4'
-      } else {
-        return '4'
-      }
-    },
-    isMobileDevice () {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    },
-    fontPortrait () {
-      if (this.resCol === '12') {
-        return '34px'
-      } else {
-        return '43px'
-      }
-      // console.log('sssss', this.resCol)
-    },
-    font () {
-      if (this.resCol === '12') {
-        return '14px'
-      } else {
-        return '24px'
-      }
-      // console.log('sssss', this.resCol)
-    },
-    fontPortrait2 () {
-      if (this.resCol === '12') {
-        return '55px'
-      } else {
-        return '85px'
-      }
-    },
-    font2 () {
-      if (this.resCol === '12') {
-        return '17px'
-      } else {
-        return '48px'
-      }
-    },
-    font3 () {
-      if (this.resCol === '12') {
-        return '10px'
-      } else {
-        return '28px'
-      }
-    },
-    font4 () {
-      if (this.resCol === '12') {
-        return '10px'
-      } else {
-        return '28px'
-      }
-    },
     async changeStatusSound (text) {
+      console.log('[changeStatusSound]', this.statusSound)
       if (text === 'on') {
         this.statusSound = true
         await this.updatestatusNotifyByShopId()
@@ -825,9 +798,10 @@ export default {
     async updatestatusNotifyByShopId () {
       const params = {
         statusNotify: 'True',
-        shopId: this.$session.getAll().data.shopId
+        shopId: this.$session.getAll().data.shopId,
+        masBranchID: this.$session.getAll().data.masBranchID
       }
-      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotify`, params)
+      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotifyOhrich`, params)
     },
     async getMessage () {
       try {
@@ -853,14 +827,14 @@ export default {
         setTimeout(this.getMessage, 10000)
       }
     },
-    async getMessageNoInterval () {
+    async getMessageNoInterval (storeFrontQueue, dueDateDay) {
       try {
         let branchId = this.$session.getAll().data.masBranchID || 2185
-        let url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' + branchId
+        let url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' + branchId + '&storeFrontQueue=' + storeFrontQueue + '&CREATE_DATE=' + dueDateDay
         // if (this.$session.getAll().data.shopId) {
-        //   url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
+        // url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
         // } else {
-        //   url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' +
+        // url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' +
         // }
         await axios
           .get(
@@ -885,7 +859,7 @@ export default {
     async generateSound (item) {
       try {
         // eslint-disable-next-line no-tabs
-        this.tableId = item.servicePoint.replace('	  ', '').replace(' ', '').trim()
+        this.tableId = item.servicePoint.replace(' ', '').replace(' ', '').trim()
         let storeFrontQueue = item.storeFrontQueue
         // storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
         // storeFrontQueue = storeFrontQueue.replace('B', 'บี')
@@ -924,12 +898,16 @@ export default {
               params,
               { headers: { 'Botnoi-Token': 'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0' } }
             ).then((res) => {
-              this.playSound(res.data)
+              this.dataListPlay.push(res.data)
+              this.playSound()
               result = res.data
+              console.log('this.dataListPlay Log1', this.dataListPlay)
             })
         } else {
           let res = { text: item.storeFrontQueue, audio_url: item.audioFile }
-          this.playSound(res)
+          this.dataListPlay.push(res)
+          console.log('this.dataListPlay Log2', this.dataListPlay)
+          this.playSound()
           result = res
         }
         return result
@@ -947,34 +925,43 @@ export default {
     //   let text = `ขอเชิญ คิว ${storeFrontQueue} ที่ช่อง ${dock} ค่ะ`
     //   return text
     // },
-    playSound (res) {
-      this.audio = res.audio_url
-      this.tableTarget = this.tableAudioList[this.tableId]
-      console.log('tableTarget', this.tableTarget)
-      console.log('tableId', this.tableId)
-      this.timeCount = 1
+    playSound () {
       let playerPrefix = document.getElementById('playerPrefix')
       let playerQueue = document.getElementById('playerQueue')
       // let playerSuffix = document.getElementById('playerSuffix')
       let playerCounter = document.getElementById('playerCounter')
-      playerPrefix.play()
-      playerPrefix.onended = (event) => {
-        playerQueue.load()
-        playerQueue.play()
-        playerQueue.onended = (event) => {
-          playerCounter.load()
-          playerCounter.play()
-          playerCounter.onended = (event) => {
-            if (this.timeCount < this.repeatRound) {
-              this.timeCount++
-              playerPrefix.play()
-              playerPrefix.onended = (event) => {
-                playerQueue.play()
-                playerQueue.onended = (event) => {
-                  playerCounter.play()
-                  playerCounter.onended = (event) => {
-                    var vid = document.getElementById('videoAds')
-                    vid.play()
+      if (playerPrefix.paused && playerQueue.paused && playerCounter.paused) {
+        let res = this.dataListPlay[0]
+        var vid = document.getElementById('videoAds')
+        vid.pause()
+        this.audio = res.audio_url
+        this.tableTarget = this.tableAudioList[this.tableId]
+        console.log('tableTarget', this.tableTarget)
+        console.log('tableId', this.tableId)
+        this.timeCount = 1
+        playerPrefix.play()
+        playerPrefix.onended = (event) => {
+          playerQueue.load()
+          playerQueue.play()
+          playerQueue.onended = (event) => {
+            playerCounter.load()
+            playerCounter.play()
+            playerCounter.onended = (event) => {
+              if (this.timeCount < this.repeatRound) {
+                this.timeCount++
+                playerPrefix.play()
+                playerPrefix.onended = (event) => {
+                  playerQueue.play()
+                  playerQueue.onended = (event) => {
+                    playerCounter.play()
+                    playerCounter.onended = (event) => {
+                      vid.play()
+                      this.dataListPlay = this.dataListPlay.slice(1)
+                      if (this.dataListPlay.length > 0) {
+                        this.playSound()
+                      }
+                      console.log('this.dataListPlay', this.dataListPlay)
+                    }
                   }
                 }
               }
@@ -1074,22 +1061,19 @@ export default {
       this.setTimerCalendar = setInterval(function () { _this.searchBooking() }, 15000)
     },
     async searchBooking () {
-      if (this.statusSound) {
-        this.getMessageNoInterval()
-      }
       if (this.validSearch === true) {
         // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
         this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
         // await this.getBookingDataList(this.dateStart)
         let urlApi = this.DNS_IP +
-              '/booking_view/get?shopId=' +
-              this.shopId +
-              '&masBranchID=' +
-              this.masBranchID +
-              // '&flowId=' +
-              // this.flowSelect +
-              '&dueDate=' +
-              this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+            '/booking_view/get?shopId=' +
+            this.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            // '&flowId=' +
+            // this.flowSelect +
+            '&dueDate=' +
+            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         // '&dueDate=' +
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         await axios
@@ -1127,6 +1111,14 @@ export default {
               this.itemBookingUse = sortDataDataCon.filter((el, ind) => { return ind <= 5 })
               let test = dataWain.filter((el, ind) => { return el.storeFrontText === 'A' })
               this.GroupQueue(test)
+              if (dataCon.length > 0) {
+                if (this.statusSound) {
+                  for (let i = 0; i < dataCon.length; i++) {
+                    let d = dataCon[i]
+                    await this.getMessageNoInterval(d.storeFrontQueue, d.dueDateDay)
+                  }
+                }
+              }
             } else {
               this.itemBookingUse = []
               this.countConfirm = 0
@@ -1522,6 +1514,9 @@ export default {
         document.getElementById('pdfV').src = outDoc
       })
       this.dialogPrint = true
+    },
+    checkWiFiStatus () {
+      this.wifiStatus = navigator.onLine ? 'connected' : 'disconnected'
     }
   }
 }

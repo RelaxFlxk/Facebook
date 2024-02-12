@@ -1,733 +1,114 @@
 <template>
-  <div>
-    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-    <!-- <v-row >
-      <v-col cols="12">
-        <v-sheet
-          :color="shopColor"
-          elevation="1"
-          :height="resCol === '12' ? '70' : '170'"
-          width="100%"
-          style="border-bottom: 1px solid #695988 !important"
-        >
-          <v-row>
-            <v-col :cols="resCol === '12' ? '6' : '8' " align="left" :class=" resCol !== '12' ? 'mt-6 ml-8 pa-0' : 'mt-1 pl-7'">
-              <v-img :src="shopImage" contain :max-width="resCol === '12' ? '50px' : '170px'" max-height="130px"></v-img>
-            </v-col>
-            <v-col :cols="resCol === '12' ? '6' : '3' " align="right" :class="resCol !== '12' ? 'mt-6 ml-16' : 'mt-1 pr-7 pt-5'">
-              <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6" :max-width="resCol === '12' ? '70px' : '220px'"></v-img>
-            </v-col>
-          </v-row>
-        </v-sheet>
-      </v-col>
-    </v-row> -->
-        <!-- <div style="display:flex;justify-content: center;" class="ma-3">
-            <v-chip
-              class="mr-1 font-weight-black"
-              :style="'background-color:' + (languageSelect === 0 ? '#173053' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
-              dark
-              @click="languageSelect = 0"
-              >
-              <v-avatar left>
-                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-TH.png?alt=media&token=e4bd7ffa-aed9-47e3-9240-4dcb9d8d284e"></v-img>
-              </v-avatar>
-                TH
-            </v-chip>
-            <v-chip
-              class="ml-1 font-weight-black"
-              :style="'background-color:' + (languageSelect === 1 ? '#173053' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
-              dark
-              @click="languageSelect = 1">
-              <v-avatar left>
-                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-USA1.png?alt=media&token=a83dd820-f576-457a-8d08-1009cea9d70b"></v-img>
-              </v-avatar>
-                EN
-            </v-chip>
-          </div> -->
-        <!-- <v-form ref="form_search" v-model="validSearch" lazy-validation>
-          <v-row>
-            <v-col cols="3">
-              <v-select
-                :item-text="languageSelect === 0 ? 'text' : 'textEng'"
-                v-model="masBranchID"
-                background-color="white"
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                hide-details
-                :items="branchItem"
-                :label="languageSelect === 0 ? 'สาขา' : 'Branch'"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-                @change="clearTimeLoop(), checkSearch()"
-                ><template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-map-marker-outline
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col>
-            <v-col cols="3">
-              <v-select
-                :item-text="languageSelect === 0 ? 'text' : 'textEng'"
-                :label="languageSelect === 0 ? 'ประเภทบริการ' : 'Service'"
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                v-model="flowSelect"
-                hide-details
-                background-color="white"
-                :items="DataFlowItem"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-                @change="clearTimeLoop(), checkSearch()"
-              >
-                <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-note-text-outline
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col>
-            <v-col cols="3">
-              <v-menu
-                ref="menu"
-                v-model="menuStart"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    hide-details
-                    background-color="white"
-                    v-model="dateStart"
-                    style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                    :label="languageSelect === 0 ? 'วัน/เดือน/ปี' : 'Date'"
-                    readonly
-                    outlined
-                    dense
-                    required
-                    :rules ="[rules.required]"
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                  <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-calendar
-                  </v-icon>
-                </template></v-text-field>
-                </template>
-                <v-date-picker
-                  @input="menuStart = false, clearTimeLoop(), checkSearch()"
-                  v-model="dateStart"
-                  no-title
-                  scrollable
-                >
-                </v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="2" class="mt-n3">
-              <v-switch
-                v-model="switchMode"
-                inset
-                label="เปิดวิดีโอ"
-              ></v-switch>
-            </v-col>
-          </v-row>
-        </v-form> -->
-    <v-sheet
-      :color="shopColor"
-      elevation="0"
-      height="110vh"
-      width="100%"
-    >
-      <v-row class="ml-6" v-if="orientation === 'landscape'">
-        <v-col :cols="resCol === '12' ? '5' : '4'" :class="resCol === '12' ? 'pr-0 pt-0' : 'pr-0'">
-          <v-container>
-            <v-row no-gutters >
-              <v-col cols="12">
-                <v-sheet
-                  color="#9bd817"
-                  elevation="1"
-                  :height="resCol === '12' ? '99' : '130'"
-                  width="100%"
-                  dark
-                  style="border-bottom: 1px solid #695988 !important;border-radius: 10px 10px 0px 0px;"
-                >
-                  <v-container>
-                    <v-row>
-                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
-                        <br>
-                        <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + font() + ';line-height: 37px;'" >
-                            Number
-                          </v-col>
-                          <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size: ' + font() + ';line-height: 24px;'">
-                          <!-- <v-col cols="12" :style="'font-weight: 700;font-size: ' + '5px' + ';line-height: 24px;'"> -->
-                            หมายเลขคิว
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
-                        <br>
-                        <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:'  + font() + ';line-height: 24px;'">
-                            Counter
-                          </v-col>
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + font() + ';line-height: 37px;'">
-                            ช่องบริการ
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-sheet>
-                <div>
-                  <v-sheet
-                  elevation="1"
-                  height="85%"
-                  min-height="200px"
-                  width="100%"
-                  style="border-radius: 0px 0px 10px 10px;"
-                >
-                  <v-container>
-                    <v-row v-for="(items, id) in itemBookingUse" :key="id">
-                      <v-col cols="6" class="pt-2">
-                        <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: ' + font2() + ';color:black'">
-                            {{items.storeFrontQueue}}
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6" class="pt-2" style="border-left: 1px solid #695988 !important">
-                        <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color:black'">
-                            {{items.servicePoint === '' ? (items.statusBt === 'confirmJob' ? 'เรียกคิว' : '') : items.servicePoint}}
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                    <div class="text-right">
-                      <v-icon
-                        large
-                        color="#695988"
-                        @click="changeStatusSound('off')"
-                        v-if="statusSound === true"
-                      >
-                        mdi-volume-high
-                      </v-icon>
-                      <v-icon
-                        large
-                        color="#695988"
-                        @click="changeStatusSound('on')"
-                        v-else
-                      >
-                         mdi-volume-off
-                      </v-icon>
-                    </div>
-                  </v-container>
-                </v-sheet>
-                </div>
-              </v-col>
-            </v-row>
-            <v-row v-if="resCol !== '12'">
-              <v-col cols="7">
-                <v-menu
-                  ref="menu"
-                  v-model="menuStart"
-                  transition="scale-transition"
-                  offset-y
-                  max-width="290px"
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          hide-details
-                          :background-color="'white'"
-                          v-model="dateStartShow"
-                          readonly
-                          outlined
-                          dense
-                          required
-                          :rules ="[rules.required]"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                        <template #prepend-inner>
-                        <v-icon :color="'black'" style="font-size:20px;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                          mdi-calendar
-                        </v-icon>
-                      </template>
-                    </v-text-field>
-                  </template>
-                  <v-date-picker
-                    @input="menuStart = false, clearTimeLoop(), checkSearch()"
-                    v-model="dateStart"
-                    no-title
-                    scrollable
-                  >
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="5">
-                <v-text-field
-                  outlined
-                  :background-color="'white'"
-                  dense
-                  readonly
-                  v-model="shopTime"
-                >
-                  <template #prepend-inner>
-                    <v-icon :color="'black'" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                      mdi-clock-time-four
-                    </v-icon>
-                  </template>
-                </v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-col>
-        <v-col :cols="resCol === '12' ? '7' : '8'">
-          <!-- <v-row>
-            <v-col cols="11" class="pb-0 pt-0 mt-3" style="display: flex;justify-content: flex-end;">
-              <v-card
-                elevation="1"
-                :color="bgColor3"
-                style="padding: 10px; width: 330px;"
-              >
-                <div style="margin: auto 0;" class="text-center text-white">
-                  <div style="font-weight: 700;font-size: 28px;">คิวที่ยังไม่ได้เลือก</div>
-                  <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong>
-                </div>
-              </v-card>
-            </v-col>
-          </v-row> -->
-          <v-row v-if="videoLinkMonition">
-            <v-col cols="12" class="text-center pt-0">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-6'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-                <source :src="videoLinkMonition" type="video/webm">
-              </video>
-              <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </v-col>
-          </v-row>
-          <!-- <template>
-            <v-row>
-              <v-col cols="4" class="pb-0 pt-0 mt-3 pr-0">
-                <v-card
-                  elevation="1"
-                  :color="bgColor3"
-                  style="padding: 10px; width: 90%;"
-                >
-                  <div style="margin: auto 0;" class="text-center text-white">
-                    <div :style="'margin-bottom:4px;font-weight: 700;font-size: ' + font3() + ';color:' + text">คิวที่รอเรียก : {{countConfirm}}</div>
-                    <v-row>
-                      <v-col cols="4" class="px-0 py-0 pl-1" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3">
-                         <strong :style="'font-size: ' + font4() + ';color:' + text ">{{item3.storeFrontText}} : {{countConfirmList.filter(el => { return el.flowId === item3.value  }).length}}</strong>
-                      </v-col>
-                    </v-row>
+  <div :style="{ backgroundColor: shopColor, height: '100%', width: '100%' }">
+      <div :class="`d-flex ${isPortrait ? 'flex-column':'flex-row'}`">
+          <BookingUse :bookingUse="itemBookingUse" :isPortrait="isPortrait"/>
+          <div v-if="!isPortrait"  class="col-7 d-flex flex-column">
+              <div class="mt-5">
+              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+              <source :src="videoLinkMonition" type="video/webm">
+            </video>
+               <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+              </div>
+              <div class="d-flex flex-row justify-content-between mx-4 mt-5 h-100">
+              <CardWaiting :groupQueueItem="GroupQueueItem.one" time="10"/>
+              <CardWaiting :groupQueueItem="GroupQueueItem.two" time="10 - 20"/>
+              <CardWaiting :groupQueueItem="GroupQueueItem.three" time="20 - 30"/>
+            </div>
+          </div>
+      </div>
+     <div v-if="isPortrait" class="col-12 d-flex flex-row justify-content-between height-card">
+          <CardWaiting :groupQueueItem="GroupQueueItem.one" time="10"/>
+          <CardWaiting :groupQueueItem="GroupQueueItem.two" time="10 - 20"/>
+          <CardWaiting :groupQueueItem="GroupQueueItem.three" time="20 - 30"/>
+     </div>
+      <div v-if="isPortrait" class="d-flex flex-row justify-content-between">
+          <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+              <source :src="videoLinkMonition" type="video/webm">
+           </video>
+          <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+     </div>
+      <div :class="`d-flex flex-row justify-content-between mx-3 ${isPortrait ? '' : 'mt-3'}`">
+          <div class="col-6 py-0">
+            <v-icon class="mr-3" large>
+             {{ wifiIcon }}
+             </v-icon>
+             <v-btn icon
+                      large
+                      color="#695988"
+                      @click="changeStatusSound('off')"
+                      v-if="statusSound === true"
+                    >
+                    <v-icon>mdi-volume-high</v-icon>
+                    </v-btn>
+                    <v-btn icon
+                      large
+                      color="#695988"
+                      @click="changeStatusSound('on')"
+                      v-else
+                    >
+                    <v-icon>mdi-volume-off</v-icon>
+                    </v-btn>
                   </div>
-                </v-card>
-              </v-col>
-              <v-col clos="8" class="pb-0 pt-0 mt-3 pl-0">
-                <v-sheet
-                  :color="bgColor3"
-                  elevation="1"
-                  height="100%"
-                  width="93%"
-                  dark
-                  style="border-radius: 10px 10px 10px 10px;padding: 10px;"
-                >
-                  <v-row>
-                    <v-col cols="2" :class="resCol === 12 ? 'pb-0 pt-1 mt-3 pl-10' : 'pl-2'" v-for="(items, id) in countConfirmList" :key="id">
-                      <strong :style="'font-size: ' + font3() + ';color:' + text">{{items.storeFrontQueue}}</strong>
-                    </v-col>
-                  </v-row>
-                </v-sheet>
-              </v-col>
-            </v-row>
-          </template> -->
-            <v-row class="mx-10">
-                    <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="190px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.one.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.one" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                        <div class="text-center">
-                          <strong style="font-size:18px;">Estimate Waiting time <br> 10 min</strong>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="190px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.two.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.two" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                        <div class="text-center">
-                          <strong style="font-size:18px;">Estimate waiting time <br> 10 - 20 min</strong>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="190px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.three.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.three" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                          <div class="text-center">
-                            <strong style="font-size:18px;">Estimate waiting time <br> 20 - 30 min</strong>
-                          </div>
-                      </v-card>
-                    </v-col>
-                  </v-row>
+          <div class="col-6 py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span></div>
+      </div>
+      <v-row v-show="hideSound === true">
+        <v-col>
+          <audio id="playerPrefix" controls="controls">>
+            <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
+            Your browser does not support the audio format.
+          </audio>
+          <audio id="playerQueue" controls="controls">>
+            <source :src="audio">
+            Your browser does not support the audio format.
+          </audio>
+          <audio id="playerCounter" controls="controls">>
+            <source :src="tableTarget">
+            Your browser does not support the audio format.
+          </audio>
         </v-col>
-        <v-row v-show="hideSound === true">
-          <v-col>
-            <audio id="playerPrefix" controls="controls">>
-              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerQueue" controls="controls">>
-              <source :src="audio">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerCounter" controls="controls">>
-              <source :src="tableTarget">
-              Your browser does not support the audio format.
-            </audio>
-          </v-col>
-          <v-col>
-            {{history}}
-          </v-col>
-        </v-row>
+        <v-col>
+          {{history}}
+        </v-col>
       </v-row>
-      <v-row class="pt-5" v-else>
-        <v-col cols="12" class="test">
-            <v-row no-gutters class="px-6">
-              <v-col cols="12">
-                <v-sheet
-                  color="#9bd817"
-                  elevation="1"
-                  :height="resCol === '12' ? '99' : '130'"
-                  width="100%"
-                  dark
-                  style="border-bottom: 1px solid #9bd817!important;border-radius: 10px 10px 0px 0px;"
-                >
-                  <v-container>
-                    <v-row>
-                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
-                        <br>
-                        <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + fontPortrait() + ';line-height: 37px;'" >
-                            Number
-                          </v-col>
-                          <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size: ' + fontPortrait() + ';line-height: 37px;'">
-                          <!-- <v-col cols="12" :style="'font-weight: 700;font-size: ' + '5px' + ';line-height: 24px;'"> -->
-                            หมายเลขคิว
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
-                        <br>
-                        <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:'  + fontPortrait() + ';line-height: 37px;'">
-                            Counter
-                          </v-col>
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + fontPortrait() + ';line-height: 37px;'">
-                            ช่องบริการ
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-sheet>
-                <div>
-                  <v-sheet
-                  elevation="1"
-                  height="85%"
-                  width="100%"
-                  style="border-radius: 0px 0px 10px 10px;"
-                >
-                  <v-container>
-                    <v-row v-for="(items, id) in itemBookingUse" :key="id">
-                      <v-col cols="6" class="pt-1">
-                        <v-row class="text-center">
-                          <v-col cols="12"  class="p-0" :style="'font-weight: 700;font-size: ' + fontPortrait2() + ';color:black'">
-                            {{items.storeFrontQueue}}
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6" class="pt-1" style="border-left: 1px solid #9bd817 !important">
-                        <v-row class="text-center">
-                          <v-col cols="12"  class="p-0" :style="'font-weight: 700;font-size: ' + fontPortrait2() + ';color:black'">
-                            {{items.servicePoint === '' ? (items.statusBt === 'confirmJob' ? 'เรียกคิว' : '') : items.servicePoint}}
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                    <div class="text-right">
-                      <v-icon
-                        large
-                        color="#695988"
-                        @click="changeStatusSound('off')"
-                        v-if="statusSound === true"
-                      >
-                        mdi-volume-high
-                      </v-icon>
-                      <v-icon
-                        large
-                        color="#695988"
-                        @click="changeStatusSound('on')"
-                        v-else
-                      >
-                         mdi-volume-off
-                      </v-icon>
-                    </div>
-                  </v-container>
-                </v-sheet>
-                </div>
-              </v-col>
-            </v-row>
-        </v-col>
-        <v-row class="px-10">
-                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.one.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.one" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                        <div class="text-center"  style="display: flex;
-    flex-direction: column;
-    padding-bottom: 10px;">
-                          <strong style="font-size:15px;">Estimate Waiting time</strong>
-                          <strong style="font-size:15px;">10 min</strong>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.two.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.two" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                        <div class="text-center"  style="display: flex;
-    flex-direction: column;
-    padding-bottom: 10px;">
-                          <strong style="font-size:15px;">Estimate waiting time</strong>
-                          <strong style="font-size:15px;">10 - 20 min</strong>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.three.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.three" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                          <div class="text-center" style="display: flex;
-    flex-direction: column;
-    padding-bottom: 10px;">
-                            <strong style="font-size:15px;">Estimate waiting time</strong>
-                            <strong style="font-size:15px;">20 - 30 min</strong>
-                          </div>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-        <v-col cols="12">
-          <v-row v-if="videoLinkMonition">
-            <v-col cols="12" class="text-center p-0">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-10'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-                <source :src="videoLinkMonition" type="video/webm">
-              </video>
-              <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-row class="pt-5 px-10">
-              <v-col cols="7">
-                <v-menu
-                  ref="menu"
-                  v-model="menuStart"
-                  transition="scale-transition"
-                  offset-y
-                  max-width="290px"
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          hide-details
-                          :background-color="'white'"
-                          v-model="dateStartShow"
-                          readonly
-                          outlined
-                          dense
-                          required
-                          :rules ="[rules.required]"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                        <template #prepend-inner>
-                        <v-icon :color="'black'" style="font-size:20px;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                          mdi-calendar
-                        </v-icon>
-                      </template>
-                    </v-text-field>
-                  </template>
-                  <v-date-picker
-                    @input="menuStart = false, clearTimeLoop(), checkSearch()"
-                    v-model="dateStart"
-                    no-title
-                    scrollable
-                  >
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="5">
-                <v-text-field
-                  outlined
-                  :background-color="'white'"
-                  dense
-                  readonly
-                  v-model="shopTime"
-                >
-                  <template #prepend-inner>
-                    <v-icon :color="'black'" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                      mdi-clock-time-four
-                    </v-icon>
-                  </template>
-                </v-text-field>
-              </v-col>
-            </v-row>
-        <v-row v-show="hideSound === true">
-          <v-col>
-            <audio id="playerPrefix" controls="controls">>
-              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerQueue" controls="controls">>
-              <source :src="audio">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerCounter" controls="controls">>
-              <source :src="tableTarget">
-              Your browser does not support the audio format.
-            </audio>
-          </v-col>
-          <v-col>
-            {{history}}
-          </v-col>
-        </v-row>
-      </v-row>
-    </v-sheet>
   </div>
 </template>
 <script>
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
-import pdfMake from 'pdfmake'
-import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
 import moment from 'moment-timezone'
+import { CardWaiting, BookingUse } from '../TV'
 
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
-    VuetifyMoney
+    VuetifyMoney,
+    CardWaiting,
+    BookingUse
   },
   computed: {
     videoElement () {
       return this.$refs.video
     },
-    resCol () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs':
-          return '12'
-        case 'sm':
-          return '12'
-        case 'md':
-          return '6'
-        case 'lg':
-          return '3'
-        case 'xl':
-          return '6'
-      }
+    formattedDateTime () {
+      return this.currentTime
     },
-    colsWidth () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '55'
-        case 'sm': return '55'
-        case 'md': return '55'
-        case 'lg': return '60'
-        case 'xl': return '80'
+    wifiIcon () {
+      switch (this.wifiStatus) {
+        case 'connected':
+          return 'mdi-wifi'
+        case 'disconnected':
+          return 'mdi-wifi-off'
+        default:
+          return 'mdi-wifi-strength-alert-outline'
       }
-    },
-    colsWidth2 () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return 'xs'
-        case 'sm': return 'sm'
-        case 'md': return 'md'
-        case 'lg': return 'lg'
-        case 'xl': return 'xl'
-      }
-    }
-  },
-  watch: {
-    // orientation (newVal) {
-    //   // ทำสิ่งที่คุณต้องการเมื่อมีการเปลี่ยนแปลงใน orientation
-    //   // this.orientation = newVal
-    //   console.log('เปลี่ยนแปลง orientation เป็น:', newVal)
-    // },
-    // whenever question changes, this function will run
-    colsWidth (newQuestion, oldQuestion) {
-      // console.log('newnewnew', newQuestion, oldQuestion)
-      this.Fontsize = newQuestion
-    },
-    colsWidth2 (newQuestion, oldQuestion) {
-      // console.log('newnewnew', newQuestion, oldQuestion)
-      this.DiSize = newQuestion
     }
   },
   created () {
     setInterval(this.getNow, 1000)
+    this.checkWiFiStatus()
+    window.addEventListener('online', () => { this.wifiStatus = 'connected' })
+    window.addEventListener('offline', () => { this.wifiStatus = 'disconnected' })
   },
   data () {
     return {
@@ -754,50 +135,12 @@ export default {
       flowSelect: '',
       dateStart: '',
       shop: [],
-      // fieldNameEn: [{textTH: 'นวดคอ บ่า ไหล่', textEN: 'Nack & Shoulder  Massage'}, {textTH: 'นวดตอกเส้น', textEN: 'TOK  SEN MASSAGE'}, {textTH: 'นวดหินร้อน', textEN: 'HOT STONE MASSAGE'}],
-      breadcrumbs: [
-        {
-          text: 'Home',
-          disabled: false,
-          href: '/Core/Home'
-        },
-        {
-          text: 'จัดการ Queue',
-          disabled: false,
-          href: '/Master/BookingListQueue'
-        }
-      ],
       dialog: false,
       dialogAdd: false,
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       search: '',
       shopName: '',
-      headers: [
-        { text: 'คิว', value: 'storeFrontQueue' },
-        { text: 'วันที่นัดหมาย', value: 'dueDate' },
-        { text: 'ชื่อลูกค้า', value: 'cusName' },
-        { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
-      ],
-      rules: {
-        numberRules: value =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        counterTel: value => value.length <= 10 || 'Max 10 characters',
-        IDcardRules: value =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        required: value => !!value || 'กรุณากรอก.',
-        resizeImag: value =>
-          !value ||
-          value.size < 2000000 ||
-          'Avatar size should be less than 2 MB!',
-        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(value) || 'Invalid e-mail.'
-        }
-      },
       shopColor: '',
       shopImage: '',
       shopTime: '',
@@ -837,7 +180,9 @@ export default {
         'two': [],
         'three': []
       },
-      isPortrait: null,
+      currentTime: moment().format('DD/MMM/YYYY HH:mm'),
+      isPortrait: true,
+      wifiStatus: 'unknown',
       checkRef: false,
       soundQueneNo: [
         { 'queue': 'A001', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A001.wav' },
@@ -1232,18 +577,11 @@ export default {
   async mounted () {
     this.checkOrientation()
 
+    window.addEventListener('resize', this.checkOrientation)
+
     // เพิ่ม event listener เพื่อตรวจสอบการเปลี่ยนแปลงของ orientation
     window.addEventListener('orientationchange', this.checkOrientation)
-    // eslint-disable-next-line no-tabs
-    // this.generateSound({storeFrontQueue: 'A200', servicePoint: '	  1'})
-    this.isPortrait = window.matchMedia('(orientation: portrait)').matches
 
-    // if (!this.isPortrait) {
-    //   console.log(' หน้าจอเป็นแนวตั้ง')
-    // } else {
-    //   console.log(' หน้าจอเป็นแนวนอน')
-    // }
-    this.Fontsize = this.colsWidth
     await this.getShop()
     await this.getDataBranch()
     await this.getDataFlow()
@@ -1257,26 +595,20 @@ export default {
     // this.checkSearch()
     this.getFirestore()
     document.querySelector('body').requestFullscreen()
-    if (this.isMobileDevice()) {
-      // Code to execute if the device is a mobile device
-      window.scrollTo(0, 1)
-    }
+    this.interval = setInterval(() => {
+      this.currentTime = moment().format('DD/MMM/YYYY HH:mm') // อัพเดตเวลาทุก 1 วินาที
+    }, 1000)
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.checkOrientation)
   },
   beforeDestroy () {
     this.$root.$off('dataReturn')
-    // นำออก event listener เมื่อ component ถูกทำลาย
-    // window.removeEventListener('orientationchange', this.checkOrientation)
+    clearInterval(this.interval)
   },
   methods: {
     checkOrientation () {
-      // ตรวจสอบ orientation และปรับค่าตัวแปร
-      if (window.matchMedia('(orientation: portrait)').matches) {
-        console.log('portrait')
-        this.orientation = 'portrait'
-      } else if (window.matchMedia('(orientation: landscape)').matches) {
-        console.log('landscape')
-        this.orientation = 'landscape'
-      }
+      this.isPortrait = window.innerHeight > window.innerWidth
     },
     replaceFunc (text) {
       let itemText = text.split('')
@@ -1305,10 +637,10 @@ export default {
           textFill = textFill + ' nine'
         }
       }
-      if (itemText[0] === 'B') {
-        return itemText[0] + ' ' + textFill
-      } else {
+      if (itemText[0] === 'เ') {
         return itemText[0] + itemText[1] + ' ' + textFill
+      } else {
+        return itemText[0] + ' ' + textFill
       }
     },
     async getFirestore () {
@@ -1441,72 +773,6 @@ export default {
     //   })
     //   return sortedArray
     // },
-    columCardMain () {
-      // this.resCol ===
-      if (this.resCol === '3') {
-        return '4'
-      } else if (this.resCol === '6') {
-        return '4'
-      } else {
-        return this.resCol
-      }
-    },
-    columCardMainMobile () {
-      if (this.resCol === '3') {
-        return '4'
-      } else if (this.resCol === '6') {
-        return '4'
-      } else {
-        return '4'
-      }
-    },
-    isMobileDevice () {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    },
-    fontPortrait () {
-      if (this.resCol === '12') {
-        return '34px'
-      } else {
-        return '43px'
-      }
-      // console.log('sssss', this.resCol)
-    },
-    font () {
-      if (this.resCol === '12') {
-        return '14px'
-      } else {
-        return '24px'
-      }
-      // console.log('sssss', this.resCol)
-    },
-    fontPortrait2 () {
-      if (this.resCol === '12') {
-        return '55px'
-      } else {
-        return '85px'
-      }
-    },
-    font2 () {
-      if (this.resCol === '12') {
-        return '17px'
-      } else {
-        return '48px'
-      }
-    },
-    font3 () {
-      if (this.resCol === '12') {
-        return '10px'
-      } else {
-        return '28px'
-      }
-    },
-    font4 () {
-      if (this.resCol === '12') {
-        return '10px'
-      } else {
-        return '28px'
-      }
-    },
     async changeStatusSound (text) {
       if (text === 'on') {
         this.statusSound = true
@@ -1521,9 +787,10 @@ export default {
     async updatestatusNotifyByShopId () {
       const params = {
         statusNotify: 'True',
-        shopId: this.$session.getAll().data.shopId
+        shopId: this.$session.getAll().data.shopId,
+        masBranchID: this.$session.getAll().data.masBranchID
       }
-      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotify`, params)
+      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotifyOhrich`, params)
     },
     async getMessage () {
       try {
@@ -1583,16 +850,19 @@ export default {
         // eslint-disable-next-line no-tabs
         this.tableId = item.servicePoint.replace('	  ', '').replace(' ', '').trim()
         let storeFrontQueue = item.storeFrontQueue
+        console.log('[generateSound] storeFrontQueue', storeFrontQueue)
         // storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
         // storeFrontQueue = storeFrontQueue.replace('B', 'บี')
         // storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
         // storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
         // storeFrontQueue = storeFrontQueue.replace('E', 'อี')
         storeFrontQueue = this.replaceFunc(storeFrontQueue.replace('A', 'เอ'))
+        console.log('[generateSound] storeFrontQueue 2', storeFrontQueue)
         let result
         let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
         if (oldSound.length > 0) {
           item.audioFile = oldSound[0].audioFile
+          console.log('[generateSound] item.audioFile', item.audioFile)
         } else {
           // let branchId = this.$session.getAll().data.masBranchID || 2185
           await axios
@@ -1601,6 +871,7 @@ export default {
             ).then(async (response) => {
               if (response.data.length > 0 && typeof response.data.status === 'undefined') {
                 item.audioFile = response.data[0].audioFile
+                console.log('[generateSound] item.audioFile', item.audioFile)
               }
             })
         }
@@ -1658,8 +929,6 @@ export default {
         vid.pause()
         this.audio = res.audio_url
         this.tableTarget = this.tableAudioList[this.tableId]
-        console.log('tableTarget', this.tableTarget)
-        console.log('tableId', this.tableId)
         this.timeCount = 1
         playerPrefix.play()
         playerPrefix.onended = (event) => {
@@ -1830,7 +1099,7 @@ export default {
               // this.countConfirmListGroup = dataWain.map((el, ind) => { return ind <= 11 })
               // this.GroupQueueItem = await this.GroupQueue(this.countConfirmList)
               // console.log('test', this.GroupQueueItem)
-              this.itemBookingUse = [ ...sortDataDataCon, ...dataWain ].filter((el, ind) => { return ind <= 5 })
+              this.itemBookingUse = sortDataDataCon.filter((el, ind) => { return ind <= 5 })
               let test = dataWain.filter((el, ind) => { return el.storeFrontText === 'A' })
               this.GroupQueue(test)
               if (dataCon.length > 0) {
@@ -1955,287 +1224,8 @@ export default {
         })
       return result
     },
-    async closeJobSubmit (item) {
-      this.$swal({
-        title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#fa0202',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      }).then(async response => {
-        var dtt = {
-          bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'confirmJob',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName || 'monthon.y@srtforex.com',
-          LAST_USER: this.$session.getAll().data.userName || 'monthon.y@srtforex.com'
-        }
-        await axios
-          .post(this.DNS_IP + '/booking_transaction/add', dtt)
-          .then(async responses => {
-            this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
-            await this.searchBooking()
-            let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-            if (bookSelect.length > 0) {
-              for (let i = 0; i < bookSelect.length; i++) {
-                let d = bookSelect[i]
-                let s = {}
-                s.lineUserId = d.lineUserId || ''
-                if (s.lineUserId !== '') {
-                  await axios
-                    .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-                    .then(async responses => {}).catch(error => {
-                      console.log('error function pushMsgQueue : ', error)
-                    })
-                }
-              }
-            }
-          })
-      })
-    },
-    setPrint (item, language) {
-      let docDefinition = {}
-      if (language === 'th') {
-        docDefinition = {
-          pageSize: 'A4',
-          content: [
-            {
-              text: this.shopName,
-              style: 'header',
-              alignment: 'center'
-            },
-            {
-              text: '   ',
-              style: 'header',
-              widths: ['*']
-            },
-            {
-              columns: [
-                {
-                  style: 'subheader',
-                  text: 'วันที่'
-                },
-                {
-                  style: 'subheader',
-                  text: item.dueDateText.split(' ')[0],
-                  alignment: 'right'
-                }
-              ]
-            },
-            {
-              text: '   ',
-              style: 'subheader',
-              widths: ['*']
-            },
-            {
-              columns: [
-                {
-                  style: 'subheader',
-                  text: 'รับคิวเวลา'
-                },
-                {
-                  style: 'subheader',
-                  text: item.timeText,
-                  alignment: 'right'
-                }
-              ]
-            },
-            {
-              text: '   ',
-              style: 'subheader',
-              widths: ['*']
-            },
-            {
-              alignment: 'center',
-              style: 'tableExample',
-              table: {
-                heights: [70],
-                widths: ['*'],
-                body: [
-                  [
-                    {
-                      text: [
-                        {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'white'},
-                        {text: item.storeFrontQueue, fontSize: 150, color: 'white'}
-                      ],
-                      border: [false, false, false, false],
-                      fillColor: '#092C4C'
-                    }
-                  ]
-                ]
-              }
-            },
-            {
-              text: '   ',
-              style: 'subheader',
-              widths: ['*']
-            },
-            {
-              text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-              fontSize: 15,
-              alignment: 'center'
-            }
-          ],
-          styles: {
-            header: {
-              fontSize: 28,
-              bold: true
-            },
-            subheader: {
-              fontSize: 25,
-              bold: true
-            },
-            quote: {
-              italics: true
-            },
-            small: {
-              fontSize: 8
-            },
-            defaultStyle: {
-              columnGap: 20
-            },
-            tableExample: {
-              margin: [0, 5, 0, 15]
-            }
-          },
-          defaultStyle: { // 4. default style 'KANIT' font to test
-            font: 'Kanit'
-          }
-        }
-      } else {
-        docDefinition = {
-          pageSize: 'A4',
-          content: [
-            {
-              text: this.shopName,
-              style: 'header',
-              alignment: 'center'
-            },
-            {
-              text: '   ',
-              style: 'header',
-              widths: ['*']
-            },
-            {
-              columns: [
-                {
-                  style: 'subheader',
-                  text: 'Date'
-                },
-                {
-                  style: 'subheader',
-                  text: item.dueDateText.split(' ')[0],
-                  alignment: 'right'
-                }
-              ]
-            },
-            {
-              text: '   ',
-              style: 'subheader',
-              widths: ['*']
-            },
-            {
-              columns: [
-                {
-                  style: 'subheader',
-                  text: 'Time'
-                },
-                {
-                  style: 'subheader',
-                  text: item.timeText,
-                  alignment: 'right'
-                }
-              ]
-            },
-            {
-              text: '   ',
-              style: 'subheader',
-              widths: ['*']
-            },
-            {
-              alignment: 'center',
-              style: 'tableExample',
-              table: {
-                heights: [70],
-                widths: ['*'],
-                body: [
-                  [
-                    {
-                      text: [
-                        {text: 'Number\n', fontSize: 30, color: 'white'},
-                        {text: item.storeFrontQueue, fontSize: 150, color: 'white'}
-                      ],
-                      border: [false, false, false, false],
-                      fillColor: '#092C4C'
-                    }
-                  ]
-                ]
-              }
-            },
-            {
-              text: '   ',
-              style: 'subheader',
-              widths: ['*']
-            },
-            {
-              text: '* The company reserves the right to skip the queue. In the event that the customer does not come.',
-              fontSize: 15,
-              alignment: 'center'
-            }
-          ],
-          styles: {
-            header: {
-              fontSize: 28,
-              bold: true
-            },
-            subheader: {
-              fontSize: 25,
-              bold: true
-            },
-            quote: {
-              italics: true
-            },
-            small: {
-              fontSize: 8
-            },
-            defaultStyle: {
-              columnGap: 20
-            },
-            tableExample: {
-              margin: [0, 5, 0, 15]
-            }
-          },
-          defaultStyle: { // 4. default style 'KANIT' font to test
-            font: 'Kanit'
-          }
-        }
-      }
-      pdfMake.vfs = pdfFonts.pdfMake.vfs // 2. set vfs pdf font
-      pdfMake.fonts = {
-        // download default Roboto font from cdnjs.com
-        Roboto: {
-          normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
-          bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
-          italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
-          bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
-        },
-        // Kanit Font
-        Kanit: { // 3. set Kanit font
-          normal: 'Kanit-Regular.ttf',
-          bold: 'Kanit-Medium.ttf',
-          italics: 'Kanit-Italic.ttf',
-          bolditalics: 'Kanit-MediumItalic.ttf'
-        }
-      }
-      // pdfMake.createPdf(docDefinition).open({}, window)
-      pdfMake.createPdf(docDefinition).getDataUrl(function (outDoc) {
-        document.getElementById('pdfV').src = outDoc
-      })
-      this.dialogPrint = true
+    checkWiFiStatus () {
+      this.wifiStatus = navigator.onLine ? 'connected' : 'disconnected'
     }
   }
 }
@@ -2273,4 +1263,15 @@ export default {
 .text-black >>> .v-input__slot {
   color: #005fcc !important;
 }
+
+.text-datetime, .text-number-waiting{
+  font-weight: 700;
+}
+@media screen and (orientation: portrait) {
+  .height-card{
+    min-height: 16vh;
+  }
+}
+
+@media screen and (orientation: landscape) {}
 </style>
