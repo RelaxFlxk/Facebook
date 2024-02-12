@@ -1,216 +1,34 @@
 <template>
-  <div>
-    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-    <!-- <v-row >
-      <v-col cols="12">
-        <v-sheet
-          :color="shopColor"
-          elevation="1"
-          :height="resCol === '12' ? '70' : '170'"
-          width="100%"
-          style="border-bottom: 1px solid #695988 !important"
-        >
-          <v-row>
-            <v-col :cols="resCol === '12' ? '6' : '8' " align="left" :class=" resCol !== '12' ? 'mt-6 ml-8 pa-0' : 'mt-1 pl-7'">
-              <v-img :src="shopImage" contain :max-width="resCol === '12' ? '50px' : '170px'" max-height="130px"></v-img>
-            </v-col>
-            <v-col :cols="resCol === '12' ? '6' : '3' " align="right" :class="resCol !== '12' ? 'mt-6 ml-16' : 'mt-1 pr-7 pt-5'">
-              <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6" :max-width="resCol === '12' ? '70px' : '220px'"></v-img>
-            </v-col>
-          </v-row>
-        </v-sheet>
-      </v-col>
-    </v-row> -->
-        <!-- <div style="display:flex;justify-content: center;" class="ma-3">
-            <v-chip
-              class="mr-1 font-weight-black"
-              :style="'background-color:' + (languageSelect === 0 ? '#173053' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
-              dark
-              @click="languageSelect = 0"
-              >
-              <v-avatar left>
-                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-TH.png?alt=media&token=e4bd7ffa-aed9-47e3-9240-4dcb9d8d284e"></v-img>
-              </v-avatar>
-                TH
-            </v-chip>
-            <v-chip
-              class="ml-1 font-weight-black"
-              :style="'background-color:' + (languageSelect === 1 ? '#173053' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
-              dark
-              @click="languageSelect = 1">
-              <v-avatar left>
-                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-USA1.png?alt=media&token=a83dd820-f576-457a-8d08-1009cea9d70b"></v-img>
-              </v-avatar>
-                EN
-            </v-chip>
-          </div> -->
-        <!-- <v-form ref="form_search" v-model="validSearch" lazy-validation>
-          <v-row>
-            <v-col cols="3">
-              <v-select
-                :item-text="languageSelect === 0 ? 'text' : 'textEng'"
-                v-model="masBranchID"
-                background-color="white"
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                hide-details
-                :items="branchItem"
-                :label="languageSelect === 0 ? 'สาขา' : 'Branch'"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-                @change="clearTimeLoop(), checkSearch()"
-                ><template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-map-marker-outline
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col>
-            <v-col cols="3">
-              <v-select
-                :item-text="languageSelect === 0 ? 'text' : 'textEng'"
-                :label="languageSelect === 0 ? 'ประเภทบริการ' : 'Service'"
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                v-model="flowSelect"
-                hide-details
-                background-color="white"
-                :items="DataFlowItem"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-                @change="clearTimeLoop(), checkSearch()"
-              >
-                <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-note-text-outline
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col>
-            <v-col cols="3">
-              <v-menu
-                ref="menu"
-                v-model="menuStart"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    hide-details
-                    background-color="white"
-                    v-model="dateStart"
-                    style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                    :label="languageSelect === 0 ? 'วัน/เดือน/ปี' : 'Date'"
-                    readonly
-                    outlined
-                    dense
-                    required
-                    :rules ="[rules.required]"
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                  <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-calendar
-                  </v-icon>
-                </template></v-text-field>
-                </template>
-                <v-date-picker
-                  @input="menuStart = false, clearTimeLoop(), checkSearch()"
-                  v-model="dateStart"
-                  no-title
-                  scrollable
-                >
-                </v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="2" class="mt-n3">
-              <v-switch
-                v-model="switchMode"
-                inset
-                label="เปิดวิดีโอ"
-              ></v-switch>
-            </v-col>
-          </v-row>
-        </v-form> -->
-    <v-sheet
-      :color="shopColor"
-      elevation="0"
-      height="110vh"
-      width="100%"
-    >
-      <v-row class="ml-6" v-if="orientation === 'landscape'">
-        <v-col :cols="resCol === '12' ? '5' : '4'" :class="resCol === '12' ? 'pr-0 pt-0' : 'pr-0'">
-          <v-container>
-            <v-row no-gutters >
-              <v-col cols="12">
-                <v-sheet
-                  color="#9bd817"
-                  elevation="1"
-                  :height="resCol === '12' ? '99' : '130'"
-                  width="100%"
-                  dark
-                  style="border-bottom: 1px solid #695988 !important;border-radius: 10px 10px 0px 0px;"
-                >
-                  <v-container>
-                    <v-row>
-                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
-                        <br>
-                        <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + font() + ';line-height: 37px;'" >
-                            Number
-                          </v-col>
-                          <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size: ' + font() + ';line-height: 24px;'">
-                          <!-- <v-col cols="12" :style="'font-weight: 700;font-size: ' + '5px' + ';line-height: 24px;'"> -->
-                            หมายเลขคิว
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
-                        <br>
-                        <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:'  + font() + ';line-height: 24px;'">
-                            Counter
-                          </v-col>
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + font() + ';line-height: 37px;'">
-                            ช่องบริการ
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-sheet>
-                <div>
-                  <v-sheet
-                  elevation="1"
-                  height="85%"
-                  min-height="200px"
-                  width="100%"
-                  style="border-radius: 0px 0px 10px 10px;"
-                >
-                  <v-container>
-                    <v-row v-for="(items, id) in itemBookingUse" :key="id">
-                      <v-col cols="6" class="pt-2">
-                        <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: ' + font2() + ';color:black'">
-                            {{items.storeFrontQueue}}
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6" class="pt-2" style="border-left: 1px solid #695988 !important">
-                        <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color:black'">
-                            {{items.servicePoint === '' ? (items.statusBt === 'confirmJob' ? 'เรียกคิว' : '') : items.servicePoint}}
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                    <div class="text-right">
-                      <v-icon
+    <div :style="{ backgroundColor: shopColor, height: '100%', width: '100%' }">
+        <div :class="`d-flex ${isPortrait ? 'flex-column':'flex-row'}`">
+            <BookingUse :bookingUse="itemBooking" :isPortrait="isPortrait"/>
+            <div v-if="!isPortrait"  class="col-7 d-flex flex-column">
+                <div class="mt-5">
+                <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+                <source :src="videoLinkMonition" type="video/webm">
+              </video>
+                 <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="d-flex flex-row justify-content-between mx-4 mt-5 h-100">
+                <CardWaiting :groupQueueItem="GroupQueueItem.one" time="10"/>
+                <CardWaiting :groupQueueItem="GroupQueueItem.two" time="10 - 20"/>
+                <CardWaiting :groupQueueItem="GroupQueueItem.three" time="20 - 30"/>
+              </div>
+            </div>
+        </div>
+       <div v-if="isPortrait" class="col-12 d-flex flex-row justify-content-between height-card">
+            <CardWaiting :groupQueueItem="GroupQueueItem.one" time="10"/>
+            <CardWaiting :groupQueueItem="GroupQueueItem.two" time="10 - 20"/>
+            <CardWaiting :groupQueueItem="GroupQueueItem.three" time="20 - 30"/>
+       </div>
+        <div v-if="isPortrait" class="d-flex flex-row justify-content-between">
+            <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+                <source :src="videoLinkMonition" type="video/webm">
+             </video>
+            <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+       </div>
+        <div :class="`d-flex flex-row justify-content-between mx-3 ${isPortrait ? '' : 'mt-3'}`">
+            <div class="col-6 py-0">  <v-icon
                         large
                         color="#695988"
                         @click="changeStatusSound('off')"
@@ -225,441 +43,11 @@
                         v-else
                       >
                          mdi-volume-off
-                      </v-icon>
-                    </div>
-                  </v-container>
-                </v-sheet>
-                </div>
-              </v-col>
-            </v-row>
-            <v-row v-if="resCol !== '12'">
-              <v-col cols="7">
-                <v-menu
-                  ref="menu"
-                  v-model="menuStart"
-                  transition="scale-transition"
-                  offset-y
-                  max-width="290px"
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          hide-details
-                          :background-color="'white'"
-                          v-model="dateStartShow"
-                          readonly
-                          outlined
-                          dense
-                          required
-                          :rules ="[rules.required]"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                        <template #prepend-inner>
-                        <v-icon :color="'black'" style="font-size:20px;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                          mdi-calendar
-                        </v-icon>
-                      </template>
-                    </v-text-field>
-                  </template>
-                  <v-date-picker
-                    @input="menuStart = false, clearTimeLoop(), checkSearch()"
-                    v-model="dateStart"
-                    no-title
-                    scrollable
-                  >
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="5">
-                <v-text-field
-                  outlined
-                  :background-color="'white'"
-                  dense
-                  readonly
-                  v-model="shopTime"
-                >
-                  <template #prepend-inner>
-                    <v-icon :color="'black'" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                      mdi-clock-time-four
-                    </v-icon>
-                  </template>
-                </v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-col>
-        <v-col :cols="resCol === '12' ? '7' : '8'">
-          <!-- <v-row>
-            <v-col cols="11" class="pb-0 pt-0 mt-3" style="display: flex;justify-content: flex-end;">
-              <v-card
-                elevation="1"
-                :color="bgColor3"
-                style="padding: 10px; width: 330px;"
-              >
-                <div style="margin: auto 0;" class="text-center text-white">
-                  <div style="font-weight: 700;font-size: 28px;">คิวที่ยังไม่ได้เลือก</div>
-                  <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong>
-                </div>
-              </v-card>
-            </v-col>
-          </v-row> -->
-          <v-row v-if="videoLinkMonition">
-            <v-col cols="12" class="text-center pt-0">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-6'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-                <source :src="videoLinkMonition" type="video/webm">
-              </video>
-              <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </v-col>
-          </v-row>
-          <!-- <template>
-            <v-row>
-              <v-col cols="4" class="pb-0 pt-0 mt-3 pr-0">
-                <v-card
-                  elevation="1"
-                  :color="bgColor3"
-                  style="padding: 10px; width: 90%;"
-                >
-                  <div style="margin: auto 0;" class="text-center text-white">
-                    <div :style="'margin-bottom:4px;font-weight: 700;font-size: ' + font3() + ';color:' + text">คิวที่รอเรียก : {{countConfirm}}</div>
-                    <v-row>
-                      <v-col cols="4" class="px-0 py-0 pl-1" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3">
-                         <strong :style="'font-size: ' + font4() + ';color:' + text ">{{item3.storeFrontText}} : {{countConfirmList.filter(el => { return el.flowId === item3.value  }).length}}</strong>
-                      </v-col>
-                    </v-row>
-                  </div>
-                </v-card>
-              </v-col>
-              <v-col clos="8" class="pb-0 pt-0 mt-3 pl-0">
-                <v-sheet
-                  :color="bgColor3"
-                  elevation="1"
-                  height="100%"
-                  width="93%"
-                  dark
-                  style="border-radius: 10px 10px 10px 10px;padding: 10px;"
-                >
-                  <v-row>
-                    <v-col cols="2" :class="resCol === 12 ? 'pb-0 pt-1 mt-3 pl-10' : 'pl-2'" v-for="(items, id) in countConfirmList" :key="id">
-                      <strong :style="'font-size: ' + font3() + ';color:' + text">{{items.storeFrontQueue}}</strong>
-                    </v-col>
-                  </v-row>
-                </v-sheet>
-              </v-col>
-            </v-row>
-          </template> -->
-            <v-row class="mx-10">
-                    <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="190px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.one.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.one" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                        <div class="text-center">
-                          <strong style="font-size:18px;">Estimate Waiting time <br> 10 min</strong>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="190px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.two.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.two" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                        <div class="text-center">
-                          <strong style="font-size:18px;">Estimate waiting time <br> 10 - 20 min</strong>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col :cols="columCardMain()" class="pa-3 mt-1">
-                      <v-card min-height="190px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.three.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.three" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                          <div class="text-center">
-                            <strong style="font-size:18px;">Estimate waiting time <br> 20 - 30 min</strong>
-                          </div>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-        </v-col>
-        <v-row v-show="hideSound === true">
-          <v-col>
-            <audio id="playerPrefix" controls="controls">>
-              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerQueue" controls="controls">>
-              <source :src="audio">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerCounter" controls="controls">>
-              <source :src="tableTarget">
-              Your browser does not support the audio format.
-            </audio>
-          </v-col>
-          <v-col>
-            {{history}}
-          </v-col>
-        </v-row>
-      </v-row>
-      <v-row class="pt-5" v-else>
-        <v-col cols="12" class="test">
-            <v-row no-gutters class="px-6">
-              <v-col cols="12">
-                <v-sheet
-                  color="#9bd817"
-                  elevation="1"
-                  :height="resCol === '12' ? '99' : '130'"
-                  width="100%"
-                  dark
-                  style="border-bottom: 1px solid #9bd817!important;border-radius: 10px 10px 0px 0px;"
-                >
-                  <v-container>
-                    <v-row>
-                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
-                        <br>
-                        <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + fontPortrait() + ';line-height: 37px;'" >
-                            Number
-                          </v-col>
-                          <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size: ' + fontPortrait() + ';line-height: 37px;'">
-                          <!-- <v-col cols="12" :style="'font-weight: 700;font-size: ' + '5px' + ';line-height: 24px;'"> -->
-                            หมายเลขคิว
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
-                        <br>
-                        <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:'  + fontPortrait() + ';line-height: 37px;'">
-                            Counter
-                          </v-col>
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-color:#000000;font-weight: 700;font-size:' + fontPortrait() + ';line-height: 37px;'">
-                            ช่องบริการ
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-sheet>
-                <div>
-                  <v-sheet
-                  elevation="1"
-                  height="85%"
-                  width="100%"
-                  style="border-radius: 0px 0px 10px 10px;"
-                >
-                  <v-container>
-                    <v-row v-for="(items, id) in itemBookingUse" :key="id">
-                      <v-col cols="6" class="pt-1">
-                        <v-row class="text-center">
-                          <v-col cols="12"  class="p-0" :style="'font-weight: 700;font-size: ' + fontPortrait2() + ';color:black'">
-                            {{items.storeFrontQueue}}
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6" class="pt-1" style="border-left: 1px solid #9bd817 !important">
-                        <v-row class="text-center">
-                          <v-col cols="12"  class="p-0" :style="'font-weight: 700;font-size: ' + fontPortrait2() + ';color:black'">
-                            {{items.servicePoint === '' ? (items.statusBt === 'confirmJob' ? 'เรียกคิว' : '') : items.servicePoint}}
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                    <div class="text-right">
-                      <v-icon
-                        large
-                        color="#695988"
-                        @click="changeStatusSound('off')"
-                        v-if="statusSound === true"
-                      >
-                        mdi-volume-high
-                      </v-icon>
-                      <v-icon
-                        large
-                        color="#695988"
-                        @click="changeStatusSound('on')"
-                        v-else
-                      >
-                         mdi-volume-off
-                      </v-icon>
-                    </div>
-                  </v-container>
-                </v-sheet>
-                </div>
-              </v-col>
-            </v-row>
-        </v-col>
-        <v-row class="px-10">
-                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.one.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.one[0].storeFrontQueue + ' ~ ' + GroupQueueItem.one[GroupQueueItem.one.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.one" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                        <div class="text-center"  style="display: flex;
-    flex-direction: column;
-    padding-bottom: 10px;">
-                          <strong style="font-size:15px;">Estimate Waiting time</strong>
-                          <strong style="font-size:15px;">10 min</strong>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.two.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.two[0].storeFrontQueue + ' ~ ' + GroupQueueItem.two[GroupQueueItem.two.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.two" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                        <div class="text-center"  style="display: flex;
-    flex-direction: column;
-    padding-bottom: 10px;">
-                          <strong style="font-size:15px;">Estimate waiting time</strong>
-                          <strong style="font-size:15px;">10 - 20 min</strong>
-                        </div>
-                      </v-card>
-                    </v-col>
-                    <v-col :cols="columCardMainMobile()" class="pa-3 mt-1">
-                      <v-card min-height="160px">
-                        <v-container style="height:120px;">
-                          <v-row class="pa-2">
-                            <v-col v-if="GroupQueueItem.three.length > 6" cols="12" class="pa-1" style="display: flex;justify-content: center;">
-                              <strong style="font-size:24px;">{{ GroupQueueItem.three[0].storeFrontQueue + ' ~ ' + GroupQueueItem.three[GroupQueueItem.three.length - 1].storeFrontQueue }}</strong>
-                            </v-col>
-                            <v-col v-else v-for="(item, i) in GroupQueueItem.three" :key="i" cols="4" class="pa-1" style="display: flex;align-items: center;justify-content: center;">
-                              <strong style="font-size:24px;"  >{{ item.storeFrontQueue }}</strong>
-                            </v-col>
-                          </v-row>
-                        </v-container>
-                          <div class="text-center" style="display: flex;
-    flex-direction: column;
-    padding-bottom: 10px;">
-                            <strong style="font-size:15px;">Estimate waiting time</strong>
-                            <strong style="font-size:15px;">20 - 30 min</strong>
-                          </div>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-        <v-col cols="12">
-          <v-row v-if="videoLinkMonition">
-            <v-col cols="12" class="text-center p-0">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-10'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-                <source :src="videoLinkMonition" type="video/webm">
-              </video>
-              <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-row class="pt-5 px-10">
-              <v-col cols="7">
-                <v-menu
-                  ref="menu"
-                  v-model="menuStart"
-                  transition="scale-transition"
-                  offset-y
-                  max-width="290px"
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          hide-details
-                          :background-color="'white'"
-                          v-model="dateStartShow"
-                          readonly
-                          outlined
-                          dense
-                          required
-                          :rules ="[rules.required]"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                        <template #prepend-inner>
-                        <v-icon :color="'black'" style="font-size:20px;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                          mdi-calendar
-                        </v-icon>
-                      </template>
-                    </v-text-field>
-                  </template>
-                  <v-date-picker
-                    @input="menuStart = false, clearTimeLoop(), checkSearch()"
-                    v-model="dateStart"
-                    no-title
-                    scrollable
-                  >
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="5">
-                <v-text-field
-                  outlined
-                  :background-color="'white'"
-                  dense
-                  readonly
-                  v-model="shopTime"
-                >
-                  <template #prepend-inner>
-                    <v-icon :color="'black'" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                      mdi-clock-time-four
-                    </v-icon>
-                  </template>
-                </v-text-field>
-              </v-col>
-            </v-row>
-        <v-row v-show="hideSound === true">
-          <v-col>
-            <audio id="playerPrefix" controls="controls">>
-              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerQueue" controls="controls">>
-              <source :src="audio">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerCounter" controls="controls">>
-              <source :src="tableTarget">
-              Your browser does not support the audio format.
-            </audio>
-          </v-col>
-          <v-col>
-            {{history}}
-          </v-col>
-        </v-row>
-      </v-row>
-    </v-sheet>
-  </div>
-</template>
+                      </v-icon></div>
+            <div class="col-6 py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span></div>
+        </div>
+    </div>
+  </template>
 <script>
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
@@ -667,63 +55,20 @@ import VuetifyMoney from '../VuetifyMoney.vue'
 import pdfMake from 'pdfmake'
 import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
 import moment from 'moment-timezone'
-
+import { CardWaiting, BookingUse } from '../TV'
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
-    VuetifyMoney
+    VuetifyMoney,
+    CardWaiting,
+    BookingUse
   },
   computed: {
     videoElement () {
       return this.$refs.video
     },
-    resCol () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs':
-          return '12'
-        case 'sm':
-          return '12'
-        case 'md':
-          return '6'
-        case 'lg':
-          return '3'
-        case 'xl':
-          return '6'
-      }
-    },
-    colsWidth () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '55'
-        case 'sm': return '55'
-        case 'md': return '55'
-        case 'lg': return '60'
-        case 'xl': return '80'
-      }
-    },
-    colsWidth2 () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return 'xs'
-        case 'sm': return 'sm'
-        case 'md': return 'md'
-        case 'lg': return 'lg'
-        case 'xl': return 'xl'
-      }
-    }
-  },
-  watch: {
-    // orientation (newVal) {
-    //   // ทำสิ่งที่คุณต้องการเมื่อมีการเปลี่ยนแปลงใน orientation
-    //   // this.orientation = newVal
-    //   console.log('เปลี่ยนแปลง orientation เป็น:', newVal)
-    // },
-    // whenever question changes, this function will run
-    colsWidth (newQuestion, oldQuestion) {
-      // console.log('newnewnew', newQuestion, oldQuestion)
-      this.Fontsize = newQuestion
-    },
-    colsWidth2 (newQuestion, oldQuestion) {
-      // console.log('newnewnew', newQuestion, oldQuestion)
-      this.DiSize = newQuestion
+    formattedDateTime () {
+      return this.currentTime // เวลาที่จัดรูปแบบแล้ว
     }
   },
   created () {
@@ -735,7 +80,6 @@ export default {
       statusSound: false,
       dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
-      Fontsize: null,
       DiSize: null,
       setTimerCalendar: null,
       languageSelect: 0,
@@ -773,31 +117,6 @@ export default {
       shopId: this.$session.getAll().data.shopId,
       search: '',
       shopName: '',
-      headers: [
-        { text: 'คิว', value: 'storeFrontQueue' },
-        { text: 'วันที่นัดหมาย', value: 'dueDate' },
-        { text: 'ชื่อลูกค้า', value: 'cusName' },
-        { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
-      ],
-      rules: {
-        numberRules: value =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        counterTel: value => value.length <= 10 || 'Max 10 characters',
-        IDcardRules: value =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        required: value => !!value || 'กรุณากรอก.',
-        resizeImag: value =>
-          !value ||
-          value.size < 2000000 ||
-          'Avatar size should be less than 2 MB!',
-        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(value) || 'Invalid e-mail.'
-        }
-      },
       shopColor: '',
       shopImage: '',
       shopTime: '',
@@ -837,8 +156,9 @@ export default {
         'two': [],
         'three': []
       },
-      isPortrait: null,
       checkRef: false,
+      currentTime: moment().format('DD/MMM/YYYY HH:mm'),
+      isPortrait: true,
       soundQueneNo: [
         { 'queue': 'A001', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A001.wav' },
         { 'queue': 'A002', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A002.wav' },
@@ -1231,18 +551,13 @@ export default {
   async mounted () {
     this.checkOrientation()
 
-    // เพิ่ม event listener เพื่อตรวจสอบการเปลี่ยนแปลงของ orientation
-    window.addEventListener('orientationchange', this.checkOrientation)
-    // eslint-disable-next-line no-tabs
-    // this.generateSound({storeFrontQueue: 'A200', servicePoint: '	  1'})
-    this.isPortrait = window.matchMedia('(orientation: portrait)').matches
+    window.addEventListener('resize', this.checkOrientation)
 
     // if (!this.isPortrait) {
     //   console.log(' หน้าจอเป็นแนวตั้ง')
     // } else {
     //   console.log(' หน้าจอเป็นแนวนอน')
     // }
-    this.Fontsize = this.colsWidth
     await this.getShop()
     await this.getDataBranch()
     await this.getDataFlow()
@@ -1260,22 +575,20 @@ export default {
       // Code to execute if the device is a mobile device
       window.scrollTo(0, 1)
     }
+    this.interval = setInterval(() => {
+      this.currentTime = moment().format('DD/MMM/YYYY HH:mm') // อัพเดตเวลาทุก 1 วินาที
+    }, 1000)
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.checkOrientation)
   },
   beforeDestroy () {
     this.$root.$off('dataReturn')
-    // นำออก event listener เมื่อ component ถูกทำลาย
-    // window.removeEventListener('orientationchange', this.checkOrientation)
+    clearInterval(this.interval)
   },
   methods: {
     checkOrientation () {
-      // ตรวจสอบ orientation และปรับค่าตัวแปร
-      if (window.matchMedia('(orientation: portrait)').matches) {
-        console.log('portrait')
-        this.orientation = 'portrait'
-      } else if (window.matchMedia('(orientation: landscape)').matches) {
-        console.log('landscape')
-        this.orientation = 'landscape'
-      }
+      this.isPortrait = window.innerHeight > window.innerWidth
     },
     replaceFunc (text) {
       let itemText = text.split('')
@@ -1319,10 +632,8 @@ export default {
             this.updateProcessOhrichUpdate()
             await this.searchBooking()
           } else {
-            console.log(change.doc.id)
             let branchId = this.$session.getAll().data.masBranchID || 2185
             if (change.doc.data().active === '1' && change.doc.data().masBranchID === branchId && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
-              console.log(change)
               await this.searchBooking()
               this.updateProcessOhrichUpdate()
             }
@@ -1771,14 +1082,14 @@ export default {
         this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
         // await this.getBookingDataList(this.dateStart)
         let urlApi = this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.shopId +
-            '&masBranchID=' +
-            this.masBranchID +
-            // '&flowId=' +
-            // this.flowSelect +
-            '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+              '/booking_view/get?shopId=' +
+              this.shopId +
+              '&masBranchID=' +
+              this.masBranchID +
+              // '&flowId=' +
+              // this.flowSelect +
+              '&dueDate=' +
+              this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         // '&dueDate=' +
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         await axios
@@ -1813,7 +1124,7 @@ export default {
               // this.countConfirmListGroup = dataWain.map((el, ind) => { return ind <= 11 })
               // this.GroupQueueItem = await this.GroupQueue(this.countConfirmList)
               // console.log('test', this.GroupQueueItem)
-              this.itemBookingUse = [ ...sortDataDataCon, ...dataWain ].filter((el, ind) => { return ind <= 5 })
+              this.itemBookingUse = sortDataDataCon.filter((el, ind) => { return ind <= 5 })
               let test = dataWain.filter((el, ind) => { return el.storeFrontText === 'A' })
               this.GroupQueue(test)
             } else {
@@ -2215,37 +1526,48 @@ export default {
   }
 }
 </script>
-<style scope>
-.centered-input >>> input {
-      text-align: center
+  <style scope>
+  .centered-input >>> input {
+        text-align: center
+      }
+  #margin {
+    margin-top: 50px;
+    margin-bottom: 40px;
+  }
+  .v_text_edit {
+    Width: 255px;
+    Height: 52px;
+    font-size: 10px !important;
+  }
+  #subtext {
+    color: #173053;
+    font-size: 30px !important;
+    font-weight: bold;
+  }
+  .center_screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    width: auto;
+    height: auto;
+    text-align: center;
+    border: solid 1px blue;
+    padding: .5rem;
+  }
+  .text-black >>> .v-input__slot {
+    color: #005fcc !important;
+  }
+
+  .text-datetime, .text-number-waiting{
+    font-weight: 700;
+  }
+  @media screen and (orientation: portrait) {
+    .height-card{
+      min-height: 16vh;
     }
-#margin {
-  margin-top: 50px;
-  margin-bottom: 40px;
 }
-.v_text_edit {
-  Width: 255px;
-  Height: 52px;
-  font-size: 10px !important;
-}
-#subtext {
-  color: #173053;
-  font-size: 30px !important;
-  font-weight: bold;
-}
-.center_screen {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -50px;
-  margin-left: -50px;
-  width: auto;
-  height: auto;
-  text-align: center;
-  border: solid 1px blue;
-  padding: .5rem;
-}
-.text-black >>> .v-input__slot {
-  color: #005fcc !important;
-}
+
+@media screen and (orientation: landscape) {}
 </style>
