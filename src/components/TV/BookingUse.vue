@@ -52,7 +52,7 @@ export default {
   }
   @media screen and (orientation: portrait) {
     .text-service {
-    font-size: 7.5vw;
+    font-size: 7vw;
   }
   .text-sub{
     font-size: 3vw;
