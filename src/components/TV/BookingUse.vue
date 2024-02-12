@@ -52,7 +52,7 @@ export default {
   }
   @media screen and (orientation: portrait) {
     .text-service {
-    font-size: 7vw;
+    font-size: 5vw;
   }
   .text-sub{
     font-size: 3vw;
@@ -60,17 +60,29 @@ export default {
   .text-Header {
     font-size: 4vw;
   }
+  .service{
+    min-height: 5vh;
+  }
+  .none-service{
+    min-height: 5vh;
+  }
 }
 
 @media screen and (orientation: landscape) {
   .text-service {
-    font-size: 4vw;
+    font-size: 3.5vw;
   }
   .text-sub{
     font-size: 1.8vw;
   }
   .text-Header {
     font-size: 3.5vw;
+  }
+  .service{
+    min-height: 10vh;
+  }
+  .none-service{
+    min-height: 10vh;
   }
 
 }
