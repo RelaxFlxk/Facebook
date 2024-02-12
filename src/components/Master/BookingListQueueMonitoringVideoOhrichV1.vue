@@ -1,7 +1,7 @@
 <template>
     <div :style="{ backgroundColor: shopColor, height: '100%', width: '100%' }">
         <div :class="`d-flex ${isPortrait ? 'flex-column':'flex-row'}`">
-            <BookingUse :bookingUse="itemBooking" :isPortrait="isPortrait"/>
+            <BookingUse :bookingUse="itemBookingUse" :isPortrait="isPortrait"/>
             <div v-if="!isPortrait"  class="col-7 d-flex flex-column">
                 <div class="mt-5">
                 <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">

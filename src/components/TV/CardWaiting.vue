@@ -1,9 +1,9 @@
 <template>
         <div class="col-4 div-waiting d-flex flex-column justify-content-between mr-1">
             <div v-if="groupQueueItem && groupQueueItem.length > 6" class="mb-4 d-flex justify-content-center">
-                <span class="text-number-waiting">{{ groupQueueItem[0].storeFrontQueue + ' ~ ' + groupQueueItem[GroupQueueItem.one.length - 1].storeFrontQueue }}</span>
+                <span class="text-number-waiting">{{ groupQueueItem[0].storeFrontQueue + ' ~ ' + groupQueueItem[groupQueueItem.length - 1].storeFrontQueue }}</span>
             </div>
-            <div v-else-if="groupQueueItem.length > 0" :class="`mb-4`">
+            <div v-else-if="groupQueueItem && groupQueueItem.length > 0" :class="`mb-4`">
                 <div  :class="`d-flex flex-wrap justify-content-center`">
                     <div v-for="(item, index) in groupQueueItem" :key="index" class="pa-1 text-number-waiting col-4">
                          {{ item.storeFrontQueue }}
