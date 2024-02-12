@@ -1920,6 +1920,7 @@ export default {
         } else {
           this.formDelete.totalPrice = this.totalPrice
         }
+        this.CloseOnsiteCalendarGridTime(this.formDelete.jobNo)
         await axios
           .post(this.DNS_IP + '/job/editPrice/' + this.formDelete.jobId, this.formDelete)
           .then(async response => {
@@ -1959,6 +1960,7 @@ export default {
           } else {
             this.formDelete.totalPrice = this.totalPrice
           }
+          this.CloseOnsiteCalendarGridTime(this.formDelete.jobNo)
           await axios
             .post(this.DNS_IP + '/job/editPrice/' + this.formDelete.jobId, this.formDelete)
             .then(async response => {
@@ -1971,6 +1973,20 @@ export default {
             })
         })
       }
+    },
+    async CloseOnsiteCalendarGridTime (jobNo) {
+      let obj = {
+        'userId': this.session.data.userName,
+        'jobNo': jobNo
+      }
+      await axios
+        .post(this.DNS_IP + '/CalendarGridTime/CloseEmp', obj)
+        .then(async response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
     },
     async pushmessagePrice (jobNo) {
       let updateStatusSend = { updateStatusSend: 'false', checkPayment: this.checkPayment }

@@ -731,6 +731,18 @@ export default {
     if (this.$session.getAll().data.shopActive === 'inactive') {
       this.$router.push('/Core/Login')
     } else {
+      this.checkImageUrl(this.session.data.shopImge)
+        .then(async (status) => {
+          console.log('status', status)
+          if (status === false) {
+            this.checkAndUpdateImg()
+          }
+        })
+        .catch((error) => {
+          console.log('status error', error)
+          this.checkAndUpdateImg()
+        })
+
       if (this.$session.getAll().data.shopId.includes('SD_')) {
         await this.chkConnectLineOa()
       } else {
@@ -744,6 +756,7 @@ export default {
       // } else {
       //   this.paymentStatus = 'fix'
       // }
+
       let trialsVersionDate = this.$session.getAll().data.trialsVersionDate || ''
       let billingEndDate = this.$session.getAll().data.billingEndDate || ''
       if (trialsVersionDate === '' || moment().format('YYYY-MM-DD HH:mm') > trialsVersionDate) {
@@ -792,6 +805,46 @@ export default {
     }
   },
   methods: {
+    checkImageUrl (url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image()
+        img.onload = () => resolve(true) // รูปภาพโหลดสำเร็จ
+        // eslint-disable-next-line prefer-promise-reject-errors
+        img.onerror = () => reject(false) // ไม่สามารถโหลดรูปภาพ
+
+        img.src = url // ตั้งค่า URL ของรูปภาพ
+      })
+    },
+    async checkAndUpdateImg () {
+      const url = `${this.DNS_IP}/line/getOa`
+      const config = {
+        headers: {
+          'botId': this.session.data.shopId
+        }
+      }
+      await axios.get(url, config).then((response) => {
+        let rs = response.data
+        if (rs.pictureUrl !== undefined) {
+          const item = {
+            shopImge: rs.pictureUrl
+          }
+          axios
+            .post(this.DNS_IP + '/sys_shop/edit/' + this.session.data.shopId, item)
+            .then(async response => {
+              console.log('/sys_shop/edit/', response)
+              let session = JSON.parse(localStorage.getItem('sessionData'))
+              session.shopImge = rs.pictureUrl
+              this.$session.start()
+              this.$session.set('data', session)
+              localStorage.clear()
+              localStorage.setItem('sessionData', JSON.stringify(session))
+            })
+            .catch((err) => { console.log('error', err) })
+        }
+      }).catch((error) => {
+        console.log('error', error)
+      })
+    },
     gotoBilling () {
       // this.$router.push('/BillingPlan')
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {

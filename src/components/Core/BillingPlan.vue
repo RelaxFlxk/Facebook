@@ -4,7 +4,7 @@
       <!-- <v-app-bar-nav-icon dark @click.stop="drawer = !drawer" /> -->
         <!-- <v-toolbar-title v-text="title" /> -->
       <v-spacer></v-spacer>
-      <v-avatar class="mr-3">
+      <v-avatar class="mr-3" @click="dialogLogOut = true">
         <v-img :src="shopImge"></v-img>
       </v-avatar>
       <v-toolbar-title>{{ shopName }}</v-toolbar-title>
@@ -869,6 +869,26 @@
         </div>
       </div>
     </v-main>
+    <v-dialog
+      v-model="dialogLogOut"
+    >
+      <v-card>
+        <v-card-title>
+          ออกจากระบบ
+        </v-card-title>
+        <v-card-text>ต้องการ ออกจากระบบ ใช่หรือไม่?</v-card-text>
+        <v-card-actions>
+          <v-btn
+            text
+            tile
+            dark
+            class="nav-button-dark"
+            @click.prevent="logout()">
+            <v-icon color="white">mdi-logout</v-icon>&nbsp;&nbsp;ออกจากระบบ
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -921,6 +941,7 @@ export default {
   },
   data () {
     return {
+      dialogLogOut: false,
       validAdddialogQrcode: true,
       validAdddialogReConfirm: true,
       loadingBillingPlan: false,
@@ -1089,6 +1110,12 @@ export default {
     }
   },
   methods: {
+    logout () {
+      this.$session.destroy()
+      this.$session.clear()
+      localStorage.clear()
+      this.$router.push('/Core/Login')
+    },
     gotoLink (Link) {
       window.open(Link, '_blank')
     },

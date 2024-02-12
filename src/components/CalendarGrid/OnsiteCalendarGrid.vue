@@ -42,7 +42,7 @@
           <v-spacer></v-spacer>
         </v-toolbar>
       </v-sheet>
-      <v-sheet height="600">
+      <v-sheet height="600" v-if="focus">
         <v-calendar
           ref="calendar"
           v-model="focus"
@@ -58,13 +58,14 @@
           <!-- นำรูปภาพมาแสดง -->
           <!-- <img v-if="category.image" :src="category.image" alt="Category Image" /> -->
           <div class="categoriesProfile">
-            <!-- <v-avatar>
+            <!-- {{ categoriesItem.filter((item) => item.text === category)[0].empImge }} -->
+            <v-avatar v-if="categoriesItem.filter((item) => item.text === category)[0].empImge">
             <img
-              src="https://cdn.vuetifyjs.com/images/john.jpg"
+              :src="categoriesItem.filter((item) => item.text === category)[0].empImge"
               :alt="category.name"
             >
-            </v-avatar> -->
-            <v-avatar color="indigo">
+            </v-avatar>
+            <v-avatar v-else color="indigo">
               <v-icon dark>
                 mdi-account-circle
               </v-icon>
@@ -90,7 +91,7 @@ export default {
     return {
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
-      focus: '',
+      focus: null,
       events: [],
       colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
       names: ['ซ่อมทั่วไป', 'ตัดผม', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
@@ -103,10 +104,12 @@ export default {
     }
   },
   async mounted () {
+    // console.log('this.DNS_IP ', this.DNS_IP)
     await this.getEmpOnsite()
     await this.getFlow()
-    await this.getEventEmp()
-    await this.setEvent()
+    this.focus = moment().format('YYYY-MM-DD')
+    // await this.getEventEmp()
+    // await this.setEvent()
     // await this.$refs.calendar.checkChange()
   },
   methods: {
@@ -114,7 +117,7 @@ export default {
       return event.color
     },
     setToday () {
-      this.focus = ''
+      this.focus = moment().format('YYYY-MM-DD')
     },
     prev () {
       this.$refs.calendar.prev()
@@ -199,14 +202,13 @@ export default {
               let d = rs[i]
               if (d.USER_ROLE === 'onsite') {
                 // console.log('empId', d.empId)
-                let s = {}
-                s.value = d.empId
-                s.text = d.empFirst_NameTH
-                this.categoriesItem.push(s)
+                d.value = d.empId
+                d.text = d.empFirst_NameTH
+                this.categoriesItem.push(d)
                 this.categories.push(d.empFirst_NameTH)
               }
             }
-            // console.log('this.$refs.calendar', this.$refs.calendar)
+            console.log('this.categoriesItem', this.categoriesItem)
             // await this.$refs.calendar.checkChange()
           } else {
           // กรณีไม่มีข้อมูล
@@ -220,8 +222,10 @@ export default {
       console.log('this.categories', this.categories)
     },
     async getEventEmp () {
+      this.eventsItem = []
+      console.log('getEventEmp', this.DNS_IP)
       await axios
-        .get(this.DNS_IP + `/CalendarGridTime/get?shopId=${this.shopId}`)
+        .get(this.DNS_IP + `/CalendarGridTime/get?shopId=${this.shopId}&start=${this.focus}`)
         .then(async (response) => {
           let rs = response.data
           if (rs.length > 0) {
@@ -229,46 +233,51 @@ export default {
               let d = rs[i]
               this.eventsItem.push(d)
             }
-            // console.log('this.eventsItm', this.eventsItem)
+            console.log('this.eventsItm', this.eventsItem)
             // console.log('this.$refs.calendar', this.$refs.calendar)
             // await this.$refs.calendar.checkChange()
           } else {
-          // กรณีไม่มีข้อมูล
+            // กรณีไม่มีข้อมูล
             console.warn('No data returned from the server.')
           }
         })
         .catch(error => {
-        // ดัก error และทำอะไรกับ error นั้น
+          // ดัก error และทำอะไรกับ error นั้น
           console.error('Error fetching data:', error)
         })
       // console.log('this.categories', this.categories)
     },
     async setEvent () {
-      console.log('----', this.eventsItem)
-      const events = []
-      for (let i = 0; i < this.eventsItem.length; i++) {
-        let element = this.eventsItem[i]
-        // console.log('DATE', element.start)
-        // console.log('DATEMONENT', moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
-        // console.log('newDATE', new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss')))
-        // console.log('------', startDate, startTime)
-        let start = new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
-        let end = new Date(moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
-        let findIndex = this.flowName.findIndex((item) => item.value === element.flowId)
-        let flowName = this.flowName.filter((item) => item.value === element.flowId)[0].text
-        // console.log('moment', moment())
-        // console.log('start', start, ' - ', end)
-        events.push({
-          name: flowName,
-          start: start,
-          end: end,
-          color: this.colors[findIndex],
-          timed: true,
-          category: this.categoriesItem.filter((item) => item.value === element.empId)[0].text
-        })
+      try {
+        await this.getEventEmp()
+        console.log('----', this.eventsItem)
+        const events = []
+        for (let i = 0; i < this.eventsItem.length; i++) {
+          let element = this.eventsItem[i]
+          // console.log('DATE', element.start)
+          // console.log('DATEMONENT', moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
+          // console.log('newDATE', new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss')))
+          // console.log('------', startDate, startTime)
+          let start = new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
+          let end = new Date(moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
+          let findIndex = this.flowName.findIndex((item) => item.value === element.flowId)
+          let flowName = this.flowName.filter((item) => item.value === element.flowId)[0].text
+          // console.log('moment', moment())
+          // console.log('start', start, ' - ', end)
+          events.push({
+            name: flowName,
+            start: start,
+            end: end,
+            color: this.colors[findIndex],
+            timed: true,
+            category: this.categoriesItem.filter((item) => item.value === element.empId)[0].text
+          })
+        }
+        console.log('events', events)
+        this.events = events
+      } catch (error) {
+        console.log(error)
       }
-      console.log('events', events)
-      this.events = events
     }
   }
 }
