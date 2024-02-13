@@ -637,9 +637,9 @@
           </v-dialog>
           <!-- end delete -->
           <!-- dialog limitbookint -->
-          <v-dialog v-model="dialoglimitbooking"  persistent>
+          <v-dialog v-model="dialoglimitbooking"  persistent min-width="400">
             <v-card
-            min-height="500px" class="pa-1 "
+              min-height="500px" class="pa-1 "
               color="#F4F4F4"
             >
               <!-- <v-card-title>asdasdasdas</v-card-title> -->
@@ -671,7 +671,7 @@
                     v-model="valid_update"
                     lazy-validation
                   >
-                  <v-row style="justify-content: space-between;">
+                  <v-row style="display: flex;justify-content: center;">
                   <v-col style="min-width: 270px;max-width: 400px;">
                         <v-row>
                           <v-col cols="12">
@@ -726,8 +726,8 @@
                           </v-col>
                         </v-row>
                       </v-col>
-                      <v-divider class="mx-4" vertical></v-divider>
-                      <v-col style="min-width: 300px;">
+                      <v-divider class="mx-4" vertical v-if="formUpdateLimitbooking.USER_ROLE !== 'onsite'"></v-divider>
+                      <v-col style="min-width: 300px;" v-if="formUpdateLimitbooking.USER_ROLE !== 'onsite'">
                       <v-card class="pa-3 mb-5" min-height="675px">
                           <h4 class="font-weight-bold mt-2">
                             จัดการเวลานัดหมาย
@@ -1194,7 +1194,7 @@
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
-                      v-if="item.privacyPage === 'bookingform'"
+                      v-if="item.privacyPage === 'bookingform' || item.USER_ROLE === 'onsite'"
                       color="purple"
                       fab
                       small
@@ -1973,6 +1973,7 @@ export default {
                 rs[0].dateDayCustom
               )
             }
+            this.formUpdateLimitbooking.USER_ROLE = rs[0].USER_ROLE
             this.formUpdateLimitbooking.typeDayCustom = rs[0].typeDayCustom
             this.formUpdateLimitbooking.dateDayoffValue = rs[0].dateDayoffValue
             this.formUpdateLimitbooking.setTimebyday = rs[0].setTimebyday
