@@ -644,19 +644,18 @@ export default {
       }
     },
     async getFirestore () {
-      console.log('checkRef1')
+      if (this.checkRef === false) {
+        console.log('checkRef0')
+        this.checkRef = true
+        await this.searchBooking()
+        this.updateProcessOhrichUpdate()
+      }
       this.firestore = this.$firebase.firestore()
       this.firestore.collection('ProcessOhrichUpdate').limit(1000).onSnapshot((snapshot) => {
         // console.log(snapshot)
         snapshot.docChanges().forEach(async (change) => {
           let branchId = this.$session.getAll().data.masBranchID || 2185
           let userName = this.$session.getAll().data.userName
-          if (this.checkRef === false) {
-            console.log('checkRef1')
-            this.checkRef = true
-            await this.searchBooking()
-            this.updateProcessOhrichUpdate()
-          }
           if (change.doc.data().masBranchID === branchId && change.doc.id === userName) {
             console.log('active', change.doc.data().active)
             if (this.checkRef === false) {
