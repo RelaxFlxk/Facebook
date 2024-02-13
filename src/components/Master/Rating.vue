@@ -120,6 +120,7 @@
           @input="onStartDateInput"
           :max="endDate"
           outlined
+          @change="getRating()"
         ></v-date-picker>
       </v-menu>
     </v-col>
@@ -147,6 +148,7 @@
           :min="startDate"
           @input="onEndDateInput"
           outlined
+          @change="getRating()"
         ></v-date-picker>
       </v-menu>
     </v-col>
@@ -512,6 +514,12 @@
           </v-card>
         </v-dialog>
       </div>
+      <v-overlay :value="overlay">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
     </v-main>
   </div>
 </template>
@@ -597,7 +605,10 @@ export default {
       menu2: false,
       startDate: '',
       endDate: '',
-      response: ''
+      response: [],
+      dateNow: new Date(),
+      ArrayData: [],
+      overlay: false
     }
   },
   async created () {
@@ -681,14 +692,19 @@ export default {
       this.Ratingitem = []
       const payload = {
         shopId: this.shopId,
-        masBranchID: this.masBranchID
+        masBranchID: this.masBranchID,
+        create_date_start: this.startDate,
+        create_date_end: this.endDate
       }
       await axios
         .get(this.DNS_IP + '/rating/get', { params: payload })
         .then(async response => {
-          this.rs = response.data
-          this.response = response
-          await this.filterByDateRange()
+          if (response.data.status !== false) {
+            console.log('getRating', response.data)
+            this.rs = response.data
+            this.response = response
+            this.filterByDateRange()
+          }
         })
         .catch(error => {
           console.log('error function addData : ', error)
@@ -716,6 +732,8 @@ export default {
                   callBackStatus: d.callBackStatus,
                   staffCallBack: d.staffCallBack,
                   staffCallBackRemark: d.staffCallBackRemark,
+                  flowName: d.flowName,
+                  bookingDataCustomerTel: d.bookingDataCustomerTel,
                   CREATE_DATE: this.format_dateNotime(d.CREATE_DATE)
                 }
               }
@@ -725,7 +743,7 @@ export default {
           }
           return acc
         }, {})
-
+        console.log('tempGroup', tempGroup)
         for (let refId in tempGroup) {
           if (refId.refId === response.data.refId) {
             let averageRating =
@@ -803,6 +821,7 @@ export default {
         } else {
           this.booking = response.data[0]
           console.log('masBranchNames', this.booking)
+          // await this.ArrayData.push(this.booking + ',')
         }
       })
     },
@@ -810,6 +829,7 @@ export default {
       // console.log('getBookingDataCallBack', item)
       this.booking = []
       this.bookingData = []
+      console.log('this.rs', this.rs)
       this.dataRating = this.rs.filter(data => data.refId === item.refId)
       this.dataRating.map(data => {
         data.rating = parseInt(data.rating)
@@ -865,6 +885,7 @@ export default {
           currentDate >= startDateWithTime && currentDate <= endDateWithTime
         )
       })
+      console.log('this.filterdate', this.filterdate)
       this.filterItem(this.filterdate, this.response)
     },
     updateStatusCallBack () {
@@ -974,62 +995,72 @@ export default {
       this.$refs.endDatePicker.minDate = this.startDate
     },
     async exportExcel () {
-      const dataanswer = []
+      this.overlay = true
+      const dataAnswerId = []
       const dataUser = []
-
       for (let i = 0; i < this.rs.length; i++) {
-        // console.log('this.rs.answer', this.rs[i].answer)
-
-        // Add comma before the item except for the first one
-        if (i === 0) {
-          dataanswer.push(' "' + this.rs[i].answer + '"')
-        } else {
-          dataanswer.push(', "' + this.rs[i].answer + '"')
+        let d = this.rs[i]
+        let v = {}
+        d.answerId = d.answerId || 'old'
+        v.answerId = d.answerId
+        v.answer = d.answer || 'ประเมินแบบเก่า'
+        if (dataAnswerId.filter(el => { return el.answerId === d.answerId }).length === 0) {
+          dataAnswerId.push(v)
         }
 
         // console.log('dataanswer', dataanswer)
       }
-      let dataA = dataanswer.join('')
-      let dataB = dataA.replace(/"/g, '')
-      let dataBArray = dataB.split(',')
-
-      for (let i = 0; i < this.Ratingitem.length; i++) {
-        // console.log('this.Ratingitem.rating', this.Ratingitem[i])
-        let item = this.Ratingitem[i]
-        await this.getbranceName(item.refId)
-        // console.log('this.booking.flowName', this.booking.flowName)
-        let rowData = [
-          '"' + item.displayName + '"',
-          '"' + item.CREATE_DATE + '"',
-          '"' + item.comment + '"',
-          '"' + item.rating + '"',
-          '"' + this.booking.bookingDataCustomerTel + '"',
-          '"' + this.booking.masBranchName + '"',
-          '"' + this.booking.flowName + '"'
-        ]
-        dataUser.push(rowData.join(','))
-        for (let i = 0; i < this.filterdate.length; i++) {
-          let item = this.filterdate[i]
-          if (i === 0) {
-            dataUser.push(',"' + item.rating + '"')
-          } else {
-            dataUser.push(', "' + item.rating + '"')
-          }
-          // console.log('dataUser2', rating)
-        }
-      }
-      let dataUserA = dataUser.join('')
-      let dataUserBArray = dataUserA.replace(/"/g, '').split(',')
-
-      // for (let i = 0; i < ratingBArray.length; i++) {
-      //   ratingBArray[i] = ratingBArray[i].replace(/"/g, '')
-      // }
-
+      // let dataA = dataanswer.join('')
+      // let dataB = dataA.replace(/"/g, '')
+      // let dataBArray = dataB.split(',')
+      // console.log('dataBArray', dataBArray)
+      let answerHeaders = dataAnswerId.map(el => el.answer)
       const data = [
         ['รายงาน ' + 'ความพึงพอใจ ' + 'วันที่ ' + this.startDate + ' ถึง ' + this.endDate],
-        ['ชื่อลูกค้า', 'วันที่นัดหมาย', 'คำชี้แนะ', 'คะแนนโดยรวม', 'เบอร์ติดต่อ', 'สาขา', 'ประเภทบริการ', ...dataBArray],
-        dataUserBArray
+        ['ชื่อลูกค้า', 'วันที่ทำแบบสอบถาม', 'คำชี้แนะ', 'คะแนนโดยรวม', 'เบอร์ติดต่อ', 'ประเภทบริการ', ...answerHeaders]
       ]
+      for (let i = 0; i < this.Ratingitem.length; i++) {
+        dataUser[i] = []
+        let item = this.Ratingitem[i]
+        item.answerId = item.answerId || 'old'
+        console.log('Ratingitem', item)
+        // await this.getbranceName(item.refId)
+        let rowData = [
+          '"' + item.displayName ? item.displayName : '-' + '"',
+          '"' + item.CREATE_DATE ? item.CREATE_DATE : '-' + '"',
+          '"' + item.comment ? item.comment : '-' + '"',
+          '"' + item.rating ? item.rating.toFixed(1) : '-' + '"',
+          '"' + item.bookingDataCustomerTel ? item.bookingDataCustomerTel : '-' + '"',
+          '"' + item.flowName ? item.flowName : '-' + '"'
+        ]
+        dataUser[i].push(rowData.join(','))
+        let checkAnswer = this.filterdate.filter(el => { return el.refId === item.refId })
+        if (checkAnswer.length > 0) {
+          for (let n = 0; n < checkAnswer.length; n++) {
+            let item2 = checkAnswer[n]
+            item2.answerId = item2.answerId || 'old'
+            for (let x = 0; x < dataAnswerId.length; x++) {
+              let dataAnswer = dataAnswerId[x]
+              if (item2.answerId === 'old') {
+                if (dataAnswer.answerId !== 'old') {
+                  dataUser[i].push(', ')
+                } else {
+                  dataUser[i].push(', "' + item2.rating + '"')
+                }
+              } else {
+                if (item2.answerId === dataAnswer.answerId) {
+                  dataUser[i].push(', "' + item2.rating + '"')
+                }
+              }
+            }
+            // }
+          }
+        }
+        let dataUserA = dataUser[i].join('')
+        let dataUserBArray = dataUserA.replace(/"/g, '').split(',')
+        // console.log('dataUserBArray', dataUserBArray)
+        data.push(dataUserBArray)
+      }
 
       // console.log('data', data)
 
@@ -1044,9 +1075,20 @@ export default {
         alignment: { horizontal: 'center' } // Center align the text
       }
 
+      let NameBranch = this.branch.filter(data => data.value === this.masBranchID)
+      const today = new Date()
+      const year = today.getFullYear()
+      const month = (today.getMonth() + 1).toString().padStart(2, '0') // +1 เพราะเดือนเริ่มที่ 0
+      const day = today.getDate().toString().padStart(2, '0')
+      const hours = today.getHours().toString().padStart(2, '0')
+      const minutes = today.getMinutes().toString().padStart(2, '0')
+      const seconds = today.getSeconds().toString().padStart(2, '0')
+
+      const formattedDate = `${year}-${month}-${day} เวลา ${hours}-${minutes}-${seconds}`
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
-      XLSX.writeFile(wb, 'exported_data.xlsx')
+      XLSX.writeFile(wb, 'สาขา' + NameBranch[0].text + ' ' + formattedDate + '.xlsx')
+      this.overlay = false
     }
   }
 }
