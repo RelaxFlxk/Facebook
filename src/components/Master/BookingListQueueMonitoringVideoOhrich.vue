@@ -915,7 +915,7 @@ export default {
           }
           await axios
             .post(
-              'https://api-voice.botnoi.ai/api/service/generate_audio',
+              'https://api-voice.botnoi.ai/openapi/v1/generate_audio',
               params,
               { headers: { 'Botnoi-Token': 'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0' } }
             ).then((res) => {
