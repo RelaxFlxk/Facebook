@@ -569,7 +569,27 @@ export default {
         { 'queue': 'B026', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B026.wav' },
         { 'queue': 'B027', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B027.wav' },
         { 'queue': 'B028', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B028.wav' },
-        { 'queue': 'B029', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B029.wav' }
+        { 'queue': 'B029', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B029.wav' },
+        { 'queue': 'C001', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C001.wav' },
+        { 'queue': 'C002', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C002.wav' },
+        { 'queue': 'C003', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C003.wav' },
+        { 'queue': 'C004', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C004.wav' },
+        { 'queue': 'C005', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C005.wav' },
+        { 'queue': 'C006', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C006.wav' },
+        { 'queue': 'C007', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C007.wav' },
+        { 'queue': 'C008', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C008.wav' },
+        { 'queue': 'C009', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C009.wav' },
+        { 'queue': 'C010', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C010.wav' },
+        { 'queue': 'C011', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C011.wav' },
+        { 'queue': 'C012', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C012.wav' },
+        { 'queue': 'C013', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C013.wav' },
+        { 'queue': 'C014', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C014.wav' },
+        { 'queue': 'C015', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C015.wav' },
+        { 'queue': 'C016', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C016.wav' },
+        { 'queue': 'C017', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C017.wav' },
+        { 'queue': 'C018', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C018.wav' },
+        { 'queue': 'C019', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C019.wav' },
+        { 'queue': 'C020', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C020.wav' }
       ],
       dataListPlay: []
     }
@@ -866,6 +886,7 @@ export default {
         console.log('[generateSound] storeFrontQueue 2', storeFrontQueue)
         let result
         let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
+        item.audioFile = null
         if (oldSound.length > 0) {
           item.audioFile = oldSound[0].audioFile
           console.log('[generateSound] item.audioFile', item.audioFile)
@@ -881,8 +902,9 @@ export default {
               }
             })
         }
+        console.log('[generateSound] item.audioFile', item.audioFile)
         // let text = this.convertItemtoText(item)
-        if (!item.audioFile) {
+        if (item.audioFile === null) {
           var params = {
             text: ' ' + storeFrontQueue,
             text_delay: ' ' + storeFrontQueue,
