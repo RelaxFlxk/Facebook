@@ -854,9 +854,11 @@ export default {
     },
     async GroupArrayQueue (dataArray) {
       // ใช้ Map เพื่อจัดกลุ่มตาม flowId
+      console.log('!!!!!!', dataArray)
       let dataConfirm = []
       let data = []
       let dataB = []
+      let dataC = []
       for (let i = 0; i < dataArray.length; i++) {
         let d = dataArray[i]
         if (d.statusBt === 'confirmJob') {
@@ -864,6 +866,8 @@ export default {
         } else {
           if (d.storeFrontText === 'B') {
             dataB.push(d)
+          } else if (d.storeFrontText === 'C') {
+            dataC.push(d)
           } else {
             data.push(d)
           }
@@ -872,7 +876,8 @@ export default {
       // console.log('dataConfirm', dataConfirm)
       // console.log('data', data)
       // console.log('dataB', dataB)
-      let mergedData = [...dataB, ...data.slice(0)]
+      // let mergedData = [...dataB, ...data.slice(0)]
+      let mergedData = [...dataC, ...dataB, ...data.slice(0)]
       dataConfirm.push(...mergedData)
 
       console.log(dataConfirm)
