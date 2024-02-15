@@ -610,7 +610,6 @@ export default {
     //   // your code goes here
     //   this.closeSetTimeBookingMonitor()
     // })
-    this.dateStart = moment().format('YYYY-MM-DD')
     // this.clearTimeLoop()
     // this.checkSearch()
     this.getFirestore()
@@ -677,7 +676,6 @@ export default {
           let branchId = this.$session.getAll().data.masBranchID || 2185
           let userName = this.$session.getAll().data.userName
           if (change.doc.data().masBranchID === branchId && change.doc.id === userName) {
-            this.dateStart = moment().format('YYYY-MM-DD')
             console.log('active', change.doc.data().active)
             if (this.checkRef === false) {
               console.log('checkRef1')
@@ -1082,7 +1080,6 @@ export default {
     },
     async searchBooking () {
       if (this.validSearch === true) {
-        this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
         let urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.shopId +
@@ -1091,7 +1088,7 @@ export default {
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+            moment().format('YYYY-MM-DD') + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         // '&dueDate=' +
         await axios
           .get(urlApi)
