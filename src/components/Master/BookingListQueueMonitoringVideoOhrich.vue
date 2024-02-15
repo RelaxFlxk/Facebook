@@ -677,6 +677,7 @@ export default {
           let branchId = this.$session.getAll().data.masBranchID || 2185
           let userName = this.$session.getAll().data.userName
           if (change.doc.data().masBranchID === branchId && change.doc.id === userName) {
+            this.dateStart = moment().format('YYYY-MM-DD')
             console.log('active', change.doc.data().active)
             if (this.checkRef === false) {
               console.log('checkRef1')
@@ -1081,9 +1082,7 @@ export default {
     },
     async searchBooking () {
       if (this.validSearch === true) {
-        // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
         this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
-        // await this.getBookingDataList(this.dateStart)
         let urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.shopId +
@@ -1094,7 +1093,6 @@ export default {
             '&dueDate=' +
             this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         // '&dueDate=' +
-        // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         await axios
           .get(urlApi)
           .then(async response => {
