@@ -877,7 +877,7 @@ export default {
       // console.log('data', data)
       // console.log('dataB', dataB)
       // let mergedData = [...dataB, ...data.slice(0)]
-      let mergedData = [...dataC, ...dataB, ...data.slice(0)]
+      let mergedData = [...dataB, ...dataC, ...data.slice(0)]
       dataConfirm.push(...mergedData)
 
       console.log(dataConfirm)
