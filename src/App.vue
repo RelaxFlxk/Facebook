@@ -382,9 +382,9 @@ table tr:last-child td:last-child {
   font-size: 17px !important;
 }
 .theme--light.v-calendar-weekly .v-calendar-weekly__day {
-    border-right: 2px solid #555 !important;
+    /* border-right: 2px solid #555 !important;
     border-bottom: 2px solid #555 !important;
-    color: #000 !important;
+    color: #000 !important; */
 }
 .v-label{
   margin-bottom: 0;
