@@ -280,7 +280,7 @@
                   color="#F38383"
                   rounded
                   min-width="88px"
-                  :disabled="itemBooking[0].statusBt === 'confirmJob' ? false:true"
+                  :disabled="itemBooking[0].statusBt === 'confirmJob' && dataReady === false ? false:true"
                   @click="backHomeSubmit(itemBooking[0])"
                 >
                   <strong class="text-white">ปิดงาน</strong>
@@ -576,7 +576,8 @@ export default {
       setTimerCalendar: null,
       checkRef: false,
       checkStatusEdit: false,
-      datawainingShow: []
+      datawainingShow: [],
+      dataReady: false
       // datawainingShowtest: [
       //   'A001', 'A002', 'A003', 'A004', 'A005', 'A006', 'A001', 'A002', 'A003', 'A004', 'A005', 'A006'
       // ]
@@ -853,9 +854,11 @@ export default {
     },
     async GroupArrayQueue (dataArray) {
       // ใช้ Map เพื่อจัดกลุ่มตาม flowId
+      console.log('!!!!!!', dataArray)
       let dataConfirm = []
       let data = []
       let dataB = []
+      let dataC = []
       for (let i = 0; i < dataArray.length; i++) {
         let d = dataArray[i]
         if (d.statusBt === 'confirmJob') {
@@ -863,6 +866,8 @@ export default {
         } else {
           if (d.storeFrontText === 'B') {
             dataB.push(d)
+          } else if (d.storeFrontText === 'C') {
+            dataC.push(d)
           } else {
             data.push(d)
           }
@@ -871,7 +876,8 @@ export default {
       // console.log('dataConfirm', dataConfirm)
       // console.log('data', data)
       // console.log('dataB', dataB)
-      let mergedData = [...dataB, ...data.slice(0)]
+      // let mergedData = [...dataB, ...data.slice(0)]
+      let mergedData = [...dataB, ...dataC, ...data.slice(0)]
       dataConfirm.push(...mergedData)
 
       console.log(dataConfirm)
@@ -1259,6 +1265,7 @@ export default {
     },
     async backHomeSubmit (item) {
       console.log('backHomeSubmit', item)
+      this.dataReady = true
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       this.checkStatusEdit = true
       if (statusBooking === 'confirmJob') {
@@ -1277,12 +1284,17 @@ export default {
             // this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
             await this.resetFirebaseUse()
             await this.searchBooking('unNoti')
+            this.dataReady = false
             // this.clearTimeLoop()
+          }).catch(error => {
+            this.dataReady = false
+            console.log('catch getBookingDataList : ', error)
           })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.resetFirebaseUse()
         await this.searchBooking('unNoti')
+        this.dataReady = false
         // this.clearTimeLoop()
       }
     },

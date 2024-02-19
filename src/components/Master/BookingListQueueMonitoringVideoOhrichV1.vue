@@ -1,84 +1,85 @@
 <template>
-  <div :style="{ backgroundColor: shopColor, height: '100%', width: '100%' }">
-      <div :class="`d-flex ${isPortrait ? 'flex-column':'flex-row'}`">
-          <BookingUse :bookingUse="itemBookingUse" :isPortrait="isPortrait"/>
-          <div v-if="!isPortrait"  class="col-7 d-flex flex-column">
-              <div class="mt-5">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-              <source :src="videoLinkMonition" type="video/webm">
-            </video>
-               <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <div :style="{ backgroundColor: shopColor, height: '100%', width: '100%' }">
+        <div :class="`d-flex ${isPortrait ? 'flex-column':'flex-row'}`">
+            <BookingUse :bookingUse="itemBookingUse" :isPortrait="isPortrait"/>
+            <div v-if="!isPortrait"  class="col-7 d-flex flex-column">
+                <div class="mt-5">
+                <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+                <source :src="videoLinkMonition" type="video/webm">
+              </video>
+                 <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="d-flex flex-row justify-content-between mx-4 mt-5 h-100">
+                <CardWaiting :groupQueueItem="GroupQueueItem.one" time="10"/>
+                <CardWaiting :groupQueueItem="GroupQueueItem.two" time="10 - 20"/>
+                <CardWaiting :groupQueueItem="GroupQueueItem.three" time="20 - 30"/>
               </div>
-              <div class="d-flex flex-row justify-content-between mx-4 mt-5 h-100">
-              <CardWaiting :groupQueueItem="GroupQueueItem.one" time="10"/>
-              <CardWaiting :groupQueueItem="GroupQueueItem.two" time="10 - 20"/>
-              <CardWaiting :groupQueueItem="GroupQueueItem.three" time="20 - 30"/>
             </div>
-          </div>
-      </div>
-     <div v-if="isPortrait" class="col-12 d-flex flex-row justify-content-between height-card">
-          <CardWaiting :groupQueueItem="GroupQueueItem.one" time="10"/>
-          <CardWaiting :groupQueueItem="GroupQueueItem.two" time="10 - 20"/>
-          <CardWaiting :groupQueueItem="GroupQueueItem.three" time="20 - 30"/>
-     </div>
-      <div v-if="isPortrait" class="d-flex flex-row justify-content-between">
-          <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-              <source :src="videoLinkMonition" type="video/webm">
-           </video>
-          <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-     </div>
-      <div :class="`d-flex flex-row justify-content-between mx-3 ${isPortrait ? '' : 'mt-3'}`">
-          <div class="col-6 py-0">
-            <v-icon class="mr-3" large>
-             {{ wifiIcon }}
-             </v-icon>
-             <v-btn icon
-                      large
-                      color="#695988"
-                      @click="changeStatusSound('off')"
-                      v-if="statusSound === true"
-                    >
-                    <v-icon>mdi-volume-high</v-icon>
-                    </v-btn>
-                    <v-btn icon
-                      large
-                      color="#695988"
-                      @click="changeStatusSound('on')"
-                      v-else
-                    >
-                    <v-icon>mdi-volume-off</v-icon>
-                    </v-btn>
-                  </div>
-          <div class="col-6 py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span></div>
-      </div>
-      <v-row v-show="hideSound === true">
-        <v-col>
-          <audio id="playerPrefix" controls="controls">>
-            <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
-            Your browser does not support the audio format.
-          </audio>
-          <audio id="playerQueue" controls="controls">>
-            <source :src="audio">
-            Your browser does not support the audio format.
-          </audio>
-          <audio id="playerCounter" controls="controls">>
-            <source :src="tableTarget">
-            Your browser does not support the audio format.
-          </audio>
-        </v-col>
-        <v-col>
-          {{history}}
-        </v-col>
-      </v-row>
-  </div>
-</template>
+        </div>
+       <div v-if="isPortrait" class="col-12 d-flex flex-row justify-content-between height-card">
+            <CardWaiting :groupQueueItem="GroupQueueItem.one" time="10"/>
+            <CardWaiting :groupQueueItem="GroupQueueItem.two" time="10 - 20"/>
+            <CardWaiting :groupQueueItem="GroupQueueItem.three" time="20 - 30"/>
+       </div>
+        <div v-if="isPortrait" class="d-flex flex-row justify-content-between">
+            <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+                <source :src="videoLinkMonition" type="video/webm">
+             </video>
+            <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+       </div>
+        <div :class="`d-flex flex-row justify-content-between mx-3 ${isPortrait ? '' : 'mt-3'}`">
+            <div class="col-6 py-0">
+              <v-icon class="mr-3" large>
+               {{ wifiIcon }}
+               </v-icon>
+               <v-btn icon
+                        large
+                        color="#695988"
+                        @click="changeStatusSound('off')"
+                        v-if="statusSound === true"
+                      >
+                      <v-icon>mdi-volume-high</v-icon>
+                      </v-btn>
+                      <v-btn icon
+                        large
+                        color="#695988"
+                        @click="changeStatusSound('on')"
+                        v-else
+                      >
+                      <v-icon>mdi-volume-off</v-icon>
+                      </v-btn>
+                    </div>
+            <div class="col-6 py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span></div>
+        </div>
+        <v-row v-show="hideSound === true">
+          <v-col>
+            <audio id="playerPrefix" controls="controls">>
+              <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
+              Your browser does not support the audio format.
+            </audio>
+            <audio id="playerQueue" controls="controls">>
+              <source :src="audio">
+              Your browser does not support the audio format.
+            </audio>
+            <audio id="playerCounter" controls="controls">>
+              <source :src="tableTarget">
+              Your browser does not support the audio format.
+            </audio>
+          </v-col>
+          <v-col>
+            {{history}}
+          </v-col>
+        </v-row>
+    </div>
+  </template>
 <script>
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
+import pdfMake from 'pdfmake'
+import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
 import moment from 'moment-timezone'
 import { CardWaiting, BookingUse } from '../TV'
-
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
@@ -116,7 +117,6 @@ export default {
       statusSound: false,
       dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
-      Fontsize: null,
       DiSize: null,
       setTimerCalendar: null,
       languageSelect: 0,
@@ -135,6 +135,19 @@ export default {
       flowSelect: '',
       dateStart: '',
       shop: [],
+      // fieldNameEn: [{textTH: 'นวดคอ บ่า ไหล่', textEN: 'Nack & Shoulder  Massage'}, {textTH: 'นวดตอกเส้น', textEN: 'TOK  SEN MASSAGE'}, {textTH: 'นวดหินร้อน', textEN: 'HOT STONE MASSAGE'}],
+      breadcrumbs: [
+        {
+          text: 'Home',
+          disabled: false,
+          href: '/Core/Home'
+        },
+        {
+          text: 'จัดการ Queue',
+          disabled: false,
+          href: '/Master/BookingListQueue'
+        }
+      ],
       dialog: false,
       dialogAdd: false,
       session: this.$session.getAll(),
@@ -180,10 +193,10 @@ export default {
         'two': [],
         'three': []
       },
+      checkRef: false,
       currentTime: moment().format('DD/MMM/YYYY HH:mm'),
       isPortrait: true,
       wifiStatus: 'unknown',
-      checkRef: false,
       soundQueneNo: [
         { 'queue': 'A001', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A001.wav' },
         { 'queue': 'A002', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/A002.wav' },
@@ -569,29 +582,8 @@ export default {
         { 'queue': 'B026', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B026.wav' },
         { 'queue': 'B027', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B027.wav' },
         { 'queue': 'B028', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B028.wav' },
-        { 'queue': 'B029', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B029.wav' },
-        { 'queue': 'C001', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C001.wav' },
-        { 'queue': 'C002', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C002.wav' },
-        { 'queue': 'C003', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C003.wav' },
-        { 'queue': 'C004', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C004.wav' },
-        { 'queue': 'C005', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C005.wav' },
-        { 'queue': 'C006', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C006.wav' },
-        { 'queue': 'C007', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C007.wav' },
-        { 'queue': 'C008', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C008.wav' },
-        { 'queue': 'C009', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C009.wav' },
-        { 'queue': 'C010', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C010.wav' },
-        { 'queue': 'C011', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C011.wav' },
-        { 'queue': 'C012', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C012.wav' },
-        { 'queue': 'C013', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C013.wav' },
-        { 'queue': 'C014', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C014.wav' },
-        { 'queue': 'C015', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C015.wav' },
-        { 'queue': 'C016', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C016.wav' },
-        { 'queue': 'C017', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C017.wav' },
-        { 'queue': 'C018', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C018.wav' },
-        { 'queue': 'C019', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C019.wav' },
-        { 'queue': 'C020', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/C020.wav' }
-      ],
-      dataListPlay: []
+        { 'queue': 'B029', 'audioFile': 'https://storage.googleapis.com/ohrich-sound/B029.wav' }
+      ]
     }
   },
   async mounted () {
@@ -599,9 +591,11 @@ export default {
 
     window.addEventListener('resize', this.checkOrientation)
 
-    // เพิ่ม event listener เพื่อตรวจสอบการเปลี่ยนแปลงของ orientation
-    window.addEventListener('orientationchange', this.checkOrientation)
-
+    // if (!this.isPortrait) {
+    //   console.log(' หน้าจอเป็นแนวตั้ง')
+    // } else {
+    //   console.log(' หน้าจอเป็นแนวนอน')
+    // }
     await this.getShop()
     await this.getDataBranch()
     await this.getDataFlow()
@@ -610,10 +604,15 @@ export default {
     //   // your code goes here
     //   this.closeSetTimeBookingMonitor()
     // })
+    this.dateStart = moment().format('YYYY-MM-DD')
     // this.clearTimeLoop()
     // this.checkSearch()
     this.getFirestore()
     document.querySelector('body').requestFullscreen()
+    if (this.isMobileDevice()) {
+      // Code to execute if the device is a mobile device
+      window.scrollTo(0, 1)
+    }
     this.interval = setInterval(() => {
       this.currentTime = moment().format('DD/MMM/YYYY HH:mm') // อัพเดตเวลาทุก 1 วินาที
     }, 1000)
@@ -663,32 +662,18 @@ export default {
       }
     },
     async getFirestore () {
-      if (this.checkRef === false) {
-        console.log('checkRef0')
-        this.checkRef = true
-        await this.searchBooking()
-        this.updateProcessOhrichUpdate()
-      }
       this.firestore = this.$firebase.firestore()
       this.firestore.collection('ProcessOhrichUpdate').limit(1000).onSnapshot((snapshot) => {
-        // console.log(snapshot)
         snapshot.docChanges().forEach(async (change) => {
-          let branchId = this.$session.getAll().data.masBranchID || 2185
-          let userName = this.$session.getAll().data.userName
-          if (change.doc.data().masBranchID === branchId && change.doc.id === userName) {
-            console.log('active', change.doc.data().active)
-            if (this.checkRef === false) {
-              console.log('checkRef1')
-              this.checkRef = true
+          if (this.checkRef === false) {
+            this.checkRef = true
+            this.updateProcessOhrichUpdate()
+            await this.searchBooking()
+          } else {
+            let branchId = this.$session.getAll().data.masBranchID || 2185
+            if (change.doc.data().active === '1' && change.doc.data().masBranchID === branchId && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
               await this.searchBooking()
               this.updateProcessOhrichUpdate()
-            } else {
-            // console.log(change.doc.id)
-              if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
-                console.log('checkRef2')
-                await this.searchBooking()
-                this.updateProcessOhrichUpdate()
-              }
             }
           }
         })
@@ -799,6 +784,7 @@ export default {
     //   return sortedArray
     // },
     async changeStatusSound (text) {
+      console.log('[changeStatusSound]', this.statusSound)
       if (text === 'on') {
         this.statusSound = true
         await this.updatestatusNotifyByShopId()
@@ -846,9 +832,9 @@ export default {
         let branchId = this.$session.getAll().data.masBranchID || 2185
         let url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' + branchId + '&storeFrontQueue=' + storeFrontQueue + '&CREATE_DATE=' + dueDateDay
         // if (this.$session.getAll().data.shopId) {
-        //   url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
+        // url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
         // } else {
-        //   url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' +
+        // url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId + '&masBranchID=' +
         // }
         await axios
           .get(
@@ -873,22 +859,18 @@ export default {
     async generateSound (item) {
       try {
         // eslint-disable-next-line no-tabs
-        this.tableId = item.servicePoint.replace('	  ', '').replace(' ', '').trim()
+        this.tableId = item.servicePoint.replace(' ', '').replace(' ', '').trim()
         let storeFrontQueue = item.storeFrontQueue
-        console.log('[generateSound] storeFrontQueue', storeFrontQueue)
         // storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
         // storeFrontQueue = storeFrontQueue.replace('B', 'บี')
         // storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
         // storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
         // storeFrontQueue = storeFrontQueue.replace('E', 'อี')
         storeFrontQueue = this.replaceFunc(storeFrontQueue.replace('A', 'เอ'))
-        console.log('[generateSound] storeFrontQueue 2', storeFrontQueue)
         let result
         let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
-        item.audioFile = null
         if (oldSound.length > 0) {
           item.audioFile = oldSound[0].audioFile
-          console.log('[generateSound] item.audioFile', item.audioFile)
         } else {
           // let branchId = this.$session.getAll().data.masBranchID || 2185
           await axios
@@ -897,13 +879,11 @@ export default {
             ).then(async (response) => {
               if (response.data.length > 0 && typeof response.data.status === 'undefined') {
                 item.audioFile = response.data[0].audioFile
-                console.log('[generateSound] item.audioFile', item.audioFile)
               }
             })
         }
-        console.log('[generateSound] item.audioFile', item.audioFile)
         // let text = this.convertItemtoText(item)
-        if (item.audioFile === null) {
+        if (!item.audioFile) {
           var params = {
             text: ' ' + storeFrontQueue,
             text_delay: ' ' + storeFrontQueue,
@@ -914,7 +894,7 @@ export default {
           }
           await axios
             .post(
-              'https://api-voice.botnoi.ai/openapi/v1/generate_audio',
+              'https://api-voice.botnoi.ai/api/service/generate_audio',
               params,
               { headers: { 'Botnoi-Token': 'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0' } }
             ).then((res) => {
@@ -956,6 +936,8 @@ export default {
         vid.pause()
         this.audio = res.audio_url
         this.tableTarget = this.tableAudioList[this.tableId]
+        console.log('tableTarget', this.tableTarget)
+        console.log('tableId', this.tableId)
         this.timeCount = 1
         playerPrefix.play()
         playerPrefix.onended = (event) => {
@@ -1080,6 +1062,9 @@ export default {
     },
     async searchBooking () {
       if (this.validSearch === true) {
+        // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
+        this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
+        // await this.getBookingDataList(this.dateStart)
         let urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.shopId +
@@ -1088,8 +1073,9 @@ export default {
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
-            moment().format('YYYY-MM-DD') + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         // '&dueDate=' +
+        // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         await axios
           .get(urlApi)
           .then(async response => {
@@ -1247,53 +1233,335 @@ export default {
         })
       return result
     },
+    async closeJobSubmit (item) {
+      this.$swal({
+        title: 'ให้บริการ เสร็จเรียบร้อยแล้ว ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#fa0202',
+        cancelButtonColor: '#b3b1ab',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async response => {
+        var dtt = {
+          bookNo: item.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'confirmJob',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.$session.getAll().data.userName || 'monthon.y@srtforex.com',
+          LAST_USER: this.$session.getAll().data.userName || 'monthon.y@srtforex.com'
+        }
+        await axios
+          .post(this.DNS_IP + '/booking_transaction/add', dtt)
+          .then(async responses => {
+            this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
+            await this.searchBooking()
+            let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
+            if (bookSelect.length > 0) {
+              for (let i = 0; i < bookSelect.length; i++) {
+                let d = bookSelect[i]
+                let s = {}
+                s.lineUserId = d.lineUserId || ''
+                if (s.lineUserId !== '') {
+                  await axios
+                    .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
+                    .then(async responses => {}).catch(error => {
+                      console.log('error function pushMsgQueue : ', error)
+                    })
+                }
+              }
+            }
+          })
+      })
+    },
+    setPrint (item, language) {
+      let docDefinition = {}
+      if (language === 'th') {
+        docDefinition = {
+          pageSize: 'A4',
+          content: [
+            {
+              text: this.shopName,
+              style: 'header',
+              alignment: 'center'
+            },
+            {
+              text: '   ',
+              style: 'header',
+              widths: ['*']
+            },
+            {
+              columns: [
+                {
+                  style: 'subheader',
+                  text: 'วันที่'
+                },
+                {
+                  style: 'subheader',
+                  text: item.dueDateText.split(' ')[0],
+                  alignment: 'right'
+                }
+              ]
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              columns: [
+                {
+                  style: 'subheader',
+                  text: 'รับคิวเวลา'
+                },
+                {
+                  style: 'subheader',
+                  text: item.timeText,
+                  alignment: 'right'
+                }
+              ]
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              alignment: 'center',
+              style: 'tableExample',
+              table: {
+                heights: [70],
+                widths: ['*'],
+                body: [
+                  [
+                    {
+                      text: [
+                        {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'white'},
+                        {text: item.storeFrontQueue, fontSize: 150, color: 'white'}
+                      ],
+                      border: [false, false, false, false],
+                      fillColor: '#092C4C'
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
+              fontSize: 15,
+              alignment: 'center'
+            }
+          ],
+          styles: {
+            header: {
+              fontSize: 28,
+              bold: true
+            },
+            subheader: {
+              fontSize: 25,
+              bold: true
+            },
+            quote: {
+              italics: true
+            },
+            small: {
+              fontSize: 8
+            },
+            defaultStyle: {
+              columnGap: 20
+            },
+            tableExample: {
+              margin: [0, 5, 0, 15]
+            }
+          },
+          defaultStyle: { // 4. default style 'KANIT' font to test
+            font: 'Kanit'
+          }
+        }
+      } else {
+        docDefinition = {
+          pageSize: 'A4',
+          content: [
+            {
+              text: this.shopName,
+              style: 'header',
+              alignment: 'center'
+            },
+            {
+              text: '   ',
+              style: 'header',
+              widths: ['*']
+            },
+            {
+              columns: [
+                {
+                  style: 'subheader',
+                  text: 'Date'
+                },
+                {
+                  style: 'subheader',
+                  text: item.dueDateText.split(' ')[0],
+                  alignment: 'right'
+                }
+              ]
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              columns: [
+                {
+                  style: 'subheader',
+                  text: 'Time'
+                },
+                {
+                  style: 'subheader',
+                  text: item.timeText,
+                  alignment: 'right'
+                }
+              ]
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              alignment: 'center',
+              style: 'tableExample',
+              table: {
+                heights: [70],
+                widths: ['*'],
+                body: [
+                  [
+                    {
+                      text: [
+                        {text: 'Number\n', fontSize: 30, color: 'white'},
+                        {text: item.storeFrontQueue, fontSize: 150, color: 'white'}
+                      ],
+                      border: [false, false, false, false],
+                      fillColor: '#092C4C'
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              text: '   ',
+              style: 'subheader',
+              widths: ['*']
+            },
+            {
+              text: '* The company reserves the right to skip the queue. In the event that the customer does not come.',
+              fontSize: 15,
+              alignment: 'center'
+            }
+          ],
+          styles: {
+            header: {
+              fontSize: 28,
+              bold: true
+            },
+            subheader: {
+              fontSize: 25,
+              bold: true
+            },
+            quote: {
+              italics: true
+            },
+            small: {
+              fontSize: 8
+            },
+            defaultStyle: {
+              columnGap: 20
+            },
+            tableExample: {
+              margin: [0, 5, 0, 15]
+            }
+          },
+          defaultStyle: { // 4. default style 'KANIT' font to test
+            font: 'Kanit'
+          }
+        }
+      }
+      pdfMake.vfs = pdfFonts.pdfMake.vfs // 2. set vfs pdf font
+      pdfMake.fonts = {
+        // download default Roboto font from cdnjs.com
+        Roboto: {
+          normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+          bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+          italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+          bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+        },
+        // Kanit Font
+        Kanit: { // 3. set Kanit font
+          normal: 'Kanit-Regular.ttf',
+          bold: 'Kanit-Medium.ttf',
+          italics: 'Kanit-Italic.ttf',
+          bolditalics: 'Kanit-MediumItalic.ttf'
+        }
+      }
+      // pdfMake.createPdf(docDefinition).open({}, window)
+      pdfMake.createPdf(docDefinition).getDataUrl(function (outDoc) {
+        document.getElementById('pdfV').src = outDoc
+      })
+      this.dialogPrint = true
+    },
     checkWiFiStatus () {
       this.wifiStatus = navigator.onLine ? 'connected' : 'disconnected'
     }
   }
 }
 </script>
-<style scope>
-.centered-input >>> input {
-      text-align: center
-    }
-#margin {
-  margin-top: 50px;
-  margin-bottom: 40px;
-}
-.v_text_edit {
-  Width: 255px;
-  Height: 52px;
-  font-size: 10px !important;
-}
-#subtext {
-  color: #173053;
-  font-size: 30px !important;
-  font-weight: bold;
-}
-.center_screen {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -50px;
-  margin-left: -50px;
-  width: auto;
-  height: auto;
-  text-align: center;
-  border: solid 1px blue;
-  padding: .5rem;
-}
-.text-black >>> .v-input__slot {
-  color: #005fcc !important;
-}
-
-.text-datetime, .text-number-waiting{
-  font-weight: 700;
-}
-@media screen and (orientation: portrait) {
-  .height-card{
-    min-height: 16vh;
+  <style scope>
+  .centered-input >>> input {
+        text-align: center
+      }
+  #margin {
+    margin-top: 50px;
+    margin-bottom: 40px;
   }
+  .v_text_edit {
+    Width: 255px;
+    Height: 52px;
+    font-size: 10px !important;
+  }
+  #subtext {
+    color: #173053;
+    font-size: 30px !important;
+    font-weight: bold;
+  }
+  .center_screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    width: auto;
+    height: auto;
+    text-align: center;
+    border: solid 1px blue;
+    padding: .5rem;
+  }
+  .text-black >>> .v-input__slot {
+    color: #005fcc !important;
+  }
+
+  .text-datetime, .text-number-waiting{
+    font-weight: 700;
+  }
+  @media screen and (orientation: portrait) {
+    .height-card{
+      min-height: 16vh;
+    }
 }
 
 @media screen and (orientation: landscape) {}

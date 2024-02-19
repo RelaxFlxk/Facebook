@@ -909,6 +909,19 @@
                               ></v-checkbox>
                             </v-col>
                           </v-row>
+                          <!-- <v-row v-if="formAdd.checkOnsite === 'True'">
+                            <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
+                              <v-text-field
+                                class="px-4"
+                                v-model="formAdd.OnsiteEndTime"
+                                label="ระบุเวลาการทำงาน (ถ้ามีโปรดระบุ)"
+                                outlined
+                                type="number"
+                                dense
+                              ></v-text-field>
+                              <p> นาที</p>
+                            </v-col>
+                          </v-row> -->
                           <v-row>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
                               <v-checkbox
@@ -1439,6 +1452,19 @@
                               ></v-checkbox>
                             </v-col>
                           </v-row>
+                          <!-- <v-row v-if="formUpdate.checkOnsite === 'True'">
+                            <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
+                              <v-text-field
+                                class="px-4"
+                                v-model="formUpdate.OnsiteEndTime"
+                                label="ระบุเวลาการทำงาน (ถ้ามีโปรดระบุ)"
+                                outlined
+                                type="number"
+                                dense
+                              ></v-text-field>
+                              <p> นาที</p>
+                            </v-col>
+                          </v-row> -->
                           <v-row>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
                               <v-checkbox
@@ -3022,7 +3048,8 @@ export default {
         storeFrontNotifyStatus: 'False',
         storeFrontNotifySet: '0',
         newCustomerStatus: 'False',
-        checkDateConfirmJob: 'False'
+        checkDateConfirmJob: 'False',
+        OnsiteEndTime: null
       },
       formAddStep: {
         stepId: '',
@@ -3106,7 +3133,8 @@ export default {
         storeFrontNotifyStatus: 'False',
         storeFrontNotifySet: '0',
         newCustomerStatus: 'False',
-        checkDateConfirmJob: 'False'
+        checkDateConfirmJob: 'False',
+        OnsiteEndTime: null
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -4820,6 +4848,8 @@ export default {
       this.formUpdate.flowCode = item.flowCode
       this.formUpdate.amountDeposit = item.amountDeposit || 0
       this.formUpdate.depositPercent = item.depositPercent || 0
+      console.log('item.OnsiteEndTime', item.OnsiteEndTime)
+      this.formUpdate.OnsiteEndTime = item.OnsiteEndTime || null
       this.formUpdate.checkPayment = item.checkPayment || 'True'
       this.formUpdate.checkDeposit = item.checkDeposit || 'False'
       this.formUpdate.storeFrontCheck = item.storeFrontCheck || 'False'
@@ -4894,6 +4924,7 @@ export default {
             this.formAdd.flowfieldName = JSON.stringify(this.desserts)
             this.formAdd.amountDeposit = this.formAdd.amountDeposit || 0
             this.formAdd.depositPercent = this.formAdd.depositPercent || 0
+            this.formAdd.OnsiteEndTime = this.formAdd.OnsiteEndTime || 0
             this.formAdd.depositTextEN = this.formAdd.depositTextEN.replace(/%/g, '%%').replace(/'/g, "\\'")
             this.formAdd.depositTextTH = this.formAdd.depositTextTH.replace(/%/g, '%%').replace(/'/g, "\\'")
             this.formAdd.flowName = this.formAdd.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")
@@ -5068,6 +5099,7 @@ export default {
             this.formUpdate.LAST_USER = this.session.data.userName
             this.formUpdate.amountDeposit = this.formUpdate.amountDeposit || 0
             this.formUpdate.depositPercent = this.formUpdate.depositPercent || 0
+            this.formUpdate.OnsiteEndTime = this.formUpdate.OnsiteEndTime || 0
             this.formUpdate.flowfieldName = JSON.stringify(fieldId)
             this.formUpdate.depositTextEN = this.formUpdate.depositTextEN.replace(/%/g, '%%').replace(/'/g, "\\'")
             this.formUpdate.depositTextTH = this.formUpdate.depositTextTH.replace(/%/g, '%%').replace(/'/g, "\\'")

@@ -7572,6 +7572,7 @@
           <CallLog ref="CallLog"></CallLog>
           <NotificationService ref="NotificationService"></NotificationService>
           <PrintQrCodeConfirmJobLINE ref="PrintQrCodeConfirmJobLINE"></PrintQrCodeConfirmJobLINE>
+          <GoogleCalendarCmp ref="GoogleCalendarRef" />
       </div>
     </v-main>
   </div>
@@ -9388,6 +9389,20 @@ export default {
         await axios.post(this.DNS_IP + '/Booking/edit/' + bookNo, dt)
       } catch (e) { console.log(e) }
     },
+    async ChangeOnsiteCalendarGridTime (bookNo, empId) {
+      let obj = {
+        'bookNo': bookNo,
+        'empId': empId
+      }
+      await axios
+        .post(this.DNS_IP + '/CalendarGridTime/ChangEmp', obj)
+        .then(async response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.log('error function addData : ', error)
+        })
+    },
     async jobChangeOnsite () {
       console.log('this.jobitem', this.jobitem)
       this.swalConfig.title = 'ต้องการ เปลี่ยนพนักงาน ใช่หรือไม่?'
@@ -9403,6 +9418,7 @@ export default {
             await axios
               .post(this.DNS_IP + '/job/updateJobNo/' + this.jobitem[0].jobNo, updateJob)
               .then(async response => {
+                this.ChangeOnsiteCalendarGridTime(this.jobitem[0].bookNo, this.empSelectJob)
                 this.$swal('เรียบร้อย', 'เปลี่ยนพนักงาน เรียบร้อย', 'success')
                 if (parseInt(this.jobitem[0].empStepId) !== this.empSelectJob) {
                   if (this.jobitem[0].lineUserId !== '') {
@@ -11534,7 +11550,7 @@ export default {
             }
             console.log('statusGoogleCalendar', this.statusGoogleCalendar)
             if (this.statusGoogleCalendar === 'True') {
-              await this.connectGoogleCalendar('Edit', Add[0].bookNo)
+              this.connectGoogleCalendar('Edit', Add[0].bookNo)
             }
             // this.getTimesChange('update')
             this.formEdit.radiosRemark = ''
@@ -14547,7 +14563,7 @@ export default {
         .then(async response => {
           // this.getDataCalendaBooking()
           if (this.statusGoogleCalendar === 'True') {
-            await this.connectGoogleCalendar('Add', dt.bookNo)
+            this.connectGoogleCalendar('Add', dt.bookNo)
           }
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
@@ -15369,7 +15385,7 @@ export default {
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
               console.log('statusGoogleCalendar', this.statusGoogleCalendar)
               if (this.statusGoogleCalendar === 'True') {
-                await this.connectGoogleCalendar('Add', dt.bookNo)
+                this.connectGoogleCalendar('Add', dt.bookNo)
               }
               await this.updateRemarkAndEmpSelect(item)
               // this.getDataCalendaBooking()
@@ -15581,7 +15597,7 @@ export default {
           this.pushMsglineCancel(this.bookNoRemove)
           console.log('statusGoogleCalendar', this.statusGoogleCalendar)
           if (this.statusGoogleCalendar === 'True') {
-            await this.connectGoogleCalendar('Delete', dt.bookNo)
+            this.connectGoogleCalendar('Delete', dt.bookNo)
           }
           this.$swal('เรียบร้อย', 'ยกเลิกเรียบร้อย', 'success')
           console.log('addDataGlobal', response)
@@ -15781,14 +15797,14 @@ export default {
                 console.log('*****Edit')
                 // edit
                 if (this.statusGoogleCalendar === 'True') {
-                  await this.connectGoogleCalendar('Edit', dt.bookNo)
+                  this.connectGoogleCalendar('Edit', dt.bookNo)
                 }
               }
               if (item.statusBt === 'wait' && (changeStatus === 'confirm')) {
                 console.log('*****Add')
                 // create
                 if (this.statusGoogleCalendar === 'True') {
-                  await this.connectGoogleCalendar('Add', dt.bookNo)
+                  this.connectGoogleCalendar('Add', dt.bookNo)
                 }
               }
               if (item.statusBt === 'confirm' || item.statusBt === 'confirmJob') {
