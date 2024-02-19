@@ -1359,7 +1359,7 @@ export default {
       }
       // let itemIncustomField = []
       // let itemIncustomFieldCustomer = []
-      this.IdUpdate = ''
+      this.IdUpdate = 'noData'
       await axios
         .get(this.DNS_IP + '/BookingField/get?shopId=' + this.shopId)
         .then(response => {
@@ -1647,44 +1647,47 @@ export default {
       }
     },
     async saveBooking (booking) {
-      let url = '/BookingField/add'
-      if (this.IdUpdate !== '') {
-        url = '/BookingField/edit/' + this.IdUpdate
+      if (this.IdUpdate === 'noData') {
+        this.$swal('กรุณาลองใหม่อีกครั้ง', ' ', 'error')
+        await this.getBookingField()
+        if (this.editBycustomField === 'True') {
+          this.dialogchekField = false
+        }
+        this.dataReady = false
       } else {
         booking.CREATE_USER = this.session.data.userName
-      }
-
-      await axios
-        .post(this.DNS_IP + url, booking)
-        .then(async response => {
-          for (let i = 0; i < this.Fielditem.length; i++) {
-            let d = this.Fielditem[i]
-            let showcarditem = {
-              showCard: d.showcard
+        await axios
+          .post(this.DNS_IP + '/BookingField/edit/' + this.IdUpdate, booking)
+          .then(async response => {
+            for (let i = 0; i < this.Fielditem.length; i++) {
+              let d = this.Fielditem[i]
+              let showcarditem = {
+                showCard: d.showcard
+              }
+              await axios
+                .post(
+                  this.DNS_IP + '/customField/edit/' + d.fieldId,
+                  showcarditem
+                )
+                .then(response => {})
+                .catch(error => {
+                  console.log('error function addData : ', error)
+                })
             }
-            await axios
-              .post(
-                this.DNS_IP + '/customField/edit/' + d.fieldId,
-                showcarditem
-              )
-              .then(response => {})
-              .catch(error => {
-                console.log('error function addData : ', error)
-              })
-          }
 
-          this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
-          await this.getBookingField()
-          if (this.editBycustomField === 'True') {
-            this.dialogchekField = false
-          }
-          this.dataReady = false
-          console.log(`addDataGlobal DNS_IP + ${url}`, response)
-        })
-        .catch(error => {
-          console.log('error function addData : ', error)
-          this.dataReady = false
-        })
+            this.$swal('บันทึกข้อมูลเรียบร้อย', ' ', 'success')
+            await this.getBookingField()
+            if (this.editBycustomField === 'True') {
+              this.dialogchekField = false
+            }
+            this.dataReady = false
+            console.log(`addDataGlobal DNS_IP`, response)
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+            this.dataReady = false
+          })
+      }
     },
     updateTypeJob () {
       this.validate('updateTypeJob')
