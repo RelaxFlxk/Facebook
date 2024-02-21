@@ -3612,7 +3612,7 @@
                           <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-qrcode-scan </v-icon> QR Code สำหรับให้ลูกค้า </v-list-item-title>
                           </v-list-item>
-                          <v-list-item v-if="item.statusBt === 'confirmJob' && item.RECORD_STATUS_Job === 'D'" @click.stop="setBookingAgain(item)">
+                          <v-list-item v-if="item.statusBt !== 'wait'" @click.stop="setBookingAgain(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="fluent:group-return-24-filled"></v-icon> นัดหมายอีกครั้ง </v-list-item-title>
                           </v-list-item>
                           <!-- <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
@@ -16368,7 +16368,7 @@ export default {
       if (this.validBookingAgain !== false) {
         console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
         this.loadingEdit = true
-        this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
+        this.swalConfig.title = 'ต้องการ นัดหมายอีกครั้ง ใช่หรือไม่?'
         this.$swal(this.swalConfig)
           .then(async result => {
             if (this.getSelectText === 'cancel') {
