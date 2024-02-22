@@ -2,10 +2,17 @@
   <v-main class="main">
     <div class="d-flex flex-column flex-sm-row mx-5 my-sm-5 my-2">
       <div class="col-12 col-sm-12 col-md-6">
-        <v-card class="p-3 p-md-5 main-card">
+        <v-card flat v-if="!overlay">
+            <v-card-text>
+               <div class="text-center">
+                <waitingAlert></waitingAlert>
+              </div>
+            </v-card-text>
+        </v-card>
+        <v-card class="p-3 p-md-5 main-card" v-if="overlay">
         <div class="d-flex flex-column">
           <div class="d-flex flex-row d-flex justify-content-between">
-            <div><h5 class="font-weight-bold" v-if="itemBooking.length > 0" >Counter {{$session.getAll().data.counter}}</h5></div>
+            <div><h5 class="font-weight-bold m-0" v-if="itemBooking.length > 0" >Counter {{$session.getAll().data.counter}}</h5></div>
             <div class="d-flex flex-sm-row">
               <div class="d-flex flex-row align-items-center mr-3" v-if="branchItem">
                 <div class="mr-1"><v-icon  color="red">mdi-map-marker</v-icon></div>
@@ -25,7 +32,7 @@
               <div v-for="(flowitem, index) in flowSelectCheckItem" :key="index">
                 <div class="d-flex flex-row justify-content-between align-items-center">
                   <div><span>{{ flowitem.flowNameEn + ' : Type ' + flowitem.storeFrontText }}</span></div>
-                  <div><v-switch inset color="success" v-model="flowSelectCheck" :value="flowitem.storeFrontText" @change="searchBooking('unNoti')" /></div>
+                  <div><v-switch inset color="success" v-model="flowSelectCheck" :value="flowitem.storeFrontText" @change="UpdatetypeStoreFrontText()" /></div>
                 </div>
                 <v-divider v-if="(index + 1) < flowSelectCheckItem.length" class="m-0"></v-divider>
                  </div>
@@ -33,14 +40,14 @@
           </div>
           <div class="d-flex flex-row justify-content-between align-items-center my-5">
             <div><span class="text-center font-weight-black text-number">{{  itemBooking && itemBooking.length >0  ? itemBooking[0].storeFrontQueue : 'XXXX' }}</span></div>
-            <div class="col-6 col-sm-4 col-md-4">
+            <div>
               <v-btn
                 @click="closeJobSubmit(itemBooking[0])"
                 :disabled= "itemBooking[0].statusBt !== 'confirm'"
                 dark
                 :class="`rounded-btn justify-content-center align-items-center ${itemBooking[0].statusBt === 'confirm' ? 'rounded-btn-confirm':'rounded-btn-closejob'}`">
                 <div class="d-flex flex-column">
-                <div><v-icon size="100">mdi-bell-ring</v-icon></div>
+                <div><v-icon size="45">mdi-bell-ring</v-icon></div>
                 <div><span :class="`text-event ${itemBooking[0].statusBt === 'confirm' ? 'text-white' :'text-bell-disabled'}`">เรียกคิว</span></div>
                 </div>
             </v-btn>
@@ -108,7 +115,7 @@ export default {
       servicePointItem: [],
       servicePoint: '',
       closeItem: '',
-      dialogServicePointStatus: true,
+      dialogServicePointStatus: false,
       validSearch: true,
       statusReturn: false,
       itemBooking: [],
@@ -172,7 +179,7 @@ export default {
       dataLineConfig: {},
       HistoryData: [],
       pictureUrHistory: '',
-      dialogHistory: true,
+      dialogHistory: false,
       shopPhone: '',
       setTimerCalendar: null,
       checkRef: false,
@@ -180,11 +187,17 @@ export default {
       datawainingShow: [],
       dataReady: false,
       flowSelectCheckItem: [],
-      flowSelectCheck: ['A', 'B', 'C'],
+      flowSelectCheck: [],
       currentDate: moment().format('DD/MMM/YYYY')
       // datawainingShowtest: [
       //   'A001', 'A002', 'A003', 'A004', 'A005', 'A006', 'A001', 'A002', 'A003', 'A004', 'A005', 'A006'
       // ]
+    }
+  },
+  watch: {
+    // whenever question changes, this function will run
+    flowSelectCheck (newQuestion, oldQuestion) {
+      console.log('flowSelectCheck', newQuestion, oldQuestion)
     }
   },
   computed: {
@@ -222,8 +235,26 @@ export default {
     console.log('localStorage', JSON.parse(localStorage.getItem('sessionData')))
     console.log('session', this.$session.getAll().data)
     await this.beforeCreate()
+    // await this.UpdatetypeStoreFrontText()
   },
   methods: {
+    async UpdatetypeStoreFrontText () {
+      let dataSession = this.$session.get('data')
+      dataSession.typeStoreFrontText = this.flowSelectCheck
+      this.$session.set('data', dataSession)
+      let obj = {
+        'typeStoreFrontText': JSON.stringify(this.flowSelectCheck)
+      }
+      let id = this.$session.getAll().data.userId
+      this.searchBooking('unNoti')
+      this.updateSYS_USER(id, obj)
+    },
+    async updateSYS_USER (id, obj) {
+      await axios
+        .post(this.DNS_IP + '/system_user/edit/' + id, obj)
+        .then(async responses => { console.log(responses) })
+        .catch((error) => { console.log(error) })
+    },
     async getFirestore () {
       console.log('getFirestore')
       this.firestore = this.$firebase.firestore()
@@ -663,6 +694,12 @@ export default {
                   s.allData = d
                   resultOption.push(s)
                   this.flowSelectCheckItem.push(d)
+                  if (this.$session.getAll().data.typeStoreFrontText === null) {
+                    this.flowSelectCheck.push(d.storeFrontText)
+                  } else {
+                    let dt = JSON.parse(this.$session.getAll().data.typeStoreFrontText) || []
+                    this.flowSelectCheck = dt
+                  }
                 }
               }
               console.log('this.flowSelectCheckItem', this.flowSelectCheckItem)
@@ -1787,10 +1824,10 @@ export default {
   cursor: pointer;
   font-size: 40px;
   border-radius: 50em;
-  width: 200px !important;
-  height: 200px !important;
+  width: 140px !important;
+  height: 140px !important;
   box-sizing: border-box;
-  border: 14px solid transparent;
+  border: 5px solid transparent;
 }
 .text-bell{
   width: 100px !important;
@@ -1805,6 +1842,10 @@ export default {
   .text-number {
   font-size: 13vw;
   }
+  .text-event{
+  font-size: 15px;
+  font-weight: bold;
+}
 }
 @media (min-width: 601px) and (max-width: 1300px) {
   .text-main {
