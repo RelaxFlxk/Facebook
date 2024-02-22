@@ -731,6 +731,7 @@ export default {
     if (this.$session.getAll().data.shopActive === 'inactive') {
       this.$router.push('/Core/Login')
     } else {
+      this.getShop()
       this.checkImageUrl(this.session.data.shopImge)
         .then(async (status) => {
           console.log('status', status)
@@ -805,6 +806,21 @@ export default {
     }
   },
   methods: {
+    async getShop () {
+      await axios
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
+        .then(response => {
+          let rs = response.data
+          // console.log('rssssssssssss', rs)
+          if (rs.status === false) {
+            this.logout()
+          } else {
+            if (rs[0].shopActive === 'inactive') {
+              this.logout()
+            }
+          }
+        })
+    },
     checkImageUrl (url) {
       return new Promise((resolve, reject) => {
         const img = new Image()
