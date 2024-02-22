@@ -12,7 +12,7 @@
         <v-card class="p-3 p-md-5 main-card" v-if="overlay">
         <div class="d-flex flex-column">
           <div class="d-flex flex-row d-flex justify-content-between">
-            <div><h5 class="font-weight-bold m-0" v-if="itemBooking.length > 0" >Counter {{$session.getAll().data.counter}}</h5></div>
+            <div><h5 class="font-weight-bold m-0" >Counter {{$session.getAll().data.counter}}</h5></div>
             <div class="d-flex flex-sm-row">
               <div class="d-flex flex-row align-items-center mr-3" v-if="branchItem">
                 <div class="mr-1"><v-icon  color="red">mdi-map-marker</v-icon></div>
@@ -43,29 +43,29 @@
             <div>
               <v-btn
                 @click="closeJobSubmit(itemBooking[0])"
-                :disabled= "itemBooking[0].statusBt !== 'confirm'"
+                :disabled="itemBooking && itemBooking.length > 0 && itemBooking[0].statusBt === 'confirm' ? false : true"
                 dark
-                :class="`rounded-btn justify-content-center align-items-center ${itemBooking[0].statusBt === 'confirm' ? 'rounded-btn-confirm':'rounded-btn-closejob'}`">
+                :class="`rounded-btn justify-content-center align-items-center ${itemBooking && itemBooking.length > 0 && itemBooking[0].statusBt === 'confirm' ? 'rounded-btn-confirm':'rounded-btn-closejob'}`">
                 <div class="d-flex flex-column">
                 <div><v-icon size="45">mdi-bell-ring</v-icon></div>
-                <div><span :class="`text-event ${itemBooking[0].statusBt === 'confirm' ? 'text-white' :'text-bell-disabled'}`">เรียกคิว</span></div>
+                <div><span :class="`text-event ${itemBooking && itemBooking.length > 0 && itemBooking[0].statusBt === 'confirm' ? 'text-white' :'text-bell-disabled'}`">เรียกคิว</span></div>
                 </div>
             </v-btn>
             </div>
           </div>
           <div class="d-flex flex-row justify-content-between align-items-center">
             <div class="w-100 mr-2">
-              <v-btn class="btn-event" color="warning" rounded elevation="1" @click="removeQueue(itemBooking[0])">
+              <v-btn class="btn-event" color="warning" rounded elevation="1" :disabled="itemBooking === null && itemBooking.length === 0" @click="removeQueue(itemBooking[0])">
                <v-icon class="mr-2">mdi-delete</v-icon><span class="text-event">ลบคิว</span> </v-btn></div>
             <div class="w-100 mx-2">
-               <v-btn  class="btn-event" color="#1B437C" rounded :disabled="itemBooking[0].statusBt === 'confirmJob' ? false : true"
+               <v-btn  class="btn-event" color="#1B437C" rounded :disabled="itemBooking && itemBooking.length > 0 && itemBooking[0].statusBt === 'confirmJob' ? false : true"
                @click="closeJobSubmitReturn(itemBooking[0])">
                 <strong class="text-white text-event">เรียกคิวซ้ำ</strong>
                 </v-btn>
             </div>
             <div class="w-100 ml-2">
               <v-btn class="btn-event" color="#F38383" rounded
-              :disabled="itemBooking[0].statusBt === 'confirmJob' && dataReady === false ? false : true"
+              :disabled="itemBooking && itemBooking.length > 0 && itemBooking[0].statusBt === 'confirmJob' && dataReady === false ? false : true"
               @click="backHomeSubmit(itemBooking[0])">
                <strong class="text-white text-event">ปิดงาน</strong>
                </v-btn>
@@ -527,7 +527,7 @@ export default {
     //   return sortedArray
     // },
     async searchBooking (checkNoti, item) {
-      console.log('searchBooking ', checkNoti, item)
+      console.log('searchBooking ', checkNoti, this.validSearch, this.dateStart)
       if (this.validSearch === true) {
         this.checkStatusEdit = false
         // this.overlay = false
@@ -565,6 +565,7 @@ export default {
             let rs = response.data
             if (rs.length > 0) {
               let sortData = await this.GroupArrayQueue(rs)
+              console.log('itemBookings sortData', sortData)
               // let sortData = rs.sort((a, b) => {
               //   if (a.storeFrontQueue < b.storeFrontQueue) return -1
               //   return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
@@ -588,17 +589,18 @@ export default {
               } else {
                 itemBookings = itemBooking
               }
+              console.log('itemBookings', itemBookings)
               this.itemBooking = itemBookings
               this.overlay = true
-              this.openHistory(this.itemBooking[0])
-              if (checkNoti === 'noti') {
-                // console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
-                if (item.storeFrontNotifyStatus === 'True') {
-                  if (parseInt(item.storeFrontNotifySet) > 0) {
-                    this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
-                  }
-                }
-              }
+              // this.openHistory(this.itemBooking[0])
+              // if (checkNoti === 'noti') {
+              //   // console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
+              //   if (item.storeFrontNotifyStatus === 'True') {
+              //     if (parseInt(item.storeFrontNotifySet) > 0) {
+              //       this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
+              //     }
+              //   }
+              // }
             } else {
               this.itemBooking = []
               this.datawainingShow = []
