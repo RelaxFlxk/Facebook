@@ -5,22 +5,6 @@
         height="54"
         class="d-flex"
       >
-        <v-btn
-          icon
-          class="ma-2"
-          @click="$refs.calendar.prev()"
-        >
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
-        <v-select
-          v-model="type"
-          :items="types"
-          dense
-          outlined
-          hide-details
-          class="ma-2"
-          label="type"
-        ></v-select>
         <v-select
           v-model="mode"
           :items="modes"
@@ -39,17 +23,8 @@
           label="weekdays"
           class="ma-2"
         ></v-select>
-        <v-spacer></v-spacer>
-        <v-btn
-          icon
-          class="ma-2"
-          @click="$refs.calendar.next()"
-        >
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
       </v-sheet>
-      <v-sheet height="600">
-        <p>{{ (typeof value) + '-' + (typeof focus) + focus }}</p>
+      <v-sheet height="600" style="width: 100%;">
         <v-calendar
           ref="calendar"
           v-model="focus"
@@ -65,7 +40,67 @@
           locale="th-TH"
           short-intervals
           @change="getEvents"
-        ></v-calendar>
+        >
+        <template #event="{ event }">
+            <!-- {{ event }} -->
+        <div v-if="type === 'month'">
+            <div v-if="event.item.length > 0" class="eventIF">
+                <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
+                    <p class="ma-0">{{ event.item[0].flowName}}</p>
+                </div>
+                <p class="mb-1"><v-icon small color="#FFFFFF">mdi-map-marker-outline</v-icon> {{ event.item[0].address }}</p>
+                </div>
+                <div v-else class="eventElse">
+                    <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
+                    <p class="ma-0">{{ event.name}}</p>
+                </div>
+                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime }}</p>
+            </div>
+        </div>
+        <div v-if="type === 'week'">
+            <div v-if="event.item.length > 0" class="eventIF">
+                <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
+                    <p class="ma-0">{{ event.item[0].flowName}}</p>
+                </div>
+                <p class="mb-1"><v-icon small color="#FFFFFF">mdi-map-marker-outline</v-icon> {{ event.item[0].address }}</p>
+                </div>
+                <div v-else class="eventElse">
+                    <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
+                    <p class="ma-0">{{ event.name}}</p>
+                </div>
+                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime }}</p>
+            </div>
+        </div>
+        <div v-if="type === 'day'">
+            <div v-if="event.item.length > 0" class="eventIF">
+                <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
+                    <p class="ma-0">{{ event.item[0].flowName}}</p>
+                </div>
+                <p class="mb-1"><v-icon small color="#FFFFFF">mdi-map-marker-outline</v-icon> {{ event.item[0].address }}</p>
+                </div>
+                <div v-else class="eventElse">
+                    <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
+                    <p class="ma-0">{{ event.name}}</p>
+                </div>
+                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime }}</p>
+            </div>
+        </div>
+        <div v-if="type === '4day'">
+            <div v-if="event.item.length > 0" class="eventIF">
+                <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
+                    <p class="ma-0">{{ event.item[0].flowName}}</p>
+                </div>
+                <p class="mb-1"><v-icon small color="#FFFFFF">mdi-map-marker-outline</v-icon> {{ event.item[0].address }}</p>
+                </div>
+                <div v-else class="eventElse">
+                    <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
+                    <p class="ma-0">{{ event.name}}</p>
+                </div>
+                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime }}</p>
+            </div>
+        </div>
+        </template>
+        </v-calendar>
       </v-sheet>
     </div>
 </template>
@@ -80,6 +115,18 @@ export default {
     focus: {
       type: String,
       default: this.value
+    },
+    type: {
+      type: String,
+      default: () => 'month'
+    },
+    colors: {
+      type: Array,
+      default: () => []
+    },
+    names: {
+      type: Array,
+      default: () => []
     }
   },
   //   watch: {
@@ -91,7 +138,7 @@ export default {
   //   },
   data () {
     return {
-      type: 'month',
+    //   type: 'month',
       types: ['month', 'week', 'day', '4day'],
       mode: 'stack',
       modes: ['stack', 'column'],
@@ -102,9 +149,9 @@ export default {
         { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
         { text: 'Mon, Wed, Fri', value: [1, 3, 5] }
       ],
-      value: '',
-      colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-      names: ['ล้างรถยนต์นอกสถานที่', 'Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party']
+      value: ''
+    //   colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
+    //   names: ['ล้างรถยนต์นอกสถานที่', 'Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party']
     }
   },
   methods: {
@@ -155,5 +202,13 @@ export default {
 <style scoped>
 .v-calendar-daily_head-weekday {
   display: none !important;
+}
+.eventIF {
+    padding-left: 0.5vw;
+    height: 100%;
+}
+.eventElse {
+    padding-left: 0.5vw;
+    height: 100%;
 }
 </style>

@@ -3,7 +3,7 @@
     <v-row class="fill-height">
     <v-col class="pa-3">
       <!-- \border-color: rgb(0 0 0)!important; -->
-      <div v-if="focus" class="pa-3 ma-0" style="display: flex;justify-content: center;">
+      <!-- <div v-if="focus" class="pa-3 ma-0" style="display: flex;justify-content: center;">
         <v-btn-toggle
           rounded
           color="#000000"
@@ -55,36 +55,118 @@
             </v-icon>
           </v-btn>
         </v-btn-toggle>
-      </div>
-        <v-sheet elevation="4" class="Main pa-3" v-if="focus">
-          {{ colsSize }}
-          <v-row>
-            <v-col cols="3" class="pr-0">
-               <div  class="menuleft">
-                <v-date-picker
-                v-model="focus"
-                no-title
-                >
-                </v-date-picker>
-                <div  v-for="(item , index) in flowName" :key="index">
-                <h6 style="display: flex;align-items: center;">
-                  <v-icon class="mr-2" :color="colors[index]">mdi-checkbox-multiple-blank</v-icon>
-                  {{ item.text }}
-                </h6>
-                </div>
-              </div>
-            </v-col>
-            <v-col cols="9" class="pl-0">
-              <FullCalendar :events="TT" :focus="focus"></FullCalendar>
-            </v-col>
-          </v-row>
+      </div> -->
+      <!-- <v-sheet
+        tile
+        height="54"
+        class="d-flex"
+      >
+        <v-btn
+          icon
+          class="ma-2"
+          @click="$refs.calendar.prev()"
+        >
+          <v-icon>mdi-chevron-left</v-icon>
+        </v-btn>
+        <v-select
+          v-model="type"
+          :items="types"
+          dense
+          outlined
+          hide-details
+          class="ma-2"
+          label="type"
+        ></v-select>
+        <v-select
+          v-model="mode"
+          :items="modes"
+          dense
+          outlined
+          hide-details
+          label="event-overlap-mode"
+          class="ma-2"
+        ></v-select>
+        <v-select
+          v-model="weekday"
+          :items="weekdays"
+          dense
+          outlined
+          hide-details
+          label="weekdays"
+          class="ma-2"
+        ></v-select>
+        <v-spacer></v-spacer>
+        <v-btn
+          icon
+          class="ma-2"
+          @click="$refs.calendar.next()"
+        >
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
+      </v-sheet> -->
+        <v-sheet class="Main pa-3" v-if="focus">
+          <div class="menuleft">
+            <div>
+              <v-select
+              v-model="type"
+              :items="types"
+              dense
+              outlined
+              hide-details
+              class="ma-2"
+              label="type"
+            ></v-select>
+            </div>
+            <v-date-picker
+            v-model="focus"
+            no-title
+            >
+            </v-date-picker>
+            <div class="px-4"  v-for="(item , index) in flowName" :key="index">
+            <h6 style="display: flex;align-items: center;">
+              <v-icon class="mr-2" :color="colors[index]">mdi-checkbox-multiple-blank</v-icon>
+              {{ item.text }}
+            </h6>
+            </div>
+            <!-- Filter ช่างได้ -->
+            <!-- <div v-if="categoriesCheckBox.length > 0">
+              <v-checkbox
+                v-for="(item2 , index2) in categoriesCheckBox" :key="index2"
+                v-model="categories"
+                :label="item2"
+                :value="item2"
+              ></v-checkbox>
+            </div> -->
+          </div>
+          <div class="pl-1 menuright">
+            <FullCalendar
+             v-if="type !== 'category'"
+            :events="TT"
+            :focus="focus"
+            :type="type"
+            :colors="colors"
+            :names="names"
+            ></FullCalendar>
+            <CategoryCalendar
+              v-else
+              :events="events"
+              :focus="focus"
+              :type="type"
+              :colors="colors"
+              :names="names"
+              :categories="categories"
+              :categoriesItem="categoriesItem"
+              :empDayoff="empDayoff"
+              >
+              </CategoryCalendar>
+          </div>
       </v-sheet>
       <!-- เป็น prop ที่ไว้แสดงเวลาเริ่มและเวลาสิ้นสุด
         first-interval="7"
           :interval-count="24-7" -->
     </v-col>
   </v-row>
-  <FullCalendar :events="TT"></FullCalendar>
+  <!-- <FullCalendar :events="TT"></FullCalendar> -->
   </v-main>
 </template>
 
@@ -92,7 +174,13 @@
 import axios from 'axios' // api
 import moment from 'moment' // แปลง date
 import FullCalendar from './FullCalendar.vue'
+// import CalendarCategory from './CalendarCategory.vue'
+import CategoryCalendar from './CategoryCalendar.vue'
 export default {
+  components: {
+    CategoryCalendar,
+    FullCalendar
+  },
   computed: {
     colsWidth () {
       switch (this.$vuetify.breakpoint.name) {
@@ -115,17 +203,29 @@ export default {
   },
   data () {
     return {
+      type: 'month',
+      types: ['month', 'week', 'day', '4day', 'category'],
+      mode: 'stack',
+      modes: ['stack', 'column'],
+      weekday: [0, 1, 2, 3, 4, 5, 6],
+      weekdays: [
+        { text: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
+        { text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
+        { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
+        { text: 'Mon, Wed, Fri', value: [1, 3, 5] }
+      ],
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       focus: null,
       menu: false,
       events: [],
       colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-      names: ['ซ่อมทั่วไป', 'ตัดผม', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
+      names: [],
       // categories: ['AAAAAA', 'BBBBBB']
       flowName: [],
       dataFlow: [],
       categories: [],
+      categoriesCheckBox: [],
       categoriesItem: [],
       eventsItem: [],
       empDayoff: [],
@@ -143,14 +243,6 @@ export default {
     // await this.$refs.calendar.checkChange()
   },
   methods: {
-    momentTitle (focus) {
-      return moment(focus).format('ddd, MMM D, YYYY')
-    },
-    isTimedEvent (event) {
-      // console.log('event!!!!!"', event)
-      // event.end = '2024-02-05'
-      return event
-    },
     customIntervalFormat (interval) {
       // จัดรูปแบบเวลาให้อยู่ในรูปแบบ HH:mm โดยไม่ใช้ AM/PM
       // console.log(interval)
@@ -175,7 +267,8 @@ export default {
     async getJobData () {
       this.dataJob = []
       // let params = null
-      let params = this.DNS_IP + '/job/get?shopId=' + this.shopId + '&checkOnsite=True' + '&dueDate=' + this.focus
+      let month = moment(this.focus).format('YYYY-MM')
+      let params = this.DNS_IP + '/job/get?shopId=' + this.shopId + '&checkOnsite=True' + '&dueDate=' + month
       await axios
         .get(params)
         .then(async (response) => {
@@ -187,33 +280,6 @@ export default {
             console.log('this.dataJob', this.dataJob)
           }
         })
-    },
-    setDayOff (category, date) {
-      let empDayoffItem = this.empDayoff.filter((item) => item.empName === category)[0]
-      if (empDayoffItem.typeDayCustom === 'off') {
-        let dayCustomStatus = empDayoffItem.dateDayCustom.filter((item) => item === date)
-        let newDate = new Date(date)
-        let day = newDate.getDay()
-        let dayValueStatus = empDayoffItem.dateDayoffValue.filter((item) => item === day)
-        // console.log('status', dayCustomStatus, typeof day)
-        // console.log('IF')
-        if (dayCustomStatus.length > 0 || dayValueStatus.length > 0) {
-          return true
-        } else {
-          return false
-        }
-      } else {
-        // console.log('ELSE')
-        let dayCustomStatus = empDayoffItem.dateDayCustom.filter((item) => item === date)
-        if (dayCustomStatus.length > 0) {
-          return false
-        } else {
-          return true
-        }
-      }
-      // console.log('category', category, date)
-      // console.log('this.categoriesItem', this.categoriesItem)
-      // return true
     },
     async getFlow () {
       await axios
@@ -230,6 +296,7 @@ export default {
                 s.value = d.flowId
                 s.text = d.flowName
                 this.flowName.push(s)
+                this.names.push(d.flowName)
               }
             }
             console.log('flowName', this.flowName)
@@ -260,6 +327,7 @@ export default {
                 d.text = d.empFirst_NameTH
                 this.categoriesItem.push(d)
                 this.categories.push(d.empFirst_NameTH)
+                this.categoriesCheckBox.push(d.empFirst_NameTH)
                 let dayOff = {
                   'empName': d.empFirst_NameTH,
                   'typeDayCustom': d.typeDayCustom,
@@ -347,60 +415,46 @@ export default {
               start: start,
               end: end,
               color: this.colors[findIndex],
-              timed: true
-            })
-            TT.push({
-              name: flowName,
-              start: start,
-              end: end,
-              color: this.colors[findIndex],
-              timed: true
-            })
-            TT.push({
-              name: flowName,
-              start: start,
-              end: end,
-              color: this.colors[findIndex],
-              timed: true
-            })
-            TT.push({
-              name: flowName,
-              start: start,
-              end: end,
-              color: this.colors[findIndex],
-              timed: true
+              timed: true,
+              item: this.dataJob.filter((item) => item.bookNo === element.refID),
+              startTime: moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm'),
+              endTime: moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm')
+              // name: flowName,
+              // start: start,
+              // end: end,
+              // color: this.colors[findIndex],
+              // timed: true
             })
           }
         }
-        // console.log('events', JSON.stringify(TT))
+        console.log('events', events)
         this.events = events
         this.TT = TT
       } catch (error) {
         console.log(error)
       }
     }
-  },
-  components: { FullCalendar }
+  }
 }
 </script>
 
 <style>
 .Main {
-  min-height: 600px;
+  min-height: 650px;
   display: flex;
-  flex-wrap: wrap;
-}
-.menuright {
-  width: 100%;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e0e0e0;
 }
 .menuleft {
   display: flex;
   flex-direction: column;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #e0e0e0;
   width: 300px;
-  height: 100%;
+  height: 76vh;
+}
+.menuright {
+  flex-grow: 1;
+  overflow: scroll;
 }
 /* .v-calendar-daily_head-weekday {
   display: none !important;
