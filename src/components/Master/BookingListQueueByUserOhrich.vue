@@ -202,7 +202,6 @@ export default {
   },
   computed: {
     resCol () {
-      console.log('this.$vuetify.breakpoint.name', this.$vuetify.breakpoint.name)
       switch (this.$vuetify.breakpoint.name) {
         case 'xs':
           return '12'
@@ -215,10 +214,6 @@ export default {
         case 'xl':
           return '6'
       }
-      console.log(
-        'this.$vuetify.breakpoint.name',
-        this.$vuetify.breakpoint.name
-      )
     },
     dialogwidth () {
       switch (this.$vuetify.breakpoint.name) {
@@ -232,13 +227,12 @@ export default {
   },
   async mounted () {
     this.dateStart = this.momenDate_1(new Date())
-    console.log('localStorage', JSON.parse(localStorage.getItem('sessionData')))
-    console.log('session', this.$session.getAll().data)
     await this.beforeCreate()
     // await this.UpdatetypeStoreFrontText()
   },
   methods: {
     async UpdatetypeStoreFrontText () {
+      console.log('Start !! UpdatetypeStoreFrontText')
       let dataSession = this.$session.get('data')
       dataSession.typeStoreFrontText = this.flowSelectCheck
       this.$session.set('data', dataSession)
@@ -256,7 +250,6 @@ export default {
         .catch((error) => { console.log(error) })
     },
     async getFirestore () {
-      console.log('getFirestore')
       this.firestore = this.$firebase.firestore()
       this.firestore.collection('ProcessOhrichUpdate').limit(1000).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
@@ -266,12 +259,8 @@ export default {
             await this.getBefore()
           } else {
             if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
-              console.log('------------------------')
-              console.log(change.doc.id)
-              console.log('JSON.parse(localStorage.getItem(\'sessionData\'))', JSON.parse(localStorage.getItem('sessionData')))
               // if (change.doc.data().active === '1' && change.doc.id === this.$session.getAll().data.userName) {
               if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
-                console.log('Have Session')
                 if (change.doc.id === this.$session.getAll().data.userName) {
                   if (!this.checkStatusEdit) {
                     await this.getBefore()
@@ -279,7 +268,6 @@ export default {
                   }
                 }
               } else {
-                console.log('Not Have Session')
                 await this.checkSession()
               }
             }
@@ -490,8 +478,6 @@ export default {
       this.searchBooking('unNoti')
     },
     async GroupArrayQueue (dataArray) {
-      // ใช้ Map เพื่อจัดกลุ่มตาม flowId
-      console.log('!!!!!!', dataArray)
       let dataConfirm = []
       let data = []
       let dataB = []
@@ -501,7 +487,7 @@ export default {
         if (d.statusBt === 'confirmJob') {
           dataConfirm.push(d)
         } else {
-          // console.log('TEST@@!@#!@#!@#!@#!@#', this.flowSelectCheck.filter((item) => item === d.storeFrontText))
+          console.log('[GroupArrayQueue] :', this.flowSelectCheck.filter((item) => item === d.storeFrontText), d.storeFrontText)
           if (this.flowSelectCheck.filter((item) => item === d.storeFrontText).length > 0) {
             if (d.storeFrontText === 'B') {
               dataB.push(d)
@@ -511,16 +497,13 @@ export default {
               data.push(d)
             }
           }
+          console.log('[List flowSelectCheck]', this.flowSelectCheck, 'dataB', dataB, 'dataC', dataC, 'data', data)
         }
       }
-      // console.log('dataConfirm', dataConfirm)
-      // console.log('data', data)
-      // console.log('dataB', dataB)
       // let mergedData = [...dataB, ...data.slice(0)]
       let mergedData = [...dataC, ...dataB, ...data.slice(0)]
       dataConfirm.push(...mergedData)
-
-      console.log(dataConfirm)
+      console.log('Data [dataConfirm]', dataConfirm)
       return dataConfirm
     },
     // async GroupArrayQueue (dataArray) {
@@ -544,6 +527,7 @@ export default {
     //   return sortedArray
     // },
     async searchBooking (checkNoti, item) {
+      console.log('searchBooking ', checkNoti, item)
       if (this.validSearch === true) {
         this.checkStatusEdit = false
         // this.overlay = false
@@ -702,13 +686,11 @@ export default {
                   }
                 }
               }
-              console.log('this.flowSelectCheckItem', this.flowSelectCheckItem)
             }
           } else {
             resultOption = []
           }
         })
-      console.log('resultOption', resultOption)
       this.DataFlowItem = resultOption
       if (resultOption.length === 1) {
         this.flowSelect = this.DataFlowItem[0].value
@@ -746,7 +728,6 @@ export default {
               // console.log('this.DataFlowName', this.DataFlowName)
             }
             this.masBranchID = rs[0].masBranchID
-            console.log('this.masBranchID', this.masBranchID)
           }
         })
     },
@@ -911,7 +892,6 @@ export default {
       }
     },
     async backHomeSubmit (item) {
-      console.log('backHomeSubmit', item)
       this.dataReady = true
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       this.checkStatusEdit = true
@@ -953,14 +933,12 @@ export default {
         '&dueDateDay=' + this.dateStart + '&storeFrontQueue=is not null&statusBt=confirmJob&servicePointStatus=True')
         .then(async response => {
           let rs = response.data
-          console.log('setservicePointCount', rs)
           if (rs.status !== false) {
             let servicePointItem = rs.filter(el => { return el.servicePoint !== null || el.servicePoint !== '' })
             if (servicePointItem.length > 0) {
               if (JSON.parse(item.servicePointCount).length > 0) {
                 for (let i = 0; i < JSON.parse(item.servicePointCount).length; i++) {
                   let d = JSON.parse(item.servicePointCount)[i]
-                  console.log('Count', servicePointItem.filter(el => { return el.servicePoint === d.textTh }))
                   if (servicePointItem.filter(el => { return el.servicePoint === d.textTh }).length === 0) {
                     this.servicePointItem.push(d)
                   }
@@ -990,7 +968,6 @@ export default {
     async closeJobSubmit (item) {
       if (item.statusBt === 'confirm') {
         this.checkStatusEdit = true
-        console.log('closeJobSubmit', item)
         let statusBooking = await this.checkBookingStatus(item.bookNo)
         if (statusBooking === 'confirm') {
           if (item.servicePointStatus === 'True') {
@@ -1079,7 +1056,6 @@ export default {
       var dtt = {
         servicePoint: this.servicePoint
       }
-      console.log('dttdttdttdttdttdtt', dtt)
       await axios
         .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
         .then(async responses => {})
@@ -1749,7 +1725,6 @@ export default {
     },
     async pushMessageRecallQueue (countNoti, checkGetQueue) {
       let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
-      console.log('bookSelect', bookSelect)
       if (bookSelect.length > 0) {
         let bookSelectuse = bookSelect.filter((element, index) => { return index < countNoti })
         for (let i = 0; i < bookSelectuse.length; i++) {
@@ -1827,7 +1802,7 @@ export default {
   width: 140px !important;
   height: 140px !important;
   box-sizing: border-box;
-  border: 5px solid transparent;
+  border: 10px solid transparent;
 }
 .text-bell{
   width: 100px !important;
