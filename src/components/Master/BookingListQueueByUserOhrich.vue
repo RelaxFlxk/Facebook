@@ -255,6 +255,8 @@ export default {
         snapshot.docChanges().forEach(async (change) => {
           if (this.checkRef === false) {
             this.checkRef = true
+            this.dateStart = this.momenDate_1(new Date())
+            this.currentDate = moment().format('DD/MMM/YYYY')
             this.updateProcessOhrichUpdate()
             await this.getBefore()
           } else {
@@ -263,6 +265,8 @@ export default {
               if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
                 if (change.doc.id === this.$session.getAll().data.userName) {
                   if (!this.checkStatusEdit) {
+                    this.dateStart = this.momenDate_1(new Date())
+                    this.currentDate = moment().format('DD/MMM/YYYY')
                     await this.getBefore()
                     this.updateProcessOhrichUpdate()
                   }
