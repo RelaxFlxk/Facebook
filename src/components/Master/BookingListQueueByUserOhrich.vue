@@ -665,8 +665,8 @@ export default {
     },
     async getDataFlow () {
       let resultOption = []
-      this.flowSelectCheckItem = []
-      this.flowSelectCheck = []
+      let flowSelectCheckItem = []
+      let flowSelectCheck = []
       await axios
         .get(this.DNS_IP + `/flow/get?shopId=${this.$session.getAll().data.shopId}&storeFrontCheck=True&masBranchIDAll=${this.masBranchID}`)
         .then(response => {
@@ -685,41 +685,42 @@ export default {
                   s.value = d.flowId
                   s.allData = d
                   resultOption.push(s)
-                  this.flowSelectCheckItem.push(d)
+                  flowSelectCheckItem.push(d)
                   if (this.$session.getAll().data.typeStoreFrontText === null) {
-                    this.flowSelectCheck.push(d.storeFrontText)
+                    flowSelectCheck.push(d.storeFrontText)
                   } else {
                     let dt = JSON.parse(this.$session.getAll().data.typeStoreFrontText) || []
-                    this.flowSelectCheck = dt
+                    flowSelectCheck = dt
                   }
                 }
               }
             }
+            if (flowSelectCheckItem.length > 0) {
+              this.flowSelectCheckItem = flowSelectCheckItem
+            } else {
+              this.flowSelectCheckItem = []
+            }
+            if (flowSelectCheck.length > 0) {
+              this.flowSelectCheck = flowSelectCheck
+            } else {
+              this.flowSelectCheck = []
+            }
           } else {
             resultOption = []
           }
+          this.DataFlowItem = resultOption
+          if (resultOption.length === 1) {
+            this.flowSelect = this.DataFlowItem[0].value
+          }
+          if (resultOption.length > 1) {
+            this.flowSelect = 'allFlow'
+          }
+        }).catch(error => {
+          this.DataFlowItem = []
+          console.log('catch getDataFlow : ', error)
         })
-      this.DataFlowItem = resultOption
-      if (resultOption.length === 1) {
-        this.flowSelect = this.DataFlowItem[0].value
-      }
-      if (resultOption.length > 1) {
-        this.flowSelect = 'allFlow'
-      }
     },
     async getDataBranch () {
-      // if (localStorage.getItem('BRANCH') === null) {
-      //   let temp = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
-      //   console.log(typeof temp)
-      //   localStorage.setItem('BRANCH', JSON.stringify(temp))
-      // }
-      // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
-      // this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
-      // if (this.branchItem.length > 0) {
-      //   this.masBranchID = this.branchItem[0].value
-      //   console.log('this.branchItem', this.branchItem)
-      //   console.log('this.masBranchID', this.masBranchID)
-      // }
       let masBranchID = this.$session.getAll().data.masBranchID
       await axios
         .get(this.DNS_IP + `/master_branch/get?shopId=${this.$session.getAll().data.shopId}&masBranchID=${masBranchID}`)
@@ -737,6 +738,8 @@ export default {
             }
             this.masBranchID = rs[0].masBranchID
           }
+        }).catch(error => {
+          console.log('catch getDataBranch : ', error)
         })
     },
     async getDataFromAPI (url, fieldId, fieldName, param) {
@@ -758,6 +761,9 @@ export default {
           } else {
             result = []
           }
+        }).catch(error => {
+          result = []
+          console.log('catch getDataFromAPI : ', error)
         })
       return result
     },
