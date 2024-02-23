@@ -665,6 +665,8 @@ export default {
     },
     async getDataFlow () {
       let resultOption = []
+      this.flowSelectCheckItem = []
+      this.flowSelectCheck = []
       await axios
         .get(this.DNS_IP + `/flow/get?shopId=${this.$session.getAll().data.shopId}&storeFrontCheck=True&masBranchIDAll=${this.masBranchID}`)
         .then(response => {
