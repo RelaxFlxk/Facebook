@@ -1749,7 +1749,7 @@ export default {
   }
 }
 </script>
-<style scope>
+<style scoped>
 .main {
   overflow-x: hidden;
   height:100vh;
