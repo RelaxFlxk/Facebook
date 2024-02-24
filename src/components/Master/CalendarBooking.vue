@@ -1277,7 +1277,8 @@ export default {
             s.remark = t.remark
             s.cusName = t.cusName
             s.cusReg = t.cusReg
-            s.flowName = serviceDetail
+            // s.flowName = serviceDetail
+            s.flowName = t.flowName
             s.dueDateTimeStamp = t.dueDateTimeStamp
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
@@ -1387,7 +1388,8 @@ export default {
             s.cusName = t.cusName
             s.remark = t.remark
             s.cusReg = t.cusReg
-            s.flowName = serviceDetail
+            // s.flowName = serviceDetail
+            s.flowName = t.flowName
             s.dueDateTimeStamp = t.dueDateTimeStamp
             s.tel = t.tel
             s.empFull_NameTH = t.empFull_NameTH

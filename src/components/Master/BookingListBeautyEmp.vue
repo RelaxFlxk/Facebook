@@ -11972,7 +11972,8 @@ export default {
             s.remark = t.remark
             s.cusName = t.cusName
             s.cusReg = t.cusReg
-            s.flowName = serviceDetail
+            // s.flowName = serviceDetail
+            s.flowName = t.flowName
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
             s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
@@ -12074,7 +12075,8 @@ export default {
             s.cusName = t.cusName
             s.remark = t.remark
             s.cusReg = t.cusReg
-            s.flowName = serviceDetail
+            // s.flowName = serviceDetail
+            s.flowName = t.flowName
             s.tel = t.tel
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? 'Extra Job' : ''
@@ -12216,7 +12218,8 @@ export default {
             s.remark = t.remark
             s.cusName = t.cusName
             s.cusReg = t.cusReg
-            s.flowName = serviceDetail
+            // s.flowName = serviceDetail
+            s.flowName = t.flowName
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
             s.tel = t.tel
@@ -12301,7 +12304,8 @@ export default {
             s.remark = t.remark
             s.cusName = t.cusName
             s.cusReg = t.cusReg
-            s.flowName = serviceDetail
+            // s.flowName = serviceDetail
+            s.flowName = t.flowName
             s.tel = t.tel
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? 'Extra Job' : ''
@@ -12419,7 +12423,8 @@ export default {
           s.remark = t.remark
           s.cusName = t.cusName
           s.cusReg = t.cusReg
-          s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          // s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          s.flowName = t.flowName
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
           // s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
@@ -12484,7 +12489,8 @@ export default {
           s.cusName = t.cusName
           s.remark = t.remark
           s.cusReg = t.cusReg
-          s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          // s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          s.flowName = t.flowName
           s.tel = t.tel
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
@@ -13110,7 +13116,8 @@ export default {
             //   serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
             // })
             // serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
-            t.flowNameShow = t.flowName + ' : ' + t.displayFlowName || ''
+            // t.flowNameShow = t.flowName + ' : ' + t.displayFlowName || ''
+            t.flowNameShow = t.flowName
             this.dataItemSelect.push(t)
           }
         } else {
@@ -13198,7 +13205,8 @@ export default {
             //   })
             // }
             // serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
-            t.flowNameShow = t.flowName + ' : ' + t.displayFlowName || ''
+            // t.flowNameShow = t.flowName + ' : ' + t.displayFlowName || ''
+            t.flowNameShow = t.flowName
             this.dataItemSelect.push(t)
           }
         } else {
