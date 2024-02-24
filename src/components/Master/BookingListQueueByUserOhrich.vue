@@ -232,10 +232,10 @@ export default {
   },
   methods: {
     async UpdatetypeStoreFrontText () {
-      console.log('Start !! UpdatetypeStoreFrontText')
       let dataSession = this.$session.get('data')
-      dataSession.typeStoreFrontText = this.flowSelectCheck
+      dataSession.typeStoreFrontText = JSON.stringify(this.flowSelectCheck)
       this.$session.set('data', dataSession)
+      localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
       let obj = {
         'typeStoreFrontText': JSON.stringify(this.flowSelectCheck)
       }
@@ -246,7 +246,7 @@ export default {
     async updateSYS_USER (id, obj) {
       await axios
         .post(this.DNS_IP + '/system_user/edit/' + id, obj)
-        .then(async responses => { console.log(responses) })
+        .then(async responses => { console.log('updateSYS_USER', responses) })
         .catch((error) => { console.log(error) })
     },
     async getFirestore () {
@@ -400,49 +400,6 @@ export default {
     dial: function (number) {
       window.location = 'tel:' + number
     },
-    async sendQonline (item) {
-      let dtt = {
-        checkGetQueue: 'False'
-      }
-      await axios
-        .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
-        .then(async responses => {
-          // this.$swal({
-          //   title: 'Send successfully',
-          //   text: 'ส่งสำเร็จ',
-          //   type: 'success',
-          //   timer: 2000,
-          //   showConfirmButton: false
-          // })
-        }).catch(error => {
-          console.log('error function pushMsgQueueOhrich : ', error)
-        })
-    },
-    async openHistory (item) {
-      // console.log('item', item)
-      // console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
-      if (item) {
-        this.HistoryData = this.BookingDataList[item.bookNo]
-        this.pictureUrHistory = item.memberPicture
-        let phoneNum = this.HistoryData.filter(item3 => { return item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร' })
-        if (phoneNum.length > 0) {
-          this.shopPhone = phoneNum[0].fieldValue.replace(/-/g, '')
-        } else {
-          this.shopPhone = ''
-        }
-      // axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
-      //   .then(async (response) => {
-      //     let rs = response.data
-      //     if (rs.status !== false) {
-      //       this.HistoryData = response.data
-      // this.dialogHistory = true
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log('error function addData : ', error)
-      //   })
-      }
-    },
     async getShop () {
       let shopImg = ''
       await axios
@@ -531,13 +488,13 @@ export default {
     //   return sortedArray
     // },
     async searchBooking (checkNoti, item) {
-      console.log('searchBooking ', checkNoti, this.validSearch, this.dateStart)
+      // console.log('searchBooking ', checkNoti, this.validSearch, this.dateStart)
       if (this.validSearch === true) {
         this.checkStatusEdit = false
         // this.overlay = false
         // this.itemBooking = []
         let itemBooking = []
-        await this.getBookingDataList(this.dateStart)
+        // await this.getBookingDataList(this.dateStart)
         let urlApi = {}
         if (this.flowSelect === 'allFlow') {
           urlApi = this.DNS_IP +
@@ -568,19 +525,14 @@ export default {
             // console.log('getData', response.data)
             let rs = response.data
             if (rs.length > 0) {
-              let sortData = await this.GroupArrayQueue(rs)
-              console.log('itemBookings sortData', sortData)
-              // let sortData = rs.sort((a, b) => {
-              //   if (a.storeFrontQueue < b.storeFrontQueue) return -1
-              //   return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
-              // })
-              for (let i = 0; i < sortData.length; i++) {
-                let d = sortData[i]
-                if (this.BookingDataList[d.bookNo] !== undefined) {
-                  d.cusName = d.bookingDataCustomerName || ''
-                  itemBooking.push(d)
-                }
-              }
+              itemBooking = await this.GroupArrayQueue(rs)
+              // for (let i = 0; i < sortData.length; i++) {
+              //   let d = sortData[i]
+              //   if (this.BookingDataList[d.bookNo] !== undefined) {
+              //     d.cusName = d.bookingDataCustomerName || ''
+              //     itemBooking.push(d)
+              //   }
+              // }
               // console.log('itemBooking', itemBooking)
               let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
               let empId = this.$session.getAll().data.empId || ''
@@ -593,18 +545,9 @@ export default {
               } else {
                 itemBookings = itemBooking
               }
-              console.log('itemBookings', itemBookings)
+              // console.log('itemBookings', itemBookings)
               this.itemBooking = itemBookings
               this.overlay = true
-              // this.openHistory(this.itemBooking[0])
-              // if (checkNoti === 'noti') {
-              //   // console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
-              //   if (item.storeFrontNotifyStatus === 'True') {
-              //     if (parseInt(item.storeFrontNotifySet) > 0) {
-              //       this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
-              //     }
-              //   }
-              // }
             } else {
               this.itemBooking = []
               this.datawainingShow = []
@@ -705,6 +648,7 @@ export default {
             } else {
               this.flowSelectCheck = []
             }
+            console.log('flowSelectCheck get flow', this.$session.getAll().data.typeStoreFrontText)
           } else {
             resultOption = []
           }
@@ -867,9 +811,6 @@ export default {
           // this.clearTimeLoop()
         }
       }
-    },
-    settingCounter () {
-
     },
     async closeJobSubmitReturn (item) {
       console.log('closeJobSubmit', item)

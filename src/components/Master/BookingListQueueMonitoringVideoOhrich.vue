@@ -113,7 +113,7 @@ export default {
   data () {
     return {
       orientation: '',
-      statusSound: false,
+      statusSound: true,
       dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
       Fontsize: null,
