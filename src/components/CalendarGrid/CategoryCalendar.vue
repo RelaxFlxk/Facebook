@@ -6,7 +6,7 @@
         class="d-flex"
       >
       </v-sheet>
-      <v-sheet>
+      <v-sheet height="750">
         <!-- {{ focus }}
         {{ categories }}
         {{ names }} -->

@@ -24,7 +24,7 @@
           class="ma-2"
         ></v-select>
       </v-sheet>
-      <v-sheet height="600" style="width: 100%;">
+      <v-sheet height="750" style="width: 100%;">
         <v-calendar
           ref="calendar"
           v-model="focus"
