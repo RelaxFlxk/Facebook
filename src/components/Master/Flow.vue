@@ -638,7 +638,7 @@
                             attach
                             chips
                             :menu-props="{ bottom: true, offsetY: true }"
-                            :rules="[rules.required]"
+                            :rules="[rules.requiredArray]"
                           ></v-select>
                         </v-col>
                           <v-col cols="12" class="pt-0 pb-0">
@@ -1172,7 +1172,7 @@
                             attach
                             chips
                             :menu-props="{ bottom: true, offsetY: true }"
-                            :rules="[rules.required]"
+                            :rules="[rules.requiredArray]"
                           ></v-select>
                         </v-col>
                         <v-col cols="12" class="pt-0 pb-0" >
@@ -3203,6 +3203,7 @@ export default {
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
           'กรุณากรอกตัวเลข 0 ถึง 9',
         required: value => !!value || 'กรุณากรอก.',
+        requiredArray: value => value.length > 0 || 'กรุณาเลือกประเภทบริการ',
         resizeImag: value =>
           !value ||
           value.size < 2000000 ||

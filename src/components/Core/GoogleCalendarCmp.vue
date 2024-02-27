@@ -288,6 +288,13 @@ export default {
           }
         }
       }
+      if (this.flowItem[0].GoogleCalendarMeet === 'True') {
+        item.requestId = this.bookingItem[0].bookNo
+        if (this.bookingItem[0].bookingDataCustomerEmail !== null && this.bookingItem[0].bookingDataCustomerEmail !== '') {
+          let obj = {'email': this.bookingItem[0].bookingDataCustomerEmail}
+          item.attendees.push(obj)
+        }
+      }
       return item
     },
     async checkTypeEven (status, bookNo) {
@@ -337,6 +344,13 @@ export default {
       await this.getSysUser()
       console.log('this.attendeesEmail', this.attendeesEmail)
       item.attendees = this.attendeesEmail
+      if (this.flowItem[0].GoogleCalendarMeet === 'True') {
+        item.requestId = this.bookingItem[0].bookNo
+        if (this.bookingItem[0].bookingDataCustomerEmail !== null && this.bookingItem[0].bookingDataCustomerEmail !== '') {
+          let obj = {'email': this.bookingItem[0].bookingDataCustomerEmail}
+          item.attendees.push(obj)
+        }
+      }
       return item
     },
     async getBooking () {

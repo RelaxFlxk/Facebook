@@ -257,7 +257,7 @@
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col cols="12" v-if="formUpdate.category !== ''">
+                      <v-col cols="12" v-if="formUpdate.category !== '' && categorySub.length > 0">
                         <v-select
                           v-model="formUpdate.categorySub"
                           :items="categorySub"
@@ -268,7 +268,7 @@
                           multiple
                           attach
                           :menu-props="{ bottom: true, offsetY: true }"
-                          :rules="[rules.required]"
+                          :rules="[rules.requiredArray]"
                         ></v-select>
                       </v-col>
                     </v-row>
@@ -559,6 +559,7 @@ export default {
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
           'กรุณากรอกตัวเลข 0 ถึง 9',
         required: value => !!value || 'กรุณากรอก.',
+        requiredArray: value => value.length > 0 || 'กรุณาเลือกประเภทบริการ',
         requiredCountDay: (value) => value == null || value === '' ? 'กรุณากรอก.' : true,
         resizeImag: value =>
           !value ||
@@ -786,7 +787,6 @@ export default {
       this.formUpdate.category = parseInt(item.category)
       await this.selectCategorySub()
       this.formUpdate.categorySub = JSON.parse(item.categorySub) || []
-
       // this.formUpdate.primaryColor = item.primaryColor
       // this.formUpdate.secondaryColor = item.secondaryColor
       // if (this.formUpdate.ZIP_CD.length >= 5) {
@@ -795,191 +795,195 @@ export default {
       console.log('formUpdate', this.formUpdate)
     },
     async editData () {
+      await this.$refs.form_update.validate()
+      console.log('validUpdate', this.validUpdate)
       console.log(this.formUpdate)
+      if (this.validUpdate === true) {
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
-      this.dataReady = false
+        this.dataReady = false
 
-      this.$swal({
-        title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#b3b1ab',
-        confirmButtonText: 'ใช่',
-        cancelButtonText: 'ไม่'
-      })
-        .then(async result => {
-          // this.formUpdate.LAST_USER = this.session.data.userName
-          var ID = this.formUpdate.shopId
-          if (this.filesUpdate) {
-            const _this = this
-            let params = new FormData()
-            params.append('file', this.filesUpdate)
+        this.$swal({
+          title: 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#b3b1ab',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        })
+          .then(async result => {
+            // this.formUpdate.LAST_USER = this.session.data.userName
+            var ID = this.formUpdate.shopId
+            if (this.filesUpdate) {
+              const _this = this
+              let params = new FormData()
+              params.append('file', this.filesUpdate)
+              await axios
+                .post(this.DNS_IP + `/file/upload/shop`, params)
+                .then(function (response) {
+                  _this.formUpdate.shopImge = response.data
+                  console.log('url Pic', response.data)
+                })
+            } else {
+              this.formUpdate.shopImge = this.formUpdate.pictureUrlPreview
+            }
+            if (this.filesUpdateImgCover) {
+              const _this = this
+              let params = new FormData()
+              params.append('file', this.filesUpdateImgCover)
+              await axios
+                .post(this.DNS_IP + `/file/upload/shop`, params)
+                .then(function (response) {
+                  _this.formUpdate.shopImageCover = response.data
+                  console.log('url Pic', response.data)
+                })
+            } else {
+              this.formUpdate.shopImageCover = this.formUpdate.pictureCoverUrlPreview
+            }
+            var darkMode = ''
+            if (this.formUpdate.darkMode === true) {
+              darkMode = 'True'
+            } else {
+              darkMode = 'False'
+            }
+            let bookingthankText = ''
+            if (this.formUpdate.bookingthankText === '') {
+              bookingthankText = ''
+            } else {
+              bookingthankText = this.formUpdate.bookingthankText.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            let bookingthankTextEn = ''
+            if (this.formUpdate.bookingthankTextEn === '') {
+              bookingthankTextEn = ''
+            } else {
+              bookingthankTextEn = this.formUpdate.bookingthankTextEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            let videoLinkMonition = ''
+            if (this.formUpdate.videoLinkMonition === '' || this.formUpdate.videoLinkMonition === null) {
+              videoLinkMonition = ''
+            } else {
+              videoLinkMonition = this.formUpdate.videoLinkMonition.replace(/%/g, '%%').replace(/'/g, "\\'")
+            }
+            var dt = {
+              shopName: this.formUpdate.shopName,
+              shopImge: this.formUpdate.shopImge,
+              shopImageCover: this.formUpdate.shopImageCover,
+              contactTel: this.formUpdate.contactTel,
+              LAST_USER: this.session.data.userName,
+              contactEmail: this.formUpdate.contactEmail,
+              primaryColor: this.formUpdate.primaryColor,
+              secondaryColor: this.formUpdate.secondaryColor,
+              category: this.formUpdate.category,
+              categorySub: JSON.stringify(this.formUpdate.categorySub),
+              timeSlotStatus: this.formUpdate.timeSlotStatus,
+              showQrPayments: this.formUpdate.showQrPayments,
+              videoLinkMonition: videoLinkMonition,
+              darkMode: darkMode,
+              bookingthankText: bookingthankText,
+              bookingthankTextEn: bookingthankTextEn,
+              statusGoogleCalendar: this.formUpdate.statusGoogleCalendar,
+              statusGoogleCalendarEmp: this.formUpdate.statusGoogleCalendarEmp,
+              statusCustomerEdit: this.formUpdate.statusCustomerEdit,
+              statusCustomerEditNoTime: this.formUpdate.statusCustomerEditNoTime,
+              countCustomerEdit: this.formUpdate.countCustomerEdit,
+              countDayCustomerEdit: this.formUpdate.countDayCustomerEdit
+            }
             await axios
-              .post(this.DNS_IP + `/file/upload/shop`, params)
-              .then(function (response) {
-                _this.formUpdate.shopImge = response.data
-                console.log('url Pic', response.data)
-              })
-          } else {
-            this.formUpdate.shopImge = this.formUpdate.pictureUrlPreview
-          }
-          if (this.filesUpdateImgCover) {
-            const _this = this
-            let params = new FormData()
-            params.append('file', this.filesUpdateImgCover)
-            await axios
-              .post(this.DNS_IP + `/file/upload/shop`, params)
-              .then(function (response) {
-                _this.formUpdate.shopImageCover = response.data
-                console.log('url Pic', response.data)
-              })
-          } else {
-            this.formUpdate.shopImageCover = this.formUpdate.pictureCoverUrlPreview
-          }
-          var darkMode = ''
-          if (this.formUpdate.darkMode === true) {
-            darkMode = 'True'
-          } else {
-            darkMode = 'False'
-          }
-          let bookingthankText = ''
-          if (this.formUpdate.bookingthankText === '') {
-            bookingthankText = ''
-          } else {
-            bookingthankText = this.formUpdate.bookingthankText.replace(/%/g, '%%').replace(/'/g, "\\'")
-          }
-          let bookingthankTextEn = ''
-          if (this.formUpdate.bookingthankTextEn === '') {
-            bookingthankTextEn = ''
-          } else {
-            bookingthankTextEn = this.formUpdate.bookingthankTextEn.replace(/%/g, '%%').replace(/'/g, "\\'")
-          }
-          let videoLinkMonition = ''
-          if (this.formUpdate.videoLinkMonition === '' || this.formUpdate.videoLinkMonition === null) {
-            videoLinkMonition = ''
-          } else {
-            videoLinkMonition = this.formUpdate.videoLinkMonition.replace(/%/g, '%%').replace(/'/g, "\\'")
-          }
-          var dt = {
-            shopName: this.formUpdate.shopName,
-            shopImge: this.formUpdate.shopImge,
-            shopImageCover: this.formUpdate.shopImageCover,
-            contactTel: this.formUpdate.contactTel,
-            LAST_USER: this.session.data.userName,
-            contactEmail: this.formUpdate.contactEmail,
-            primaryColor: this.formUpdate.primaryColor,
-            secondaryColor: this.formUpdate.secondaryColor,
-            category: this.formUpdate.category,
-            categorySub: JSON.stringify(this.formUpdate.categorySub),
-            timeSlotStatus: this.formUpdate.timeSlotStatus,
-            showQrPayments: this.formUpdate.showQrPayments,
-            videoLinkMonition: videoLinkMonition,
-            darkMode: darkMode,
-            bookingthankText: bookingthankText,
-            bookingthankTextEn: bookingthankTextEn,
-            statusGoogleCalendar: this.formUpdate.statusGoogleCalendar,
-            statusGoogleCalendarEmp: this.formUpdate.statusGoogleCalendarEmp,
-            statusCustomerEdit: this.formUpdate.statusCustomerEdit,
-            statusCustomerEditNoTime: this.formUpdate.statusCustomerEditNoTime,
-            countCustomerEdit: this.formUpdate.countCustomerEdit,
-            countDayCustomerEdit: this.formUpdate.countDayCustomerEdit
-          }
-          await axios
-            .post(
-              // eslint-disable-next-line quotes
-              this.DNS_IP + this.path + 'edit/' + ID,
-              dt
-              // {
-              //   headers: {
-              //     'Application-Key': this.$session.getAll().ApplicationKey
-              //   }
-              // }
-            )
-            .then(async response => {
-              // Debug response
-              var ds = {
-                shopName: this.formUpdate.shopName,
-                shopImge: this.formUpdate.shopImge,
-                shopImageCover: this.formUpdate.shopImageCover,
-                contactTel: this.formUpdate.contactTel,
-                LAST_USER: this.session.data.userName,
-                contactEmail: this.formUpdate.contactEmail,
-                primaryColor: this.formUpdate.primaryColor,
-                secondaryColor: this.formUpdate.secondaryColor,
-                darkMode: darkMode,
-                bookingthankText: bookingthankText,
-                sourceProgram: 'belinked',
-                bookingthankTextEn: bookingthankTextEn
-              }
-              this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
-              console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
-              let checktimeSlotStatus = this.formUpdate.timeSlotStatus || 'False'
-              console.log('-----------', this.timeSlotStatusOld, checktimeSlotStatus)
-              if (this.timeSlotStatusOld === checktimeSlotStatus) {
-                this.$swal('เรียบร้อย', 'บันทึกสำเร็จ', 'success')
-              } else {
-                let dt = {}
-                if (this.formUpdate.timeSlotStatus === 'True') {
-                  dt = {
-                    shopId: this.$session.getAll().data.shopId,
-                    timeSlotStatus: this.formUpdate.timeSlotStatus,
-                    storeFrontCheck: 'False',
-                    checkOnsite: 'False',
-                    LAST_USER: this.$session.getAll().data.userName
-                  }
-                } else {
-                  dt = {
-                    shopId: this.$session.getAll().data.shopId,
-                    timeSlotStatus: this.formUpdate.timeSlotStatus,
-                    LAST_USER: this.$session.getAll().data.userName
-                  }
+              .post(
+                // eslint-disable-next-line quotes
+                this.DNS_IP + this.path + 'edit/' + ID,
+                dt
+                // {
+                //   headers: {
+                //     'Application-Key': this.$session.getAll().ApplicationKey
+                //   }
+                // }
+              )
+              .then(async response => {
+                // Debug response
+                var ds = {
+                  shopName: this.formUpdate.shopName,
+                  shopImge: this.formUpdate.shopImge,
+                  shopImageCover: this.formUpdate.shopImageCover,
+                  contactTel: this.formUpdate.contactTel,
+                  LAST_USER: this.session.data.userName,
+                  contactEmail: this.formUpdate.contactEmail,
+                  primaryColor: this.formUpdate.primaryColor,
+                  secondaryColor: this.formUpdate.secondaryColor,
+                  darkMode: darkMode,
+                  bookingthankText: bookingthankText,
+                  sourceProgram: 'belinked',
+                  bookingthankTextEn: bookingthankTextEn
                 }
-                axios
-                  .post(
-                    // eslint-disable-next-line quotes
-                    this.DNS_IP + "/flow/editTimeSlotStatusByshopId",
-                    dt
-                  )
-                  .then(async response => {})
-                this.$swal('เรียบร้อย', 'กรุณา เข้าสู่ระบบอีกครั้ง', 'success')
-                  .then(async result => {
-                    console.log('IF!!!!!!!_IF')
-                    this.logout()
-                  }).catch(error => {
-                    console.log('IF!!!!!!!_ELSE')
-                    this.logout()
-                    console.log('error function editDataGlobal : ', error)
-                  })
-              }
-              // Close Dialog
-              this.dialogEdit = false
+                this.updateBetaskDB(ds, this.$session.getAll().data.shopId)
+                console.log('editDataGlobal DNS_IP + PATH + "edit"', response)
+                let checktimeSlotStatus = this.formUpdate.timeSlotStatus || 'False'
+                console.log('-----------', this.timeSlotStatusOld, checktimeSlotStatus)
+                if (this.timeSlotStatusOld === checktimeSlotStatus) {
+                  this.$swal('เรียบร้อย', 'บันทึกสำเร็จ', 'success')
+                } else {
+                  let dt = {}
+                  if (this.formUpdate.timeSlotStatus === 'True') {
+                    dt = {
+                      shopId: this.$session.getAll().data.shopId,
+                      timeSlotStatus: this.formUpdate.timeSlotStatus,
+                      storeFrontCheck: 'False',
+                      checkOnsite: 'False',
+                      LAST_USER: this.$session.getAll().data.userName
+                    }
+                  } else {
+                    dt = {
+                      shopId: this.$session.getAll().data.shopId,
+                      timeSlotStatus: this.formUpdate.timeSlotStatus,
+                      LAST_USER: this.$session.getAll().data.userName
+                    }
+                  }
+                  axios
+                    .post(
+                      // eslint-disable-next-line quotes
+                      this.DNS_IP + "/flow/editTimeSlotStatusByshopId",
+                      dt
+                    )
+                    .then(async response => {})
+                  this.$swal('เรียบร้อย', 'กรุณา เข้าสู่ระบบอีกครั้ง', 'success')
+                    .then(async result => {
+                      console.log('IF!!!!!!!_IF')
+                      this.logout()
+                    }).catch(error => {
+                      console.log('IF!!!!!!!_ELSE')
+                      this.logout()
+                      console.log('error function editDataGlobal : ', error)
+                    })
+                }
+                // Close Dialog
+                this.dialogEdit = false
 
-              // Load Data
-              // await this.reloadData()
-              this.resetShop()
-              await this.clearDataUpdate()
-              this.filesShop = null
-              await this.getDataGlobal(
-                this.DNS_IP,
-                this.path,
-                this.session.data.shopId,
-                this.returnLink
-              )
-            })
-            // eslint-disable-next-line handle-callback-err
-            .catch(error => {
-              this.dataReady = true
-              console.log('error function editDataGlobal : ', error)
-              this.$router.push(
-                '/system/Errorpage?returnLink=' + this.returnLink
-              )
-            })
-        })
-        .catch(error => {
-          this.dataReady = true
-          console.log('error function editDataGlobal : ', error)
-        })
+                // Load Data
+                // await this.reloadData()
+                this.resetShop()
+                await this.clearDataUpdate()
+                this.filesShop = null
+                await this.getDataGlobal(
+                  this.DNS_IP,
+                  this.path,
+                  this.session.data.shopId,
+                  this.returnLink
+                )
+              })
+              // eslint-disable-next-line handle-callback-err
+              .catch(error => {
+                this.dataReady = true
+                console.log('error function editDataGlobal : ', error)
+                this.$router.push(
+                  '/system/Errorpage?returnLink=' + this.returnLink
+                )
+              })
+          })
+          .catch(error => {
+            this.dataReady = true
+            console.log('error function editDataGlobal : ', error)
+          })
+      }
     },
     logout () {
       this.$session.destroy()

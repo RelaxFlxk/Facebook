@@ -689,7 +689,7 @@
     </v-dialog>
      <SidebarNoti :isOpen="isOpenNoti" :closeDrawer="closeDrawer" :listData="listNoti"/>
      <SidebarSetupGuide :isOpen="isOpenSetup" :closeDrawer="closeSetup" :shopName="session.data.shopName" :progress="progress" :setup="dataSetupGuide" :updateSetUp="updateSetUp"/>
-     <Dialogfinish :shopName="session.data.shopName" :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted" :url="session.data.timeSlotStatus ? "/>
+     <Dialogfinish :shopName="session.data.shopName" :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted" url=""/>
   </div>
 </template>
 
@@ -802,6 +802,19 @@ export default {
         this.isOpenCompleted = false
         this.isOpenSetup = false
       }
+      this.getShop()
+      this.checkImageUrl(this.session.data.shopImge)
+        .then(async (status) => {
+          console.log('status', status)
+          if (status === false) {
+            this.checkAndUpdateImg()
+          }
+        })
+        .catch((error) => {
+          console.log('status error', error)
+          this.checkAndUpdateImg()
+        })
+
       if (this.$session.getAll().data.shopId.includes('SD_')) {
         await this.chkConnectLineOa()
       } else {
@@ -865,6 +878,61 @@ export default {
     document.removeEventListener('click', this.closeDrawerOnClickOutside)
   },
   methods: {
+    async getShop () {
+      await axios
+        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
+        .then(response => {
+          let rs = response.data
+          // console.log('rssssssssssss', rs)
+          if (rs.status === false) {
+            this.logout()
+          } else {
+            if (rs[0].shopActive === 'inactive') {
+              this.logout()
+            }
+          }
+        })
+    },
+    checkImageUrl (url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image()
+        img.onload = () => resolve(true) // รูปภาพโหลดสำเร็จ
+        // eslint-disable-next-line prefer-promise-reject-errors
+        img.onerror = () => reject(false) // ไม่สามารถโหลดรูปภาพ
+
+        img.src = url // ตั้งค่า URL ของรูปภาพ
+      })
+    },
+    async checkAndUpdateImg () {
+      const url = `${this.DNS_IP}/line/getOa`
+      const config = {
+        headers: {
+          'botId': this.session.data.shopId
+        }
+      }
+      await axios.get(url, config).then((response) => {
+        let rs = response.data
+        if (rs.pictureUrl !== undefined) {
+          const item = {
+            shopImge: rs.pictureUrl
+          }
+          axios
+            .post(this.DNS_IP + '/sys_shop/edit/' + this.session.data.shopId, item)
+            .then(async response => {
+              console.log('/sys_shop/edit/', response)
+              let session = JSON.parse(localStorage.getItem('sessionData'))
+              session.shopImge = rs.pictureUrl
+              this.$session.start()
+              this.$session.set('data', session)
+              localStorage.clear()
+              localStorage.setItem('sessionData', JSON.stringify(session))
+            })
+            .catch((err) => { console.log('error', err) })
+        }
+      }).catch((error) => {
+        console.log('error', error)
+      })
+    },
     gotoBilling () {
       // this.$router.push('/BillingPlan')
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
