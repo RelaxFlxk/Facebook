@@ -448,7 +448,7 @@ export default {
         if (d.statusBt === 'confirmJob') {
           dataConfirm.push(d)
         } else {
-          console.log('[GroupArrayQueue] :', this.flowSelectCheck.filter((item) => item === d.storeFrontText), d.storeFrontText)
+          // console.log('[GroupArrayQueue] :', this.flowSelectCheck.filter((item) => item === d.storeFrontText), d.storeFrontText)
           if (this.flowSelectCheck.filter((item) => item === d.storeFrontText).length > 0) {
             if (d.storeFrontText === 'B') {
               dataB.push(d)
@@ -458,13 +458,13 @@ export default {
               data.push(d)
             }
           }
-          console.log('[List flowSelectCheck]', this.flowSelectCheck, 'dataB', dataB, 'dataC', dataC, 'data', data)
+          // console.log('[List flowSelectCheck]', this.flowSelectCheck, 'dataB', dataB, 'dataC', dataC, 'data', data)
         }
       }
       // let mergedData = [...dataB, ...data.slice(0)]
-      let mergedData = [...dataC, ...dataB, ...data.slice(0)]
+      let mergedData = [...dataB, ...dataC, ...data.slice(0)]
       dataConfirm.push(...mergedData)
-      console.log('Data [dataConfirm]', dataConfirm)
+      // console.log('Data [dataConfirm]', dataConfirm)
       return dataConfirm
     },
     // async GroupArrayQueue (dataArray) {
