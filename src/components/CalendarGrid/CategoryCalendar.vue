@@ -13,7 +13,7 @@
         <v-calendar
         ref="calendar"
         v-model="focus"
-        color="success"
+        color="primary"
         type="category"
         category-show-all
         first-interval="6"
