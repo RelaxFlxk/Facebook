@@ -448,6 +448,7 @@ export default {
               this.countConfirm = 0
               this.queueSummary = []
               this.groupQueueWaitingAll = []
+              this.countConfirmList = []
             }
           })
       }
