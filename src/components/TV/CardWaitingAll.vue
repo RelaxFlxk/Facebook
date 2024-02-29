@@ -1,7 +1,12 @@
 <template>
   <div class="d-flex flex-column justify-content-between mr-1 mr-1 p-0">
-    <div class=" d-flex justify-content-center py-2 title">
-      <span class="text-waiting">All queues waiting</span>
+    <div class=" d-flex flex-column justify-content-center py-1 title">
+      <div class="text-center">
+        <span class="text-waiting">All queues waiting</span>
+      </div>
+      <div class="text-center">
+        <span class="text-waiting">หมายเลขคิวที่รอ</span>
+      </div>
     </div>
     <div class="d-flex flex-row div-waiting  flex-wrap h-100">
       <div  v-for="(item, index) in groupQueueItem" :key="index" class="py-2 text-center text-number-waiting col-3">

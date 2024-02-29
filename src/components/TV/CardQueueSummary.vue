@@ -1,7 +1,12 @@
 <template>
   <div class="d-flex flex-column justify-content-between mr-1 mr-1 p-0">
-    <div class=" d-flex justify-content-center py-2 title">
-      <span class="text-waiting">All Queue Type Waiting</span>
+    <div class=" d-flex flex-column justify-content-center py-1 title">
+      <div class="text-center">
+        <span class="text-waiting">All Queue Type Waiting</span>
+      </div>
+      <div class="text-center">
+        <span class="text-waiting">จำนวนคิวที่รอ</span>
+      </div>
     </div>
     <div class="d-flex flex-column div-waiting h-100">
       <div v-for="(item, key) in queueSummary" :key="key" class="d-flex flex-row justify-content-around py-2">
