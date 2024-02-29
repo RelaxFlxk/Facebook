@@ -1525,7 +1525,9 @@ export default {
       this.isOpenSetup = false
     },
     onOpenNoti () {
-      this.updateReadNoti()
+      if (this.isNoti) {
+        this.updateReadNoti()
+      }
       this.isOpenNoti = true
     },
     onOpenSetup () {
@@ -1600,26 +1602,34 @@ export default {
       this.firestore.collection('BetaskLinked')
         .where(FieldPath.documentId(), '==', this.$session.getAll().data.shopId)
         .onSnapshot((snapshot) => {
-          snapshot.forEach((doc) => {
-            console.log(doc.data())
-            if (doc.data().activeBooking === '1') {
-              this.isNoti = true
-              this.GetNotiBooking()
-            } else {
-              this.isNoti = false
-            }
-          })
+          if (snapshot.empty) {
+            this.setNewNotifyApp()
+          } else {
+            snapshot.forEach((doc) => {
+              console.log(doc.data())
+              if (doc.data().activeBooking === '1') {
+                this.GetNotiBooking()
+              } else {
+                this.isNoti = false
+              }
+            })
+          }
         })
     },
     async GetNotiBooking () {
       try {
         await axios
           .get(
-            this.DNS_IP + '/booking_view/get?shopId=SD_1707125636530&IsNotify=False')
+            this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId + '&IsNotify=False')
           .then(async response => {
             if (response.data) {
               console.log('GetNotiBooking ->', response.data)
-              this.listNoti = response.data
+              if (response.data.status !== false) {
+                this.listNoti = response.data
+                this.isNoti = true
+              } else {
+                this.listNoti = []
+              }
             }
           })
       } catch (error) {
@@ -1634,11 +1644,38 @@ export default {
             'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/BetaskNotify-ProcessBookingNotify', body)
           .then(async response => {
             if (response.data) {
+              this.UpdateBookingIsNotifyByShopId()
               console.log('GetNotiBooking ->', response.data)
             }
           })
       } catch (error) {
         console.log('Error updateSetUp', error)
+      }
+    },
+    async UpdateBookingIsNotifyByShopId () {
+      try {
+        await axios
+          .post(
+            this.DNS_IP + '/Booking/editIsNotifyByShopId/' + this.$session.getAll().data.shopId)
+          .then(async response => {
+          })
+      } catch (error) {
+        console.log('Error updateSetUp', error)
+      }
+    },
+    async setNewNotifyApp () {
+      try {
+        let body = {shopId: this.$session.getAll().data.shopId}
+        await axios
+          .post(
+            'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/BetaskNotify-ProcessBookingSetNew', body)
+          .then(async response => {
+            if (response.data) {
+              console.log('ProcessBookingSetNew ->', response.data)
+            }
+          })
+      } catch (error) {
+        console.log('Error ProcessBookingSetNew', error)
       }
     }
 
