@@ -10,14 +10,14 @@
                <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
               </div>
               <div class="d-flex flex-row justify-content-between mx-4 mt-5 h-100">
-              <CardQueueSummary class="col-4" :queueSummary="queueSummary"/>
-              <CardWaitingAll class="col" :groupQueueItem="groupQueueWaitingAll"/>
+              <CardQueueSummary class="col-4" :queueSummary="queueSummary ? queueSummary : []"/>
+              <CardWaitingAll class="col" :groupQueueItem="groupQueueWaitingAll && groupQueueWaitingAll.length > 0 ?  groupQueueWaitingAll.slice(0, 12) : []"/>
             </div>
           </div>
       </div>
      <div v-if="isPortrait" class="col-12 d-flex flex-row justify-content-between height-card">
-      <CardQueueSummary class="col-4" :queueSummary="queueSummary"/>
-      <CardWaitingAll class="col" :groupQueueItem="groupQueueWaitingAll"/>
+      <CardQueueSummary class="col-4" :queueSummary="queueSummary ? queueSummary : []"/>
+      <CardWaitingAll class="col" :groupQueueItem="groupQueueWaitingAll && groupQueueWaitingAll.length > 0 ?  groupQueueWaitingAll.slice(0, 12) : []"/>
      </div>
       <div v-if="isPortrait" class="d-flex flex-row justify-content-between">
           <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
@@ -50,24 +50,24 @@
           <div class="col-6 py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span></div>
       </div>
       <v-row v-show="hideSound === true">
-        <v-col>
-          <audio id="playerPrefix" controls="controls">>
-            <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
-            Your browser does not support the audio format.
-          </audio>
-          <audio id="playerQueue" controls="controls">>
-            <source :src="audio">
-            Your browser does not support the audio format.
-          </audio>
-          <audio id="playerCounter" controls="controls">>
-            <source :src="tableTarget">
-            Your browser does not support the audio format.
-          </audio>
-        </v-col>
-        <v-col>
-          {{history}}
-        </v-col>
-      </v-row>
+            <v-col>
+              <audio id="playerPrefix" controls="controls">>
+                <source src="https://storage.googleapis.com/clinic_ruangkao/queue.wav">
+                Your browser does not support the audio format.
+              </audio>
+              <audio id="playerQueue" controls="controls">>
+                <source :src="audio">
+                Your browser does not support the audio format.
+              </audio>
+              <audio id="playerSuffix" controls="controls">>
+                <source src="https://storage.googleapis.com/clinic_ruangkao/invite.wav">
+                Your browser does not support the audio format.
+              </audio>
+            </v-col>
+            <v-col>
+              {{history}}
+            </v-col>
+          </v-row>
   </div>
 </template>
 <script>
@@ -106,7 +106,7 @@ export default {
   data () {
     return {
       orientation: '',
-      statusSound: true,
+      statusSound: false,
       dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
       validSearch: true,
@@ -141,7 +141,7 @@ export default {
       audio: null,
       timeCount: 0,
       repeatRound: 2,
-      speakerId: 3,
+      speakerId: 1,
       history: [],
       objInterval: null,
       text2: '',
@@ -177,10 +177,8 @@ export default {
       wifiStatus: 'unknown',
       soundQueneNo: [],
       dataListPlay: [],
-      queueSummary: [{ type: 'A', total: 0 }, { type: 'B', total: 0 }],
-      // queueSummary: [],
-      groupQueueWaitingAll: [{storeFrontQueue: 'A001'}, {storeFrontQueue: 'A002'}, {storeFrontQueue: 'A003'}, {storeFrontQueue: 'A004'}, {storeFrontQueue: 'A008'}, {storeFrontQueue: 'A009'}, {storeFrontQueue: 'A010'}, {storeFrontQueue: 'A011'}, {storeFrontQueue: 'A012'}, {storeFrontQueue: 'A013'}, {storeFrontQueue: 'A0114'}, {storeFrontQueue: 'A015'}]
-      // groupQueueWaitingAll: []
+      queueSummary: [],
+      groupQueueWaitingAll: []
     }
   },
   async mounted () {
@@ -195,8 +193,11 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     this.setTime()
+    this.intervalSearch = setInterval(() => {
+      this.searchBooking()
+    }, 10000)
     this.interval = setInterval(() => {
-      this.currentTime = moment().format('DD/MMM/YYYY HH:mm') // อัพเดตเวลาทุก 1 วินาที
+      this.currentTime = moment().format('DD/MMM/YYYY HH:mm')
     }, 1000)
   },
   destroyed () {
@@ -205,6 +206,7 @@ export default {
   beforeDestroy () {
     this.$root.$off('dataReturn')
     clearInterval(this.interval)
+    clearInterval(this.intervalSearch)
   },
   methods: {
     checkOrientation () {
@@ -214,11 +216,11 @@ export default {
       if (text === 'on') {
         this.statusSound = true
         await this.updatestatusNotifyByShopId()
-        // this.getMessage()
+        this.getMessage()
       } else {
         this.statusSound = false
-        // clearInterval(this.statusSoundCheck)
-        // this.statusSoundCheck = null
+        clearInterval(this.statusSoundCheck)
+        this.statusSoundCheck = null
       }
     },
     async updatestatusNotifyByShopId () {
@@ -271,21 +273,24 @@ export default {
         let result
         let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
         item.audioFile = null
-        if (oldSound.length > 0) {
+        console.log('oldSound ', oldSound)
+        if (oldSound && oldSound.length > 0) {
           item.audioFile = oldSound[0].audioFile
-          console.log('[generateSound] item.audioFile', item.audioFile)
         } else {
+          console.log('oldSound no have')
           await axios
             .get(
               `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull`
             ).then(async (response) => {
+              console.log('nont oldSound callQueues', response.data)
               if (response.data.length > 0 && typeof response.data.status === 'undefined') {
                 item.audioFile = response.data[0].audioFile
               }
             })
         }
         // let text = this.convertItemtoText(item)
-        if (!item.audioFile) {
+        console.log('generateSound audioFile->', item.audioFile)
+        if (item.audioFile === null) {
           var params = {
             text: ' ' + storeFrontQueue,
             text_delay: ' ' + storeFrontQueue,
@@ -301,13 +306,13 @@ export default {
               { headers: { 'Botnoi-Token': 'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0' } }
             ).then((res) => {
               this.dataListPlay.push(res.data)
-              this.playSound()
+              this.playSound(res.data)
               result = res.data
             })
         } else {
           let res = { text: item.storeFrontQueue, audio_url: item.audioFile }
           this.dataListPlay.push(res)
-          this.playSound()
+          this.playSound(res)
           result = res
         }
         return result
@@ -326,41 +331,35 @@ export default {
       let text = `ขอเชิญ คิว ${storeFrontQueue} ที่ช่อง ${dock} ค่ะ`
       return text
     },
-    playSound () {
+    playSound (res) {
+      if (res) {
+        this.audio = res.audio_url
+      }
+      console.log('playSound', this.audio)
+      // this.tableTarget = this.tableAudioList[this.tableId]
+      this.timeCount = 1
       let playerPrefix = document.getElementById('playerPrefix')
       let playerQueue = document.getElementById('playerQueue')
-      // let playerSuffix = document.getElementById('playerSuffix')
-      let playerCounter = document.getElementById('playerCounter')
-      if (playerPrefix.paused && playerQueue.paused && playerCounter.paused) {
-        let res = this.dataListPlay[0]
-        var vid = document.getElementById('videoAds')
-        vid.pause()
-        this.audio = res.audio_url
-        this.tableTarget = this.tableAudioList[this.tableId]
-        this.timeCount = 1
-        playerPrefix.play()
-        playerPrefix.onended = (event) => {
-          playerQueue.load()
-          playerQueue.play()
-          playerQueue.onended = (event) => {
-            playerCounter.load()
-            playerCounter.play()
-            playerCounter.onended = (event) => {
-              if (this.timeCount < this.repeatRound) {
-                this.timeCount++
-                playerPrefix.play()
-                playerPrefix.onended = (event) => {
-                  playerQueue.play()
-                  playerQueue.onended = (event) => {
-                    playerCounter.play()
-                    playerCounter.onended = (event) => {
-                      vid.play()
-                      this.dataListPlay = this.dataListPlay.slice(1)
-                      if (this.dataListPlay.length > 0) {
-                        this.playSound()
-                      }
-                      console.log('this.dataListPlay', this.dataListPlay)
-                    }
+      let playerSuffix = document.getElementById('playerSuffix')
+      var vid = document.getElementById('videoAds')
+      vid.pause()
+      playerPrefix.play()
+      playerPrefix.onended = (event) => {
+        playerQueue.load()
+        playerQueue.play()
+        playerQueue.onended = (event) => {
+          playerSuffix.load()
+          playerSuffix.play()
+          playerSuffix.onended = (event) => {
+            if (this.timeCount < this.repeatRound) {
+              this.timeCount++
+              playerPrefix.play()
+              playerPrefix.onended = (event) => {
+                playerQueue.play()
+                playerQueue.onended = (event) => {
+                  playerSuffix.play()
+                  playerSuffix.onended = (event) => {
+                    vid.play()
                   }
                 }
               }
@@ -405,6 +404,8 @@ export default {
       setTimeout(() => this.searchBooking(), 500)
     },
     async searchBooking () {
+      this.queueSummary = []
+      this.itemBooking = []
       if (this.validSearch === true) {
         let urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -422,6 +423,7 @@ export default {
           .then(async response => {
             let rs = response.data
             if (rs.length > 0) {
+              this.groupQueueWaitingAll = rs.filter(el => { return el.statusBt === 'confirm' })
               let sortData = rs.sort((a, b) => {
                 if (a.storeFrontQueue < b.storeFrontQueue) return -1
                 return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
@@ -437,6 +439,7 @@ export default {
                 if (a.LAST_DATE > b.LAST_DATE) return -1
                 return a.LAST_DATE < b.LAST_DATE ? 1 : 0
               })
+              this.queueSummary = await this.groupCountType(dataWain)
               this.countConfirm = dataWain.length
               this.countConfirmList = dataWain.filter((el, ind) => { return ind <= 11 })
               this.itemBookingUse = sortDataDataCon.filter((el, ind) => { return ind <= 5 })
@@ -445,6 +448,23 @@ export default {
               this.countConfirm = 0
             }
           })
+      }
+    },
+    async groupCountType (dataConfirm) {
+      try {
+        const countStoreFrontText = dataConfirm.reduce((accumulator, currentValue) => {
+          const text = currentValue.storeFrontText
+          accumulator[text] = (accumulator[text] || 0) + 1
+          return accumulator
+        }, {})
+        const queueSummaryArray = Object.entries(countStoreFrontText).map(([key, value]) => {
+          return { key, value }
+        })
+        if (queueSummaryArray.length > 0) {
+          return queueSummaryArray
+        }
+      } catch (error) {
+        console.log('error', error)
       }
     },
     getDataFromFieldName (data, key) {

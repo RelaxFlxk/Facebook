@@ -4,7 +4,7 @@
       <span class="text-waiting">All queues waiting</span>
     </div>
     <div class="d-flex flex-row div-waiting  flex-wrap h-100">
-      <div v-for="(item, index) in groupQueueItem" :key="index" class="py-2 text-center text-number-waiting col-3">
+      <div  v-for="(item, index) in groupQueueItem" :key="index" class="py-2 text-center text-number-waiting col-3">
        <span>{{ item.storeFrontQueue }}</span>
       </div>
     </div>

@@ -4,11 +4,11 @@
       <span class="text-waiting">All Queue Type Waiting</span>
     </div>
     <div class="d-flex flex-column div-waiting h-100">
-      <div v-for="(item, index) in queueSummary" :key="index" class="d-flex flex-row justify-content-around py-2">
+      <div v-for="(item, key) in queueSummary" :key="key" class="d-flex flex-row justify-content-around py-2">
         <div >
-          <span class="text-number-waiting">{{ item.type }}</span>
+          <span class="text-number-waiting">{{ item.key }}</span>
         </div>
-        <div><span class="text-number-waiting">{{ item.total }}</span></div>
+        <div><span class="text-number-waiting">{{ item.value }}</span></div>
       </div>
     </div>
   </div>
