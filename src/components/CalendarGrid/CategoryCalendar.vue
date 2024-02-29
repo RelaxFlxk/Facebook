@@ -1,18 +1,69 @@
 <template>
     <div>
-      <v-sheet
-        tile
-        height="54"
-        class="d-flex"
-      >
-      </v-sheet>
-      <v-sheet height="750">
+      <div class="pa-3 ma-0" style="display: flex;justify-content: center;">
+        <v-btn-toggle
+          rounded
+          color="#000000"
+        >
+        <v-btn
+            outlined
+            @click="prev"
+          >
+            <v-icon>
+              mdi-chevron-left
+            </v-icon>
+          </v-btn>
+          <v-btn
+            outlined
+          >
+            Today
+          </v-btn>
+          <!-- <v-btn
+            outlined
+          >
+          <p class="ma-0" style="color: black;">{{ momentTitle(focus)}}</p>
+          </v-btn> -->
+          <v-menu
+            v-model="menu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  outlined
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                <p class="ma-0" style="color: black;">{{ momentTitle(focus)}}</p>
+                </v-btn>
+              </template>
+              <v-date-picker
+              v-model="value"
+              no-title
+              @input="menu = false"
+              >
+              </v-date-picker>
+          </v-menu>
+          <v-btn
+            outlined
+            @click="next"
+          >
+            <v-icon>
+              mdi-chevron-right
+            </v-icon>
+          </v-btn>
+        </v-btn-toggle>
+      </div>
+      <v-sheet height="670" style="width: 100%;">
         <!-- {{ focus }}
         {{ categories }}
         {{ names }} -->
         <v-calendar
         ref="calendar"
-        v-model="focus"
+        v-model="value"
         color="primary"
         type="category"
         category-show-all
@@ -22,6 +73,7 @@
         short-intervals
         :categories="categories"
         :events="events"
+        :event-color="getEventColor"
         locale="th-TH"
         :event-timed="isTimedEvent"
         @change="getEvents"
@@ -49,7 +101,7 @@
                 <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime }}</p>
             </div>
         </template>
-        <template #interval="{ date, time, category}">
+        <template #interval="{ date, category}">
         <!-- Custom content for the interval -->
         <div class="intervalOff" v-if="setDayOff(category, date)">
         <!-- Render additional content here -->
@@ -134,10 +186,20 @@ export default {
     categoriesItem: {
       type: Array,
       default: () => []
+    },
+    flowName: {
+      type: Array,
+      default: () => []
+    },
+    typeColor: {
+      type: String,
+      default: () => ''
     }
   },
   data () {
     return {
+      menu: false,
+      value: ''
     //   type: 'month',
     //   types: ['month', 'week', 'day', '4day'],
     //   mode: 'stack',
@@ -155,15 +217,37 @@ export default {
     }
   },
   watch: {
-    // whenever question changes, this function will run
     focus (newQuestion, oldQuestion) {
-      console.log('focus', newQuestion, oldQuestion)
+      if (newQuestion !== oldQuestion) {
+        this.value = newQuestion
+      }
     },
-    events (newQuestion, oldQuestion) {
-      console.log('focus', newQuestion, oldQuestion)
+    value (newQuestion, oldQuestion) {
+      this.sendDataToParent(newQuestion)
     }
   },
   methods: {
+    getEventColor (event) {
+      if (this.typeColor === 'Flow') {
+        let key = this.flowName.findIndex((item) => item.text === event.name)
+        let color = this.colors[key]
+        return color
+      } else {
+        let key = this.categories.findIndex((item) => item === event.category)
+        let color = this.colors[key]
+        return color
+      }
+    },
+    sendDataToParent (newQuestion) {
+      // ส่งข้อมูลไปยังคอมโพเนนต์แม่ ผ่านการส่งเหตุการณ์ (event) ชื่อว่า 'send-data'
+      this.$emit('send-data', newQuestion)
+    },
+    prev () {
+      this.$refs.calendar.prev()
+    },
+    next () {
+      this.$refs.calendar.next()
+    },
     momentTitle (focus) {
       return moment(focus).format('ddd, MMM D, YYYY')
     },
@@ -206,9 +290,6 @@ export default {
     },
     getEvents () {
       console.log('@@@@@@@@@', this.events)
-    },
-    getEventColor (event) {
-      return event.color
     },
     rnd (a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a

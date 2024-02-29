@@ -3,59 +3,6 @@
     <v-row class="fill-height">
     <v-col class="pa-3">
       <!-- \border-color: rgb(0 0 0)!important; -->
-      <!-- <div v-if="focus" class="pa-3 ma-0" style="display: flex;justify-content: center;">
-        <v-btn-toggle
-          rounded
-          color="#000000"
-        >
-        <v-btn
-            outlined
-            @click="prev"
-          >
-            <v-icon>
-              mdi-chevron-left
-            </v-icon>
-          </v-btn>
-          <v-btn
-            outlined
-            @click="setToday"
-          >
-            Today
-          </v-btn>
-          <v-menu
-          v-model="menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                outlined
-                v-bind="attrs"
-                v-on="on"
-              >
-              <p class="ma-0" style="color: black;">{{ momentTitle(focus)}}</p>
-              </v-btn>
-            </template>
-            <v-date-picker
-            v-model="focus"
-            no-title
-            @input="menu = false"
-            >
-            </v-date-picker>
-          </v-menu>
-          <v-btn
-            outlined
-            @click="next"
-          >
-            <v-icon>
-              mdi-chevron-right
-            </v-icon>
-          </v-btn>
-        </v-btn-toggle>
-      </div> -->
       <!-- <v-sheet
         tile
         height="54"
@@ -117,26 +64,65 @@
               label="type"
             ></v-select>
             </div>
+            <div style="overflow-y: scroll;">
             <v-date-picker
             v-model="focus"
             no-title
             >
             </v-date-picker>
-            <div class="px-4"  v-for="(item , index) in flowName" :key="index">
-            <h6 style="display: flex;align-items: center;">
-              <v-icon class="mr-2" :color="colors[index]">mdi-checkbox-multiple-blank</v-icon>
-              {{ item.text }}
-            </h6>
+              <v-sheet elevation="2" class="pa-2 px-3 py-6 ma-1">
+              <h6 class="text-center font-weight-black">EVENT COLOR {{ events.length + ' - ' + TT.length }}</h6>
+              <div style="display: flex;justify-content: space-around;">
+                <v-switch
+                v-model="typeColor"
+                hide-details
+                inset
+                label="บริการ"
+                :true-value="typesColor[0]"
+                :false-value="typesColor[1]"
+              ></v-switch>
+              <v-switch
+                v-model="typeColor"
+                hide-details
+                inset
+                :true-value="typesColor[1]"
+                :false-value="typesColor[0]"
+                label="พนักงาน"
+              ></v-switch>
+              </div>
+            </v-sheet>
+            <v-expansion-panels v-model="panel" multiple class="pa-2">
+              <v-expansion-panel>
+                <v-expansion-panel-header>บริการ</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div class="pa-1"  v-for="(item , index) in flowName" :key="index">
+                    <h6 style="display: flex;align-items: center;">
+                      <v-icon class="mr-2" :color="colors[index]">mdi-checkbox-multiple-blank</v-icon>
+                      {{ item.text }}
+                    </h6>
+                  </div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>พนักงาน</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <!-- Filter ช่างได้ -->
+                  <!-- {{ categoriesCheckBoxs }} -->
+                  <div class="pa-1" v-if="categoriesCheckBox.length > 0">
+                    <v-checkbox
+                      :color="colors[index2]"
+                      hide-details
+                      v-for="(item2 , index2) in categoriesCheckBox" :key="index2"
+                      v-model="categoriesCheckBoxs"
+                      :label="item2"
+                      :value="item2"
+                      @click="filterEmp(item2, index2)"
+                    ></v-checkbox>
+                  </div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
             </div>
-            <!-- Filter ช่างได้ -->
-            <!-- <div v-if="categoriesCheckBox.length > 0">
-              <v-checkbox
-                v-for="(item2 , index2) in categoriesCheckBox" :key="index2"
-                v-model="categories"
-                :label="item2"
-                :value="item2"
-              ></v-checkbox>
-            </div> -->
           </div>
           <div class="pl-1 menuright">
             <FullCalendar
@@ -145,18 +131,26 @@
             :focus="focus"
             :type="type"
             :colors="colors"
+            :categories="categories"
+            :typeColor="typeColor"
             :names="names"
+            :flowName="flowName"
+            @send-data="changeData"
+            @more="clickMore"
             ></FullCalendar>
             <CategoryCalendar
               v-else
               :events="events"
               :focus="focus"
               :type="type"
+              :typeColor="typeColor"
               :colors="colors"
               :names="names"
               :categories="categories"
               :categoriesItem="categoriesItem"
               :empDayoff="empDayoff"
+              :flowName="flowName"
+              @send-data="changeData"
               >
               </CategoryCalendar>
           </div>
@@ -203,8 +197,11 @@ export default {
   },
   data () {
     return {
+      panel: [0, 1],
       type: 'month',
       types: ['month', 'week', 'day', '4day', 'category'],
+      typeColor: 'Flow',
+      typesColor: ['Flow', 'Emp'],
       mode: 'stack',
       modes: ['stack', 'column'],
       weekday: [0, 1, 2, 3, 4, 5, 6],
@@ -217,15 +214,34 @@ export default {
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       focus: null,
-      menu: false,
       events: [],
-      colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
+      colors: [
+        'green',
+        'red',
+        'blue',
+        'orange',
+        'purple',
+        'cyan',
+        'pink',
+        'teal',
+        'lime',
+        'brown',
+        'grey',
+        'blueGrey',
+        'amber',
+        'lightGreen',
+        'deepOrange',
+        'indigo',
+        'lightBlue',
+        'deepPurple'
+      ],
       names: [],
       // categories: ['AAAAAA', 'BBBBBB']
       flowName: [],
       dataFlow: [],
       categories: [],
       categoriesCheckBox: [],
+      categoriesCheckBoxs: [],
       categoriesItem: [],
       eventsItem: [],
       empDayoff: [],
@@ -243,6 +259,17 @@ export default {
     // await this.$refs.calendar.checkChange()
   },
   methods: {
+    clickMore (data) {
+      this.type = 'day'
+      this.focus = data
+    },
+    changeData (data) {
+      // console.log('data!!!!', data)
+      this.focus = data
+    },
+    filterEmp (item, key) {
+      console.log('-------', item, ' - ', key)
+    },
     customIntervalFormat (interval) {
       // จัดรูปแบบเวลาให้อยู่ในรูปแบบ HH:mm โดยไม่ใช้ AM/PM
       // console.log(interval)
@@ -328,6 +355,7 @@ export default {
                 this.categoriesItem.push(d)
                 this.categories.push(d.empFirst_NameTH)
                 this.categoriesCheckBox.push(d.empFirst_NameTH)
+                this.categoriesCheckBoxs.push(d.empFirst_NameTH)
                 let dayOff = {
                   'empName': d.empFirst_NameTH,
                   'typeDayCustom': d.typeDayCustom,
@@ -391,11 +419,10 @@ export default {
           // console.log('DATEMONENT', moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
           // console.log('newDATE', new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss')))
           // console.log('------', startDate, startTime)
-          let start = new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
-          let end = new Date(moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
-          let findIndex = this.flowName.findIndex((item) => item.value === element.flowId)
-          console.log('!!!!!!', element.flowId, this.flowName.filter((item) => item.value === element.flowId))
-          if (this.flowName.filter((item) => item.value === element.flowId).length > 0) {
+          if (this.flowName.filter((item) => item.value === element.flowId).length) {
+            let start = new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
+            let end = new Date(moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
+            let findIndex = this.flowName.findIndex((item) => item.value === element.flowId)
             let flowName = this.flowName.filter((item) => item.value === element.flowId)[0].text
             // console.log('moment', moment())
             // console.log('start', start, ' - ', end)
@@ -417,6 +444,7 @@ export default {
               color: this.colors[findIndex],
               timed: true,
               item: this.dataJob.filter((item) => item.bookNo === element.refID),
+              category: this.categoriesItem.filter((item) => item.value === element.empId)[0].text,
               startTime: moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm'),
               endTime: moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm')
               // name: flowName,
@@ -450,7 +478,7 @@ export default {
   display: flex;
   flex-direction: column;
   width: 300px;
-  height: 76vh;
+  height: 83vh;
 }
 .menuright {
   flex-grow: 1;

@@ -5,6 +5,13 @@
         height="54"
         class="d-flex"
       >
+      <v-btn
+        icon
+        class="ma-2"
+        @click="$refs.calendar.prev()"
+      >
+        <v-icon>mdi-chevron-left</v-icon>
+      </v-btn>
         <v-select
           v-model="mode"
           :items="modes"
@@ -23,17 +30,25 @@
           label="weekdays"
           class="ma-2"
         ></v-select>
+        <v-btn
+        icon
+        class="ma-2"
+        @click="$refs.calendar.next()"
+      >
+        <v-icon>mdi-chevron-right</v-icon>
+      </v-btn>
       </v-sheet>
-      <v-sheet height="750" style="width: 100%;">
+      <v-sheet height="670" style="width: 100%;">
         <v-calendar
           ref="calendar"
-          v-model="focus"
+          v-model="value"
           :weekdays="weekday"
           :type="type"
           :events="events"
           :event-overlap-mode="mode"
           :event-overlap-threshold="30"
           :event-color="getEventColor"
+          @click:more="Test"
           first-interval="6"
           :interval-count="24-6"
           :interval-format="customIntervalFormat"
@@ -127,15 +142,31 @@ export default {
     names: {
       type: Array,
       default: () => []
+    },
+    categories: {
+      type: Array,
+      default: () => []
+    },
+    flowName: {
+      type: Array,
+      default: () => []
+    },
+    typeColor: {
+      type: String,
+      default: () => ''
     }
   },
-  //   watch: {
-  //     // whenever question changes, this function will run
-  //     focus (newQuestion, oldQuestion) {
-  //       console.log('focus', newQuestion, oldQuestion)
-  //       this.value = newQuestion
-  //     }
-  //   },
+  watch: {
+    // whenever question changes, this function will run
+    focus (newQuestion, oldQuestion) {
+      if (newQuestion !== oldQuestion) {
+        this.value = newQuestion
+      }
+    },
+    value (newQuestion, oldQuestion) {
+      this.sendDataToParent(newQuestion)
+    }
+  },
   data () {
     return {
     //   type: 'month',
@@ -155,6 +186,13 @@ export default {
     }
   },
   methods: {
+    Test (event) {
+      this.$emit('more', event.date)
+    },
+    sendDataToParent (newQuestion) {
+      // ส่งข้อมูลไปยังคอมโพเนนต์แม่ ผ่านการส่งเหตุการณ์ (event) ชื่อว่า 'send-data'
+      this.$emit('send-data', newQuestion)
+    },
     customIntervalFormat (interval) {
       // จัดรูปแบบเวลาให้อยู่ในรูปแบบ HH:mm โดยไม่ใช้ AM/PM
       // console.log(interval)
@@ -163,35 +201,16 @@ export default {
     getEvents () {
       console.log('!!!!!!!!', this.events)
     },
-    // getEvents ({ start, end }) {
-    //   const events = []
-
-    //   const min = new Date(`${start.date}T00:00:00`)
-    //   const max = new Date(`${end.date}T23:59:59`)
-    //   const days = (max.getTime() - min.getTime()) / 86400000
-    //   const eventCount = this.rnd(days, days + 20)
-
-    //   for (let i = 0; i < eventCount; i++) {
-    //     const allDay = this.rnd(0, 3) === 0
-    //     const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-    //     const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-    //     const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-    //     const second = new Date(first.getTime() + secondTimestamp)
-
-    //     events.push({
-    //       name: this.names[this.rnd(0, this.names.length - 1)],
-    //       start: first,
-    //       end: second,
-    //       color: this.colors[this.rnd(0, this.colors.length - 1)],
-    //       timed: !allDay
-    //     })
-    //   }
-    //   console.log(events[0])
-    //   this.events = this.ee
-    //   console.log('this.eventsFULCALENDAR', this.events)
-    // },
     getEventColor (event) {
-      return event.color
+      if (this.typeColor === 'Flow') {
+        let key = this.flowName.findIndex((item) => item.text === event.name)
+        let color = this.colors[key]
+        return color
+      } else {
+        let key = this.categories.findIndex((item) => item === event.category)
+        let color = this.colors[key]
+        return color
+      }
     },
     rnd (a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a
