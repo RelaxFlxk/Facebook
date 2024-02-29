@@ -5108,13 +5108,12 @@
               </v-card-text>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogHistory" scrollable persistent max-width="50%">
-            <v-card>
+        <v-dialog v-model="dialogHistory" scrollable persistent max-width="600px">
+            <v-card class="pa-3">
               <v-card-title>
                 <span class="headline"></span>
               </v-card-title>
-              <v-card-text>
-                <v-container>
+              <v-card-text class="pa-0" style="overflow-x: hidden;">
                   <v-row>
                     <v-col cols="6" class="text-left pt-10">
                       <h3><strong>ประวัติเข้ารับบริการ</strong></h3>
@@ -5138,7 +5137,7 @@
                    <v-row >
                     <v-col class="main" col="12" md="12" sm="12" >
                       <v-card class="p-3 " min-height="70vh" rounded>
-                        <div class="avatar text-center">
+                        <div class="avatar text-center pt-3">
                           <div style="display:flex;align-items: center;justify-content: center;">
                             <h4 v-if="memberName">
                             {{memberName}}
@@ -5253,7 +5252,6 @@
                       </v-card>
                     </v-col>
                   </v-row>
-                </v-container>
               </v-card-text>
             </v-card>
           </v-dialog>
@@ -12101,8 +12099,8 @@ export default {
           s.remark = t.remark
           s.cusName = t.cusName
           s.cusReg = t.cusReg
-          // s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
-          s.flowName = t.flowName
+          s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          // s.flowName = t.flowName
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
           s.carModel = t.bookingDataCustomerCarModel || ''
@@ -12164,8 +12162,8 @@ export default {
           s.cusName = t.cusName
           s.remark = t.remark
           s.cusReg = t.cusReg
-          // s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
-          s.flowName = t.flowName
+          s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          // s.flowName = t.flowName
           s.tel = t.tel
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
@@ -13036,7 +13034,7 @@ export default {
             // serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
             // t.flowNameShow = serviceDetail
             // t.flowNameShow = t.displayFlowName || t.flowName
-            t.flowNameShow = t.flowName
+            t.flowNameShow = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
             this.dataItemSelect.push(t)
           }
         } else {
@@ -13126,7 +13124,7 @@ export default {
             // serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
             // t.flowNameShow = serviceDetail
             // t.flowNameShow = t.displayFlowName || t.flowName
-            t.flowNameShow = t.flowName
+            t.flowNameShow = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
             this.dataItemSelect.push(t)
           }
         } else {
