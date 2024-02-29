@@ -1290,7 +1290,7 @@ export default {
   }
 }
 </script>
-  <style scope>
+<style scope>
   .centered-input >>> input {
         text-align: center
       }
@@ -1323,4 +1323,4 @@ export default {
   .text-black >>> .v-input__slot {
     color: #005fcc !important;
   }
-  </style>
+</style>
