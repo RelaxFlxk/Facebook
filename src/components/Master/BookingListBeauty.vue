@@ -12099,8 +12099,8 @@ export default {
           s.remark = t.remark
           s.cusName = t.cusName
           s.cusReg = t.cusReg
-          // s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
-          s.flowName = t.flowName
+          s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          // s.flowName = t.flowName
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
           s.carModel = t.bookingDataCustomerCarModel || ''
@@ -12162,8 +12162,8 @@ export default {
           s.cusName = t.cusName
           s.remark = t.remark
           s.cusReg = t.cusReg
-          // s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
-          s.flowName = t.flowName
+          s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          // s.flowName = t.flowName
           s.tel = t.tel
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
@@ -13034,7 +13034,7 @@ export default {
             // serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
             // t.flowNameShow = serviceDetail
             // t.flowNameShow = t.displayFlowName || t.flowName
-            t.flowNameShow = t.flowName
+            t.flowNameShow = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
             this.dataItemSelect.push(t)
           }
         } else {
@@ -13124,7 +13124,7 @@ export default {
             // serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
             // t.flowNameShow = serviceDetail
             // t.flowNameShow = t.displayFlowName || t.flowName
-            t.flowNameShow = t.flowName
+            t.flowNameShow = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
             this.dataItemSelect.push(t)
           }
         } else {
