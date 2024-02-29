@@ -446,6 +446,8 @@ export default {
             } else {
               this.itemBookingUse = []
               this.countConfirm = 0
+              this.queueSummary = []
+              this.groupQueueWaitingAll = []
             }
           })
       }
