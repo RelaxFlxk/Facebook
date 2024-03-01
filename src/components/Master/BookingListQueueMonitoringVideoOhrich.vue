@@ -921,12 +921,10 @@ export default {
               this.dataListPlay.push(res.data)
               this.playSound()
               result = res.data
-              console.log('this.dataListPlay Log1', this.dataListPlay)
             })
         } else {
           let res = { text: item.storeFrontQueue, audio_url: item.audioFile }
           this.dataListPlay.push(res)
-          console.log('this.dataListPlay Log2', this.dataListPlay)
           this.playSound()
           result = res
         }

@@ -1,153 +1,95 @@
 <template>
-  <div>
-    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
-    <v-row >
-      <v-col cols="12">
-        <v-sheet
-          :color="shopColor"
-          elevation="1"
-          :height="resCol === '12' ? '70' : '170'"
-          width="100%"
-          style="border-bottom: 1px solid #695988 !important"
-        >
-          <v-row>
-            <v-col :cols="resCol === '12' ? '6' : '8' " align="left" :class=" resCol !== '12' ? 'mt-6 ml-8 pa-0' : 'mt-1 pl-7'">
-              <v-img :src="shopImage" contain :max-width="resCol === '12' ? '50px' : '170px'" max-height="130px"></v-img>
-            </v-col>
-            <v-col :cols="resCol === '12' ? '6' : '3' " align="right" :class="resCol !== '12' ? 'mt-6 ml-16' : 'mt-1 pr-7 pt-5'">
-              <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6" :max-width="resCol === '12' ? '70px' : '220px'"></v-img>
-            </v-col>
-          </v-row>
-        </v-sheet>
-      </v-col>
-    </v-row>
-        <!-- <div style="display:flex;justify-content: center;" class="ma-3">
-            <v-chip
-              class="mr-1 font-weight-black"
-              :style="'background-color:' + (languageSelect === 0 ? '#173053' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
-              dark
-              @click="languageSelect = 0"
-              >
-              <v-avatar left>
-                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-TH.png?alt=media&token=e4bd7ffa-aed9-47e3-9240-4dcb9d8d284e"></v-img>
-              </v-avatar>
-                TH
-            </v-chip>
-            <v-chip
-              class="ml-1 font-weight-black"
-              :style="'background-color:' + (languageSelect === 1 ? '#173053' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
-              dark
-              @click="languageSelect = 1">
-              <v-avatar left>
-                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-USA1.png?alt=media&token=a83dd820-f576-457a-8d08-1009cea9d70b"></v-img>
-              </v-avatar>
-                EN
-            </v-chip>
-          </div> -->
-        <!-- <v-form ref="form_search" v-model="validSearch" lazy-validation>
-          <v-row>
-            <v-col cols="3">
-              <v-select
-                :item-text="languageSelect === 0 ? 'text' : 'textEng'"
-                v-model="masBranchID"
-                background-color="white"
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                hide-details
-                :items="branchItem"
-                :label="languageSelect === 0 ? 'สาขา' : 'Branch'"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-                @change="clearTimeLoop(), checkSearch()"
-                ><template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-map-marker-outline
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col>
-            <v-col cols="3">
-              <v-select
-                :item-text="languageSelect === 0 ? 'text' : 'textEng'"
-                :label="languageSelect === 0 ? 'ประเภทบริการ' : 'Service'"
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                v-model="flowSelect"
-                hide-details
-                background-color="white"
-                :items="DataFlowItem"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-                @change="clearTimeLoop(), checkSearch()"
-              >
-                <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-note-text-outline
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col>
-            <v-col cols="3">
-              <v-menu
-                ref="menu"
-                v-model="menuStart"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    hide-details
-                    background-color="white"
-                    v-model="dateStart"
-                    style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                    :label="languageSelect === 0 ? 'วัน/เดือน/ปี' : 'Date'"
-                    readonly
-                    outlined
-                    dense
-                    required
-                    :rules ="[rules.required]"
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                  <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-calendar
-                  </v-icon>
-                </template></v-text-field>
-                </template>
-                <v-date-picker
-                  @input="menuStart = false, clearTimeLoop(), checkSearch()"
-                  v-model="dateStart"
-                  no-title
-                  scrollable
+    <div>
+      <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
+      <v-row >
+        <v-col cols="12">
+          <v-sheet
+            :color="shopColor"
+            elevation="1"
+            :height="resCol === '12' ? '70' : '170'"
+            width="100%"
+            style="border-bottom: 1px solid #695988 !important"
+          >
+            <v-row>
+              <v-col :cols="resCol === '12' ? '6' : '8' " align="left" :class=" resCol !== '12' ? 'mt-6 ml-8 pa-0' : 'mt-1 pl-7'">
+                <v-img :src="shopImage" contain :max-width="resCol === '12' ? '50px' : '170px'" max-height="130px"></v-img>
+              </v-col>
+              <v-col :cols="resCol === '12' ? '6' : '3' " align="right" :class="resCol !== '12' ? 'mt-6 ml-16' : 'mt-1 pr-7 pt-5'">
+                <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6" :max-width="resCol === '12' ? '70px' : '220px'"></v-img>
+              </v-col>
+            </v-row>
+          </v-sheet>
+        </v-col>
+      </v-row>
+          <!-- <div style="display:flex;justify-content: center;" class="ma-3">
+              <v-chip
+                class="mr-1 font-weight-black"
+                :style="'background-color:' + (languageSelect === 0 ? '#173053' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
+                dark
+                @click="languageSelect = 0"
                 >
-                </v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="2" class="mt-n3">
-              <v-switch
-                v-model="switchMode"
-                inset
-                label="เปิดวิดีโอ"
-              ></v-switch>
-            </v-col>
-          </v-row>
-        </v-form> -->
-    <v-sheet
-      :color="shopColor"
-      elevation="0"
-      height="110vh"
-      width="100%"
-    >
-      <v-row class="ml-6">
-        <v-col :cols="resCol === '12' ? '5' : '4'" :class="resCol === '12' ? 'pr-0 pt-0' : 'pr-0'">
-          <v-container>
-            <v-row v-if="resCol !== '12'">
-              <v-col cols="6">
+                <v-avatar left>
+                  <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-TH.png?alt=media&token=e4bd7ffa-aed9-47e3-9240-4dcb9d8d284e"></v-img>
+                </v-avatar>
+                  TH
+              </v-chip>
+              <v-chip
+                class="ml-1 font-weight-black"
+                :style="'background-color:' + (languageSelect === 1 ? '#173053' : 'rgb(103 103 103 / 18%)') + ';font-size:20px'"
+                dark
+                @click="languageSelect = 1">
+                <v-avatar left>
+                  <v-img src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-web%2Fflag-USA1.png?alt=media&token=a83dd820-f576-457a-8d08-1009cea9d70b"></v-img>
+                </v-avatar>
+                  EN
+              </v-chip>
+            </div> -->
+          <!-- <v-form ref="form_search" v-model="validSearch" lazy-validation>
+            <v-row>
+              <v-col cols="3">
+                <v-select
+                  :item-text="languageSelect === 0 ? 'text' : 'textEng'"
+                  v-model="masBranchID"
+                  background-color="white"
+                  style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                  hide-details
+                  :items="branchItem"
+                  :label="languageSelect === 0 ? 'สาขา' : 'Branch'"
+                  outlined
+                  dense
+                  required
+                  :rules ="[rules.required]"
+                  @change="clearTimeLoop(), checkSearch()"
+                  ><template #prepend-inner>
+                    <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                      mdi-map-marker-outline
+                    </v-icon>
+                  </template>
+                </v-select>
+              </v-col>
+              <v-col cols="3">
+                <v-select
+                  :item-text="languageSelect === 0 ? 'text' : 'textEng'"
+                  :label="languageSelect === 0 ? 'ประเภทบริการ' : 'Service'"
+                  style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                  v-model="flowSelect"
+                  hide-details
+                  background-color="white"
+                  :items="DataFlowItem"
+                  outlined
+                  dense
+                  required
+                  :rules ="[rules.required]"
+                  @change="clearTimeLoop(), checkSearch()"
+                >
+                  <template #prepend-inner>
+                    <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                      mdi-note-text-outline
+                    </v-icon>
+                  </template>
+                </v-select>
+              </v-col>
+              <v-col cols="3">
                 <v-menu
                   ref="menu"
                   v-model="menuStart"
@@ -157,24 +99,25 @@
                   min-width="auto"
                 >
                   <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          hide-details
-                          :background-color="'white'"
-                          v-model="dateStartShow"
-                          readonly
-                          outlined
-                          dense
-                          required
-                          :rules ="[rules.required]"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                        <template #prepend-inner>
-                        <v-icon :color="'black'" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                          mdi-calendar
-                        </v-icon>
-                      </template>
-                    </v-text-field>
+                    <v-text-field
+                      hide-details
+                      background-color="white"
+                      v-model="dateStart"
+                      style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                      :label="languageSelect === 0 ? 'วัน/เดือน/ปี' : 'Date'"
+                      readonly
+                      outlined
+                      dense
+                      required
+                      :rules ="[rules.required]"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                    <template #prepend-inner>
+                    <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                      mdi-calendar
+                    </v-icon>
+                  </template></v-text-field>
                   </template>
                   <v-date-picker
                     @input="menuStart = false, clearTimeLoop(), checkSearch()"
@@ -185,191 +128,248 @@
                   </v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  outlined
-                  :background-color="'white'"
-                  dense
-                  readonly
-                  v-model="shopTime"
-                >
-                  <template #prepend-inner>
-                    <v-icon :color="'black'" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                      mdi-clock-time-four
-                    </v-icon>
-                  </template>
-                </v-text-field>
+              <v-col cols="2" class="mt-n3">
+                <v-switch
+                  v-model="switchMode"
+                  inset
+                  label="เปิดวิดีโอ"
+                ></v-switch>
               </v-col>
             </v-row>
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-sheet
-                  :color="bgColor3"
-                  elevation="1"
-                  :height="resCol === '12' ? '99' : '130'"
-                  width="100%"
-                  dark
-                  style="border-bottom: 1px solid #695988 !important;border-radius: 10px 10px 0px 0px;"
-                >
-                  <v-container>
-                    <v-row>
-                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
-                        <br>
-                        <v-row class="text-center">
-                          <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size: ' + font() + ';line-height: 24px;color:' + text">
-                          <!-- <v-col cols="12" :style="'font-weight: 700;font-size: ' + '5px' + ';line-height: 24px;color:' + text"> -->
-                            หมายเลขคิว
-                          </v-col>
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size:' + font() + ';line-height: 24px;color:' + text" >
-                            Number
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
-                        <br>
-                        <v-row class="text-center">
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size:' + font() + ';line-height: 24px;color:' + text">
-                            ช่องบริการ
-                          </v-col>
-                          <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size:'  + font() + ';line-height: 24px;color:' + text">
-                            Counter
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-sheet>
-                <v-sheet
-                  elevation="1"
-                  height="85%"
-                  width="100%"
-                  style="border-radius: 0px 0px 10px 10px;"
-                >
-                  <v-container>
-                    <v-row v-for="(items, id) in itemBookingUse" :key="id">
-                      <v-col cols="6" class="pt-2">
-                        <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: ' + font2() + ';color:black'">
-                            {{items.storeFrontQueue}}
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="6" class="pt-2" style="border-left: 1px solid #695988 !important">
-                        <v-row class="text-center">
-                          <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color:black'">
-                            {{items.servicePoint === '' ? (items.statusBt === 'confirmJob' ? 'เรียกคิว' : '') : items.servicePoint}}
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                    <div class="text-right">
-                      <v-icon
-                        large
-                        color="#695988"
-                        @click="changeStatusSound('off')"
-                        v-if="statusSound === true"
-                      >
-                        mdi-volume-high
+          </v-form> -->
+      <v-sheet
+        :color="shopColor"
+        elevation="0"
+        height="110vh"
+        width="100%"
+      >
+        <v-row class="ml-6">
+          <v-col :cols="resCol === '12' ? '5' : '4'" :class="resCol === '12' ? 'pr-0 pt-0' : 'pr-0'">
+            <v-container>
+              <v-row v-if="resCol !== '12'">
+                <v-col cols="6">
+                  <v-menu
+                    ref="menu"
+                    v-model="menuStart"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            hide-details
+                            :background-color="'white'"
+                            v-model="dateStartShow"
+                            readonly
+                            outlined
+                            dense
+                            required
+                            :rules ="[rules.required]"
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                          <template #prepend-inner>
+                          <v-icon :color="'black'" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                            mdi-calendar
+                          </v-icon>
+                        </template>
+                      </v-text-field>
+                    </template>
+                    <v-date-picker
+                      @input="menuStart = false, clearTimeLoop(), checkSearch()"
+                      v-model="dateStart"
+                      no-title
+                      scrollable
+                    >
+                    </v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    outlined
+                    :background-color="'white'"
+                    dense
+                    readonly
+                    v-model="shopTime"
+                  >
+                    <template #prepend-inner>
+                      <v-icon :color="'black'" style="padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                        mdi-clock-time-four
                       </v-icon>
-                      <v-icon
-                        large
-                        color="#695988"
-                        @click="changeStatusSound('on')"
-                        v-else
-                      >
-                         mdi-volume-off
-                      </v-icon>
-                    </div>
-                  </v-container>
-                </v-sheet>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-col>
-        <v-col :cols="resCol === '12' ? '7' : '8'">
-          <!-- <v-row>
-            <v-col cols="11" class="pb-0 pt-0 mt-3" style="display: flex;justify-content: flex-end;">
-              <v-card
-                elevation="1"
-                :color="bgColor3"
-                style="padding: 10px; width: 330px;"
-              >
-                <div style="margin: auto 0;" class="text-center text-white">
-                  <div style="font-weight: 700;font-size: 28px;">คิวที่ยังไม่ได้เลือก</div>
-                  <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong>
-                </div>
-              </v-card>
-            </v-col>
-          </v-row> -->
-          <v-row v-if="videoLinkMonition">
-            <v-col cols="12" class="text-center pt-0">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-15'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-                <source :src="videoLinkMonition" type="video/webm">
-              </video>
-              <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </v-col>
-          </v-row>
-          <template>
-            <v-row>
-              <v-col cols="4" class="pb-0 pt-0 mt-3 pr-0">
+                    </template>
+                  </v-text-field>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-sheet
+                    :color="bgColor3"
+                    elevation="1"
+                    :height="resCol === '12' ? '99' : '130'"
+                    width="100%"
+                    dark
+                    style="border-bottom: 1px solid #695988 !important;border-radius: 10px 10px 0px 0px;"
+                  >
+                    <v-container>
+                      <v-row>
+                        <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
+                          <br>
+                          <v-row class="text-center">
+                            <v-col  :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size: ' + font() + ';line-height: 24px;color:' + text">
+                            <!-- <v-col cols="12" :style="'font-weight: 700;font-size: ' + '5px' + ';line-height: 24px;color:' + text"> -->
+                              หมายเลขคิว
+                            </v-col>
+                            <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size:' + font() + ';line-height: 24px;color:' + text" >
+                              Number
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                        <v-col cols="6" :class="resCol === '12' ? 'pa-0' : ''">
+                          <br>
+                          <v-row class="text-center">
+                            <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size:' + font() + ';line-height: 24px;color:' + text">
+                              ช่องบริการ
+                            </v-col>
+                            <v-col :class="resCol === '12' ? 'pa-0' : ''" cols="12" :style="'font-weight: 700;font-size:'  + font() + ';line-height: 24px;color:' + text">
+                              Counter
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-sheet>
+                  <v-sheet
+                    elevation="1"
+                    height="85%"
+                    width="100%"
+                    style="border-radius: 0px 0px 10px 10px;"
+                  >
+                    <v-container>
+                      <v-row v-for="(items, id) in itemBookingUse" :key="id">
+                        <v-col cols="6" class="pt-2">
+                          <v-row class="text-center">
+                            <v-col cols="12" :style="'font-weight: 700;font-size: ' + font2() + ';color:black'">
+                              {{items.storeFrontQueue}}
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                        <v-col cols="6" class="pt-2" style="border-left: 1px solid #695988 !important">
+                          <v-row class="text-center">
+                            <v-col cols="12" :style="'font-weight: 700;font-size: 48px;color:black'">
+                              {{items.servicePoint === '' ? (items.statusBt === 'confirmJob' ? 'เรียกคิว' : '') : items.servicePoint}}
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                      <div class="text-right">
+                        <v-icon
+                          large
+                          color="#695988"
+                          @click="changeStatusSound('off')"
+                          v-if="statusSound === true"
+                        >
+                          mdi-volume-high
+                        </v-icon>
+                        <v-icon
+                          large
+                          color="#695988"
+                          @click="changeStatusSound('on')"
+                          v-else
+                        >
+                           mdi-volume-off
+                        </v-icon>
+                      </div>
+                    </v-container>
+                  </v-sheet>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-col>
+          <v-col :cols="resCol === '12' ? '7' : '8'">
+            <!-- <v-row>
+              <v-col cols="11" class="pb-0 pt-0 mt-3" style="display: flex;justify-content: flex-end;">
                 <v-card
                   elevation="1"
                   :color="bgColor3"
-                  style="padding: 10px; width: 90%;"
+                  style="padding: 10px; width: 330px;"
                 >
                   <div style="margin: auto 0;" class="text-center text-white">
-                    <div :style="'margin-bottom:4px;font-weight: 700;font-size: ' + font3() + ';color:' + text">คิวที่รอเรียก : {{countConfirm}}</div>
-                    <!-- <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong> -->
-                    <v-row>
-                      <v-col cols="4" class="px-0 py-0 pl-1" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3">
-                         <strong :style="'font-size: ' + font4() + ';color:' + text ">{{item3.storeFrontText}} : {{countConfirmList.filter(el => { return el.flowId === item3.value  }).length}}</strong>
-                      </v-col>
-                    </v-row>
+                    <div style="font-weight: 700;font-size: 28px;">คิวที่ยังไม่ได้เลือก</div>
+                    <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong>
                   </div>
                 </v-card>
               </v-col>
-              <v-col clos="8" class="pb-0 pt-0 mt-3 pl-0">
-                <v-sheet
-                  :color="bgColor3"
-                  elevation="1"
-                  height="100%"
-                  width="93%"
-                  dark
-                  style="border-radius: 10px 10px 10px 10px;padding: 10px;"
-                >
-                  <v-row>
-                    <v-col cols="2" :class="resCol === 12 ? 'pb-0 pt-1 mt-3 pl-10' : 'pl-2'" v-for="(items, id) in countConfirmList" :key="id">
-                      <strong :style="'font-size: ' + font3() + ';color:' + text">{{items.storeFrontQueue}}</strong>
-                    </v-col>
-                  </v-row>
-                </v-sheet>
+            </v-row> -->
+            <v-row v-if="videoLinkMonition">
+              <v-col cols="12" class="text-center pt-0">
+                <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" :class=" resCol === '12' ? 'mt-3' : 'mt-15'" width="90%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+                  <source :src="videoLinkMonition" type="video/webm">
+                </video>
+                <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
               </v-col>
             </v-row>
-          </template>
-        </v-col>
-        <v-row v-show="hideSound === true">
-          <v-col>
-            <audio id="playerPrefix" controls="controls">>
-              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084603578380.wav">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerQueue" controls="controls">>
-              <source :src="audio">
-              Your browser does not support the audio format.
-            </audio>
-            <audio id="playerSuffix" controls="controls">>
-              <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_05092023150816848745.wav">
-              Your browser does not support the audio format.
-            </audio>
+            <template>
+              <v-row>
+                <v-col cols="4" class="pb-0 pt-0 mt-3 pr-0">
+                  <v-card
+                    elevation="1"
+                    :color="bgColor3"
+                    style="padding: 10px; width: 90%;"
+                  >
+                    <div style="margin: auto 0;" class="text-center text-white">
+                      <div :style="'margin-bottom:4px;font-weight: 700;font-size: ' + font3() + ';color:' + text">คิวที่รอเรียก : {{countConfirm}}</div>
+                      <!-- <strong style="font-weight: 700;font-size: 28px;">{{countConfirm}}</strong> -->
+                      <v-row>
+                        <v-col cols="4" class="px-0 py-0 pl-1" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3">
+                           <strong :style="'font-size: ' + font4() + ';color:' + text ">{{item3.storeFrontText}} : {{countConfirmList.filter(el => { return el.flowId === item3.value  }).length}}</strong>
+                        </v-col>
+                      </v-row>
+                    </div>
+                  </v-card>
+                </v-col>
+                <v-col clos="8" class="pb-0 pt-0 mt-3 pl-0">
+                  <v-sheet
+                    :color="bgColor3"
+                    elevation="1"
+                    height="100%"
+                    width="93%"
+                    dark
+                    style="border-radius: 10px 10px 10px 10px;padding: 10px;"
+                  >
+                    <v-row>
+                      <v-col cols="2" :class="resCol === 12 ? 'pb-0 pt-1 mt-3 pl-10' : 'pl-2'" v-for="(items, id) in countConfirmList" :key="id">
+                        <strong :style="'font-size: ' + font3() + ';color:' + text">{{items.storeFrontQueue}}</strong>
+                      </v-col>
+                    </v-row>
+                  </v-sheet>
+                </v-col>
+              </v-row>
+            </template>
           </v-col>
-          <v-col>
-            {{history}}
-          </v-col>
+          <v-row v-show="hideSound === true">
+            <v-col>
+              <audio id="playerPrefix" controls="controls">>
+                <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_02132023084603578380.wav">
+                Your browser does not support the audio format.
+              </audio>
+              <audio id="playerQueue" controls="controls">>
+                <source :src="audio">
+                Your browser does not support the audio format.
+              </audio>
+              <audio id="playerSuffix" controls="controls">>
+                <source src="https://botnoi-dictionary.s3.amazonaws.com:443/e94bf12b0abf0ec0335775cd1a906ca1fcfeeff3c24a3ebe5bc9fe3dde5014c1_05092023150816848745.wav">
+                Your browser does not support the audio format.
+              </audio>
+            </v-col>
+            <v-col>
+              {{history}}
+            </v-col>
+          </v-row>
         </v-row>
-      </v-row>
-    </v-sheet>
-  </div>
-</template>
+      </v-sheet>
+    </div>
+  </template>
 <script>
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
@@ -490,16 +490,16 @@ export default {
       rules: {
         numberRules: value =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
+            'กรุณากรอกตัวเลข 0 ถึง 9',
         counterTel: value => value.length <= 10 || 'Max 10 characters',
         IDcardRules: value =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
+            'กรุณากรอกตัวเลข 0 ถึง 9',
         required: value => !!value || 'กรุณากรอก.',
         resizeImag: value =>
           !value ||
-          value.size < 2000000 ||
-          'Avatar size should be less than 2 MB!',
+            value.size < 2000000 ||
+            'Avatar size should be less than 2 MB!',
         counterIDcard: value => value.length <= 13 || 'Max 13 characters',
         email: value => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -678,7 +678,7 @@ export default {
             }
           })
 
-        // let text = this.convertItemtoText(item)
+          // let text = this.convertItemtoText(item)
         if (!item.audioFile) {
           var params = {
             text: storeFrontQueue,
@@ -855,14 +855,14 @@ export default {
         this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
         // await this.getBookingDataList(this.dateStart)
         let urlApi = this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.shopId +
-            '&masBranchID=' +
-            this.masBranchID +
-            // '&flowId=' +
-            // this.flowSelect +
-            '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+              '/booking_view/get?shopId=' +
+              this.shopId +
+              '&masBranchID=' +
+              this.masBranchID +
+              // '&flowId=' +
+              // this.flowSelect +
+              '&dueDate=' +
+              this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         // '&dueDate=' +
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         await axios
@@ -1291,36 +1291,36 @@ export default {
 }
 </script>
 <style scope>
-.centered-input >>> input {
-      text-align: center
-    }
-#margin {
-  margin-top: 50px;
-  margin-bottom: 40px;
-}
-.v_text_edit {
-  Width: 255px;
-  Height: 52px;
-  font-size: 10px !important;
-}
-#subtext {
-  color: #173053;
-  font-size: 30px !important;
-  font-weight: bold;
-}
-.center_screen {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -50px;
-  margin-left: -50px;
-  width: auto;
-  height: auto;
-  text-align: center;
-  border: solid 1px blue;
-  padding: .5rem;
-}
-.text-black >>> .v-input__slot {
-  color: #005fcc !important;
-}
+  .centered-input >>> input {
+        text-align: center
+      }
+  #margin {
+    margin-top: 50px;
+    margin-bottom: 40px;
+  }
+  .v_text_edit {
+    Width: 255px;
+    Height: 52px;
+    font-size: 10px !important;
+  }
+  #subtext {
+    color: #173053;
+    font-size: 30px !important;
+    font-weight: bold;
+  }
+  .center_screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    width: auto;
+    height: auto;
+    text-align: center;
+    border: solid 1px blue;
+    padding: .5rem;
+  }
+  .text-black >>> .v-input__slot {
+    color: #005fcc !important;
+  }
 </style>

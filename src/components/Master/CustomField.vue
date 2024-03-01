@@ -1532,7 +1532,10 @@ export default {
     },
     async autobranch (item) {
       if (item !== '') {
-        let checkBranchByFlow = this.DataFlowName.filter((ii) => ii.flowId.toString() === item)[0].masBranchID
+        let checkBranchByFlow = null
+        if (this.DataFlowName.filter((ii) => ii.flowId.toString() === item).length > 0) {
+          checkBranchByFlow = this.DataFlowName.filter((ii) => ii.flowId.toString() === item)[0].masBranchID
+        }
         console.log('checkBranchByFlow', checkBranchByFlow)
         if (checkBranchByFlow !== null && checkBranchByFlow !== 'All') {
           this.branchByflow = this.DataFlowName.filter((ii) => ii.flowId.toString() === item)[0].masBranchID
