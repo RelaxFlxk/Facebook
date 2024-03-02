@@ -36,7 +36,7 @@
               </span>
             </div>
             <div class="mt-auto">
-              <v-btn  rounded color="white" @click="onClickComplete()">
+              <v-btn class="w-100"  rounded color="white" @click="onClickComplete()">
                 Finish guide
                 <v-icon right>mdi-arrow-right</v-icon>
               </v-btn>

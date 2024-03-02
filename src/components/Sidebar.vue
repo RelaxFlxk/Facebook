@@ -687,7 +687,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-     <SidebarNoti :isOpen="isOpenNoti" :closeDrawer="closeDrawer" :listData="listNoti"/>
+     <SidebarNoti :isOpen="isOpenNoti" :closeDrawer="closeDrawer" :listDataUnread="listDataUnread" :listDataReaded="listDataReaded" :taps="dataTapSidebarNoti"/>
      <SidebarSetupGuide :isOpen="isOpenSetup" :closeDrawer="closeSetup" :shopName="session.data.shopName" :progress="progress" :setup="dataSetupGuide" :updateSetUp="updateSetUp" :onClickComplete="onClickComplete"/>
      <Dialogfinish :shopName="session.data.shopName" :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted" :url="linkUrlLine"/>
   </div>
@@ -760,8 +760,10 @@ export default {
       isOpenCompleted: false,
       isNewShop: false,
       isNoti: false,
-      listNoti: [],
-      dataLineConfig: {}
+      listDataUnread: [],
+      listDataReaded: [],
+      dataLineConfig: {},
+      dataTapSidebarNoti: [ { key: 'appointment', icon: 'mdi-calendar-month-outline', label: 'Appointment' }, { key: 'news', icon: 'mdi-newspaper', label: 'News' } ]
     }
   },
   // beforeCreate () {
@@ -802,7 +804,6 @@ export default {
       this.$router.push('/Core/Login')
     } else {
       this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
-      this.GetNotiBooking()
       this.getFirestore()
       await this.getShopSetUp()
       this.getShop()
@@ -1542,7 +1543,8 @@ export default {
       this.isOpenSetup = false
     },
     onOpenNoti () {
-      this.GetNotiBooking()
+      this.GetNotiBookingUnRead()
+      this.GetNotiBookingReading()
       if (this.isNoti) {
         this.updateReadNoti()
       }
@@ -1560,7 +1562,9 @@ export default {
               this.progress = response.data.percentage ? response.data.percentage : 0
               if (response.data.setupGuide && response.data.setupGuide.length > 0) {
                 this.dataSetupGuide = response.data.setupGuide
-                this.isOpenSetup = true
+                if (response.data.percentage < 100) {
+                  this.isOpenSetup = true
+                }
               } else {
                 this.dataSetupGuide = []
               }
@@ -1649,7 +1653,6 @@ export default {
             snapshot.forEach((doc) => {
               if (doc.data().activeBooking === '1') {
                 console.log('getFirestore --> activeBooking')
-                // this.GetNotiBooking()
                 this.isNoti = true
               } else {
                 this.isNoti = false
@@ -1658,17 +1661,41 @@ export default {
           }
         })
     },
-    async GetNotiBooking () {
+    async GetNotiBookingUnRead () {
       try {
-        console.log('[Start GetNotiBooking]')
+        console.log('[Start GetNotiBookingUnRead]')
+        try {
+          await axios
+            .get(
+              this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId + '&IsNotify=False')
+            .then(async response => {
+              if (response.data) {
+                console.log('[Data GetNotiBookingUnRead]', response.data)
+                if (response.data.status !== false) {
+                  this.listDataUnread = response.data
+                } else {
+                  this.listNoti = []
+                }
+              }
+            })
+        } catch (error) {
+          console.log('Error updateSetUp', error)
+        }
+      } catch (error) {
+        console.log('Error updateSetUp', error)
+      }
+    },
+    async GetNotiBookingReading () {
+      try {
+        console.log('[Start GetNotiBookingReading]')
         await axios
           .get(
-            this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId + '&IsNotify=False')
+            this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId)
           .then(async response => {
             if (response.data) {
-              console.log('[Data GetNotiBooking]', response.data)
+              console.log('[Data GetNotiBookingReading]', response.data)
               if (response.data.status !== false) {
-                this.listNoti = response.data
+                this.listDataReaded = response.data
               } else {
                 this.listNoti = []
               }

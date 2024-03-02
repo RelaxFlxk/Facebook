@@ -360,7 +360,7 @@
                         </v-col>
                       </v-row>
                       <v-row justify="center" no-gutters>
-                        <v-col cols="auto" class="text-lelf">
+                        <v-col cols="auto" class="text-lelf mx-1">
                           <v-btn
                             color="#1B437C"
                             small
@@ -371,7 +371,7 @@
                             <v-icon>mdi-facebook</v-icon>
                           </v-btn>
                         </v-col>
-                        <v-col cols="auto" class="text-lelf">
+                        <v-col cols="auto" class="text-lelf mx-1">
                           <v-btn
                             color="#1B437C"
                             small
@@ -385,7 +385,7 @@
                         <v-col cols="auto" class="text-lelf">
                           <button v-on:click="FunCopy('line')"><v-img :src="require('@/assets/lineIcon.png')" style="width:40px;height:40px;margin-bottom:13px;" /></button>
                         </v-col>
-                        <v-col cols="auto" class="text-lelf">
+                        <v-col cols="auto" class="text-lelf mx-1">
                           <v-btn
                             color="#1B437C"
                             small
@@ -396,7 +396,7 @@
                             <v-icon>mdi-instagram</v-icon>
                           </v-btn>
                         </v-col>
-                        <v-col cols="auto" class="text-lelf">
+                        <v-col cols="auto" class="text-lelf mx-1">
                           <v-btn
                             color="#1B437C"
                             small
