@@ -2,10 +2,7 @@
   <div class="d-flex flex-column justify-content-between mr-1 mr-1 p-0">
     <div class=" d-flex flex-column justify-content-center py-1 title">
       <div class="text-center">
-        <span class="text-waiting">All Queue Type Waiting</span>
-      </div>
-      <div class="text-center">
-        <span class="text-waiting">จำนวนคิวที่รอ</span>
+        <span class="text-waiting">Number of queues waiting / จำนวนคิวที่รอ</span>
       </div>
     </div>
     <div class="d-flex flex-column div-waiting h-100">
@@ -48,7 +45,7 @@ export default {
   }
 
   .text-waiting {
-    font-size: 2vw;
+    font-size: 1.5vw;
   }
 }
 
@@ -58,6 +55,6 @@ export default {
   }
 
   .text-waiting {
-    font-size: 1vw;
+    font-size: 0.9vw;
   }
 }</style>
