@@ -133,6 +133,7 @@
             :type="type"
             :colors="colors"
             :categories="categories"
+            :categoriesCheckBox="categoriesCheckBox"
             :typeColor="typeColor"
             :names="names"
             :flowName="flowName"
@@ -149,6 +150,7 @@
               :names="names"
               :categories="categories"
               :categoriesItem="categoriesItem"
+              :categoriesCheckBox="categoriesCheckBox"
               :empDayoff="empDayoff"
               :flowName="flowName"
               @send-data="changeData"
@@ -169,6 +171,7 @@
                 :names="names"
                 :categories="categories"
                 :categoriesItem="categoriesItem"
+                :categoriesCheckBox="categoriesCheckBox"
                 :empDayoff="empDayoff"
                 :flowName="flowName"
                 @send-data="changeData"
@@ -238,24 +241,26 @@ export default {
       focus: null,
       events: [],
       colors: [
-        'green',
-        'red',
-        'blue',
-        'orange',
-        'purple',
-        'cyan',
-        'pink',
-        'teal',
-        'lime',
-        'brown',
-        'grey',
-        'blueGrey',
-        'amber',
-        'lightGreen',
-        'deepOrange',
-        'indigo',
-        'lightBlue',
-        'deepPurple'
+        '#FE6F5E',
+        '#E4CC51',
+        '#C32876',
+        '#532A75',
+        '#57472E',
+        '#B93424',
+        '#B66D2F',
+        '#024B55',
+        '#568455',
+        '#FF9B8E',
+        '#57A298',
+        '#009076',
+        '#722211',
+        '#A10057',
+        '#89ACBC',
+        '#222E75',
+        '#705899',
+        '#696BC5',
+        '#123249',
+        '#0A3E28'
       ],
       names: [],
       // categories: ['AAAAAA', 'BBBBBB']
@@ -528,19 +533,11 @@ export default {
   border-width: 1px;
   border-color: #e0e0e0;
 }
-.menuleftDrawer{
-  display: flex;
-  flex-direction: column;
-  width: 400px;
-  height: 83vh;
-  background-color: #FFFFFF;
-  padding: 22px;
-}
 .menuleft {
   display: flex;
   flex-direction: column;
   width: 300px;
-  height: 83vh;
+  height: 750px;
 }
 .menuright {
   flex-grow: 1;
@@ -566,5 +563,24 @@ export default {
   border-left: 1px solid #9e9e9e;
   background: linear-gradient(45deg, #d1d1d1 37.50%, #e6e6e6 37.50%, #e6e6e6 50%, #d1d1d1 50%, #d1d1d1 87.50%, #e6e6e6 87.50%, #e6e6e6 100%);
   background-size: 10px 10px;height: 100%;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #e0e0e0;
 }
 </style>

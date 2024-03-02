@@ -147,6 +147,10 @@ export default {
       type: Array,
       default: () => []
     },
+    categoriesCheckBox: {
+      type: Array,
+      default: () => []
+    },
     flowName: {
       type: Array,
       default: () => []
@@ -207,9 +211,15 @@ export default {
         let color = this.colors[key]
         return color
       } else {
-        let key = this.categories.findIndex((item) => item === event.category)
-        let color = this.colors[key]
-        return color
+        let data = this.categories.filter((a) => a === event.category).length > 0 ? this.categories.filter((a) => a === event.category)[0] : []
+        if (this.categoriesCheckBox.filter((a) => a === data).length > 0) {
+          let key = this.categoriesCheckBox.findIndex((item) => item === event.category)
+          let color = this.colors[key]
+          // console.log('color', color)
+          return color
+        } else {
+          // console.log('ELSE')
+        }
       }
     },
     rnd (a, b) {
