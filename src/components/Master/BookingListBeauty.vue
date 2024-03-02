@@ -3200,6 +3200,7 @@
                   :search="searchAll2"
                   min-height="400px"
                   :items-per-page="30"
+                  :item-class="getRowClass"
                 >
                   <!-- :item-class= "getColor" -->
                   <!-- <template v-slot:[`item.CREATE_DATE`]="{ item }">
@@ -8228,6 +8229,14 @@ export default {
     this.$root.$off('dataReturn')
   },
   methods: {
+    getRowClass (item) {
+      if (this.$route.query.bookNoNoti) {
+        console.log('item.bookNo === this.$route.query.bookNoNoti', item.bookNo === this.$route.query.bookNoNoti)
+        return item.bookNo === this.$route.query.bookNoNoti ? 'info' : ''
+      } else {
+        return ''
+      }
+    },
     async connectGoogleCalendar (status, bookNo) {
       console.log('status !!!', status)
       this.$refs.GoogleCalendarRef.checkTypeEven(status, bookNo)
@@ -11632,6 +11641,8 @@ export default {
     },
     async getDataDefault () {
       this.loadingRefresh = true
+      this.$route.query.bookNoNoti = 'None'
+      this.searchAll2 = ''
       await this.getDataBranch()
       await this.getEmpSelectAdd()
       this.getCustomFieldStart()
@@ -13806,19 +13817,6 @@ export default {
           this.dataReady = true
           //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
         })
-      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
-      // await axios
-      //   .get(url)
-      //   .then(async response => {
-      //     if (response.data.status !== false) {
-      //       response.data.forEach((row) => {
-      //         if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
-      //           this.BookingDataList[row.bookNo] = []
-      //         }
-      //         this.BookingDataList[row.bookNo].push(row)
-      //       })
-      //     }
-      //   })
       let urlApiwait = ''
       if (this.flowSelect === 'AllFlow') {
         urlApiwait = this.DNS_IP +
@@ -14003,6 +14001,13 @@ export default {
         }
         console.log('dataItemTime', this.dataItemTime)
         // await this.getTimesChange('update')
+        if (this.$route.query.bookNoNoti) {
+          let checkBook = dataItems.filter(el => { return el.bookNo === this.$route.query.bookNoNoti })
+          if (checkBook.length > 0) {
+            this.getSelectText = checkBook[0].statusBt
+            this.searchAll2 = checkBook[0].cusName
+          }
+        }
         if (this.getSelectText) {
           this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
         } else {
