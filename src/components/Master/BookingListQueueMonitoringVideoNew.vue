@@ -106,7 +106,7 @@ export default {
   data () {
     return {
       orientation: '',
-      statusSound: true,
+      statusSound: false,
       dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
       validSearch: true,
@@ -182,6 +182,7 @@ export default {
     }
   },
   async mounted () {
+    this.changeStatusSound('on')
     this.checkOrientation()
 
     window.addEventListener('resize', this.checkOrientation)
