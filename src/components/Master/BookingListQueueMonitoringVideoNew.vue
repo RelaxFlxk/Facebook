@@ -9,7 +9,7 @@
             </video>
                <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
               </div>
-              <div class="d-flex flex-row justify-content-between mx-4 mt-5 h-100">
+              <div class="d-flex flex-row justify-content-between mx-4  h-100">
               <CardQueueSummary class="col-4" :queueSummary="queueSummary ? queueSummary : []"/>
               <CardWaitingAll class="col" :groupQueueItem="groupQueueWaitingAll && groupQueueWaitingAll.length > 0 ?  groupQueueWaitingAll.slice(0, 12) : []"/>
             </div>
@@ -25,7 +25,7 @@
            </video>
           <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
      </div>
-      <div :class="`d-flex flex-row justify-content-between mx-3 ${isPortrait ? '' : 'mt-3'}`">
+      <div :class="`d-flex flex-row justify-content-between mx-3`">
           <div class="col-6 py-0">
             <v-icon class="mr-3" large>
              {{ wifiIcon }}
@@ -106,7 +106,7 @@ export default {
   data () {
     return {
       orientation: '',
-      statusSound: false,
+      statusSound: true,
       dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
       validSearch: true,
