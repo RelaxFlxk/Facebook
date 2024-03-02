@@ -670,29 +670,32 @@ export default {
         this.updateProcessOhrichUpdate()
       }
       this.firestore = this.$firebase.firestore()
-      this.firestore.collection('ProcessOhrichUpdate').limit(1000).onSnapshot((snapshot) => {
+      const FieldPath = this.$firebase.firestore.FieldPath
+      this.firestore.collection('ProcessOhrichUpdate')
+        .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
+        .onSnapshot((snapshot) => {
         // console.log(snapshot)
-        snapshot.docChanges().forEach(async (change) => {
-          let branchId = this.$session.getAll().data.masBranchID || 2185
-          let userName = this.$session.getAll().data.userName
-          if (change.doc.data().masBranchID === branchId && change.doc.id === userName) {
-            console.log('active', change.doc.data().active)
-            if (this.checkRef === false) {
-              console.log('checkRef1')
-              this.checkRef = true
-              await this.searchBooking()
-              this.updateProcessOhrichUpdate()
-            } else {
-            // console.log(change.doc.id)
-              if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
-                console.log('checkRef2')
+          snapshot.docChanges().forEach(async (change) => {
+            let branchId = this.$session.getAll().data.masBranchID || 2185
+            let userName = this.$session.getAll().data.userName
+            if (change.doc.data().masBranchID === branchId && change.doc.id === userName) {
+              console.log('active', change.doc.data().active)
+              if (this.checkRef === false) {
+                console.log('checkRef1')
+                this.checkRef = true
                 await this.searchBooking()
                 this.updateProcessOhrichUpdate()
+              } else {
+                // console.log(change.doc.id)
+                if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
+                  console.log('checkRef2')
+                  await this.searchBooking()
+                  this.updateProcessOhrichUpdate()
+                }
               }
             }
-          }
+          })
         })
-      })
     },
     updateProcessOhrichUpdate (item) {
       let branchId = this.$session.getAll().data.masBranchID || 2185

@@ -251,33 +251,36 @@ export default {
     },
     async getFirestore () {
       this.firestore = this.$firebase.firestore()
-      this.firestore.collection('ProcessOhrichUpdate').limit(1000).onSnapshot((snapshot) => {
-        snapshot.docChanges().forEach(async (change) => {
-          if (this.checkRef === false) {
-            this.checkRef = true
-            this.dateStart = this.momenDate_1(new Date())
-            this.currentDate = moment().format('DD/MMM/YYYY')
-            this.updateProcessOhrichUpdate()
-            await this.getBefore()
-          } else {
-            if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
+      const FieldPath = this.$firebase.firestore.FieldPath
+      this.firestore.collection('ProcessOhrichUpdate')
+        .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
+        .onSnapshot((snapshot) => {
+          snapshot.docChanges().forEach(async (change) => {
+            if (this.checkRef === false) {
+              this.checkRef = true
+              this.dateStart = this.momenDate_1(new Date())
+              this.currentDate = moment().format('DD/MMM/YYYY')
+              this.updateProcessOhrichUpdate()
+              await this.getBefore()
+            } else {
+              if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
               // if (change.doc.data().active === '1' && change.doc.id === this.$session.getAll().data.userName) {
-              if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
-                if (change.doc.id === this.$session.getAll().data.userName) {
-                  if (!this.checkStatusEdit) {
-                    this.dateStart = this.momenDate_1(new Date())
-                    this.currentDate = moment().format('DD/MMM/YYYY')
-                    await this.getBefore()
-                    this.updateProcessOhrichUpdate()
+                if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+                  if (change.doc.id === this.$session.getAll().data.userName) {
+                    if (!this.checkStatusEdit) {
+                      this.dateStart = this.momenDate_1(new Date())
+                      this.currentDate = moment().format('DD/MMM/YYYY')
+                      await this.getBefore()
+                      this.updateProcessOhrichUpdate()
+                    }
                   }
+                } else {
+                  await this.checkSession()
                 }
-              } else {
-                await this.checkSession()
               }
             }
-          }
+          })
         })
-      })
     },
     updateProcessOhrichUpdate (item) {
       let params = {
