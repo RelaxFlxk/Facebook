@@ -970,6 +970,13 @@ export default {
           // { title: 'ReportEmp', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportEmpMain', type: 'Dashboard' }
           // { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance', type: 'Dashboard' }
         ]
+        if (this.$session.getAll().data.USER_ROLE === 'admin' || this.$session.getAll().data.USER_ROLE === 'user') {
+          if (this.$session.getAll().data.showOnsite === 'แสดง') {
+            this.Dashboard.push(
+              { title: 'ปฏิทิน', icon: 'mdi-calendar', to: '/Onsite/OnsiteCalendarGrid', type: 'customer' }
+            )
+          }
+        }
         this.workflow = [
           { title: 'กระดานการทำงาน', icon: 'mdi-clipboard-check-multiple-outline', to: '/Master/BoardControl', type: 'workflow' }
         ]
@@ -1042,6 +1049,13 @@ export default {
           // { title: 'ReportEmp', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportEmpMain', type: 'Dashboard' }
           // { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance', type: 'Dashboard' }
         ]
+        if (this.$session.getAll().data.USER_ROLE === 'admin' || this.$session.getAll().data.USER_ROLE === 'user') {
+          if (this.$session.getAll().data.showOnsite === 'แสดง') {
+            this.Dashboard.push(
+              { title: 'ปฏิทิน', icon: 'mdi-calendar', to: '/Onsite/OnsiteCalendarGrid', type: 'customer' }
+            )
+          }
+        }
       }
       if (this.$session.getAll().data.USER_ROLE === 'admin') {
         this.corporate = [
@@ -1216,7 +1230,8 @@ export default {
     onsite () {
       // this.$router.push('/Onsite/JobList')
       this.onsiteSide = [
-        { title: 'รายการงานทั้งหมด', icon: 'mdi-account-plus', to: '/Onsite/JobList', type: 'customer' }
+        { title: 'รายการงานทั้งหมด', icon: 'mdi-account-plus', to: '/Onsite/JobList', type: 'customer' },
+        { title: 'ปฏิทิน', icon: 'mdi-calendar', to: '/Onsite/OnsiteCalendarGrid', type: 'customer' }
       ]
     },
     board () {

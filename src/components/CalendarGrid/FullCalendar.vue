@@ -97,7 +97,7 @@
                     <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
                     <p class="ma-0">{{ event.name}}</p>
                 </div>
-                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime }}</p>
+                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime}}</p>
             </div>
         </div>
         <div v-if="type === '4day'">

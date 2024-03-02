@@ -27,7 +27,7 @@ export default new Router({
     component: Core.Login
   },
   {
-    path: '/OnsiteCalendarGrid',
+    path: '/Onsite/OnsiteCalendarGrid',
     name: 'OnsiteCalendarGrid',
     component: CalendarGrid.OnsiteCalendarGrid
   },

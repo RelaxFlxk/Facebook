@@ -51,8 +51,9 @@
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
       </v-sheet> -->
-        <v-sheet class="Main pa-3" v-if="focus">
-          <div class="menuleft">
+          <div class="pa-0 ma-0" v-if="colsSize === 'md' || colsSize === 'lg' || colsSize === 'xl'">
+            <v-sheet class="Main pa-3" v-if="focus">
+            <div class="menuleft">
             <div>
               <v-select
               v-model="type"
@@ -61,7 +62,7 @@
               outlined
               hide-details
               class="ma-2"
-              label="type"
+              label="ประเภทปฏิทิน"
             ></v-select>
             </div>
             <div style="overflow-y: scroll;">
@@ -71,7 +72,7 @@
             >
             </v-date-picker>
               <v-sheet elevation="2" class="pa-2 px-3 py-6 ma-1">
-              <h6 class="text-center font-weight-black">EVENT COLOR {{ events.length + ' - ' + TT.length }}</h6>
+              <h6 class="text-center font-weight-black">EVENT COLOR</h6>
               <div style="display: flex;justify-content: space-around;">
                 <v-switch
                 v-model="typeColor"
@@ -113,7 +114,7 @@
                       :color="colors[index2]"
                       hide-details
                       v-for="(item2 , index2) in categoriesCheckBox" :key="index2"
-                      v-model="categoriesCheckBoxs"
+                      v-model="categories"
                       :label="item2"
                       :value="item2"
                       @click="filterEmp(item2, index2)"
@@ -127,7 +128,7 @@
           <div class="pl-1 menuright">
             <FullCalendar
              v-if="type !== 'category'"
-            :events="TT"
+            :events="events"
             :focus="focus"
             :type="type"
             :colors="colors"
@@ -154,7 +155,28 @@
               >
               </CategoryCalendar>
           </div>
-      </v-sheet>
+        </v-sheet>
+          </div>
+          <div class="pa-0 ma-0" v-else>
+            <v-sheet class="pa-3 MainMobile" v-if="focus">
+              <div class="pl-1 menuright">
+                <CategoryCalendar
+                :events="events"
+                :focus="focus"
+                :type="type"
+                :typeColor="typeColor"
+                :colors="colors"
+                :names="names"
+                :categories="categories"
+                :categoriesItem="categoriesItem"
+                :empDayoff="empDayoff"
+                :flowName="flowName"
+                @send-data="changeData"
+                >
+                </CategoryCalendar>
+              </div>
+            </v-sheet>
+          </div>
       <!-- เป็น prop ที่ไว้แสดงเวลาเริ่มและเวลาสิ้นสุด
         first-interval="7"
           :interval-count="24-7" -->
@@ -241,12 +263,31 @@ export default {
       dataFlow: [],
       categories: [],
       categoriesCheckBox: [],
-      categoriesCheckBoxs: [],
       categoriesItem: [],
       eventsItem: [],
       empDayoff: [],
       dataJob: [],
       TT: []
+    }
+  },
+  watch: {
+    // whenever question changes, this function will run
+    async colsSize (newQuestion, oldQuestion) {
+      if (newQuestion === 'md' || newQuestion === 'lg' || newQuestion === 'xl') {
+      } else {
+        this.type = 'category'
+        this.typeColor = 'Flow'
+      }
+    },
+    async focus (newQuestion, oldQuestion) {
+      if (oldQuestion) {
+        let monthnewQuestion = moment(newQuestion).format('YYYY-MM')
+        let montholdQuestion = moment(oldQuestion).format('YYYY-MM')
+        if (monthnewQuestion !== montholdQuestion) {
+          this.events = []
+          await this.setEvent()
+        }
+      }
     }
   },
   async mounted () {
@@ -268,7 +309,10 @@ export default {
       this.focus = data
     },
     filterEmp (item, key) {
-      console.log('-------', item, ' - ', key)
+      this.categories.sort((a, b) => {
+        return this.categoriesCheckBox.indexOf(a) - this.categoriesCheckBox.indexOf(b)
+      })
+      // console.log('-------', item, ' - ', key)
     },
     customIntervalFormat (interval) {
       // จัดรูปแบบเวลาให้อยู่ในรูปแบบ HH:mm โดยไม่ใช้ AM/PM
@@ -341,21 +385,24 @@ export default {
       // console.log('this.categories', this.categories)
     },
     async getEmpOnsite () {
+      let param = this.DNS_IP + `/empSelect/get?shopId=${this.shopId}`
+      if (this.session.data.USER_ROLE === 'onsite') {
+        param = this.DNS_IP + `/empSelect/get?shopId=${this.shopId}&empId=${this.session.data.empId}`
+      }
       await axios
-        .get(this.DNS_IP + `/empSelect/get?shopId=${this.shopId}`)
+        .get(param)
         .then(async (response) => {
           let rs = response.data
           if (rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
               if (d.USER_ROLE === 'onsite') {
-                console.log('empId', d)
+                // console.log('empId', d)
                 d.value = d.empId
                 d.text = d.empFirst_NameTH
                 this.categoriesItem.push(d)
                 this.categories.push(d.empFirst_NameTH)
                 this.categoriesCheckBox.push(d.empFirst_NameTH)
-                this.categoriesCheckBoxs.push(d.empFirst_NameTH)
                 let dayOff = {
                   'empName': d.empFirst_NameTH,
                   'typeDayCustom': d.typeDayCustom,
@@ -383,8 +430,12 @@ export default {
       // console.log('getEventEmp', this.DNS_IP)
       let month = moment(this.focus).format('YYYY-MM')
       console.log('month', month)
+      let param = this.DNS_IP + `/CalendarGridTime/get?shopId=${this.shopId}&start=${month}`
+      if (this.session.data.USER_ROLE === 'onsite') {
+        param = this.DNS_IP + `/CalendarGridTime/get?shopId=${this.shopId}&start=${month}&empId=${this.session.data.empId}`
+      }
       await axios
-        .get(this.DNS_IP + `/CalendarGridTime/get?shopId=${this.shopId}&start=${month}`)
+        .get(param)
         .then(async (response) => {
           let rs = response.data
           if (rs.length > 0) {
@@ -419,7 +470,7 @@ export default {
           // console.log('DATEMONENT', moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
           // console.log('newDATE', new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss')))
           // console.log('------', startDate, startTime)
-          if (this.flowName.filter((item) => item.value === element.flowId).length) {
+          if (this.flowName.filter((item) => item.value === element.flowId).length && this.categoriesItem.length > 0) {
             let start = new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
             let end = new Date(moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
             let findIndex = this.flowName.findIndex((item) => item.value === element.flowId)
@@ -467,12 +518,23 @@ export default {
 </script>
 
 <style>
+.MainMobile {
+  min-height: 750px;
+}
 .Main {
   min-height: 650px;
   display: flex;
   border-style: solid;
   border-width: 1px;
   border-color: #e0e0e0;
+}
+.menuleftDrawer{
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  height: 83vh;
+  background-color: #FFFFFF;
+  padding: 22px;
 }
 .menuleft {
   display: flex;

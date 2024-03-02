@@ -26,10 +26,10 @@
           <v-menu
             v-model="menu"
             :close-on-content-click="false"
-            :nudge-right="40"
             transition="scale-transition"
-            offset-y
             min-width="auto"
+            bottom
+            left
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -57,7 +57,7 @@
           </v-btn>
         </v-btn-toggle>
       </div>
-      <v-sheet height="670" style="width: 100%;">
+      <v-sheet height="690" style="width: 100%;">
         <!-- {{ focus }}
         {{ categories }}
         {{ names }} -->
