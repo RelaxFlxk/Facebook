@@ -1265,8 +1265,9 @@ export default {
               // console.log('convertTextField', convertTextField)
               serviceDetail += (tempField.length > 0 ? convertTextField + ' ' : '')
             })
-            serviceDetail = serviceDetail.trim() || t.flowName
-            // console.log('serviceDetail', serviceDetail)
+            // serviceDetail = serviceDetail.trim() || t.flowName
+            serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
+            console.log('serviceDetail', serviceDetail)
 
             s.type = this.dataTypeJob3
             s.runNo = runNo
@@ -1278,6 +1279,7 @@ export default {
             s.cusName = t.cusName
             s.cusReg = t.cusReg
             s.flowName = serviceDetail
+            // s.flowName = t.flowName
             s.dueDateTimeStamp = t.dueDateTimeStamp
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
@@ -1377,7 +1379,9 @@ export default {
               s.timeDueHtext = ''
             }
             // serviceDetail = t.displayFlowName.trim() || t.flowName
-            serviceDetail = serviceDetail.trim() || t.flowName
+            // serviceDetail = serviceDetail.trim() || t.flowName
+            serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
+            console.log('serviceDetail', serviceDetail)
             s.type = 'ปกติ'
             s.runNo = runNo
             s.dateBooking = t.dueDateDay
@@ -1388,6 +1392,7 @@ export default {
             s.remark = t.remark
             s.cusReg = t.cusReg
             s.flowName = serviceDetail
+            // s.flowName = t.flowName
             s.dueDateTimeStamp = t.dueDateTimeStamp
             s.tel = t.tel
             s.empFull_NameTH = t.empFull_NameTH

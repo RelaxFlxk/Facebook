@@ -113,7 +113,7 @@ export default {
   data () {
     return {
       orientation: '',
-      statusSound: false,
+      statusSound: true,
       dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
       Fontsize: null,
@@ -610,7 +610,6 @@ export default {
     //   // your code goes here
     //   this.closeSetTimeBookingMonitor()
     // })
-    this.dateStart = moment().format('YYYY-MM-DD')
     // this.clearTimeLoop()
     // this.checkSearch()
     this.getFirestore()
@@ -915,19 +914,17 @@ export default {
           }
           await axios
             .post(
-              'https://api-voice.botnoi.ai/api/service/generate_audio',
+              'https://api-voice.botnoi.ai/openapi/v1/generate_audio',
               params,
               { headers: { 'Botnoi-Token': 'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0' } }
             ).then((res) => {
               this.dataListPlay.push(res.data)
               this.playSound()
               result = res.data
-              console.log('this.dataListPlay Log1', this.dataListPlay)
             })
         } else {
           let res = { text: item.storeFrontQueue, audio_url: item.audioFile }
           this.dataListPlay.push(res)
-          console.log('this.dataListPlay Log2', this.dataListPlay)
           this.playSound()
           result = res
         }
@@ -1081,9 +1078,6 @@ export default {
     },
     async searchBooking () {
       if (this.validSearch === true) {
-        // this.dateStartShow = moment(this.dateStart).locale('th').format('LLLL')
-        this.dateStartShow = 'วัน' + moment(this.dateStart).locale('th').format('dddd') + 'ที่ ' + moment(this.dateStart).locale('th').format('D MMMM ') + (parseInt(moment(this.dateStart).format('YYYY')) + 543).toString()
-        // await this.getBookingDataList(this.dateStart)
         let urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.shopId +
@@ -1092,9 +1086,8 @@ export default {
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+            moment().format('YYYY-MM-DD') + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         // '&dueDate=' +
-        // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         await axios
           .get(urlApi)
           .then(async response => {

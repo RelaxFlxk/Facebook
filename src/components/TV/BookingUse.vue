@@ -10,7 +10,7 @@
                 <div><span class="text-sub">ช่องบริการ</span></div>
                 </div>
             </div>
-        <div v-for="(index) in 6" :key="index" :class="`d-flex flex-row row-service my-2 ${bookingUse && bookingUse.length > 0 ? bookingUse.length >= index ?  'service' : 'none-service' : 'none-service'}`" >
+        <div v-for="(index) in 6" :key="index" :class="`d-flex flex-row row-service my-1 ${bookingUse && bookingUse.length > 0 ? bookingUse.length >= index ?  'service' : 'none-service' : 'none-service'}`" >
             <div class="col-6 d-flex justify-content-center align-items-center col-left py-0"><span class="text-service">{{bookingUse && bookingUse.length > 0  ? bookingUse.length >= index ? bookingUse[index-1].storeFrontQueue  : '': ''}}</span></div>
              <div class="col-6 d-flex justify-content-center align-items-center col-right py-0"><span class="text-service">{{bookingUse && bookingUse.length > 0  ? bookingUse.length >= index ? bookingUse[index-1].servicePoint === '' ? (bookingUse[index-1].statusBt === 'confirmJob' ? 'เรียกคิว' : '') :bookingUse[index-1].servicePoint  : '': ''}}</span></div>
             </div>

@@ -3612,7 +3612,7 @@
                           <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-qrcode-scan </v-icon> QR Code สำหรับให้ลูกค้า </v-list-item-title>
                           </v-list-item>
-                          <v-list-item v-if="item.statusBt === 'confirmJob' && item.RECORD_STATUS_Job === 'D'" @click.stop="setBookingAgain(item)">
+                          <v-list-item v-if="item.statusBt !== 'wait'" @click.stop="setBookingAgain(item)">
                             <v-list-item-title><v-icon color="#73777B" class="mr-2 iconify" data-icon="fluent:group-return-24-filled"></v-icon> นัดหมายอีกครั้ง </v-list-item-title>
                           </v-list-item>
                           <!-- <v-list-item v-if="item.statusBt === 'confirmJob'" @click.stop="(dialogJob = true), getjob(item)">
@@ -5108,13 +5108,12 @@
               </v-card-text>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogHistory" scrollable persistent max-width="50%">
-            <v-card>
+        <v-dialog v-model="dialogHistory" scrollable persistent max-width="600px">
+            <v-card class="pa-3">
               <v-card-title>
                 <span class="headline"></span>
               </v-card-title>
-              <v-card-text>
-                <v-container>
+              <v-card-text class="pa-0" style="overflow-x: hidden;">
                   <v-row>
                     <v-col cols="6" class="text-left pt-10">
                       <h3><strong>ประวัติเข้ารับบริการ</strong></h3>
@@ -5138,7 +5137,7 @@
                    <v-row >
                     <v-col class="main" col="12" md="12" sm="12" >
                       <v-card class="p-3 " min-height="70vh" rounded>
-                        <div class="avatar text-center">
+                        <div class="avatar text-center pt-3">
                           <div style="display:flex;align-items: center;justify-content: center;">
                             <h4 v-if="memberName">
                             {{memberName}}
@@ -5253,7 +5252,6 @@
                       </v-card>
                     </v-col>
                   </v-row>
-                </v-container>
               </v-card-text>
             </v-card>
           </v-dialog>
@@ -7903,7 +7901,7 @@ export default {
         // monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         firstDay: 1
       },
-      masterTime: ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+      masterTime: ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'],
       masBranchID: '',
       masBranchIDExport: '',
       bookNo: '',
@@ -11880,7 +11878,8 @@ export default {
             s.remark = t.remark
             s.cusName = t.cusName
             s.cusReg = t.cusReg
-            s.flowName = serviceDetail
+            // s.flowName = serviceDetail
+            s.flowName = t.flowName
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
             s.carModel = this.getDataFromFieldName(this.BookingDataListTimechange[t.bookNo], 'รุ่นรถ')
@@ -11983,7 +11982,8 @@ export default {
             s.cusName = t.cusName
             s.remark = t.remark
             s.cusReg = t.cusReg
-            s.flowName = serviceDetail
+            // s.flowName = serviceDetail
+            s.flowName = t.flowName
             s.tel = t.tel
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? 'Extra Job' : ''
@@ -12100,6 +12100,7 @@ export default {
           s.cusName = t.cusName
           s.cusReg = t.cusReg
           s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          // s.flowName = t.flowName
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
           s.carModel = t.bookingDataCustomerCarModel || ''
@@ -12162,6 +12163,7 @@ export default {
           s.remark = t.remark
           s.cusReg = t.cusReg
           s.flowName = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+          // s.flowName = t.flowName
           s.tel = t.tel
           s.empFull_NameTH = t.empFull_NameTH
           s.extraJob = t.extraJob ? 'Extra Job' : ''
@@ -12179,12 +12181,14 @@ export default {
           dataExport.push(s)
         }
       }
+      console.log('!@#!@#!@#!@#!@#', dataExport)
       this.dataexport = dataExport
       this.onExportWait()
       // console.log('dataEport', JSON.stringify(dataExport))
     },
     onExportWait () {
       var dataexport = []
+      console.log('!!!!', this.dataexport.filter(el => { return el.packageName !== '' }))
       let checkPackageShow = this.dataexport.filter(el => { return el.packageName !== '' }).length
       console.log('checkPackageShow', checkPackageShow)
       for (var i = 0; i < this.dataexport.length; i++) {
@@ -12300,7 +12304,8 @@ export default {
             s.remark = t.remark
             s.cusName = t.cusName
             s.cusReg = t.cusReg
-            s.flowName = serviceDetail
+            // s.flowName = serviceDetail
+            s.flowName = t.flowName
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
             s.tel = t.tel
@@ -12385,7 +12390,8 @@ export default {
             s.remark = t.remark
             s.cusName = t.cusName
             s.cusReg = t.cusReg
-            s.flowName = serviceDetail
+            // s.flowName = serviceDetail
+            s.flowName = t.flowName
             s.tel = t.tel
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? 'Extra Job' : ''
@@ -13027,7 +13033,8 @@ export default {
             // })
             // serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
             // t.flowNameShow = serviceDetail
-            t.flowNameShow = t.displayFlowName || t.flowName
+            // t.flowNameShow = t.displayFlowName || t.flowName
+            t.flowNameShow = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
             this.dataItemSelect.push(t)
           }
         } else {
@@ -13116,7 +13123,8 @@ export default {
             // // serviceDetail = serviceDetail.trim() || t.flowName
             // serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
             // t.flowNameShow = serviceDetail
-            t.flowNameShow = t.displayFlowName || t.flowName
+            // t.flowNameShow = t.displayFlowName || t.flowName
+            t.flowNameShow = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
             this.dataItemSelect.push(t)
           }
         } else {
@@ -16368,7 +16376,7 @@ export default {
       if (this.validBookingAgain !== false) {
         console.log('this.BookingDataItemEdit', this.BookingDataItemEdit)
         this.loadingEdit = true
-        this.swalConfig.title = 'ต้องการ แก้ไขข้อมูล ใช่หรือไม่?'
+        this.swalConfig.title = 'ต้องการ นัดหมายอีกครั้ง ใช่หรือไม่?'
         this.$swal(this.swalConfig)
           .then(async result => {
             if (this.getSelectText === 'cancel') {
