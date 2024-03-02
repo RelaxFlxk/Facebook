@@ -10,7 +10,7 @@
     <v-card class="slide-card-style">
       <div class="p-3">
         <div class="mb-5 d-flex justify-content-center"><h3 class="slide-font">Setup guide</h3></div>
-         <div class="d-flex flex-row justify-content-between bg-setup m-2 p-2">
+         <div v-if="progress !== 100" class="d-flex flex-row justify-content-between bg-setup m-2 p-2">
           <div class="d-flex flex-column">
             <div>
               <span class="font-title-setup">
@@ -28,8 +28,29 @@
           </div>
           </div>
          </div>
+         <div  v-else class="d-flex flex-row justify-content-between bg-setup m-2 p-2">
+          <div class="d-flex flex-column">
+            <div>
+              <span class="font-title-setup-completed">
+                Setup completed
+              </span>
+            </div>
+            <div class="mt-auto">
+              <v-btn  rounded color="white" @click="onClickComplete()">
+                Finish guide
+                <v-icon right>mdi-arrow-right</v-icon>
+              </v-btn>
+            </div>
+            </div>
+          <div>
+          <div class="progress-bar" :style="progressCompoteDesktopStyle">
+             <progress :value="progress" min="0" max="100" style="height:0;width:0;"></progress>
+             <div class="progress-value">100%</div>
+          </div>
+          </div>
+         </div>
          <div v-for="(item, index) in setup" :key="index" class="m-2">
-          <v-btn class="d-flex flex-row justify-content-start div-slide hoverable col-12" :disabled="item.isComplete" @click="updateSetUp(item.taskId)">
+          <v-btn class="d-flex flex-row justify-content-start div-slide hoverable col-12"  @click="updateSetUp(item.taskId, item.isComplete)">
             <div class="mr-5">
               <v-icon v-if="item.isComplete" color="#1B437C">mdi-checkbox-marked-circle-outline</v-icon>
               <v-icon v-else color="#1B437C">mdi-checkbox-blank-circle-outline</v-icon>
@@ -52,7 +73,8 @@ export default {
     shopName: {type: String, default: ''},
     progress: {type: Number, default: 0},
     setup: {type: Array, default: () => []},
-    updateSetUp: Function
+    updateSetUp: Function,
+    onClickComplete: Function
   },
   data () {
     return {
@@ -62,6 +84,9 @@ export default {
   computed: {
     progressDesktopStyle () {
       return `background: radial-gradient(closest-side, #1B437C 88%, transparent 80% 100%), conic-gradient(#E3E6E9 ${this.progress}%, #1B437C 0)`
+    },
+    progressCompoteDesktopStyle () {
+      return `background: radial-gradient(closest-side, #1B437C 88%, transparent 80% 100%), conic-gradient(#E3E6E9 100%, #1B437C 0)`
     },
     countTest () {
       return this.setup ? this.setup.filter((item) => item.isComplete === true).length : 0
@@ -81,6 +106,11 @@ export default {
 .font-title-setup {
   font-weight: 600;
   font-size: 0.90rem;
+  color: #ddd;
+}
+.font-title-setup-completed {
+  font-weight: 600;
+  font-size: 1.5rem;
   color: #ddd;
 }
 .font-choice-setup {

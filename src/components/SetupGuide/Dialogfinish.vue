@@ -7,7 +7,7 @@
     >
       <v-card>
         <div class="d-flex flex-column flex-sm-row justify-content-between">
-          <div class="col-12 col-sm-8 d-flex flex-column">
+          <div class="col-12 d-flex flex-column">
             <div class="text-center mb-3">
               <span class="font-title">Great news, you’re all setup!</span>
             </div>
@@ -18,7 +18,7 @@
               <span class="font-detail">สามารถสแกน Qr Code หรือ Copy Link ได้ด้านล่างที่นี้</span>
             </div>
             <div class="text-center mb-2">
-             <qrcode-vue :value="'test'" :size="150" level="H" foreground="#000000" />
+             <qrcode-vue :value="url" :size="150" level="H" foreground="#000000" />
             </div>
             <div class="text-center">
               <v-text-field
@@ -29,11 +29,8 @@
                :append-icon="isCopied ? 'mdi-check' : 'mdi-content-copy'"
                @click:append="copyLink()"
              >
-    </v-text-field>
+         </v-text-field>
             </div>
-          </div>
-          <div class="col-12 col-sm-3 d-none d-sm-block">
-            รูปภาพ
           </div>
         </div>
         <div class="d-flex flex-row justify-content-center">
@@ -65,7 +62,7 @@ export default {
   },
   methods: {
     async copyLink () {
-      await navigator.clipboard.writeText(this.qrValue)
+      await navigator.clipboard.writeText(this.url)
       this.isCopied = true
     }
   }

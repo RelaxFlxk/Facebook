@@ -66,11 +66,11 @@
           </template>
         </div>
       <v-spacer></v-spacer>
-        <div v-if="isNewShop" class="progress-mobile d-block d-sm-none" :style="progressMobileStyle"  @click.stop="isOpenSetup = !isOpenSetup">
+        <div  class="progress-mobile d-block d-sm-none" :style="progressMobileStyle"  @click.stop="isOpenSetup = !isOpenSetup">
           <progress :value="progress" min="0" max="100" style="height:0;width:0;"></progress>
           <div class="progress-value-mobile">{{ progress }}%</div>
         </div>
-        <v-card v-if="isNewShop" class="d-none d-sm-block" @click.stop="isOpenSetup = !isOpenSetup">
+        <v-card  class="d-none d-sm-block" @click.stop="isOpenSetup = !isOpenSetup">
           <div class="d-flex flex-row p-1">
           <div class="col-3 p-0">
           <div class="progress-desktop" :style="progressDesktopStyle">
@@ -95,7 +95,7 @@
          </div>
       </v-btn>
       <v-avatar class="mr-3" @click="dialogLogOut = true">
-        <v-img :src="session.data.shopImge"></v-img>
+        <v-img :src="session.data.shopImge ? session.data.shopImge : require('@/assets/LogoDefault.jpg')"></v-img>
       </v-avatar>
       <v-toolbar-title>{{ session.data.shopName }}</v-toolbar-title>
         <!-- <v-list-item-avatar>
@@ -688,8 +688,8 @@
       </v-card>
     </v-dialog>
      <SidebarNoti :isOpen="isOpenNoti" :closeDrawer="closeDrawer" :listData="listNoti"/>
-     <SidebarSetupGuide :isOpen="isOpenSetup" :closeDrawer="closeSetup" :shopName="session.data.shopName" :progress="progress" :setup="dataSetupGuide" :updateSetUp="updateSetUp"/>
-     <Dialogfinish :shopName="session.data.shopName" :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted" url=""/>
+     <SidebarSetupGuide :isOpen="isOpenSetup" :closeDrawer="closeSetup" :shopName="session.data.shopName" :progress="progress" :setup="dataSetupGuide" :updateSetUp="updateSetUp" :onClickComplete="onClickComplete"/>
+     <Dialogfinish :shopName="session.data.shopName" :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted" :url="linkUrlLine"/>
   </div>
 </template>
 
@@ -760,7 +760,8 @@ export default {
       isOpenCompleted: false,
       isNewShop: false,
       isNoti: false,
-      listNoti: []
+      listNoti: [],
+      dataLineConfig: {}
     }
   },
   // beforeCreate () {
@@ -786,6 +787,13 @@ export default {
     },
     progressMobileStyle () {
       return `background: radial-gradient(closest-side, #1B437C 79%, transparent 80% 100%), conic-gradient(#E3E6E9 ${this.progress ? this.progress : 0}%, #A4C3E3 0);`
+    },
+    linkUrlLine () {
+      if (this.$session.getAll().data.timeSlotStatus === 'True') {
+        return `https://liff.line.me/${this.dataLineConfig.liffBookingFormEmpID}?shopId=${this.$session.getAll().data.shopId}`
+      } else {
+        return `https://liff.line.me/${this.dataLineConfig.liffBookingFormID}?shopId=${this.$session.getAll().data.shopId}`
+      }
     }
   },
   async mounted () {
@@ -793,15 +801,10 @@ export default {
     if (this.$session.getAll().data.shopActive === 'inactive') {
       this.$router.push('/Core/Login')
     } else {
+      this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
       this.GetNotiBooking()
       this.getFirestore()
-      if (this.$session.getAll().data.IsNewShop === 1) {
-        this.isNewShop = true
-        await this.getShopSetUp()
-      } else {
-        this.isOpenCompleted = false
-        this.isOpenSetup = false
-      }
+      await this.getShopSetUp()
       this.getShop()
       this.checkImageUrl(this.session.data.shopImge)
         .then(async (status) => {
@@ -883,7 +886,7 @@ export default {
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
         .then(response => {
           let rs = response.data
-          // console.log('rssssssssssss', rs)
+          console.log(rs, this.session.data.shopId)
           if (rs.status === false) {
             this.logout()
           } else {
@@ -1539,6 +1542,7 @@ export default {
       this.isOpenSetup = false
     },
     onOpenNoti () {
+      this.GetNotiBooking()
       if (this.isNoti) {
         this.updateReadNoti()
       }
@@ -1554,25 +1558,30 @@ export default {
           if (response !== null) {
             if (response.data !== null) {
               this.progress = response.data.percentage ? response.data.percentage : 0
-              if (this.progress === 100) {
-                this.isOpenCompleted = true
-                this.isNewShop = false
-                this.isOpenSetup = false
-                // update session IsNewShop
-                let session = JSON.parse(localStorage.getItem('sessionData'))
-                session.IsNewShop = 0
-                this.$session.start()
-                this.$session.set('data', session)
-                localStorage.clear()
-                localStorage.setItem('sessionData', JSON.stringify(session))
+              if (response.data.setupGuide && response.data.setupGuide.length > 0) {
+                this.dataSetupGuide = response.data.setupGuide
+                this.isOpenSetup = true
               } else {
-                if (response.data.setupGuide && response.data.setupGuide.length > 0) {
-                  this.dataSetupGuide = response.data.setupGuide
-                  this.isOpenSetup = true
-                } else {
-                  this.dataSetupGuide = []
-                }
+                this.dataSetupGuide = []
               }
+              // if (this.progress === 100) {
+              //   this.isNewShop = false
+              //   this.isOpenSetup = false
+
+              //   let session = JSON.parse(localStorage.getItem('sessionData'))
+              //   session.IsNewShop = 0
+              //   this.$session.start()
+              //   this.$session.set('data', session)
+              //   localStorage.clear()
+              //   localStorage.setItem('sessionData', JSON.stringify(session))
+              // } else {
+              //   if (response.data.setupGuide && response.data.setupGuide.length > 0) {
+              //     this.dataSetupGuide = response.data.setupGuide
+              //     this.isOpenSetup = true
+              //   } else {
+              //     this.dataSetupGuide = []
+              //   }
+              // }
             }
           }
         })
@@ -1583,29 +1592,47 @@ export default {
         this.isOpenSetup = false
       }
     },
-    closeCompleted () {
+    async closeCompleted () {
+      try {
+        if (this.$session.getAll().isNewShop === 1) {
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId, {IsNewShop: 0}
+            )
+            .then(async response => {
+              this.getShop()
+            })
+        }
+      } catch (error) {
+        console.log('Error ', error)
+      }
+
       this.isOpenCompleted = false
     },
-    async updateSetUp (taskid) {
+    async updateSetUp (taskid, isComplete) {
       try {
-        const body = { shopId: this.$session.getAll().data.shopId, taskId: taskid }
-        await axios
-          .post(
-            this.DNS_IP + '/Task_Transaction/add', body)
-          .then(async response => {
-            console.log('updateSetUpres -> ', response)
-            if (response.data) {
-              if (response.data.status) {
-                this.isOpenSetup = false
-                if (taskid === 1) {
-                  this.$router.push('/Master/Flow')
-                } else if (taskid === 2) {
-                  this.$router.push('/Master/Branch')
+        if (taskid === 1) {
+          this.$router.push('/Master/Flow')
+        } else if (taskid === 2) {
+          this.$router.push('/Master/Branch')
+        } else if (taskid === 3) {
+          this.$router.push('/Master/Employee')
+        }
+        this.isOpenSetup = false
+        if (!isComplete) {
+          const body = { shopId: this.$session.getAll().data.shopId, taskId: taskid }
+          await axios
+            .post(
+              this.DNS_IP + '/Task_Transaction/add', body)
+            .then(async response => {
+              if (response.data) {
+                if (response.data.status) {
+                  await this.getShopSetUp()
                 }
-                await this.getShopSetUp()
               }
-            }
-          })
+            })
+        }
       } catch (error) {
         console.log('Error updateSetUp', error)
       }
@@ -1620,9 +1647,10 @@ export default {
             this.setNewNotifyApp()
           } else {
             snapshot.forEach((doc) => {
-              console.log(doc.data())
               if (doc.data().activeBooking === '1') {
-                this.GetNotiBooking()
+                console.log('getFirestore --> activeBooking')
+                // this.GetNotiBooking()
+                this.isNoti = true
               } else {
                 this.isNoti = false
               }
@@ -1632,15 +1660,15 @@ export default {
     },
     async GetNotiBooking () {
       try {
+        console.log('[Start GetNotiBooking]')
         await axios
           .get(
             this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId + '&IsNotify=False')
           .then(async response => {
             if (response.data) {
-              console.log('GetNotiBooking ->', response.data)
+              console.log('[Data GetNotiBooking]', response.data)
               if (response.data.status !== false) {
                 this.listNoti = response.data
-                this.isNoti = true
               } else {
                 this.listNoti = []
               }
@@ -1691,6 +1719,10 @@ export default {
       } catch (error) {
         console.log('Error ProcessBookingSetNew', error)
       }
+    },
+    onClickComplete () {
+      console.log('onClickComplete')
+      this.isOpenCompleted = true
     }
 
   }

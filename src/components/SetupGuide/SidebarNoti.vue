@@ -7,8 +7,7 @@
       <v-btn icon  @click="closeDrawer()" class="close-button-mobile d-sm-none d-block">
         <v-icon>mdi-close</v-icon>
       </v-btn>
-    <v-card class="slide-card-style">
-      <div class="p-3">
+      <div class="p-3 slide-card-style">
         <div class="mb-5"><h3 class="slide-font">แจ้งเตือน</h3></div>
         <div v-for="(item, index) in listData" :key="index" class="d-flex flex-row div-slide mb-3">
           <div class="col-2 d-flex align-items-center">
@@ -19,7 +18,7 @@
               <span class="font-time-slide">{{item.CREATE_DATE}}</span>
             </div>
             <div>
-              <span class="font-title-slide">{{item.flowName}}</span>
+              <span class="font-title-slide">รายการนัดหมายใหม่ {{item.flowName}}</span>
             </div>
             <div>
               <span class="font-detail-slide">สาขา : {{ item.masBranchName }}</span>
@@ -37,7 +36,7 @@
             </div>
           </div>
         </div>
-         <div class="d-flex flex-row div-slide">
+         <!-- <div class="d-flex flex-row div-slide">
           <div class="col-2 d-flex align-items-center">
            <v-icon class="slide-icon" size="40">mdi-trophy</v-icon>
           </div>
@@ -54,9 +53,8 @@
             <div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
-    </v-card>
   </v-navigation-drawer>
  </div>
 </template>
@@ -72,7 +70,8 @@ export default {
 <style lang="css" scoped>
 .slide-card-style{
   border-radius: 0%;
-  height: 100%;
+  height: 100vh;
+  background-color: #fff;
 }
 .font-detail-slide{
   font-size: 0.75rem;
