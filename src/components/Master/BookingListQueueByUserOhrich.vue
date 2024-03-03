@@ -819,7 +819,9 @@ export default {
               // this.clearTimeLoop()
             }
           } else {
-            this.closeJobServicePointSubmit(item)
+            this.$swal('คำเตือน', 'กรุณาลองอีกครั้ง', 'info')
+            this.dialogServicePointStatus = false
+            await this.searchBooking('unNoti')
           }
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
