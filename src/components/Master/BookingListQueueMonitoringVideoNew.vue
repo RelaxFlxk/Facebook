@@ -182,7 +182,7 @@ export default {
     }
   },
   async mounted () {
-    this.changeStatusSound('on')
+    // this.changeStatusSound('on')
     this.checkOrientation()
 
     window.addEventListener('resize', this.checkOrientation)
