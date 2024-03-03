@@ -340,7 +340,7 @@ export default {
               this.resetFirebaseUse()
               await this.searchBooking('unNoti')
             } else {
-              this.resetFirebaseUse()
+              // this.resetFirebaseUse()
               await this.searchBooking('unNoti')
             }
             // this.clearTimeLoop()
@@ -781,7 +781,7 @@ export default {
             await this.searchBooking('noti', item)
           // this.clearTimeLoop()
           } else {
-            await this.resetFirebaseUse()
+            // await this.resetFirebaseUse()
             this.dialogServicePointStatus = false
             // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
             await this.searchBooking('noti', item)
@@ -889,7 +889,7 @@ export default {
               await this.searchBooking('unNoti')
               this.dataReady = false
             } else {
-              await this.resetFirebaseUse()
+              // await this.resetFirebaseUse()
               await this.searchBooking('unNoti')
               this.dataReady = false
             }
@@ -1026,7 +1026,7 @@ export default {
             await this.searchBooking('noti', item)
           // this.clearTimeLoop()
           } else {
-            await this.resetFirebaseUse()
+            // await this.resetFirebaseUse()
             await this.searchBooking('noti', item)
           }
         })
