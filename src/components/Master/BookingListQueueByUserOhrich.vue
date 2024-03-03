@@ -332,11 +332,17 @@ export default {
           remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
         }
         await axios
-          .post(this.DNS_IP + '/booking_transaction/add', dtt)
+          .post(this.DNS_IP + '/booking_transaction/addOhrich', dtt)
           .then(async responses => {
+            let checkresponses = responses.data
+            if (checkresponses.status === true) {
             // this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
-            this.resetFirebaseUse()
-            await this.searchBooking('unNoti')
+              this.resetFirebaseUse()
+              await this.searchBooking('unNoti')
+            } else {
+              this.resetFirebaseUse()
+              await this.searchBooking('unNoti')
+            }
             // this.clearTimeLoop()
           })
         // }).catch(async err => {
@@ -752,26 +758,34 @@ export default {
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios
-        .post(this.DNS_IP + '/booking_transaction/add', dtt)
+        .post(this.DNS_IP + '/booking_transaction/addOhrich', dtt)
         .then(async responses => {
-          await this.updateServicePoint(item.bookNo)
-          await this.CallNoti(item)
-          let lineUserId = item.lineUserId || ''
-          if (lineUserId !== '') {
-            let dtt = {
-              checkGetQueue: 'True'
+          let checkresponses = responses.data
+          if (checkresponses.status === true) {
+            await this.updateServicePoint(item.bookNo)
+            await this.CallNoti(item)
+            let lineUserId = item.lineUserId || ''
+            if (lineUserId !== '') {
+              let dtt = {
+                checkGetQueue: 'True'
+              }
+              await axios
+                .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
+                .then(async responses => {}).catch(error => {
+                  console.log('error function pushMsgQueueOhrich : ', error)
+                })
             }
-            await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
-              .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueueOhrich : ', error)
-              })
-          }
-          await this.resetFirebaseUse()
-          this.dialogServicePointStatus = false
-          // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.searchBooking('noti', item)
+            await this.resetFirebaseUse()
+            this.dialogServicePointStatus = false
+            // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+            await this.searchBooking('noti', item)
           // this.clearTimeLoop()
+          } else {
+            await this.resetFirebaseUse()
+            this.dialogServicePointStatus = false
+            // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+            await this.searchBooking('noti', item)
+          }
         })
     },
     async closeJobServicePoint (item) {
@@ -864,12 +878,19 @@ export default {
           LAST_USER: this.$session.getAll().data.userName
         }
         await axios
-          .post(this.DNS_IP + '/booking_transaction/add', dtt)
+          .post(this.DNS_IP + '/booking_transaction/addOhrich', dtt)
           .then(async responses => {
             // this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
-            await this.resetFirebaseUse()
-            await this.searchBooking('unNoti')
-            this.dataReady = false
+            let checkresponses = responses.data
+            if (checkresponses.status === true) {
+              await this.resetFirebaseUse()
+              await this.searchBooking('unNoti')
+              this.dataReady = false
+            } else {
+              await this.resetFirebaseUse()
+              await this.searchBooking('unNoti')
+              this.dataReady = false
+            }
             // this.clearTimeLoop()
           }).catch(error => {
             this.dataReady = false
@@ -960,7 +981,8 @@ export default {
                 // this.clearTimeLoop()
               }
             } else {
-              this.closeJob(item)
+              this.$swal('คำเตือน', 'กรุณาลองใหม่อีกครั้ง', 'info')
+              await this.searchBooking('unNoti')
             }
           }
         } else {
@@ -981,24 +1003,30 @@ export default {
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios
-        .post(this.DNS_IP + '/booking_transaction/add', dtt)
+        .post(this.DNS_IP + '/booking_transaction/addOhrich', dtt)
         .then(async responses => {
-          await this.CallNoti(item)
-          let lineUserId = item.lineUserId || ''
-          if (lineUserId !== '') {
-            let dtt = {
-              checkGetQueue: 'True'
+          let checkresponses = responses.data
+          if (checkresponses.status === true) {
+            await this.CallNoti(item)
+            let lineUserId = item.lineUserId || ''
+            if (lineUserId !== '') {
+              let dtt = {
+                checkGetQueue: 'True'
+              }
+              await axios
+                .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
+                .then(async responses => {}).catch(error => {
+                  console.log('error function pushMsgQueueOhrich : ', error)
+                })
             }
-            await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
-              .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueueOhrich : ', error)
-              })
-          }
-          // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.resetFirebaseUse()
-          await this.searchBooking('noti', item)
+            // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+            await this.resetFirebaseUse()
+            await this.searchBooking('noti', item)
           // this.clearTimeLoop()
+          } else {
+            await this.resetFirebaseUse()
+            await this.searchBooking('noti', item)
+          }
         })
     },
     async clearConfirmJob (dueDateUse) {
