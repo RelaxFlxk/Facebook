@@ -23,7 +23,7 @@
               <v-tab  class="tab-noti" v-for="(item, i) in taps" :key="i" @click="activeTab = item.key">
                 <div class="d-flex flex-column justify-content-center align-items-center">
                   <div :class="`icon-tap my-3 ${activeTab === item.key ? ' icon-tap-active' :' icon-tap-inactive'}`"><v-icon color="#ffff">{{ item.icon }}</v-icon></div>
-                  <div><span class="font-weight-bold">{{item.label}}</span></div>
+                  <div class="d-none d-sm-block"><span class="font-weight-bold">{{item.label}}</span></div>
                 </div>
               </v-tab>
             </v-tabs>
@@ -31,16 +31,16 @@
           <div class="pt-10 px-4 col">
             <div v-if="activeTab === 'appointment'">
               <div>
-               <h3 class="font-weight-bold">Appointment</h3>
+               <h3 class="font-weight-bold ">Appointment</h3>
              </div>
              <div id="listnoti">
               <div v-if="listDataUnread && listDataUnread.length > 0">
                 <div><span class="font-detail-slide font-weight-bold">ใหม่</span></div>
-                <CardNotiDetail :listData="listDataUnread"/>
+                <CardNotiDetail :listData="listDataUnread" :onClickReadedNoti=onClickReadedNoti />
               </div>
               <div v-if="listDataReaded && listDataReaded.length > 0">
                 <div><span class="font-detail-slide font-weight-bold">ก่อนหน้านี้</span></div>
-              <CardNotiDetail :listData="listDataReaded"/>
+                <CardNotiDetail :listData="listDataReaded" :onClickReadedNoti=onClickReadedNoti />
               </div>
              </div>
             </div>
@@ -65,7 +65,8 @@ export default {
     closeDrawer: Function,
     listDataUnread: { type: Array, default: () => [] },
     listDataReaded: { type: Array, default: () => [] },
-    taps: { type: Array, default: () => [] }
+    taps: { type: Array, default: () => [] },
+    onClickReadedNoti: Function
   },
   data () {
     return {
@@ -127,5 +128,12 @@ export default {
   color: #1b437c !important;
   font-size: 24px;
 }
-
+.tab-vertical {
+  flex-direction: column;
+}
+@media only screen and (max-width: 768px) and (orientation: landscape) {
+  .tab-horizontal {
+    flex-direction: row;
+  }
+}
 </style>

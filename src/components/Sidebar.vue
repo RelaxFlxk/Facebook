@@ -66,11 +66,11 @@
           </template>
         </div>
       <v-spacer></v-spacer>
-        <div  class="progress-mobile d-block d-sm-none" :style="progressMobileStyle"  @click.stop="isOpenSetup = !isOpenSetup">
+        <div  v-if="session.data.USER_ROLE === 'admin'"  class="progress-mobile d-block d-sm-none" :style="progressMobileStyle"  @click.stop="isOpenSetup = !isOpenSetup">
           <progress :value="progress" min="0" max="100" style="height:0;width:0;"></progress>
           <div class="progress-value-mobile">{{ progress }}%</div>
         </div>
-        <v-card  class="d-none d-sm-block" @click.stop="isOpenSetup = !isOpenSetup">
+        <v-card  v-if="session.data.USER_ROLE === 'admin'"  class="d-none d-sm-block" @click.stop="isOpenSetup = !isOpenSetup">
           <div class="d-flex flex-row p-1">
           <div class="col-3 p-0">
           <div class="progress-desktop" :style="progressDesktopStyle">
@@ -88,7 +88,7 @@
            </div>
           </div>
         </v-card>
-        <v-btn icon @click.stop="onOpenNoti">
+        <v-btn  v-if="session.data.USER_ROLE === 'user' || session.data.USER_ROLE === 'admin'" icon @click.stop="onOpenNoti">
          <div class="icon-with-badge">
          <v-icon color="white">mdi-bell</v-icon>
           <span :class="isNoti ? 'badge' :''"></span>
@@ -687,9 +687,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-     <SidebarNoti :isOpen="isOpenNoti" :closeDrawer="closeDrawer" :listDataUnread="listDataUnread" :listDataReaded="listDataReaded" :taps="dataTapSidebarNoti"/>
-     <SidebarSetupGuide :isOpen="isOpenSetup" :closeDrawer="closeSetup" :shopName="session.data.shopName" :progress="progress" :setup="dataSetupGuide" :updateSetUp="updateSetUp" :onClickComplete="onClickComplete"/>
-     <Dialogfinish :shopName="session.data.shopName" :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted" :url="linkUrlLine"/>
+     <SidebarNoti v-if="session.data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin'"  :isOpen="isOpenNoti" :closeDrawer="closeDrawer" :listDataUnread="listDataUnread" :listDataReaded="listDataReaded" :taps="dataTapSidebarNoti" :onClickReadedNoti="onClickReadedNoti"/>
+     <SidebarSetupGuide v-if="session.data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin'"  :isOpen="isOpenSetup" :closeDrawer="closeSetup" :shopName="session.data.shopName" :progress="progress" :setup="dataSetupGuide" :updateSetUp="updateSetUp" :onClickComplete="onClickComplete"/>
+     <Dialogfinish v-if="session.data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin'"  :shopName="session.data.shopName" :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted" :url="linkUrlLine"/>
   </div>
 </template>
 
@@ -1560,9 +1560,6 @@ export default {
     onOpenNoti () {
       this.GetNotiBookingUnRead()
       this.GetNotiBookingReading()
-      if (this.isNoti) {
-        this.updateReadNoti()
-      }
       this.isOpenNoti = true
     },
     onOpenSetup () {
@@ -1682,14 +1679,14 @@ export default {
         try {
           await axios
             .get(
-              this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId + '&IsNotify=False')
+              this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId + '&IsNotify=False&limit=10')
             .then(async response => {
               if (response.data) {
                 console.log('[Data GetNotiBookingUnRead]', response.data)
                 if (response.data.status !== false) {
                   this.listDataUnread = response.data
                 } else {
-                  this.listNoti = []
+                  this.listDataUnread = []
                 }
               }
             })
@@ -1702,17 +1699,16 @@ export default {
     },
     async GetNotiBookingReading () {
       try {
-        console.log('[Start GetNotiBookingReading]')
         await axios
           .get(
-            this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId)
+            this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId + '&IsNotify=True&limit=5')
           .then(async response => {
             if (response.data) {
               console.log('[Data GetNotiBookingReading]', response.data)
               if (response.data.status !== false) {
                 this.listDataReaded = response.data
               } else {
-                this.listNoti = []
+                this.listDataReaded = []
               }
             }
           })
@@ -1720,7 +1716,7 @@ export default {
         console.log('Error updateSetUp', error)
       }
     },
-    async updateReadNoti () {
+    async updateReadNoti (bookNo) {
       try {
         let body = {shopId: this.$session.getAll().data.shopId}
         await axios
@@ -1728,7 +1724,7 @@ export default {
             'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/BetaskNotify-ProcessBookingNotify', body)
           .then(async response => {
             if (response.data) {
-              this.UpdateBookingIsNotifyByShopId()
+              this.UpdateBookingIsNotifyByShopId(bookNo)
               console.log('GetNotiBooking ->', response.data)
             }
           })
@@ -1736,11 +1732,14 @@ export default {
         console.log('Error updateSetUp', error)
       }
     },
-    async UpdateBookingIsNotifyByShopId () {
+    async UpdateBookingIsNotifyByShopId (bookNo) {
       try {
+        let body = {
+          bookNo: bookNo
+        }
         await axios
           .post(
-            this.DNS_IP + '/Booking/editIsNotifyByShopId/' + this.$session.getAll().data.shopId)
+            this.DNS_IP + '/Booking/editIsNotifyByShopId/' + this.$session.getAll().data.shopId, body)
           .then(async response => {
           })
       } catch (error) {
@@ -1765,6 +1764,25 @@ export default {
     onClickComplete () {
       console.log('onClickComplete')
       this.isOpenCompleted = true
+    },
+    onClickReadedNoti (itemNoti) {
+      try {
+        console.log('onClickReadedNoti', itemNoti)
+        if (itemNoti.bookNo !== '') {
+          if (itemNoti.IsNotify === 'False') {
+            this.updateReadNoti(itemNoti.bookNo)
+          }
+          this.$router.push({ path: this.$session.getAll().data.timeSlotStatus === 'True' ? '/Master/BookingListBeautyEmp' : '/Master/BookingListBeauty',
+            query: { bookNoNoti: itemNoti.bookNo, customerName: itemNoti.bookingDataCustomerName, dueDate: itemNoti.dueDate.substring(0, 7), masBranchID: itemNoti.masBranchID } }).catch(err => {
+            if (err.name !== 'NavigationDuplicated') {
+              throw err
+            }
+          })
+          this.isOpenNoti = false
+        }
+      } catch (error) {
+        console.log('onClickReadedNoti -> ', error)
+      }
     }
 
   }

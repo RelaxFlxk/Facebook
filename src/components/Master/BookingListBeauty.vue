@@ -7675,9 +7675,16 @@ export default {
     }
   },
   watch: {
-    // menuDate (val) {
-    //   val && setTimeout(() => (this.$refs.dateRef.activePicker = 'month'))
-    // },
+    '$route.query.bookNoNoti' (newVal, oldVal) {
+      if (newVal !== '') {
+        if (this.$route.query.customerName && this.$route.query.dueDate && this.$route.query.masBranchID) {
+          this.searchAll2 = this.$route.query.customerName
+          this.dateStart = this.$route.query.dueDate
+          this.masBranchID = parseInt(this.$route.query.masBranchID)
+          this.checkShowDataOnsite()
+        }
+      }
+    },
     pickerDate (newval, oldval) {
       this.getMonth(newval)
       // this.allowedDates()
@@ -7695,6 +7702,7 @@ export default {
     let endDate = null
     return {
       // menu
+      bookNoNoti: '',
       showMenu: 'False',
       dataMenuAdd: [],
       expansionMenuAdd: [0],
@@ -8211,7 +8219,6 @@ export default {
   },
   async mounted () {
     await this.getShop()
-    console.log('statusGoogleCalendar', this.statusGoogleCalendar, this.statusGoogleCalendarEmp)
     this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.Redirect = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/BookingAddress?shopId=' + this.$session.getAll().data.shopId
     this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
@@ -8231,8 +8238,7 @@ export default {
   methods: {
     getRowClass (item) {
       if (this.$route.query.bookNoNoti) {
-        console.log('item.bookNo === this.$route.query.bookNoNoti', item.bookNo === this.$route.query.bookNoNoti)
-        return item.bookNo === this.$route.query.bookNoNoti ? 'info' : ''
+        return item.bookNo === this.$route.query.bookNoNoti ? 'orange lighten-5' : ''
       } else {
         return ''
       }
@@ -9496,8 +9502,6 @@ export default {
     async checkShowDataOnsite () {
       this.dataReady = false
       let text = await this.getShowOnsite()
-      // this.$session.data.flash.set('showOnsite', this.showOnsite)
-      console.log('checkShowDataOnsite', text)
       if (text === 'ไม่แสดง') {
         this.showOnsite = 'แสดง'
         this.selectOnsite = '&checkOnsite=is null'
@@ -9739,7 +9743,6 @@ export default {
           })
         }
       }
-      console.log('this.checkLimitBooking', this.checkLimitBooking)
     },
     async getMonth (month) {
       console.log('month', month)
@@ -13636,7 +13639,7 @@ export default {
       this.countJob = 0
       this.countAll = 0
       // Clear ช่องค้นหา
-      this.searchAll2 = ''
+      // this.searchAll2 = ''
       var dataItemTimes = []
       var dataItems = []
       // await this.getShowMap()

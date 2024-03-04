@@ -1957,7 +1957,6 @@ export default {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               d.masBranchID = d.masBranchID || ''
-              console.log('this.$session.getAll().data.masBranchID', this.$session.getAll().data.masBranchID)
               if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
                 let s = {}
                 s.text = d.empFirst_NameTH + ' ' + d.empLast_NameTH

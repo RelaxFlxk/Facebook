@@ -7421,11 +7421,22 @@ export default {
   beforeDestroy () {
     this.$root.$off('dataReturn')
   },
+  watch: {
+    '$route.query.bookNoNoti' (newVal, oldVal) {
+      if (newVal !== '') {
+        if (this.$route.query.customerName && this.$route.query.dueDate && this.$route.query.masBranchID) {
+          this.searchAll2 = this.$route.query.customerName
+          this.dateStart = this.$route.query.dueDate
+          this.masBranchID = parseInt(this.$route.query.masBranchID)
+          this.checkShowDataOnsite('ไม่แสดง')
+        }
+      }
+    }
+  },
   methods: {
     getRowClass (item) {
       if (this.$route.query.bookNoNoti) {
-        console.log('item.bookNo === this.$route.query.bookNoNoti', item.bookNo === this.$route.query.bookNoNoti)
-        return item.bookNo === this.$route.query.bookNoNoti ? 'info' : ''
+        return item.bookNo === this.$route.query.bookNoNoti ? 'orange lighten-5' : ''
       } else {
         return ''
       }
@@ -7435,7 +7446,6 @@ export default {
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
         .then(response => {
           let rs = response.data
-          console.log('rssssssssssss', rs)
           if (rs.length > 0) {
             this.shop = rs
             this.statusGoogleCalendar = rs[0].statusGoogleCalendar
@@ -7444,7 +7454,6 @@ export default {
         })
     },
     async setCloseJob (item) {
-      console.log('item', item)
       await this.setCloseJobItem(item[0].jobNo)
       console.log('this.ItemendStepStanby', this.ItemendStepStanby)
       await this.getStepFlowCloseJob(this.ItemendStepStanby.flowId, this.ItemendStepStanby.shopId)
@@ -13722,8 +13731,6 @@ export default {
           // this.getBookingList()
         }
       }
-      console.log('this.flowSelect', this.flowSelect)
-      // this.dataReady = false
       this.selectedStatus = true
       // this.getSelectText = ''
       this.dataItem = []
@@ -13733,7 +13740,7 @@ export default {
       this.countJob = 0
       this.countAll = 0
       // Clear ช่องค้นหา
-      this.searchAll2 = ''
+      // this.searchAll2 = ''
       var dataItemTimes = []
       var dataItems = []
       // await this.getShowMap()
