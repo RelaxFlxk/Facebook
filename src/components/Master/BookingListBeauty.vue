@@ -8222,7 +8222,14 @@ export default {
     this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.Redirect = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/BookingAddress?shopId=' + this.$session.getAll().data.shopId
     this.pathToweb = 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/JobConfirm?jobId='
-    this.checkShowDataOnsite('ไม่แสดง')
+    if (this.$route.query.customerName && this.$route.query.dueDate && this.$route.query.masBranchID) {
+      this.searchAll2 = this.$route.query.customerName
+      this.dateStart = this.$route.query.dueDate
+      this.masBranchID = parseInt(this.$route.query.masBranchID)
+      this.checkShowDataOnsite()
+    } else {
+      this.checkShowDataOnsite('ไม่แสดง')
+    }
     this.$root.$on('dataReturn', (item) => {
       this.dataReturn(item)
     })

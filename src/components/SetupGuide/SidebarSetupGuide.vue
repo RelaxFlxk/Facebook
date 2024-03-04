@@ -14,11 +14,11 @@
           <div class="d-flex flex-column">
             <div>
               <span class="font-title-setup">
-                Hi {{shopName}}, continue setting up your new account
+                สวัสดี {{shopName}} เรามาตั้งค่าร้านของคุณให้พร้อมใช้งานกันเถอะ
               </span>
             </div>
             <div class="mt-auto">
-              <span class="font-detail-setup">{{countTest}} of {{setup !== null ? setup.length : 0}} tasks Completed</span>
+              <span class="font-detail-setup">คุณยังเหลืออีก {{(setup !== null ? setup.length : 0) - countTest}} ของการตั้งค่า </span>
             </div>
             </div>
           <div>
@@ -32,12 +32,12 @@
           <div class="d-flex flex-column">
             <div>
               <span class="font-title-setup-completed">
-                Setup completed
+                ยินดีด้วย ร้านของคุณพร้อมใช้งานแล้ว
               </span>
             </div>
             <div class="mt-auto">
               <v-btn class="w-100"  rounded color="white" @click="onClickComplete()">
-                Finish guide
+                Link จองของคุณพร้อมแล้ว คลิกเลย
                 <v-icon right>mdi-arrow-right</v-icon>
               </v-btn>
             </div>
