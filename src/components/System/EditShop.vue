@@ -1013,22 +1013,18 @@ export default {
 }
 </script>
 <style scope>
-/* width */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 2px;
 }
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px grey;
   border-radius: 10px;
 }
-/* Handle */
 ::-webkit-scrollbar-thumb {
   background: #173053;
   border-radius: 10px;
 }
-
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #173053;
-}
+} */
 </style>

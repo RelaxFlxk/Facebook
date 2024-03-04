@@ -113,7 +113,7 @@ export default {
   data () {
     return {
       orientation: '',
-      statusSound: true,
+      statusSound: false,
       dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
       Fontsize: null,
@@ -595,6 +595,7 @@ export default {
     }
   },
   async mounted () {
+    // this.changeStatusSound('on')
     this.checkOrientation()
 
     window.addEventListener('resize', this.checkOrientation)
@@ -664,35 +665,34 @@ export default {
     },
     async getFirestore () {
       if (this.checkRef === false) {
-        console.log('checkRef0')
         this.checkRef = true
         await this.searchBooking()
         this.updateProcessOhrichUpdate()
       }
       this.firestore = this.$firebase.firestore()
-      this.firestore.collection('ProcessOhrichUpdate').limit(1000).onSnapshot((snapshot) => {
+      const FieldPath = this.$firebase.firestore.FieldPath
+      this.firestore.collection('ProcessOhrichUpdate')
+        .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
+        .onSnapshot((snapshot) => {
         // console.log(snapshot)
-        snapshot.docChanges().forEach(async (change) => {
-          let branchId = this.$session.getAll().data.masBranchID || 2185
-          let userName = this.$session.getAll().data.userName
-          if (change.doc.data().masBranchID === branchId && change.doc.id === userName) {
-            console.log('active', change.doc.data().active)
-            if (this.checkRef === false) {
-              console.log('checkRef1')
-              this.checkRef = true
-              await this.searchBooking()
-              this.updateProcessOhrichUpdate()
-            } else {
-            // console.log(change.doc.id)
-              if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
-                console.log('checkRef2')
+          snapshot.docChanges().forEach(async (change) => {
+            let branchId = this.$session.getAll().data.masBranchID || 2185
+            let userName = this.$session.getAll().data.userName
+            if (change.doc.data().masBranchID === branchId && change.doc.id === userName) {
+              if (this.checkRef === false) {
+                this.checkRef = true
                 await this.searchBooking()
                 this.updateProcessOhrichUpdate()
+              } else {
+                // console.log(change.doc.id)
+                if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
+                  await this.searchBooking()
+                  this.updateProcessOhrichUpdate()
+                }
               }
             }
-          }
+          })
         })
-      })
     },
     updateProcessOhrichUpdate (item) {
       let branchId = this.$session.getAll().data.masBranchID || 2185
@@ -875,20 +875,17 @@ export default {
         // eslint-disable-next-line no-tabs
         this.tableId = item.servicePoint.replace('	  ', '').replace(' ', '').trim()
         let storeFrontQueue = item.storeFrontQueue
-        console.log('[generateSound] storeFrontQueue', storeFrontQueue)
         // storeFrontQueue = storeFrontQueue.replace('A', 'เอ')
         // storeFrontQueue = storeFrontQueue.replace('B', 'บี')
         // storeFrontQueue = storeFrontQueue.replace('C', 'ซี')
         // storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
         // storeFrontQueue = storeFrontQueue.replace('E', 'อี')
         storeFrontQueue = this.replaceFunc(storeFrontQueue.replace('A', 'เอ'))
-        console.log('[generateSound] storeFrontQueue 2', storeFrontQueue)
         let result
         let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
         item.audioFile = null
         if (oldSound.length > 0) {
           item.audioFile = oldSound[0].audioFile
-          console.log('[generateSound] item.audioFile', item.audioFile)
         } else {
           // let branchId = this.$session.getAll().data.masBranchID || 2185
           await axios
@@ -897,11 +894,9 @@ export default {
             ).then(async (response) => {
               if (response.data.length > 0 && typeof response.data.status === 'undefined') {
                 item.audioFile = response.data[0].audioFile
-                console.log('[generateSound] item.audioFile', item.audioFile)
               }
             })
         }
-        console.log('[generateSound] item.audioFile', item.audioFile)
         // let text = this.convertItemtoText(item)
         if (item.audioFile === null) {
           var params = {
@@ -948,35 +943,38 @@ export default {
       let playerQueue = document.getElementById('playerQueue')
       // let playerSuffix = document.getElementById('playerSuffix')
       let playerCounter = document.getElementById('playerCounter')
-      if (playerPrefix.paused && playerQueue.paused && playerCounter.paused) {
-        let res = this.dataListPlay[0]
-        var vid = document.getElementById('videoAds')
-        vid.pause()
-        this.audio = res.audio_url
-        this.tableTarget = this.tableAudioList[this.tableId]
-        this.timeCount = 1
-        playerPrefix.play()
-        playerPrefix.onended = (event) => {
-          playerQueue.load()
-          playerQueue.play()
-          playerQueue.onended = (event) => {
-            playerCounter.load()
-            playerCounter.play()
-            playerCounter.onended = (event) => {
-              if (this.timeCount < this.repeatRound) {
-                this.timeCount++
-                playerPrefix.play()
-                playerPrefix.onended = (event) => {
-                  playerQueue.play()
-                  playerQueue.onended = (event) => {
-                    playerCounter.play()
-                    playerCounter.onended = (event) => {
-                      vid.play()
-                      this.dataListPlay = this.dataListPlay.slice(1)
-                      if (this.dataListPlay.length > 0) {
-                        this.playSound()
+      try {
+        if (playerPrefix.paused && playerQueue.paused && playerCounter.paused) {
+          let res = this.dataListPlay[0]
+          var vid = document.getElementById('videoAds')
+          playerQueue.src = res.audio_url
+          playerCounter.src = this.tableAudioList[this.tableId]
+          vid.pause()
+          this.audio = res.audio_url
+          this.tableTarget = this.tableAudioList[this.tableId]
+          this.timeCount = 1
+          playerPrefix.play()
+          playerPrefix.onended = (event) => {
+            playerQueue.load()
+            playerQueue.play()
+            playerQueue.onended = (event) => {
+              playerCounter.load()
+              playerCounter.play()
+              playerCounter.onended = (event) => {
+                if (this.timeCount < this.repeatRound) {
+                  this.timeCount++
+                  playerPrefix.play()
+                  playerPrefix.onended = (event) => {
+                    playerQueue.play()
+                    playerQueue.onended = (event) => {
+                      playerCounter.play()
+                      playerCounter.onended = (event) => {
+                        vid.play()
+                        this.dataListPlay = this.dataListPlay.slice(1)
+                        if (this.dataListPlay.length > 0) {
+                          this.playSound()
+                        }
                       }
-                      console.log('this.dataListPlay', this.dataListPlay)
                     }
                   }
                 }
@@ -984,6 +982,13 @@ export default {
             }
           }
         }
+        playerQueue.pause()
+        playerQueue.currentTime = 0
+      } catch (error) {
+        console.log('Error playSound', error)
+        playerPrefix.pause()
+        playerQueue.pause()
+        playerCounter.pause()
       }
     },
     getNow: function () {

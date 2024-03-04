@@ -1920,7 +1920,7 @@ export default {
         } else {
           this.formDelete.totalPrice = this.totalPrice
         }
-        this.CloseOnsiteCalendarGridTime(this.formDelete.jobNo)
+        // this.CloseOnsiteCalendarGridTime(this.formDelete.jobNo)
         await axios
           .post(this.DNS_IP + '/job/editPrice/' + this.formDelete.jobId, this.formDelete)
           .then(async response => {
@@ -1960,7 +1960,7 @@ export default {
           } else {
             this.formDelete.totalPrice = this.totalPrice
           }
-          this.CloseOnsiteCalendarGridTime(this.formDelete.jobNo)
+          // this.CloseOnsiteCalendarGridTime(this.formDelete.jobNo)
           await axios
             .post(this.DNS_IP + '/job/editPrice/' + this.formDelete.jobId, this.formDelete)
             .then(async response => {

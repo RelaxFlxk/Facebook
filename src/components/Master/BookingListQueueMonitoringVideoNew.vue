@@ -106,7 +106,7 @@ export default {
   data () {
     return {
       orientation: '',
-      statusSound: true,
+      statusSound: false,
       dateStartShow: '',
       video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
       validSearch: true,
@@ -182,6 +182,7 @@ export default {
     }
   },
   async mounted () {
+    // this.changeStatusSound('on')
     this.checkOrientation()
 
     window.addEventListener('resize', this.checkOrientation)
@@ -274,7 +275,6 @@ export default {
         let result
         let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
         item.audioFile = null
-        console.log('oldSound ', oldSound)
         if (oldSound && oldSound.length > 0) {
           item.audioFile = oldSound[0].audioFile
         } else {
@@ -289,8 +289,7 @@ export default {
               }
             })
         }
-        // let text = this.convertItemtoText(item)
-        console.log('generateSound audioFile->', item.audioFile)
+
         if (item.audioFile === null) {
           var params = {
             text: ' ' + storeFrontQueue,
@@ -333,40 +332,44 @@ export default {
       return text
     },
     playSound (res) {
-      if (res) {
-        this.audio = res.audio_url
-      }
-      console.log('playSound', this.audio)
-      // this.tableTarget = this.tableAudioList[this.tableId]
-      this.timeCount = 1
-      let playerPrefix = document.getElementById('playerPrefix')
-      let playerQueue = document.getElementById('playerQueue')
-      let playerSuffix = document.getElementById('playerSuffix')
-      var vid = document.getElementById('videoAds')
-      vid.pause()
-      playerPrefix.play()
-      playerPrefix.onended = (event) => {
-        playerQueue.load()
-        playerQueue.play()
-        playerQueue.onended = (event) => {
-          playerSuffix.load()
-          playerSuffix.play()
-          playerSuffix.onended = (event) => {
-            if (this.timeCount < this.repeatRound) {
-              this.timeCount++
-              playerPrefix.play()
-              playerPrefix.onended = (event) => {
-                playerQueue.play()
-                playerQueue.onended = (event) => {
-                  playerSuffix.play()
-                  playerSuffix.onended = (event) => {
-                    vid.play()
+      try {
+        if (res) {
+          this.audio = res.audio_url
+        }
+        // this.tableTarget = this.tableAudioList[this.tableId]
+        this.timeCount = 1
+        let playerPrefix = document.getElementById('playerPrefix')
+        let playerQueue = document.getElementById('playerQueue')
+        let playerSuffix = document.getElementById('playerSuffix')
+        var vid = document.getElementById('videoAds')
+        playerQueue.src = res.audio_url
+        vid.pause()
+        playerPrefix.play()
+        playerPrefix.onended = (event) => {
+          playerQueue.load()
+          playerQueue.play()
+          playerQueue.onended = (event) => {
+            playerSuffix.load()
+            playerSuffix.play()
+            playerSuffix.onended = (event) => {
+              if (this.timeCount < this.repeatRound) {
+                this.timeCount++
+                playerPrefix.play()
+                playerPrefix.onended = (event) => {
+                  playerQueue.play()
+                  playerQueue.onended = (event) => {
+                    playerSuffix.play()
+                    playerSuffix.onended = (event) => {
+                      vid.play()
+                    }
                   }
                 }
               }
             }
           }
         }
+      } catch (error) {
+        console.log('Error playSound', error)
       }
     },
     async getShop () {
