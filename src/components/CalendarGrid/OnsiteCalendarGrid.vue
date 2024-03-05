@@ -289,6 +289,7 @@ export default {
         let monthnewQuestion = moment(newQuestion).format('YYYY-MM')
         let montholdQuestion = moment(oldQuestion).format('YYYY-MM')
         if (monthnewQuestion !== montholdQuestion) {
+          console.log('getDATA')
           this.events = []
           await this.setEvent()
         }
@@ -344,7 +345,7 @@ export default {
       this.dataJob = []
       // let params = null
       let month = moment(this.focus).format('YYYY-MM')
-      let params = this.DNS_IP + '/job/get?shopId=' + this.shopId + '&checkOnsite=True' + '&dueDate=' + month
+      let params = this.DNS_IP + '/job/getCalendarGrid?shopId=' + this.shopId + '&checkOnsite=True' + '&dueDate=' + month
       await axios
         .get(params)
         .then(async (response) => {
@@ -566,8 +567,8 @@ export default {
 }
 /* width */
 ::-webkit-scrollbar {
-  width: 2px;
-  height: 2px
+  width: 0px;
+  height: 0px
 }
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px grey;

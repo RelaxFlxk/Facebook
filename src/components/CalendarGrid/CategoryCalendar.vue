@@ -299,7 +299,7 @@ export default {
       // return true
     },
     getEvents () {
-      console.log('@@@@@@@@@', this.events)
+      // console.log('@@@@@@@@@', this.events)
     },
     rnd (a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a

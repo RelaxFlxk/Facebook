@@ -38,7 +38,7 @@
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
       </v-sheet>
-      <v-sheet height="670" style="width: 100%;">
+      <v-sheet height="670" style="overflow-x: hidden;">
         <v-calendar
           ref="calendar"
           v-model="value"
@@ -203,7 +203,7 @@ export default {
       return interval.time
     },
     getEvents () {
-      console.log('!!!!!!!!', this.events)
+      // console.log('!!!!!!!!', this.events)
     },
     getEventColor (event) {
       if (this.typeColor === 'Flow') {
@@ -235,9 +235,11 @@ export default {
 .eventIF {
     padding-left: 0.5vw;
     height: 100%;
+    width: 100%;
 }
 .eventElse {
     padding-left: 0.5vw;
     height: 100%;
+    width: 100%;
 }
 </style>

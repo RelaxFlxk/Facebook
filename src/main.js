@@ -119,8 +119,9 @@ Vue.mixin({
     }
   },
   async mounted () {
+    // console.log('process.env.NODE_ENV ', process.env.NODE_ENV)
     if (process.env.NODE_ENV === 'development') {
-      this.DNS_IP = this.IPPotocalENV_Production
+      this.DNS_IP = this.IPPotocalENV_Developer
       this.DNS_IP_Betask = this.IPPotocalENV_DeveloperBetask
       this.DNS_IP_Loyalty = this.IPPotocalENV_DeveloperLoyalty
     } else {
