@@ -129,7 +129,7 @@ export default {
     },
     focus: {
       type: String,
-      default: this.value
+      default: ''
     },
     type: {
       type: String,
@@ -184,7 +184,7 @@ export default {
         { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
         { text: 'Mon, Wed, Fri', value: [1, 3, 5] }
       ],
-      value: ''
+      value: this.focus
     //   colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
     //   names: ['ล้างรถยนต์นอกสถานที่', 'Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party']
     }

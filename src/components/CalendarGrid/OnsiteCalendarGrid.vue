@@ -240,6 +240,7 @@ export default {
       shopId: this.$session.getAll().data.shopId,
       focus: null,
       events: [],
+      eventsMaster: [],
       colors: [
         '#FE6F5E',
         '#E4CC51',
@@ -294,6 +295,9 @@ export default {
           await this.setEvent()
         }
       }
+    },
+    async categories (newQuestion, oldQuestion) {
+      this.updateSelect()
     }
   },
   async mounted () {
@@ -327,6 +331,10 @@ export default {
     },
     getEventColor (event) {
       return event.color
+    },
+    async updateSelect () {
+      this.events = this.eventsMaster.filter(item => this.categories.includes(item.category))
+      console.log(this.events)
     },
     setToday () {
       this.focus = moment().format('YYYY-MM-DD')
@@ -469,14 +477,15 @@ export default {
         await this.getJobData()
         // console.log('----', this.eventsItem)
         const events = []
-        let TT = []
+        this.eventsMaster = []
+        // let TT = []
         for (let i = 0; i < this.eventsItem.length; i++) {
           let element = this.eventsItem[i]
           // console.log('DATE', element.start)
           // console.log('DATEMONENT', moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
           // console.log('newDATE', new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss')))
           // console.log('------', startDate, startTime)
-          if (this.flowName.filter((item) => item.value === element.flowId).length && this.categoriesItem.length > 0) {
+          if (this.flowName.filter((item) => item.value === element.flowId).length && this.categoriesItem.filter((item) => item.value === element.empId).length > 0) {
             let start = new Date(moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
             let end = new Date(moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
             let findIndex = this.flowName.findIndex((item) => item.value === element.flowId)
@@ -494,27 +503,21 @@ export default {
               startTime: moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm'),
               endTime: moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm')
             })
-            TT.push({
+            this.eventsMaster.push({
               name: flowName,
               start: start,
               end: end,
               color: this.colors[findIndex],
               timed: true,
-              item: this.dataJob.filter((item) => item.bookNo === element.refID),
               category: this.categoriesItem.filter((item) => item.value === element.empId)[0].text,
+              item: this.dataJob.filter((item) => item.bookNo === element.refID),
               startTime: moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm'),
               endTime: moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm')
-              // name: flowName,
-              // start: start,
-              // end: end,
-              // color: this.colors[findIndex],
-              // timed: true
             })
           }
         }
-        console.log('events', events)
+        // console.log('events', events)
         this.events = events
-        this.TT = TT
       } catch (error) {
         console.log(error)
       }
