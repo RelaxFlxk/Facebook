@@ -14,9 +14,9 @@
           <div class="d-flex flex-row d-flex justify-content-between">
             <div><h5 class="font-weight-bold m-0" >Counter {{$session.getAll().data.counter}}</h5></div>
             <div class="d-flex flex-sm-row">
-              <div class="d-flex flex-row align-items-center mr-3" v-if="branchItem">
+              <div class="d-flex flex-row align-items-center mr-3" v-if="branchName !== ''">
                 <div class="mr-1"><v-icon  color="red">mdi-map-marker</v-icon></div>
-                <div><span class="text-main">{{ branchItem.filter(el => { return masBranchID === el.value })[0].text }}</span></div>
+                <div><span class="text-main">{{branchName }}</span></div>
               </div>
               <div class="d-flex flex-row align-items-center mr-3">
                 <div class="mr-1"><v-icon  color="red">mdi-calendar-blank-outline</v-icon></div>
@@ -32,41 +32,41 @@
               <div v-for="(flowitem, index) in flowSelectCheckItem" :key="index">
                 <div class="d-flex flex-row justify-content-between align-items-center">
                   <div><span>{{ flowitem.flowNameEn + ' : Type ' + flowitem.storeFrontText }}</span></div>
-                  <div><v-switch inset color="success" v-model="flowSelectCheck" :value="flowitem.storeFrontText" @change="UpdatetypeStoreFrontText()" /></div>
+                  <div><v-switch inset color="success" v-model="flowitem.checked"  @change="UpdatetypeStoreFrontText(flowitem)" /></div>
                 </div>
                 <v-divider v-if="(index + 1) < flowSelectCheckItem.length" class="m-0"></v-divider>
                  </div>
             </v-card>
           </div>
           <div class="d-flex flex-row justify-content-between align-items-center my-5">
-            <div><span class="text-center font-weight-black text-number">{{  itemBooking && itemBooking.length >0  ? itemBooking[0].storeFrontQueue : 'XXXX' }}</span></div>
+            <div><span class="text-center font-weight-black text-number">{{ callQueue.storeFrontQueue}}</span></div>
             <div>
               <v-btn
-                @click="closeJobSubmit(itemBooking[0])"
-                :disabled="itemBooking && itemBooking.length > 0 && itemBooking[0].statusBt === 'confirm' ? false : true"
+                @click="closeJobSubmit()"
+                :disabled="callQueue !== null && (callQueue.status === 'confirm' || callQueue.status === 'againqQueue') ? false : true"
                 dark
-                :class="`rounded-btn justify-content-center align-items-center ${itemBooking && itemBooking.length > 0 && itemBooking[0].statusBt === 'confirm' ? 'rounded-btn-confirm':'rounded-btn-closejob'}`">
+                :class="`rounded-btn justify-content-center align-items-center ${callQueue !== null && (callQueue.status === 'confirm' || callQueue.status === 'againqQueue')  ? 'rounded-btn-confirm':'rounded-btn-closejob'}`">
                 <div class="d-flex flex-column">
                 <div><v-icon size="45">mdi-bell-ring</v-icon></div>
-                <div><span :class="`text-event ${itemBooking && itemBooking.length > 0 && itemBooking[0].statusBt === 'confirm' ? 'text-white' :'text-bell-disabled'}`">เรียกคิว</span></div>
+                <div><span :class="`text-event ${callQueue !== null && callQueue.status === 'confirm' ? 'text-white' :'text-bell-disabled'}`">เรียกคิว</span></div>
                 </div>
             </v-btn>
             </div>
           </div>
           <div class="d-flex flex-row justify-content-between align-items-center">
             <div class="w-100 mr-2">
-              <v-btn class="btn-event" color="warning" rounded elevation="1" :disabled="itemBooking === null && itemBooking.length === 0" @click="removeQueue(itemBooking[0])">
+              <v-btn class="btn-event" color="warning" rounded elevation="1" :disabled="callQueue !== null && (callQueue.status === 'confirm' || callQueue.status === 'confirmJob') ? false : true" @click="removeQueue()">
                <v-icon class="mr-2">mdi-delete</v-icon><span class="text-event">ลบคิว</span> </v-btn></div>
             <div class="w-100 mx-2">
-               <v-btn  class="btn-event" color="#1B437C" rounded :disabled="itemBooking && itemBooking.length > 0 && itemBooking[0].statusBt === 'confirmJob' ? false : true"
-               @click="closeJobSubmitReturn(itemBooking[0])">
+               <v-btn  class="btn-event" color="#1B437C" rounded :disabled="callQueue !== null && callQueue.status === 'confirmJob' ? false : true"
+               @click="closeJobSubmitReturn()">
                 <strong class="text-white text-event">เรียกคิวซ้ำ</strong>
                 </v-btn>
             </div>
             <div class="w-100 ml-2">
               <v-btn class="btn-event" color="#F38383" rounded
-              :disabled="itemBooking && itemBooking.length > 0 && itemBooking[0].statusBt === 'confirmJob' && dataReady === false ? false : true"
-              @click="backHomeSubmit(itemBooking[0])">
+              :disabled="callQueue !== null && callQueue.status === 'confirmJob' && dataReady === false ? false : true"
+              @click="backHomeSubmit()">
                <strong class="text-white text-event">ปิดงาน</strong>
                </v-btn>
             </div>
@@ -77,10 +77,10 @@
       <div class="col-12 col-sm-12 col-md-6">
         <v-card class="p-4 main-card h-100">
          <div class="d-flex flex-column">
-           <div><h3 class="font-weight-black text-center mt-3"> {{ 'จำนวนคิวที่รอ (' + datawainingShow.length + ')' }}</h3></div>
+           <div><h3 class="font-weight-black text-center mt-3"> {{ 'จำนวนคิวที่รอ (' + waitingQueue.length + ')' }}</h3></div>
            <div class="pa-1" style="display: flex;flex-wrap: wrap;justify-content: space-around;flex-direction: row;">
-            <v-col :cols="resCol === '12' ? '4' : '4'" v-for="(itemShow, i) in datawainingShow" :key="i">
-             <h3 class="font-weight-black text-center">{{ itemShow.storeFrontQueue }}</h3>
+            <v-col :cols="resCol === '12' ? '4' : '4'" v-for="(item) in waitingQueue" :key="item">
+             <h3 class="font-weight-black text-center">{{ item }}</h3>
               </v-col>
           </div>
          </div>
@@ -98,10 +98,7 @@ import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
-import pdfMake from 'pdfmake'
-import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
 import moment from 'moment-timezone'
-import printJS from 'print-js'
 
 export default {
   components: {
@@ -111,7 +108,6 @@ export default {
   },
   data () {
     return {
-      languageSelect: 0,
       servicePointItem: [],
       servicePoint: '',
       closeItem: '',
@@ -120,84 +116,25 @@ export default {
       statusReturn: false,
       itemBooking: [],
       BookingDataList: [],
-      menuStart: false,
-      dialogPrint: false,
       overlay: true,
-      time: '',
-      timeavailable: [],
-      branchItem: [],
+      branchName: '',
       masBranchID: '',
       DataFlowItem: [],
       flowSelect: '',
       dateStart: '',
-      breadcrumbs: [
-        {
-          text: 'Home',
-          disabled: false,
-          href: '/Core/Home'
-        },
-        {
-          text: 'จัดการ Queue',
-          disabled: false,
-          href: '/Master/BookingListQueue'
-        }
-      ],
       dialog: false,
       dialogAdd: false,
-      // session: this.$session.getAll(),
-      // shopId: this.$session.getAll().data.shopId,
-      search: '',
-      shopName: '',
-      shopImg: '',
-      headers: [
-        { text: 'คิว', value: 'storeFrontQueue' },
-        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
-        { text: 'บริการ', value: 'flowName' },
-        { text: 'ชื่อลูกค้า', value: 'cusName' },
-        // { text: 'H.N.', value: 'hnNo' },
-        { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
-      ],
-      rules: {
-        numberRules: value =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        counterTel: value => value.length <= 10 || 'Max 10 characters',
-        IDcardRules: value =>
-          (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999999) ||
-          'กรุณากรอกตัวเลข 0 ถึง 9',
-        required: value => !!value || 'กรุณากรอก.',
-        resizeImag: value =>
-          !value ||
-          value.size < 2000000 ||
-          'Avatar size should be less than 2 MB!',
-        counterIDcard: value => value.length <= 13 || 'Max 13 characters',
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(value) || 'Invalid e-mail.'
-        }
-      },
       dataLineConfig: {},
-      HistoryData: [],
-      pictureUrHistory: '',
-      dialogHistory: false,
-      shopPhone: '',
-      setTimerCalendar: null,
       checkRef: false,
       checkStatusEdit: false,
       datawainingShow: [],
       dataReady: false,
       flowSelectCheckItem: [],
       flowSelectCheck: [],
-      currentDate: moment().format('DD/MMM/YYYY')
-      // datawainingShowtest: [
-      //   'A001', 'A002', 'A003', 'A004', 'A005', 'A006', 'A001', 'A002', 'A003', 'A004', 'A005', 'A006'
-      // ]
-    }
-  },
-  watch: {
-    // whenever question changes, this function will run
-    flowSelectCheck (newQuestion, oldQuestion) {
-      console.log('flowSelectCheck', newQuestion, oldQuestion)
+      currentDate: moment().format('DD/MMM/YYYY'),
+      callQueue: {},
+      waitingQueue: [],
+      storeFront: []
     }
   },
   computed: {
@@ -225,13 +162,117 @@ export default {
       }
     }
   },
+  created () {
+    this.updateDateStart()
+  },
   async mounted () {
-    this.dateStart = this.momenDate_1(new Date())
     await this.beforeCreate()
-    // await this.UpdatetypeStoreFrontText()
+    await this.getBooking()
+    await this.getFirestore()
   },
   methods: {
-    async UpdatetypeStoreFrontText () {
+    updateDateStart () {
+      const update = () => {
+        this.dateStart = this.momenDate_1(new Date())
+
+        const now = new Date()
+        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+        const msUntilTomorrow = tomorrow - now
+        setTimeout(update, msUntilTomorrow)
+      }
+
+      update()
+    },
+    async getBooking () {
+      try {
+        let flowId = []
+        this.waitingQueue = []
+        this.flowSelectCheck.forEach(text => {
+          let storeFront = this.storeFront.filter(a => a.storeFrontText === text)
+          if (storeFront && storeFront.length > 0) {
+            flowId.push(storeFront[0].flowId)
+          }
+        })
+        if (this.flowSelectCheck && this.flowSelectCheck.length > 0) {
+          await axios
+            .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=[${flowId}]`)
+            .then(async response => {
+              if (response && response.data) {
+                let data = response.data
+                if (data.status === false) {
+                  this.callQueue = {
+                    bookNo: '',
+                    storeFrontQueue: 'XXXX',
+                    status: 'no have type'
+                  }
+                  this.waitingQueue = []
+                  return
+                }
+                if (data && data.length > 0) {
+                  this.callQueue = {
+                    bookNo: data[0].bookNo,
+                    storeFrontQueue: data[0].storeFrontQueue,
+                    status: data[0].status
+                  }
+                  response.data.filter(item => item.status === 'confirm').forEach(queue => {
+                    this.waitingQueue.push(queue.storeFrontQueue)
+                  })
+                }
+              }
+            })
+        } else {
+          this.callQueue = {
+            bookNo: '',
+            storeFrontQueue: 'XXXX',
+            status: 'no have type'
+          }
+        }
+      } catch (error) {
+        console.log('Error getBooking', error)
+      }
+    },
+    async getBookingOnlyWait () {
+      try {
+        let flowId = []
+        this.waitingQueue = []
+        this.flowSelectCheck.forEach(text => {
+          let storeFront = this.storeFront.filter(a => a.storeFrontText === text)
+          if (storeFront && storeFront.length > 0) {
+            flowId.push(storeFront[0].flowId)
+          }
+        })
+        await axios
+          .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=[${flowId}]`)
+          .then(async response => {
+            if (response && response.data) {
+              let data = response.data
+              if (data.status === false) {
+                this.waitingQueue = []
+                return
+              }
+              if (data && data.length > 0) {
+                response.data.filter(item => item.status === 'confirm').forEach(queue => {
+                  this.waitingQueue.push(queue.storeFrontQueue)
+                })
+              }
+            }
+          })
+      } catch (error) {
+        console.log('Error getBookingOnlyWait', error)
+      }
+    },
+    async UpdatetypeStoreFrontText (flowitem) {
+      if (flowitem.checked) {
+        if (!this.flowSelectCheck.includes(flowitem.storeFrontText)) {
+          this.flowSelectCheck.push(flowitem.storeFrontText)
+        }
+      } else {
+        const index = this.flowSelectCheck.indexOf(flowitem.storeFrontText)
+        if (index > -1) {
+          this.flowSelectCheck.splice(index, 1)
+        }
+      }
+
       let dataSession = this.$session.get('data')
       dataSession.typeStoreFrontText = JSON.stringify(this.flowSelectCheck)
       this.$session.set('data', dataSession)
@@ -239,9 +280,12 @@ export default {
       let obj = {
         'typeStoreFrontText': JSON.stringify(this.flowSelectCheck)
       }
-      let id = this.$session.getAll().data.userId
-      this.searchBooking('unNoti')
-      this.updateSYS_USER(id, obj)
+      if (this.callQueue.status !== 'confirmJob') {
+        this.getBooking()
+      } else {
+        this.getBookingOnlyWait()
+      }
+      this.updateSYS_USER(this.$session.getAll().data.userId, obj)
     },
     async updateSYS_USER (id, obj) {
       await axios
@@ -256,22 +300,30 @@ export default {
         .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
         .onSnapshot((snapshot) => {
           snapshot.docChanges().forEach(async (change) => {
+            console.log('getFirestore')
             if (this.checkRef === false) {
               this.checkRef = true
               this.dateStart = this.momenDate_1(new Date())
               this.currentDate = moment().format('DD/MMM/YYYY')
               this.updateProcessOhrichUpdate()
-              await this.getBefore()
+              if (this.callQueue.status === 'confirm') {
+                await this.getBooking()
+              } else {
+                await this.getBookingOnlyWait()
+              }
             } else {
               if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
-              // if (change.doc.data().active === '1' && change.doc.id === this.$session.getAll().data.userName) {
                 if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
                   if (change.doc.id === this.$session.getAll().data.userName) {
                     if (!this.checkStatusEdit) {
                       this.dateStart = this.momenDate_1(new Date())
                       this.currentDate = moment().format('DD/MMM/YYYY')
-                      await this.getBefore()
                       this.updateProcessOhrichUpdate()
+                      if (this.callQueue.status === 'confirm') {
+                        await this.getBooking()
+                      } else {
+                        await this.getBookingOnlyWait()
+                      }
                     }
                   }
                 } else {
@@ -282,47 +334,26 @@ export default {
           })
         })
     },
-    updateProcessOhrichUpdate (item) {
+    updateProcessOhrichUpdate () {
       let params = {
         userName: this.$session.getAll().data.userName,
         masBranchID: this.$session.getAll().data.masBranchID
       }
       axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
     },
-    async resetFirebaseUse (item) {
+    async resetFirebaseUse () {
       let params = {
         userName: this.$session.getAll().data.userName,
         masBranchID: this.$session.getAll().data.masBranchID
       }
       await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichNew', params)
     },
-    closeSetTimeBookingListQueue () {
-      clearInterval(this.setTimerCalendar)
-      this.setTimerCalendar = null
-    },
-    clearTimeLoop () {
-      clearInterval(this.setTimerCalendar)
-      this.setTimerCalendar = null
-      let _this = this
-      this.setTimerCalendar = setInterval(function () { _this.searchBooking('unNoti') }, 15000)
-    },
-    async removeQueue (item) {
-      // console.log('removeQueue', item)
-      let statusBooking = await this.checkBookingStatus(item.bookNo)
-      this.checkStatusEdit = true
-      if (statusBooking === 'confirmJob' || statusBooking === 'confirm') {
-        // this.$swal({
-        //   title: 'ต้องการยกเลิกคิวนี้ ใช่หรือไม่?',
-        //   type: 'question',
-        //   showCancelButton: true,
-        //   confirmButtonColor: '#1DBF73',
-        //   cancelButtonColor: '#F38383',
-        //   confirmButtonText: 'ใช่',
-        //   cancelButtonText: 'ไม่'
-        // }).then(async response => {
-        // // await this.clearConfirmJob(item.dueDate)
+    async removeQueue () {
+      // let statusBooking = await this.checkBookingStatus(item.bookNo)
+      // this.checkStatusEdit = true
+      if (this.callQueue.status === 'confirmJob' || this.callQueue.status === 'confirm') {
         var dtt = {
-          bookNo: item.bookNo,
+          bookNo: this.callQueue.bookNo,
           contactDate: this.format_date(new Date()),
           status: 'cancel',
           statusUse: 'use',
@@ -336,40 +367,20 @@ export default {
           .then(async responses => {
             let checkresponses = responses.data
             if (checkresponses.status === true) {
-            // this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
               this.resetFirebaseUse()
-              await this.searchBooking('unNoti')
-            } else {
-              // this.resetFirebaseUse()
-              await this.searchBooking('unNoti')
             }
-            // this.clearTimeLoop()
+            await this.getBooking()
           })
-        // }).catch(async err => {
-        //   // this.$router.push({ name: '404' })
-        //   console.log(err.code, err.message)
-        //   await this.searchBooking('unNoti')
-        //   // this.clearTimeLoop()
-        // })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         this.resetFirebaseUse()
         await this.searchBooking('unNoti')
-        // this.clearTimeLoop()
       }
     },
     async getBefore () {
-      this.setTime()
-      this.getShop()
-      // this.checkSearch()
-      // this.$root.$on('closeSetTimeBookingListQueue', () => {
-      // // your code goes here
-      //   this.closeSetTimeBookingListQueue()
-      // })
       this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
       this.searchBooking('unNoti')
       this.checkStatusEdit = false
-      // this.clearTimeLoop()
     },
     async checkSession () {
       if (!this.$session.exists()) {
@@ -380,7 +391,6 @@ export default {
           await this.getDataBranch()
           await this.getDataFlow()
           await this.getFirestore()
-          // await this.getBefore()
         } else {
           this.$router.push('/Core/Login')
         }
@@ -394,7 +404,6 @@ export default {
           await this.getDataBranch()
           await this.getDataFlow()
           await this.getFirestore()
-          // await this.getBefore()
         } else {
           this.$router.push('/Core/Login')
         }
@@ -402,50 +411,8 @@ export default {
         await this.checkSession()
       }
     },
-    momentThaiText (item) {
-      let dt = moment(item).locale('th').format('LL')
-      return dt
-    },
     dial: function (number) {
       window.location = 'tel:' + number
-    },
-    async getShop () {
-      let shopImg = ''
-      await axios
-        .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
-        .then(async response => {
-          let rs = response.data
-          if (rs.length > 0) {
-            this.shopName = rs[0].shopName
-            shopImg = rs[0].imageBase64 || ''
-          } else {
-            this.shopName = ''
-            this.shopImg = ''
-            shopImg = ''
-          }
-          if (shopImg !== '') {
-            this.shopImg = shopImg
-          } else {
-            this.shopImg = ''
-          }
-        })
-    },
-    validate (Action) {
-      switch (Action) {
-        case 'SEARCH':
-          this.$nextTick(() => {
-            let self = this
-            self.$refs.form_search.validate()
-          })
-          break
-        default:
-          break
-      }
-    },
-    checkSearch () {
-      // this.validate('SEARCH')
-      // setTimeout(() => this.searchBooking('unNoti'), 500)
-      this.searchBooking('unNoti')
     },
     async GroupArrayQueue (dataArray) {
       let dataConfirm = []
@@ -457,7 +424,6 @@ export default {
         if (d.statusBt === 'confirmJob') {
           dataConfirm.push(d)
         } else {
-          // console.log('[GroupArrayQueue] :', this.flowSelectCheck.filter((item) => item === d.storeFrontText), d.storeFrontText)
           if (this.flowSelectCheck.filter((item) => item === d.storeFrontText).length > 0) {
             if (d.storeFrontText === 'B') {
               dataB.push(d)
@@ -467,56 +433,19 @@ export default {
               data.push(d)
             }
           }
-          // console.log('[List flowSelectCheck]', this.flowSelectCheck, 'dataB', dataB, 'dataC', dataC, 'data', data)
         }
       }
-      // let mergedData = [...dataB, ...data.slice(0)]
       let mergedData = [...dataB, ...dataC, ...data.slice(0)]
       dataConfirm.push(...mergedData)
-      // console.log('Data [dataConfirm]', dataConfirm)
       return dataConfirm
     },
-    // async GroupArrayQueue (dataArray) {
-    //   // ใช้ Map เพื่อจัดกลุ่มตาม flowId
-    //   const sortedArray = dataArray.sort((a, b) => {
-    //     const getParts = (str) => {
-    //       const match = str.match(/([A-Z]+)([0-9]+)/)
-    //       return [match[1], parseInt(match[2])]
-    //     }
-
-    //     const [prefixA, numA] = getParts(a.storeFrontQueue)
-    //     const [prefixB, numB] = getParts(b.storeFrontQueue)
-
-    //     // เรียงลำดับตาม num และ prefix
-    //     if (numA === numB) {
-    //       return prefixA.localeCompare(prefixB)
-    //     } else {
-    //       return numA - numB
-    //     }
-    //   })
-    //   return sortedArray
-    // },
     async searchBooking (checkNoti, item) {
-      // console.log('searchBooking ', checkNoti, this.validSearch, this.dateStart)
       if (this.validSearch === true) {
         this.checkStatusEdit = false
-        // this.overlay = false
-        // this.itemBooking = []
         let itemBooking = []
-        // await this.getBookingDataList(this.dateStart)
         let urlApi = {}
         if (this.flowSelect === 'allFlow') {
-          urlApi = this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.$session.getAll().data.shopId +
-            '&masBranchID=' +
-            this.masBranchID +
-            // '&flowId=' +
-            // this.flowSelect +
-            '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
-        // '&dueDate=' +
-        // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
+          urlApi = `${this.DNS_IP}/booking_view/get?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${this.dateStart}&storeFrontQueue=is not null&statusBt=confirm and confirmJob`
         } else {
           urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -531,18 +460,9 @@ export default {
         await axios
           .get(urlApi)
           .then(async response => {
-            // console.log('getData', response.data)
             let rs = response.data
             if (rs.length > 0) {
               itemBooking = await this.GroupArrayQueue(rs)
-              // for (let i = 0; i < sortData.length; i++) {
-              //   let d = sortData[i]
-              //   if (this.BookingDataList[d.bookNo] !== undefined) {
-              //     d.cusName = d.bookingDataCustomerName || ''
-              //     itemBooking.push(d)
-              //   }
-              // }
-              // console.log('itemBooking', itemBooking)
               let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
               let empId = this.$session.getAll().data.empId || ''
               let itemBookings = []
@@ -554,7 +474,6 @@ export default {
               } else {
                 itemBookings = itemBooking
               }
-              // console.log('itemBookings', itemBookings)
               this.itemBooking = itemBookings
               this.overlay = true
             } else {
@@ -579,14 +498,12 @@ export default {
     },
     async getBookingDataList (dateStart) {
       let BookingDataList = []
-      // this.BookingDataList = []
       let url = ''
       if (this.flowSelect === 'allFlow') {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
       } else {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       }
-      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       await axios
         .get(url)
         .then(async response => {
@@ -600,72 +517,37 @@ export default {
             this.BookingDataList = BookingDataList
           }
         }).catch(error => {
-          // this.dataEditReady = true
           setTimeout(() => this.getBookingDataList(dateStart), 3000)
           console.log('catch getBookingDataList : ', error)
         })
-      // console.log('this.BookingDataList1', this.BookingDataList)
-    },
-    setTime () {
-      this.timeavailable = []
-      let checkFlow = this.DataFlowItem.filter(el => { return el.value === this.flowSelect })
-      if (checkFlow.length > 0) {
-        this.timeavailable = JSON.parse(checkFlow[0].allData.setTime)
-      } else {
-        this.timeavailable = []
-      }
     },
     async getDataFlow () {
       let resultOption = []
       let flowSelectCheckItem = []
-      let flowSelectCheck = []
+      let typeStoreFrontTextValues = this.$session.getAll().data.typeStoreFrontText ? JSON.parse(this.$session.getAll().data.typeStoreFrontText) : null
+      this.storeFront = []
       await axios
         .get(this.DNS_IP + `/flow/get?shopId=${this.$session.getAll().data.shopId}&storeFrontCheck=True&masBranchIDAll=${this.masBranchID}`)
         .then(response => {
           let rs = response.data
-          if (rs.length > 0) {
-            // resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
-            for (var i = 0; i < rs.length; i++) {
-              let d = rs[i]
-              let s = {}
-              if (JSON.parse(this.$session.getAll().data.flowId).filter(el => { return el === d.flowId }).length > 0) {
-                let checkCounter = JSON.parse(d.servicePointCount)
-                let counterByUser = this.$session.getAll().data.counter
-                // console.log('checkCounter', checkCounter, counterByUser)
-                if (checkCounter.filter((aa) => aa.textTh === counterByUser).length > 0) {
-                  s.text = d.flowName
-                  s.value = d.flowId
-                  s.allData = d
-                  resultOption.push(s)
-                  flowSelectCheckItem.push(d)
-                  if (this.$session.getAll().data.typeStoreFrontText === null) {
-                    flowSelectCheck.push(d.storeFrontText)
-                  } else {
-                    let dt = JSON.parse(this.$session.getAll().data.typeStoreFrontText) || []
-                    flowSelectCheck = dt
-                  }
-                }
-              }
+          let sessionFlowIds = JSON.parse(this.$session.getAll().data.flowId)
+          let filteredResults = rs.filter(flowData => sessionFlowIds.includes(flowData.flowId))
+          for (let itemFlow of filteredResults) {
+            let isChecked = true
+            if (typeStoreFrontTextValues) {
+              isChecked = typeStoreFrontTextValues.includes(itemFlow.storeFrontText)
             }
-            if (flowSelectCheckItem.length > 0) {
-              this.flowSelectCheckItem = flowSelectCheckItem
-            } else {
-              this.flowSelectCheckItem = []
-            }
-            if (flowSelectCheck.length > 0) {
-              this.flowSelectCheck = flowSelectCheck
-            } else {
-              this.flowSelectCheck = []
-            }
-            console.log('flowSelectCheck get flow', this.$session.getAll().data.typeStoreFrontText)
-          } else {
-            resultOption = []
+            this.storeFront.push({ flowId: itemFlow.flowId, storeFrontText: itemFlow.storeFrontText })
+            flowSelectCheckItem.push({ flowNameEn: itemFlow.flowNameEn, storeFrontText: itemFlow.storeFrontText, checked: isChecked })
+            resultOption.push({ text: itemFlow.flowName, value: itemFlow.flowId, allData: itemFlow })
           }
+          this.flowSelectCheckItem = flowSelectCheckItem.length > 0 ? flowSelectCheckItem : []
+          this.flowSelectCheck = typeStoreFrontTextValues
+
           this.DataFlowItem = resultOption
           if (resultOption.length === 1) {
             this.flowSelect = this.DataFlowItem[0].value
-          }
-          if (resultOption.length > 1) {
+          } else if (resultOption.length > 1) {
             this.flowSelect = 'allFlow'
           }
         }).catch(error => {
@@ -674,51 +556,21 @@ export default {
         })
     },
     async getDataBranch () {
-      let masBranchID = this.$session.getAll().data.masBranchID
-      await axios
-        .get(this.DNS_IP + `/master_branch/get?shopId=${this.$session.getAll().data.shopId}&masBranchID=${masBranchID}`)
-        .then(response => {
-          let rs = response.data
-          if (rs.length > 0) {
-            for (var i = 0; i < rs.length; i++) {
-              let d = rs[i]
-              let s = {}
-              s.text = d.masBranchName
-              s.value = d.masBranchID
-              s.allData = d
-              this.branchItem.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
+      try {
+        this.masBranchID = this.$session.getAll().data.masBranchID
+        await axios
+          .get(`${this.DNS_IP}/master_branch/get?shopId=` + `${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}`)
+          .then(response => {
+            let data = response.data.filter(branch => branch.masBranchID === this.masBranchID)
+            if (data && data.length > 0) {
+              this.branchName = data[0].masBranchName
             }
-            this.masBranchID = rs[0].masBranchID
-          }
-        }).catch(error => {
-          console.log('catch getDataBranch : ', error)
-        })
-    },
-    async getDataFromAPI (url, fieldId, fieldName, param) {
-      let result = []
-      await axios
-        .get(this.DNS_IP + `${url}?shopId=${this.$session.getAll().data.shopId}${param}`)
-        .then(response => {
-          let rs = response.data
-          if (rs.length > 0) {
-            for (var i = 0; i < rs.length; i++) {
-              let d = rs[i]
-              let s = {}
-              s.text = d[fieldName]
-              s.value = d[fieldId]
-              s.allData = d
-              result.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
-            }
-          } else {
-            result = []
-          }
-        }).catch(error => {
-          result = []
-          console.log('catch getDataFromAPI : ', error)
-        })
-      return result
+          }).catch(error => {
+            console.log('catch getDataBranch : ', error)
+          })
+      } catch (error) {
+        console.log('error getDataBranch', error)
+      }
     },
     async closeJobServicePointReturn (item) {
       if (this.servicePoint === '') {
@@ -742,9 +594,7 @@ export default {
         }
         await this.resetFirebaseUse()
         this.dialogServicePointStatus = false
-        // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
         await this.searchBooking('unNoti')
-        // this.clearTimeLoop()
       }
     },
     async closeJobServicePointSubmit (item) {
@@ -758,7 +608,7 @@ export default {
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios
-        .post(this.DNS_IP + '/booking_transaction/addOhrich', dtt)
+        .post(`${this.DNS_IP}'/booking_transaction/addOhrich'`, dtt)
         .then(async responses => {
           let checkresponses = responses.data
           if (checkresponses.status === true) {
@@ -777,13 +627,9 @@ export default {
             }
             await this.resetFirebaseUse()
             this.dialogServicePointStatus = false
-            // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
             await this.searchBooking('noti', item)
-          // this.clearTimeLoop()
           } else {
-            // await this.resetFirebaseUse()
             this.dialogServicePointStatus = false
-            // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
             await this.searchBooking('noti', item)
           }
         })
@@ -797,7 +643,6 @@ export default {
         if (statusBooking === 'confirm') {
           this.checkStatusEdit = true
           this.overlay = false
-          // await this.clearConfirmJob(item.dueDate)
           let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
           let empId = this.$session.getAll().data.empId || ''
           if (USER_ROLE === 'storeFront' && empId !== '') {
@@ -810,13 +655,11 @@ export default {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 this.dialogServicePointStatus = false
                 await this.searchBooking('unNoti')
-                // this.clearTimeLoop()
               }
             } else {
               this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
               this.dialogServicePointStatus = false
               await this.searchBooking('unNoti')
-              // this.clearTimeLoop()
             }
           } else {
             this.$swal('คำเตือน', 'กรุณาลองอีกครั้ง', 'info')
@@ -827,17 +670,13 @@ export default {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           this.dialogServicePointStatus = false
           await this.searchBooking('unNoti')
-          // this.clearTimeLoop()
         }
       }
     },
     async closeJobSubmitReturn (item) {
-      console.log('closeJobSubmit', item)
       this.checkStatusEdit = true
       if (item.servicePointStatus === 'True') {
         this.closeItem = item
-        // this.dialogServicePointStatus = true
-        // this.servicePoint = item.servicePoint || ''
         this.servicePoint = this.$session.getAll().data.counter
         await this.closeJobServicePointReturn(this.closeItem)
         if (item.servicePointRecursive === 'False') {
@@ -854,24 +693,22 @@ export default {
             checkGetQueue: 'True'
           }
           await axios
-            .post(this.DNS_IP + '/Booking/pushMsgQueueReturnOhrich/' + item.bookNo, dtt)
+            .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/this.callQueue.bookNo`, dtt)
             .then(async responses => {}).catch(error => {
               console.log('error function pushMsgQueueReturnOhrich : ', error)
             })
         }
-        // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
         await this.resetFirebaseUse()
-        await this.searchBooking('unNoti')
-        // this.clearTimeLoop()
+        await this.getBooking()
       }
     },
-    async backHomeSubmit (item) {
+    async backHomeSubmit () {
       this.dataReady = true
-      let statusBooking = await this.checkBookingStatus(item.bookNo)
+      // let statusBooking = await this.checkBookingStatus(item.bookNo)
       this.checkStatusEdit = true
-      if (statusBooking === 'confirmJob') {
+      if (this.callQueue.status === 'confirmJob') {
         var dtt = {
-          bookNo: item.bookNo,
+          bookNo: this.callQueue.bookNo,
           contactDate: this.format_date(new Date()),
           status: 'closeJob',
           statusUse: 'use',
@@ -880,20 +717,14 @@ export default {
           LAST_USER: this.$session.getAll().data.userName
         }
         await axios
-          .post(this.DNS_IP + '/booking_transaction/addOhrich', dtt)
+          .post(`${this.DNS_IP}/booking_transaction/addOhrich`, dtt)
           .then(async responses => {
-            // this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
             let checkresponses = responses.data
             if (checkresponses.status === true) {
               await this.resetFirebaseUse()
-              await this.searchBooking('unNoti')
-              this.dataReady = false
-            } else {
-              // await this.resetFirebaseUse()
-              await this.searchBooking('unNoti')
-              this.dataReady = false
             }
-            // this.clearTimeLoop()
+            await this.getBooking()
+            this.dataReady = false
           }).catch(error => {
             this.dataReady = false
             console.log('catch getBookingDataList : ', error)
@@ -901,9 +732,8 @@ export default {
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.resetFirebaseUse()
-        await this.searchBooking('unNoti')
+        await this.getBooking()
         this.dataReady = false
-        // this.clearTimeLoop()
       }
     },
     async setservicePointCount (item) {
@@ -946,53 +776,80 @@ export default {
           this.servicePointItem = JSON.parse(item.servicePointCount) || []
         })
     },
-    async closeJobSubmit (item) {
-      if (item.statusBt === 'confirm') {
-        this.checkStatusEdit = true
-        let statusBooking = await this.checkBookingStatus(item.bookNo)
-        if (statusBooking === 'confirm') {
-          if (item.servicePointStatus === 'True') {
-            this.closeItem = item
-            // this.dialogServicePointStatus = true
-            this.servicePoint = this.$session.getAll().data.counter
-            await this.closeJobServicePoint(this.closeItem)
-            // this.servicePoint = item.servicePoint || ''
-            if (item.servicePointRecursive === 'False') {
-              await this.setservicePointCount(item)
-            } else {
-              this.servicePointItem = JSON.parse(item.servicePointCount) || []
-            }
-            this.statusReturn = false
-          } else {
-            let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
-            let empId = this.$session.getAll().data.empId || ''
-            if (USER_ROLE === 'storeFront' && empId !== '') {
-              let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
-              if (statusBookingCheck === 'confirm') {
-                let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
-                if (statusUpdateEmp === true) {
-                  this.closeJob(item)
-                } else {
-                  this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-                  await this.searchBooking('unNoti')
-                  // this.clearTimeLoop()
-                }
-              } else {
-                this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-                await this.searchBooking('unNoti')
-                // this.clearTimeLoop()
-              }
-            } else {
-              this.$swal('คำเตือน', 'กรุณาลองใหม่อีกครั้ง', 'info')
-              await this.searchBooking('unNoti')
-            }
-          }
-        } else {
-          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-          await this.searchBooking('unNoti')
-          // this.clearTimeLoop()
+    async closeJobSubmit () {
+      try {
+        this.getBooking()
+        let body = {
+          bookNo: this.callQueue.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'confirmJob',
+          statusUse: 'use',
+          pageStatus: 'wait',
+          limitBookingCount: 1,
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.$session.getAll().data.shopId,
+          LAST_USER: this.$session.getAll().data.shopId,
+          packageId: '',
+          tokenPackage: ''
         }
+        await axios
+          .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
+          .then(async res => {
+            console.log('addOhrich', res)
+            if (res.data.status === true) {
+              this.callQueue.status = 'confirmJob'
+            } else {
+              this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+            }
+            await this.getBooking()
+          })
+      } catch (error) {
+        console.log('error closeJobSubmit', error)
       }
+
+      // if (item.statusBt === 'confirm') {
+      //   this.checkStatusEdit = true
+      //   let statusBooking = await this.checkBookingStatus(item.bookNo)
+      //   if (statusBooking === 'confirm') {
+      //     if (item.servicePointStatus === 'True') {
+      //       this.closeItem = item
+      //       // this.dialogServicePointStatus = true
+      //       this.servicePoint = this.$session.getAll().data.counter
+      //       await this.closeJobServicePoint(this.closeItem)
+      //       // this.servicePoint = item.servicePoint || ''
+      //       if (item.servicePointRecursive === 'False') {
+      //         await this.setservicePointCount(item)
+      //       } else {
+      //         this.servicePointItem = JSON.parse(item.servicePointCount) || []
+      //       }
+      //       this.statusReturn = false
+      //     } else {
+      //       let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+      //       let empId = this.$session.getAll().data.empId || ''
+      //       if (USER_ROLE === 'storeFront' && empId !== '') {
+      //         let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
+      //         if (statusBookingCheck === 'confirm') {
+      //           let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
+      //           if (statusUpdateEmp === true) {
+      //             this.closeJob(item)
+      //           } else {
+      //             this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+      //             await this.searchBooking('unNoti')
+      //           }
+      //         } else {
+      //           this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+      //           await this.searchBooking('unNoti')
+      //         }
+      //       } else {
+      //         this.$swal('คำเตือน', 'กรุณาลองใหม่อีกครั้ง', 'info')
+      //         await this.searchBooking('unNoti')
+      //       }
+      //     }
+      //   } else {
+      //     this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+      //     await this.searchBooking('unNoti')
+      //   }
+      // }
     },
     async closeJob (item) {
       var dtt = {
@@ -1024,7 +881,6 @@ export default {
             // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
             await this.resetFirebaseUse()
             await this.searchBooking('noti', item)
-          // this.clearTimeLoop()
           } else {
             // await this.resetFirebaseUse()
             await this.searchBooking('noti', item)
@@ -1071,7 +927,7 @@ export default {
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios
-        .post(this.DNS_IP + '/Booking/editQueueEmp/' + bookNo + '?status=' + status, dtt)
+        .post(`${this.DNS_IP}/Booking/editQueueEmp/${bookNo}?status=${status}`, dtt)
         .then(async response => {
           let rs = response.data
           result = rs.status
@@ -1102,635 +958,6 @@ export default {
         .then(async responses => {
           // this.$swal('เรียบร้อย', 'กรุณารอเรียกคิว', 'success')
         })
-    },
-    // async getBase64ImageFromURL (img) {
-    //   let image = await axios.get(img, {withCredentials: true, responseType: 'arraybuffer'})
-    //   let raw = Buffer.from(image.data).toString('base64')
-    //   this.shopImg = 'data:' + image.headers['content-type'] + ';base64,' + raw
-    // },
-    setPrint (item, language) {
-      let docDefinition = {}
-      if (this.shopImg === '') {
-        if (language === 'th') {
-          docDefinition = {
-            pageSize: 'A4',
-            content: [
-              {
-                text: this.shopName,
-                style: 'header',
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'รับคิวเวลา'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
-              {
-                alignment: 'center',
-                text: item.flowName,
-                fontSize: 30,
-                widths: ['*']
-              },
-              {
-                text: [
-                  {alignment: 'center', text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-                  {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-                ]
-              // alignment: 'center',
-              // style: 'tableExample',
-              // table: {
-              //   heights: [50],
-              //   widths: ['*'],
-              //   body: [
-              //     [
-              //       {
-              //         text: [
-              //           {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-              //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //         ],
-              //         border: [false, false, false, false]
-              //         // fillColor: '#092C4C'
-              //       }
-              //     ]
-              //   ]
-              // }
-              },
-              {
-                text: 'QR Code สำหรับรับการแจ้งเตือน',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
-              {
-                text: '   ',
-                fontSize: 15,
-                // style: 'subheader',
-                widths: ['*']
-              },
-              {
-                text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   fontSize: 25,
-              //   widths: ['*']
-              // },
-              {
-                columns: [
-                  {
-                    fontSize: 15,
-                    alignment: 'center',
-                    text: 'วันที่ ' + item.dueDateText.split(' ')[0]
-                  }
-                ]
-              },
-              {
-                text: '................................................',
-                style: 'subheader',
-                widths: ['*'],
-                alignment: 'center'
-              }
-            ],
-            styles: {
-              header: {
-                fontSize: 30,
-                bold: true
-              },
-              subheader: {
-                fontSize: 29,
-                bold: true
-              },
-              quote: {
-                italics: true
-              },
-              small: {
-                fontSize: 8
-              },
-              defaultStyle: {
-                columnGap: 20
-              },
-              tableExample: {
-                margin: [0, 5, 0, 15]
-              }
-            },
-            defaultStyle: { // 4. default style 'KANIT' font to test
-              font: 'Kanit'
-            }
-          }
-        } else {
-          docDefinition = {
-            pageSize: 'A4',
-            content: [
-              {
-                text: this.shopName,
-                style: 'header',
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'Time'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              {
-                alignment: 'center',
-                text: item.flowNameEn,
-                fontSize: 30,
-                widths: ['*']
-              },
-              {
-                alignment: 'center', text: 'Number', fontSize: 20, color: 'black'
-              },
-              {
-                alignment: 'center', text: item.storeFrontQueue, fontSize: 110, color: 'black'
-              },
-              // {
-              //   text: [
-              //     {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
-              //     {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   ]
-              //   // alignment: 'center',
-              //   // style: 'tableExample',
-              //   // table: {
-              //   //   heights: [50],
-              //   //   widths: ['*'],
-              //   //   body: [
-              //   //     [
-              //   //       {
-              //   //         text: [
-              //   //           {text: 'Number\n', fontSize: 20, color: 'black'},
-              //   //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   //         ],
-              //   //         border: [false, false, false, false]
-              //   //         // fillColor: '#092C4C'
-              //   //       }
-              //   //     ]
-              //   //   ]
-              //   // }
-              // },
-              {
-                text: 'QR Code for receiving notifications',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
-              {
-                text: '   ',
-                fontSize: 15,
-                // style: 'subheader',
-                widths: ['*']
-              },
-              {
-                text: "The company reserves the right to skip the queue. In case the customer doesn't come",
-                // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
-                fontSize: 15,
-                alignment: 'center'
-              },
-              {
-                columns: [
-                  {
-                    fontSize: 15,
-                    alignment: 'center',
-                    text: 'Date ' + item.dueDateText.split(' ')[0]
-                  }
-                ]
-              },
-              {
-                text: '................................................',
-                style: 'subheader',
-                widths: ['*'],
-                alignment: 'center'
-              }
-            ],
-            styles: {
-              header: {
-                fontSize: 30,
-                bold: true
-              },
-              subheader: {
-                fontSize: 29,
-                bold: true
-              },
-              quote: {
-                italics: true
-              },
-              small: {
-                fontSize: 8
-              },
-              defaultStyle: {
-                columnGap: 20
-              },
-              tableExample: {
-                margin: [0, 5, 0, 15]
-              }
-            },
-            defaultStyle: { // 4. default style 'KANIT' font to test
-              font: 'Kanit'
-            }
-          }
-        }
-      } else {
-        if (language === 'th') {
-          docDefinition = {
-            pageSize: 'A4',
-            content: [
-              {
-                text: this.shopName,
-                style: 'header',
-                alignment: 'center'
-              },
-              {
-                image: 'mySuperImage',
-                width: 150,
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'รับคิวเวลา'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
-              {
-                alignment: 'center',
-                text: item.flowName,
-                fontSize: 30,
-                widths: ['*']
-              },
-              {
-                text: [
-                  {alignment: 'center', text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-                  {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-                ]
-              // alignment: 'center',
-              // style: 'tableExample',
-              // table: {
-              //   heights: [50],
-              //   widths: ['*'],
-              //   body: [
-              //     [
-              //       {
-              //         text: [
-              //           {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-              //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //         ],
-              //         border: [false, false, false, false]
-              //         // fillColor: '#092C4C'
-              //       }
-              //     ]
-              //   ]
-              // }
-              },
-              {
-                text: 'QR Code สำหรับรับการแจ้งเตือน',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
-              {
-                text: '   ',
-                fontSize: 15,
-                // style: 'subheader',
-                widths: ['*']
-              },
-              {
-                text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   fontSize: 25,
-              //   widths: ['*']
-              // },
-              {
-                columns: [
-                  {
-                    fontSize: 15,
-                    alignment: 'center',
-                    text: 'วันที่ ' + item.dueDateText.split(' ')[0]
-                  }
-                ]
-              },
-              {
-                text: '................................................',
-                style: 'subheader',
-                widths: ['*'],
-                alignment: 'center'
-              }
-            ],
-            images: {
-              mySuperImage: this.shopImg
-
-            // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
-            // snow: this.shopImg
-
-            // is supported loading images via url with custom headers (minimal version: 0.2.5)
-            // strawberries: {
-            //   url: 'https://picsum.photos/id/1080/367/267',
-            //   headers: {
-            //     myheader: '123',
-            //     myotherheader: 'abc',
-            //   }
-            // }
-            },
-            styles: {
-              header: {
-                fontSize: 30,
-                bold: true
-              },
-              subheader: {
-                fontSize: 29,
-                bold: true
-              },
-              quote: {
-                italics: true
-              },
-              small: {
-                fontSize: 8
-              },
-              defaultStyle: {
-                columnGap: 20
-              },
-              tableExample: {
-                margin: [0, 5, 0, 15]
-              }
-            },
-            defaultStyle: { // 4. default style 'KANIT' font to test
-              font: 'Kanit'
-            }
-          }
-        } else {
-          docDefinition = {
-            pageSize: 'A4',
-            content: [
-              {
-                text: this.shopName,
-                style: 'header',
-                alignment: 'center'
-              },
-              {
-                image: 'mySuperImage',
-                width: 150,
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'Time'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              {
-                alignment: 'center',
-                text: item.flowNameEn,
-                fontSize: 30,
-                widths: ['*']
-              },
-              {
-                alignment: 'center', text: 'Number', fontSize: 20, color: 'black'
-              },
-              {
-                alignment: 'center', text: item.storeFrontQueue, fontSize: 110, color: 'black'
-              },
-              // {
-              //   text: [
-              //     {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
-              //     {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   ]
-              //   // alignment: 'center',
-              //   // style: 'tableExample',
-              //   // table: {
-              //   //   heights: [50],
-              //   //   widths: ['*'],
-              //   //   body: [
-              //   //     [
-              //   //       {
-              //   //         text: [
-              //   //           {text: 'Number\n', fontSize: 20, color: 'black'},
-              //   //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   //         ],
-              //   //         border: [false, false, false, false]
-              //   //         // fillColor: '#092C4C'
-              //   //       }
-              //   //     ]
-              //   //   ]
-              //   // }
-              // },
-              {
-                text: 'QR Code for receiving notifications',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
-              {
-                text: '   ',
-                fontSize: 15,
-                // style: 'subheader',
-                widths: ['*']
-              },
-              {
-                text: "The company reserves the right to skip the queue. In case the customer doesn't come",
-                // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
-                fontSize: 15,
-                alignment: 'center'
-              },
-              {
-                columns: [
-                  {
-                    fontSize: 15,
-                    alignment: 'center',
-                    text: 'Date ' + item.dueDateText.split(' ')[0]
-                  }
-                ]
-              },
-              {
-                text: '................................................',
-                style: 'subheader',
-                widths: ['*'],
-                alignment: 'center'
-              }
-            ],
-            images: {
-              mySuperImage: this.shopImg
-
-            // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
-            // snow: this.shopImg
-
-            // is supported loading images via url with custom headers (minimal version: 0.2.5)
-            // strawberries: {
-            //   url: 'https://picsum.photos/id/1080/367/267',
-            //   headers: {
-            //     myheader: '123',
-            //     myotherheader: 'abc',
-            //   }
-            // }
-            },
-            styles: {
-              header: {
-                fontSize: 30,
-                bold: true
-              },
-              subheader: {
-                fontSize: 29,
-                bold: true
-              },
-              quote: {
-                italics: true
-              },
-              small: {
-                fontSize: 8
-              },
-              defaultStyle: {
-                columnGap: 20
-              },
-              tableExample: {
-                margin: [0, 5, 0, 15]
-              }
-            },
-            defaultStyle: { // 4. default style 'KANIT' font to test
-              font: 'Kanit'
-            }
-          }
-        }
-      }
-      pdfMake.vfs = pdfFonts.pdfMake.vfs // 2. set vfs pdf font
-      pdfMake.fonts = {
-        // download default Roboto font from cdnjs.com
-        Roboto: {
-          normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
-          bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
-          italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
-          bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
-        },
-        // Kanit Font
-        Kanit: { // 3. set Kanit font
-          normal: 'Kanit-Regular.ttf',
-          bold: 'Kanit-Medium.ttf',
-          italics: 'Kanit-Italic.ttf',
-          bolditalics: 'Kanit-MediumItalic.ttf'
-        }
-      }
-      // pdfMake.createPdf(docDefinition).open({}, window)
-      // pdfMake.createPdf(docDefinition).print({}, window)
-
-      // pdfMake.createPdf(docDefinition).print()
-      // this.$scope.generatePdf = function () {
-      // create the window before the callback
-      // win.close()
-      // }
-
-      pdfMake.createPdf(docDefinition).getDataUrl(function (outDoc) {
-        // document.getElementById('pdfV').src = outDoc
-        let dataReplate = outDoc.replace('data:application/pdf;base64,', '')
-        printJS({printable: dataReplate, type: 'pdf', base64: true})
-      })
-      this.overlay = true
-      // var pdfFrame = window.frames['pdfV']
-      // pdfFrame.print()
-      // this.dialogPrint = true
-    },
-    async pushMessageRecallQueue (countNoti, checkGetQueue) {
-      let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
-      if (bookSelect.length > 0) {
-        let bookSelectuse = bookSelect.filter((element, index) => { return index < countNoti })
-        for (let i = 0; i < bookSelectuse.length; i++) {
-          let d = bookSelectuse[i]
-          let s = {}
-          s.lineUserId = d.lineUserId || ''
-          if (s.lineUserId !== '') {
-            let dtt = {
-              checkGetQueue: checkGetQueue
-            }
-            await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + d.bookNo, dtt)
-              .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueueOhrich : ', error)
-              })
-          }
-        }
-      }
     }
   }
 }
