@@ -79,7 +79,7 @@
          <div class="d-flex flex-column">
            <div><h3 class="font-weight-black text-center mt-3"> {{ 'จำนวนคิวที่รอ (' + waitingQueue.length + ')' }}</h3></div>
            <div class="pa-1" style="display: flex;flex-wrap: wrap;justify-content: space-around;flex-direction: row;">
-            <v-col :cols="resCol === '12' ? '4' : '4'" v-for="(item) in waitingQueue" :key="item">
+            <v-col :cols="resCol === '12' ? '4' : '4'" v-for="(item) in waitingQueue" :key="`waitingQueue-${item}`">
              <h3 class="font-weight-black text-center">{{ item }}</h3>
               </v-col>
           </div>
@@ -124,7 +124,6 @@ export default {
       dateStart: '',
       dialog: false,
       dialogAdd: false,
-      dataLineConfig: {},
       checkRef: false,
       checkStatusEdit: false,
       datawainingShow: [],
@@ -168,13 +167,12 @@ export default {
   async mounted () {
     await this.beforeCreate()
     await this.getBooking()
-    await this.getFirestore()
   },
   methods: {
     updateDateStart () {
       const update = () => {
         this.dateStart = this.momenDate_1(new Date())
-
+        this.currentDate = moment().format('DD/MMM/YYYY')
         const now = new Date()
         const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
         const msUntilTomorrow = tomorrow - now
@@ -296,42 +294,24 @@ export default {
     async getFirestore () {
       this.firestore = this.$firebase.firestore()
       const FieldPath = this.$firebase.firestore.FieldPath
+      console.log('getFirestore', this.$session.getAll().data.userName)
       this.firestore.collection('ProcessOhrichUpdate')
         .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
         .onSnapshot((snapshot) => {
-          snapshot.docChanges().forEach(async (change) => {
-            console.log('getFirestore')
-            if (this.checkRef === false) {
-              this.checkRef = true
-              this.dateStart = this.momenDate_1(new Date())
-              this.currentDate = moment().format('DD/MMM/YYYY')
-              this.updateProcessOhrichUpdate()
-              if (this.callQueue.status === 'confirm') {
-                await this.getBooking()
-              } else {
-                await this.getBookingOnlyWait()
-              }
-            } else {
+          if (snapshot.empty) {
+            this.updateProcessOhrichUpdate()
+          } else {
+            snapshot.docChanges().forEach(async (change) => {
               if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
-                if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
-                  if (change.doc.id === this.$session.getAll().data.userName) {
-                    if (!this.checkStatusEdit) {
-                      this.dateStart = this.momenDate_1(new Date())
-                      this.currentDate = moment().format('DD/MMM/YYYY')
-                      this.updateProcessOhrichUpdate()
-                      if (this.callQueue.status === 'confirm') {
-                        await this.getBooking()
-                      } else {
-                        await this.getBookingOnlyWait()
-                      }
-                    }
-                  }
+                if (this.callQueue.status === 'confirm') {
+                  await this.getBooking()
                 } else {
-                  await this.checkSession()
+                  await this.getBookingOnlyWait()
                 }
+                this.updateProcessOhrichUpdate()
               }
-            }
-          })
+            })
+          }
         })
     },
     updateProcessOhrichUpdate () {
@@ -376,11 +356,6 @@ export default {
         this.resetFirebaseUse()
         await this.searchBooking('unNoti')
       }
-    },
-    async getBefore () {
-      this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
-      this.searchBooking('unNoti')
-      this.checkStatusEdit = false
     },
     async checkSession () {
       if (!this.$session.exists()) {
@@ -439,54 +414,6 @@ export default {
       dataConfirm.push(...mergedData)
       return dataConfirm
     },
-    async searchBooking (checkNoti, item) {
-      if (this.validSearch === true) {
-        this.checkStatusEdit = false
-        let itemBooking = []
-        let urlApi = {}
-        if (this.flowSelect === 'allFlow') {
-          urlApi = `${this.DNS_IP}/booking_view/get?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${this.dateStart}&storeFrontQueue=is not null&statusBt=confirm and confirmJob`
-        } else {
-          urlApi = this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.$session.getAll().data.shopId +
-            '&masBranchID=' +
-            this.masBranchID +
-            '&flowId=' +
-            this.flowSelect +
-            '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
-        }
-        await axios
-          .get(urlApi)
-          .then(async response => {
-            let rs = response.data
-            if (rs.length > 0) {
-              itemBooking = await this.GroupArrayQueue(rs)
-              let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
-              let empId = this.$session.getAll().data.empId || ''
-              let itemBookings = []
-              if (USER_ROLE === 'storeFront' && empId !== '') {
-                let dataCon = itemBooking.filter(el => { return el.statusBt === 'confirmJob' && el.storeFrontQueueEmpId === parseInt(empId) })
-                let dataWain = itemBooking.filter(el => { return el.statusBt === 'confirm' })
-                this.datawainingShow = itemBooking.filter(el => { return el.statusBt === 'confirm' })
-                itemBookings = [ ...dataCon, ...dataWain ]
-              } else {
-                itemBookings = itemBooking
-              }
-              this.itemBooking = itemBookings
-              this.overlay = true
-            } else {
-              this.itemBooking = []
-              this.datawainingShow = []
-              this.overlay = true
-            }
-          })
-      } else {
-        this.checkStatusEdit = false
-        this.overlay = true
-      }
-    },
     getDataFromFieldName (data, key) {
       if (data !== undefined) {
         return data.filter(function (el) {
@@ -495,31 +422,6 @@ export default {
       } else {
         return []
       }
-    },
-    async getBookingDataList (dateStart) {
-      let BookingDataList = []
-      let url = ''
-      if (this.flowSelect === 'allFlow') {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
-      } else {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
-      }
-      await axios
-        .get(url)
-        .then(async response => {
-          if (response.data.status !== false) {
-            response.data.forEach((row) => {
-              if (typeof (BookingDataList[row.bookNo]) === 'undefined') {
-                BookingDataList[row.bookNo] = []
-              }
-              BookingDataList[row.bookNo].push(row)
-            })
-            this.BookingDataList = BookingDataList
-          }
-        }).catch(error => {
-          setTimeout(() => this.getBookingDataList(dateStart), 3000)
-          console.log('catch getBookingDataList : ', error)
-        })
     },
     async getDataFlow () {
       let resultOption = []
@@ -673,34 +575,44 @@ export default {
         }
       }
     },
-    async closeJobSubmitReturn (item) {
-      this.checkStatusEdit = true
-      if (item.servicePointStatus === 'True') {
-        this.closeItem = item
-        this.servicePoint = this.$session.getAll().data.counter
-        await this.closeJobServicePointReturn(this.closeItem)
-        if (item.servicePointRecursive === 'False') {
-          await this.setservicePointCount(item)
-        } else {
-          this.servicePointItem = JSON.parse(item.servicePointCount) || []
-        }
-        this.statusReturn = true
-      } else {
-        let lineUserId = item.lineUserId || ''
-        this.reCallNoti(item)
-        if (lineUserId !== '') {
-          let dtt = {
-            checkGetQueue: 'True'
-          }
+    async closeJobSubmitReturn () {
+      try {
+        if (this.callQueue.status === 'confirmJob') {
           await axios
-            .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/this.callQueue.bookNo`, dtt)
+            .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/${this.callQueue.bookNo}`, { checkGetQueue: 'True' })
             .then(async responses => {}).catch(error => {
               console.log('error function pushMsgQueueReturnOhrich : ', error)
             })
         }
-        await this.resetFirebaseUse()
-        await this.getBooking()
+      } catch (error) {
+        console.log('Error closeJobSubmitReturn', error)
       }
+      // if (item === 'True') {
+      //   this.closeItem = item
+      //   this.servicePoint = this.$session.getAll().data.counter
+      //   await this.closeJobServicePointReturn(this.closeItem)
+      //   if (item.servicePointRecursive === 'False') {
+      //     await this.setservicePointCount(item)
+      //   } else {
+      //     this.servicePointItem = JSON.parse(item.servicePointCount) || []
+      //   }
+      //   this.statusReturn = true
+      // } else {
+      //   let lineUserId = item.lineUserId || ''
+      //   this.reCallNoti(item)
+      //   if (lineUserId !== '') {
+      //     let dtt = {
+      //       checkGetQueue: 'True'
+      //     }
+      //     await axios
+      //       .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/this.callQueue.bookNo`, dtt)
+      //       .then(async responses => {}).catch(error => {
+      //         console.log('error function pushMsgQueueReturnOhrich : ', error)
+      //       })
+      //   }
+      //   await this.resetFirebaseUse()
+      //   await this.getBooking()
+      // }
     },
     async backHomeSubmit () {
       this.dataReady = true
@@ -806,50 +718,6 @@ export default {
       } catch (error) {
         console.log('error closeJobSubmit', error)
       }
-
-      // if (item.statusBt === 'confirm') {
-      //   this.checkStatusEdit = true
-      //   let statusBooking = await this.checkBookingStatus(item.bookNo)
-      //   if (statusBooking === 'confirm') {
-      //     if (item.servicePointStatus === 'True') {
-      //       this.closeItem = item
-      //       // this.dialogServicePointStatus = true
-      //       this.servicePoint = this.$session.getAll().data.counter
-      //       await this.closeJobServicePoint(this.closeItem)
-      //       // this.servicePoint = item.servicePoint || ''
-      //       if (item.servicePointRecursive === 'False') {
-      //         await this.setservicePointCount(item)
-      //       } else {
-      //         this.servicePointItem = JSON.parse(item.servicePointCount) || []
-      //       }
-      //       this.statusReturn = false
-      //     } else {
-      //       let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
-      //       let empId = this.$session.getAll().data.empId || ''
-      //       if (USER_ROLE === 'storeFront' && empId !== '') {
-      //         let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
-      //         if (statusBookingCheck === 'confirm') {
-      //           let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
-      //           if (statusUpdateEmp === true) {
-      //             this.closeJob(item)
-      //           } else {
-      //             this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-      //             await this.searchBooking('unNoti')
-      //           }
-      //         } else {
-      //           this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-      //           await this.searchBooking('unNoti')
-      //         }
-      //       } else {
-      //         this.$swal('คำเตือน', 'กรุณาลองใหม่อีกครั้ง', 'info')
-      //         await this.searchBooking('unNoti')
-      //       }
-      //     }
-      //   } else {
-      //     this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-      //     await this.searchBooking('unNoti')
-      //   }
-      // }
     },
     async closeJob (item) {
       var dtt = {
@@ -880,11 +748,8 @@ export default {
             }
             // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
             await this.resetFirebaseUse()
-            await this.searchBooking('noti', item)
-          } else {
-            // await this.resetFirebaseUse()
-            await this.searchBooking('noti', item)
           }
+          await this.getBooking()
         })
     },
     async clearConfirmJob (dueDateUse) {
@@ -948,16 +813,17 @@ export default {
         .then(async responses => {})
     },
     async reCallNoti (item) {
-      let dtdt = {
-        statusNotify: 'False',
-        servicePoint: this.servicePoint,
-        LAST_USER: this.$session.getAll().data.userName
+      try {
+        let dtdt = {
+          statusNotify: 'False',
+          servicePoint: this.$session.getAll().data.counter,
+          LAST_USER: this.$session.getAll().data.userName
+        }
+        await axios
+          .post(this.DNS_IP + '/callQueues/edit/' + item.audioFileId, dtdt)
+      } catch (error) {
+        console.log('reCallNoti', error)
       }
-      await axios
-        .post(this.DNS_IP + '/callQueues/edit/' + item.audioFileId, dtdt)
-        .then(async responses => {
-          // this.$swal('เรียบร้อย', 'กรุณารอเรียกคิว', 'success')
-        })
     }
   }
 }
