@@ -105,7 +105,6 @@ export default {
     }
   },
   created () {
-    setInterval(this.getNow, 1000)
     this.checkWiFiStatus()
     window.addEventListener('online', () => { this.wifiStatus = 'connected' })
     window.addEventListener('offline', () => { this.wifiStatus = 'disconnected' })
@@ -143,7 +142,6 @@ export default {
       shopName: '',
       shopColor: '',
       shopImage: '',
-      shopTime: '',
       bgColor: '',
       bgColor2: '',
       bgColor3: '',
@@ -1004,12 +1002,6 @@ export default {
     await this.getDataBranch()
     await this.getDataFlow()
     this.setTime()
-    // this.$root.$on('closeSetTimeBookingMonitor', () => {
-    //   // your code goes here
-    //   this.closeSetTimeBookingMonitor()
-    // })
-    // this.clearTimeLoop()
-    // this.checkSearch()
     this.getFirestore()
     document.querySelector('body').requestFullscreen()
     this.interval = setInterval(() => {
@@ -1106,12 +1098,8 @@ export default {
         'two': [],
         'three': []
       }
-      // console.log('TT', item)
-      // console.log('item', item)
       for (let i = 0; i < item.length; i += this.counterTotal) {
-        // console.log('i', item[i])
         const group = item.slice(i, i + this.counterTotal)
-        // console.log('countIndex', countIndex)
         if (countIndex <= 2) {
           this.GroupQueueItem.one.push(...group)
         } else if (countIndex <= 4) {
@@ -1119,8 +1107,6 @@ export default {
         } else {
           this.GroupQueueItem.three.push(...group)
         }
-        // console.log('group', group)
-        // this.GroupQueueItem.push(group)
         countIndex++
       }
       if (this.GroupQueueItem.one.length > 0) {
@@ -1168,42 +1154,16 @@ export default {
           }
         }
       }
-      // console.log('dataConfirm', dataConfirm)
-      // console.log('data', data)
-      // console.log('dataB', dataB)
       let mergedData = [...dataB, ...data.slice(0)]
       dataConfirm.push(...mergedData)
       return dataConfirm
     },
-    // async GroupArrayQueue (dataArray) {
-    //   // ใช้ Map เพื่อจัดกลุ่มตาม flowId
-    //   const sortedArray = dataArray.sort((a, b) => {
-    //     const getParts = (str) => {
-    //       const match = str.match(/([A-Z]+)([0-9]+)/)
-    //       return [match[1], parseInt(match[2])]
-    //     }
-
-    //     const [prefixA, numA] = getParts(a.storeFrontQueue)
-    //     const [prefixB, numB] = getParts(b.storeFrontQueue)
-
-    //     // เรียงลำดับตาม num และ prefix
-    //     if (numA === numB) {
-    //       return prefixA.localeCompare(prefixB)
-    //     } else {
-    //       return numA - numB
-    //     }
-    //   })
-    //   return sortedArray
-    // },
     async changeStatusSound (text) {
       if (text === 'on') {
         this.statusSound = true
         await this.updatestatusNotifyByShopId()
-        // this.getMessage()
       } else {
         this.statusSound = false
-        // clearInterval(this.statusSoundCheck)
-        // this.statusSoundCheck = null
       }
     },
     async updatestatusNotifyByShopId () {
@@ -1387,13 +1347,6 @@ export default {
         playerQueue.pause()
         playerCounter.pause()
       }
-    },
-    getNow: function () {
-      // const today = new Date()
-      // const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
-      // const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
-      // const dateTime = date + ' ' + time
-      this.shopTime = 'เวลา ' + moment().format('HH:mm') + ' น.'
     },
     async getShop () {
       this.shop = []
@@ -1611,15 +1564,13 @@ export default {
       }
     },
     async getDataBranch () {
-      // if (localStorage.getItem('BRANCH') === null) {
-      //   let temp = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
-      //   console.log(typeof temp)
-      //   localStorage.setItem('BRANCH', JSON.stringify(temp))
-      // }
-      // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
-      this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '', 'masBranchNameEn')
-      if (this.branchItem.length > 0) {
-        this.masBranchID = this.session.data.masBranchID || this.branchItem[0].value
+      try {
+        this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '', 'masBranchNameEn')
+        if (this.branchItem.length > 0) {
+          this.masBranchID = this.session.data.masBranchID || this.branchItem[0].value
+        }
+      } catch (error) {
+        console.log('getDataBranch ', error)
       }
     },
     async getDataFromAPI (url, fieldId, fieldName, param, fieldNameEn) {
@@ -1639,7 +1590,6 @@ export default {
               s.value = d[fieldId]
               s.allData = d
               result.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             result = []
