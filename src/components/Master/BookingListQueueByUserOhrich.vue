@@ -201,7 +201,8 @@ export default {
                   this.callQueue = {
                     bookNo: '',
                     storeFrontQueue: 'XXXX',
-                    status: 'no have type'
+                    status: 'no have type',
+                    audioFileId: null
                   }
                   this.waitingQueue = []
                   return
@@ -210,7 +211,8 @@ export default {
                   this.callQueue = {
                     bookNo: data[0].bookNo,
                     storeFrontQueue: data[0].storeFrontQueue,
-                    status: data[0].status
+                    status: data[0].status,
+                    audioFileId: data[0].audioFileId
                   }
                   response.data.filter(item => item.status === 'confirm').forEach(queue => {
                     this.waitingQueue.push(queue.storeFrontQueue)
@@ -578,41 +580,18 @@ export default {
     async closeJobSubmitReturn () {
       try {
         if (this.callQueue.status === 'confirmJob') {
+          this.reCallNoti()
           await axios
             .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/${this.callQueue.bookNo}`, { checkGetQueue: 'True' })
             .then(async responses => {}).catch(error => {
               console.log('error function pushMsgQueueReturnOhrich : ', error)
             })
+          await this.resetFirebaseUse()
+          await this.getBooking()
         }
       } catch (error) {
         console.log('Error closeJobSubmitReturn', error)
       }
-      // if (item === 'True') {
-      //   this.closeItem = item
-      //   this.servicePoint = this.$session.getAll().data.counter
-      //   await this.closeJobServicePointReturn(this.closeItem)
-      //   if (item.servicePointRecursive === 'False') {
-      //     await this.setservicePointCount(item)
-      //   } else {
-      //     this.servicePointItem = JSON.parse(item.servicePointCount) || []
-      //   }
-      //   this.statusReturn = true
-      // } else {
-      //   let lineUserId = item.lineUserId || ''
-      //   this.reCallNoti(item)
-      //   if (lineUserId !== '') {
-      //     let dtt = {
-      //       checkGetQueue: 'True'
-      //     }
-      //     await axios
-      //       .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/this.callQueue.bookNo`, dtt)
-      //       .then(async responses => {}).catch(error => {
-      //         console.log('error function pushMsgQueueReturnOhrich : ', error)
-      //       })
-      //   }
-      //   await this.resetFirebaseUse()
-      //   await this.getBooking()
-      // }
     },
     async backHomeSubmit () {
       this.dataReady = true
@@ -651,7 +630,6 @@ export default {
     async setservicePointCount (item) {
       this.servicePointItem = []
       await axios
-        // .get(this.DNS_IP + '/BookingData/get?shopId=' + this.$session.getAll().data.shopId + '&bookNo=' + this.bookNo)
         .get(this.DNS_IP + '/booking_view/get?shopId=' + item.shopId + '&flowId=' + item.flowId +
         '&dueDateDay=' + this.dateStart + '&storeFrontQueue=is not null&statusBt=confirmJob&servicePointStatus=True')
         .then(async response => {
@@ -690,31 +668,33 @@ export default {
     },
     async closeJobSubmit () {
       try {
-        this.getBooking()
-        let body = {
-          bookNo: this.callQueue.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'confirmJob',
-          statusUse: 'use',
-          pageStatus: 'wait',
-          limitBookingCount: 1,
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.shopId,
-          LAST_USER: this.$session.getAll().data.shopId,
-          packageId: '',
-          tokenPackage: ''
+        if (this.callQueue.status === 'confirm') {
+          this.getBooking()
+          let body = {
+            bookNo: this.callQueue.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'confirmJob',
+            statusUse: 'use',
+            pageStatus: 'wait',
+            limitBookingCount: 1,
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.shopId,
+            LAST_USER: this.$session.getAll().data.shopId,
+            packageId: '',
+            tokenPackage: ''
+          }
+          await axios
+            .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
+            .then(async res => {
+              if (res.data.status) {
+                this.callQueue.status = 'confirmJob'
+                await this.CallNoti()
+              } else {
+                this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+              }
+              await this.getBooking()
+            })
         }
-        await axios
-          .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
-          .then(async res => {
-            console.log('addOhrich', res)
-            if (res.data.status === true) {
-              this.callQueue.status = 'confirmJob'
-            } else {
-              this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-            }
-            await this.getBooking()
-          })
       } catch (error) {
         console.log('error closeJobSubmit', error)
       }
@@ -799,17 +779,17 @@ export default {
         })
       return result
     },
-    async CallNoti (item) {
-      let dtdt = {
-        bookNo: item.bookNo,
-        servicePoint: this.servicePoint,
+    async CallNoti () {
+      let body = {
+        bookNo: this.CallNoti.bookNo,
+        servicePoint: this.$session.getAll().data.counter,
         shopId: this.$session.getAll().data.shopId,
-        storeFrontQueue: item.storeFrontQueue,
+        storeFrontQueue: this.CallNoti.storeFrontQueue,
         CREATE_USER: this.$session.getAll().data.userName,
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios
-        .post(this.DNS_IP + '/callQueues/add', dtdt)
+        .post(`${this.DNS_IP}/callQueues/add`, body)
         .then(async responses => {})
     },
     async reCallNoti (item) {
