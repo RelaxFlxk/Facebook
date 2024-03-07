@@ -65,7 +65,7 @@
             </div>
             <div class="w-100 ml-2">
               <v-btn class="btn-event" color="#F38383" rounded
-              :disabled="callQueue !== null && callQueue.status === 'confirmJob' && dataReady === false ? false : true"
+              :disabled="callQueue !== null && callQueue.status !== 'confirmJob'"
               @click="backHomeSubmit()">
                <strong class="text-white text-event">ปิดงาน</strong>
                </v-btn>
@@ -181,6 +181,24 @@ export default {
 
       update()
     },
+    async listBookingAll () {
+      let fittleConfirmJob = []
+      try {
+        await axios
+          .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=${this.$session.getAll().data.flowId}`)
+          .then(async response => {
+            if (response && response.data) {
+              let data = response.data
+              if (data && data.length > 0) {
+                fittleConfirmJob = data.filter(item => item.status === 'confirmJob')
+              }
+            }
+          })
+      } catch (error) {
+        console.log('Error getBooking', error)
+      }
+      return fittleConfirmJob
+    },
     async getBooking () {
       try {
         let flowId = []
@@ -208,11 +226,21 @@ export default {
                   return
                 }
                 if (data && data.length > 0) {
-                  this.callQueue = {
-                    bookNo: data[0].bookNo,
-                    storeFrontQueue: data[0].storeFrontQueue,
-                    status: data[0].status,
-                    audioFileId: data[0].audioFileId
+                  const fittleConfirmJob = await this.listBookingAll()
+                  if (fittleConfirmJob && fittleConfirmJob.length > 0) {
+                    this.callQueue = {
+                      bookNo: fittleConfirmJob[0].bookNo,
+                      storeFrontQueue: fittleConfirmJob[0].storeFrontQueue,
+                      status: 'confirmJob',
+                      audioFileId: fittleConfirmJob[0].audioFileId
+                    }
+                  } else {
+                    this.callQueue = {
+                      bookNo: data[0].bookNo,
+                      storeFrontQueue: data[0].storeFrontQueue,
+                      status: data[0].status,
+                      audioFileId: data[0].audioFileId
+                    }
                   }
                   response.data.filter(item => item.status === 'confirm').forEach(queue => {
                     this.waitingQueue.push(queue.storeFrontQueue)
@@ -331,10 +359,8 @@ export default {
       await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichNew', params)
     },
     async removeQueue () {
-      // let statusBooking = await this.checkBookingStatus(item.bookNo)
-      // this.checkStatusEdit = true
       if (this.callQueue.status === 'confirmJob' || this.callQueue.status === 'confirm') {
-        var dtt = {
+        let body = {
           bookNo: this.callQueue.bookNo,
           contactDate: this.format_date(new Date()),
           status: 'cancel',
@@ -345,7 +371,7 @@ export default {
           remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
         }
         await axios
-          .post(this.DNS_IP + '/booking_transaction/addOhrich', dtt)
+          .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
           .then(async responses => {
             let checkresponses = responses.data
             if (checkresponses.status === true) {
@@ -356,7 +382,7 @@ export default {
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         this.resetFirebaseUse()
-        await this.searchBooking('unNoti')
+        await this.getBooking('unNoti')
       }
     },
     async checkSession () {
@@ -390,31 +416,6 @@ export default {
     },
     dial: function (number) {
       window.location = 'tel:' + number
-    },
-    async GroupArrayQueue (dataArray) {
-      let dataConfirm = []
-      let data = []
-      let dataB = []
-      let dataC = []
-      for (let i = 0; i < dataArray.length; i++) {
-        let d = dataArray[i]
-        if (d.statusBt === 'confirmJob') {
-          dataConfirm.push(d)
-        } else {
-          if (this.flowSelectCheck.filter((item) => item === d.storeFrontText).length > 0) {
-            if (d.storeFrontText === 'B') {
-              dataB.push(d)
-            } else if (d.storeFrontText === 'C') {
-              dataC.push(d)
-            } else {
-              data.push(d)
-            }
-          }
-        }
-      }
-      let mergedData = [...dataB, ...dataC, ...data.slice(0)]
-      dataConfirm.push(...mergedData)
-      return dataConfirm
     },
     getDataFromFieldName (data, key) {
       if (data !== undefined) {
@@ -594,11 +595,9 @@ export default {
       }
     },
     async backHomeSubmit () {
-      this.dataReady = true
       // let statusBooking = await this.checkBookingStatus(item.bookNo)
-      this.checkStatusEdit = true
       if (this.callQueue.status === 'confirmJob') {
-        var dtt = {
+        let body = {
           bookNo: this.callQueue.bookNo,
           contactDate: this.format_date(new Date()),
           status: 'closeJob',
@@ -608,63 +607,21 @@ export default {
           LAST_USER: this.$session.getAll().data.userName
         }
         await axios
-          .post(`${this.DNS_IP}/booking_transaction/addOhrich`, dtt)
+          .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
           .then(async responses => {
             let checkresponses = responses.data
             if (checkresponses.status === true) {
               await this.resetFirebaseUse()
             }
             await this.getBooking()
-            this.dataReady = false
           }).catch(error => {
-            this.dataReady = false
             console.log('catch getBookingDataList : ', error)
           })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.resetFirebaseUse()
         await this.getBooking()
-        this.dataReady = false
       }
-    },
-    async setservicePointCount (item) {
-      this.servicePointItem = []
-      await axios
-        .get(this.DNS_IP + '/booking_view/get?shopId=' + item.shopId + '&flowId=' + item.flowId +
-        '&dueDateDay=' + this.dateStart + '&storeFrontQueue=is not null&statusBt=confirmJob&servicePointStatus=True')
-        .then(async response => {
-          let rs = response.data
-          if (rs.status !== false) {
-            let servicePointItem = rs.filter(el => { return el.servicePoint !== null || el.servicePoint !== '' })
-            if (servicePointItem.length > 0) {
-              if (JSON.parse(item.servicePointCount).length > 0) {
-                for (let i = 0; i < JSON.parse(item.servicePointCount).length; i++) {
-                  let d = JSON.parse(item.servicePointCount)[i]
-                  if (servicePointItem.filter(el => { return el.servicePoint === d.textTh }).length === 0) {
-                    this.servicePointItem.push(d)
-                  }
-                }
-                if (servicePointItem.filter(el => { return el.servicePoint === item.servicePoint }).length > 0) {
-                  let otherCounr = JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint })
-                  if (otherCounr.length > 0) {
-                    this.servicePointItem.push(otherCounr[0])
-                  }
-                }
-              } else {
-                this.servicePointItem = []
-              }
-            } else {
-              this.servicePointItem = JSON.parse(item.servicePointCount) || []
-            }
-          } else {
-            this.servicePointItem = JSON.parse(item.servicePointCount) || []
-          }
-        })
-        .catch(err => {
-          // this.$router.push({ name: '404' })
-          console.log(err.code, err.message)
-          this.servicePointItem = JSON.parse(item.servicePointCount) || []
-        })
     },
     async closeJobSubmit () {
       try {
