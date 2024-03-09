@@ -150,15 +150,6 @@ export default {
         case 'xl':
           return '6'
       }
-    },
-    dialogwidth () {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '70%'
-        case 'sm': return '60%'
-        case 'md': return '50%'
-        case 'lg': return '50%'
-        case 'xl': return '50%'
-      }
     }
   },
   created () {
@@ -181,16 +172,17 @@ export default {
 
       update()
     },
-    async listBookingAll () {
+    async MyBooking () {
       let fittleConfirmJob = []
       try {
+        let empId = parseInt(this.$session.getAll().data.empId) || null
         await axios
-          .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=${this.$session.getAll().data.flowId}`)
+          .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=${this.$session.getAll().data.flowId}&storeFrontQueueEmpId=${empId}`)
           .then(async response => {
             if (response && response.data) {
               let data = response.data
               if (data && data.length > 0) {
-                fittleConfirmJob = data.filter(item => item.status === 'confirmJob')
+                fittleConfirmJob = data.filter(item => item.status === 'confirmJob' && parseInt(item.storeFrontQueueEmpId) === empId)
               }
             }
           })
@@ -202,16 +194,19 @@ export default {
     async getBooking () {
       try {
         let flowId = []
-        this.waitingQueue = []
-        this.flowSelectCheck.forEach(text => {
-          let storeFront = this.storeFront.filter(a => a.storeFrontText === text)
-          if (storeFront && storeFront.length > 0) {
-            flowId.push(storeFront[0].flowId)
-          }
-        })
+        let waitingQueue = []
+        if (Array.isArray(this.flowSelectCheck)) {
+          this.flowSelectCheck.forEach(text => {
+            let storeFront = this.storeFront.filter(a => a.storeFrontText === text)
+            if (storeFront && storeFront.length > 0) {
+              flowId.push(storeFront[0].flowId)
+            }
+          })
+        }
         if (this.flowSelectCheck && this.flowSelectCheck.length > 0) {
+          let empId = parseInt(this.$session.getAll().data.empId) || null
           await axios
-            .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=[${flowId}]`)
+            .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=[${flowId}]&storeFrontQueueEmpId=${empId}`)
             .then(async response => {
               if (response && response.data) {
                 let data = response.data
@@ -220,30 +215,44 @@ export default {
                     bookNo: '',
                     storeFrontQueue: 'XXXX',
                     status: 'no have type',
-                    audioFileId: null
+                    audioFileId: null,
+                    storeFrontQueueEmpId: null
                   }
-                  this.waitingQueue = []
+                  waitingQueue = []
                   return
                 }
                 if (data && data.length > 0) {
-                  const fittleConfirmJob = await this.listBookingAll()
+                  const fittleConfirmJob = await this.MyBooking()
                   if (fittleConfirmJob && fittleConfirmJob.length > 0) {
                     this.callQueue = {
                       bookNo: fittleConfirmJob[0].bookNo,
                       storeFrontQueue: fittleConfirmJob[0].storeFrontQueue,
                       status: 'confirmJob',
-                      audioFileId: fittleConfirmJob[0].audioFileId
+                      audioFileId: fittleConfirmJob[0].audioFileId,
+                      storeFrontQueueEmpId: parseInt(fittleConfirmJob[0].storeFrontQueueEmpId)
                     }
                   } else {
-                    this.callQueue = {
-                      bookNo: data[0].bookNo,
-                      storeFrontQueue: data[0].storeFrontQueue,
-                      status: data[0].status,
-                      audioFileId: data[0].audioFileId
+                    let fittleDataConfirm = data.filter(a => a.status === 'confirm')
+                    if (fittleDataConfirm.length > 0) {
+                      this.callQueue = {
+                        bookNo: fittleDataConfirm[0].bookNo,
+                        storeFrontQueue: fittleDataConfirm[0].storeFrontQueue,
+                        status: fittleDataConfirm[0].status,
+                        audioFileId: fittleDataConfirm[0].audioFileId,
+                        storeFrontQueueEmpId: parseInt(fittleDataConfirm[0].storeFrontQueueEmpId)
+                      }
+                    } else {
+                      this.callQueue = {
+                        bookNo: '',
+                        storeFrontQueue: 'XXXX',
+                        status: 'no have type',
+                        audioFileId: null,
+                        storeFrontQueueEmpId: null
+                      }
                     }
                   }
                   response.data.filter(item => item.status === 'confirm').forEach(queue => {
-                    this.waitingQueue.push(queue.storeFrontQueue)
+                    waitingQueue.push(queue.storeFrontQueue)
                   })
                 }
               }
@@ -252,9 +261,11 @@ export default {
           this.callQueue = {
             bookNo: '',
             storeFrontQueue: 'XXXX',
-            status: 'no have type'
+            status: 'no have type',
+            storeFrontQueueEmpId: null
           }
         }
+        this.waitingQueue = waitingQueue
       } catch (error) {
         console.log('Error getBooking', error)
       }
@@ -262,7 +273,7 @@ export default {
     async getBookingOnlyWait () {
       try {
         let flowId = []
-        this.waitingQueue = []
+        let waitingQueue = []
         this.flowSelectCheck.forEach(text => {
           let storeFront = this.storeFront.filter(a => a.storeFrontText === text)
           if (storeFront && storeFront.length > 0) {
@@ -270,28 +281,45 @@ export default {
           }
         })
         await axios
-          .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=[${flowId}]`)
+          .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=[${flowId}]&storeFrontQueueEmpId=${this.$session.getAll().data.empId}`)
           .then(async response => {
             if (response && response.data) {
               let data = response.data
               if (data.status === false) {
-                this.waitingQueue = []
+                waitingQueue = []
                 return
               }
               if (data && data.length > 0) {
+                let empId = parseInt(this.$session.getAll().data.empId) || null
+                let update = response.data.filter(itemUpdate => itemUpdate.status === 'confirmJob' && parseInt(itemUpdate.storeFrontQueueEmpId) === empId)
+                if (update && update.length > 0) {
+                  this.callQueue = {
+                    bookNo: update[0].bookNo,
+                    storeFrontQueue: update[0].storeFrontQueue,
+                    status: update[0].status,
+                    audioFileId: update[0].audioFileId,
+                    storeFrontQueueEmpId: null
+                  }
+                }
                 response.data.filter(item => item.status === 'confirm').forEach(queue => {
-                  this.waitingQueue.push(queue.storeFrontQueue)
+                  waitingQueue.push(queue.storeFrontQueue)
                 })
               }
             }
           })
+        this.waitingQueue = waitingQueue
       } catch (error) {
         console.log('Error getBookingOnlyWait', error)
       }
     },
     async UpdatetypeStoreFrontText (flowitem) {
+      this.flowSelectCheck = this.flowSelectCheck || []
       if (flowitem.checked) {
-        if (!this.flowSelectCheck.includes(flowitem.storeFrontText)) {
+        if (this.flowSelectCheck) {
+          if (!this.flowSelectCheck.includes(flowitem.storeFrontText)) {
+            this.flowSelectCheck.push(flowitem.storeFrontText)
+          }
+        } else {
           this.flowSelectCheck.push(flowitem.storeFrontText)
         }
       } else {
@@ -300,7 +328,6 @@ export default {
           this.flowSelectCheck.splice(index, 1)
         }
       }
-
       let dataSession = this.$session.get('data')
       dataSession.typeStoreFrontText = JSON.stringify(this.flowSelectCheck)
       this.$session.set('data', dataSession)
@@ -308,11 +335,11 @@ export default {
       let obj = {
         'typeStoreFrontText': JSON.stringify(this.flowSelectCheck)
       }
-      if (this.callQueue.status !== 'confirmJob') {
-        this.getBooking()
-      } else {
-        this.getBookingOnlyWait()
-      }
+      // if (this.callQueue.status !== 'confirmJob') {
+      this.getBooking()
+      // } else {
+      //  this.getBookingOnlyWait()
+      //  }
       this.updateSYS_USER(this.$session.getAll().data.userId, obj)
     },
     async updateSYS_USER (id, obj) {
@@ -324,7 +351,6 @@ export default {
     async getFirestore () {
       this.firestore = this.$firebase.firestore()
       const FieldPath = this.$firebase.firestore.FieldPath
-      console.log('getFirestore', this.$session.getAll().data.userName)
       this.firestore.collection('ProcessOhrichUpdate')
         .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
         .onSnapshot((snapshot) => {
@@ -332,12 +358,13 @@ export default {
             this.updateProcessOhrichUpdate()
           } else {
             snapshot.docChanges().forEach(async (change) => {
+              console.log('getFirestore')
               if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
-                if (this.callQueue.status === 'confirm') {
-                  await this.getBooking()
-                } else {
-                  await this.getBookingOnlyWait()
-                }
+                // if (this.callQueue.status !== 'confirmJob') {
+                await this.getBooking()
+                // } else {
+                //   await this.getBookingOnlyWait()
+                // }
                 this.updateProcessOhrichUpdate()
               }
             })
@@ -372,18 +399,16 @@ export default {
         }
         await axios
           .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
-          .then(async responses => {
-            let checkresponses = responses.data
-            if (checkresponses.status === true) {
-              this.resetFirebaseUse()
-            }
-            await this.getBooking()
-          })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-        this.resetFirebaseUse()
-        await this.getBooking('unNoti')
       }
+      this.callQueue = {
+        bookNo: null,
+        storeFrontQueue: 'XXXX',
+        status: 'removeQueue',
+        audioFileId: null
+      }
+      this.resetFirebaseUse()
     },
     async checkSession () {
       if (!this.$session.exists()) {
@@ -417,15 +442,6 @@ export default {
     dial: function (number) {
       window.location = 'tel:' + number
     },
-    getDataFromFieldName (data, key) {
-      if (data !== undefined) {
-        return data.filter(function (el) {
-          return el.fieldName === key
-        })
-      } else {
-        return []
-      }
-    },
     async getDataFlow () {
       let resultOption = []
       let flowSelectCheckItem = []
@@ -441,6 +457,8 @@ export default {
             let isChecked = true
             if (typeStoreFrontTextValues) {
               isChecked = typeStoreFrontTextValues.includes(itemFlow.storeFrontText)
+            } else {
+              isChecked = false
             }
             this.storeFront.push({ flowId: itemFlow.flowId, storeFrontText: itemFlow.storeFrontText })
             flowSelectCheckItem.push({ flowNameEn: itemFlow.flowNameEn, storeFrontText: itemFlow.storeFrontText, checked: isChecked })
@@ -477,125 +495,22 @@ export default {
         console.log('error getDataBranch', error)
       }
     },
-    async closeJobServicePointReturn (item) {
-      if (this.servicePoint === '') {
-        this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
-        this.checkStatusEdit = false
-      } else {
-        this.checkStatusEdit = true
-        this.overlay = false
-        await this.updateServicePoint(item.bookNo)
-        await this.reCallNoti(item)
-        let lineUserId = item.lineUserId || ''
-        if (lineUserId !== '') {
-          let dtt = {
-            checkGetQueue: 'True'
-          }
-          await axios
-            .post(this.DNS_IP + '/Booking/pushMsgQueueReturnOhrich/' + item.bookNo, dtt)
-            .then(async responses => {}).catch(error => {
-              console.log('error function pushMsgQueueReturnOhrich : ', error)
-            })
-        }
-        await this.resetFirebaseUse()
-        this.dialogServicePointStatus = false
-        await this.searchBooking('unNoti')
-      }
-    },
-    async closeJobServicePointSubmit (item) {
-      var dtt = {
-        bookNo: item.bookNo,
-        contactDate: this.format_date(new Date()),
-        status: 'confirmJob',
-        statusUse: 'use',
-        shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: this.$session.getAll().data.userName,
-        LAST_USER: this.$session.getAll().data.userName
-      }
-      await axios
-        .post(`${this.DNS_IP}'/booking_transaction/addOhrich'`, dtt)
-        .then(async responses => {
-          let checkresponses = responses.data
-          if (checkresponses.status === true) {
-            await this.updateServicePoint(item.bookNo)
-            await this.CallNoti(item)
-            let lineUserId = item.lineUserId || ''
-            if (lineUserId !== '') {
-              let dtt = {
-                checkGetQueue: 'True'
-              }
-              await axios
-                .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
-                .then(async responses => {}).catch(error => {
-                  console.log('error function pushMsgQueueOhrich : ', error)
-                })
-            }
-            await this.resetFirebaseUse()
-            this.dialogServicePointStatus = false
-            await this.searchBooking('noti', item)
-          } else {
-            this.dialogServicePointStatus = false
-            await this.searchBooking('noti', item)
-          }
-        })
-    },
-    async closeJobServicePoint (item) {
-      if (this.servicePoint === '') {
-        this.$swal('ผิดพลาด', 'กรุณาเลือกจุดบริการ', 'error')
-        this.checkStatusEdit = false
-      } else {
-        let statusBooking = await this.checkBookingStatus(item.bookNo)
-        if (statusBooking === 'confirm') {
-          this.checkStatusEdit = true
-          this.overlay = false
-          let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
-          let empId = this.$session.getAll().data.empId || ''
-          if (USER_ROLE === 'storeFront' && empId !== '') {
-            let statusBookingCheck = await this.checkBookingStatus(item.bookNo)
-            if (statusBookingCheck === 'confirm') {
-              let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
-              if (statusUpdateEmp === true) {
-                this.closeJobServicePointSubmit(item)
-              } else {
-                this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-                this.dialogServicePointStatus = false
-                await this.searchBooking('unNoti')
-              }
-            } else {
-              this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-              this.dialogServicePointStatus = false
-              await this.searchBooking('unNoti')
-            }
-          } else {
-            this.$swal('คำเตือน', 'กรุณาลองอีกครั้ง', 'info')
-            this.dialogServicePointStatus = false
-            await this.searchBooking('unNoti')
-          }
-        } else {
-          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-          this.dialogServicePointStatus = false
-          await this.searchBooking('unNoti')
-        }
-      }
-    },
     async closeJobSubmitReturn () {
       try {
         if (this.callQueue.status === 'confirmJob') {
-          this.reCallNoti()
+          this.reCallNoti(this.callQueue.audioFileId)
           await axios
             .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/${this.callQueue.bookNo}`, { checkGetQueue: 'True' })
             .then(async responses => {}).catch(error => {
               console.log('error function pushMsgQueueReturnOhrich : ', error)
             })
           await this.resetFirebaseUse()
-          await this.getBooking()
         }
       } catch (error) {
         console.log('Error closeJobSubmitReturn', error)
       }
     },
     async backHomeSubmit () {
-      // let statusBooking = await this.checkBookingStatus(item.bookNo)
       if (this.callQueue.status === 'confirmJob') {
         let body = {
           bookNo: this.callQueue.bookNo,
@@ -608,25 +523,19 @@ export default {
         }
         await axios
           .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
-          .then(async responses => {
-            let checkresponses = responses.data
-            if (checkresponses.status === true) {
-              await this.resetFirebaseUse()
-            }
-            await this.getBooking()
-          }).catch(error => {
+          .then(async responses => {}).catch(error => {
             console.log('catch getBookingDataList : ', error)
           })
+        this.storeFrontQueue = 'XXXX'
+        this.callQueue.status = 'closeJob'
+        await this.resetFirebaseUse()
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-        await this.resetFirebaseUse()
-        await this.getBooking()
       }
     },
     async closeJobSubmit () {
       try {
         if (this.callQueue.status === 'confirm') {
-          this.getBooking()
           let body = {
             bookNo: this.callQueue.bookNo,
             contactDate: this.format_date(new Date()),
@@ -638,18 +547,19 @@ export default {
             CREATE_USER: this.$session.getAll().data.shopId,
             LAST_USER: this.$session.getAll().data.shopId,
             packageId: '',
-            tokenPackage: ''
+            tokenPackage: '',
+            storeFrontQueueEmpId: parseInt(this.$session.getAll().data.empId),
+            servicePoint: this.$session.getAll().data.counter
           }
           await axios
             .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
             .then(async res => {
               if (res.data.status) {
-                this.callQueue.status = 'confirmJob'
                 await this.CallNoti()
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
               }
-              await this.getBooking()
+              await this.resetFirebaseUse()
             })
         }
       } catch (error) {
@@ -689,22 +599,17 @@ export default {
           await this.getBooking()
         })
     },
-    async clearConfirmJob (dueDateUse) {
-      var dtt = {
-        dueDate: dueDateUse,
-        shopId: this.$session.getAll().data.shopId
-      }
-      await axios
-        .post(this.DNS_IP + '/booking_transaction/changeQueue', dtt)
-        .then(async responses => {})
-    },
     async updateServicePoint (bookNo) {
-      var dtt = {
-        servicePoint: this.servicePoint
+      try {
+        var body = {
+          servicePoint: this.servicePoint
+        }
+        await axios
+          .post(this.DNS_IP + '/Booking/edit/' + bookNo, body)
+          .then(async responses => {})
+      } catch (error) {
+        console.log('error updateServicePoint', error)
       }
-      await axios
-        .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
-        .then(async responses => {})
     },
     async checkBookingStatus (bookNo) {
       let result = ''
@@ -724,12 +629,12 @@ export default {
     },
     async updateEmp (bookNo, status) {
       let result = ''
-      var dtt = {
+      var body = {
         storeFrontQueueEmpId: parseInt(this.$session.getAll().data.empId),
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios
-        .post(`${this.DNS_IP}/Booking/editQueueEmp/${bookNo}?status=${status}`, dtt)
+        .post(`${this.DNS_IP}/Booking/editQueueEmp/${bookNo}?status=${status}`, body)
         .then(async response => {
           let rs = response.data
           result = rs.status
@@ -738,10 +643,10 @@ export default {
     },
     async CallNoti () {
       let body = {
-        bookNo: this.CallNoti.bookNo,
+        bookNo: this.callQueue.bookNo,
         servicePoint: this.$session.getAll().data.counter,
         shopId: this.$session.getAll().data.shopId,
-        storeFrontQueue: this.CallNoti.storeFrontQueue,
+        storeFrontQueue: this.callQueue.storeFrontQueue,
         CREATE_USER: this.$session.getAll().data.userName,
         LAST_USER: this.$session.getAll().data.userName
       }
@@ -749,15 +654,15 @@ export default {
         .post(`${this.DNS_IP}/callQueues/add`, body)
         .then(async responses => {})
     },
-    async reCallNoti (item) {
+    async reCallNoti (audioFileId) {
       try {
-        let dtdt = {
+        let body = {
           statusNotify: 'False',
           servicePoint: this.$session.getAll().data.counter,
           LAST_USER: this.$session.getAll().data.userName
         }
         await axios
-          .post(this.DNS_IP + '/callQueues/edit/' + item.audioFileId, dtdt)
+          .post(this.DNS_IP + '/callQueues/edit/' + audioFileId, body)
       } catch (error) {
         console.log('reCallNoti', error)
       }
@@ -815,7 +720,7 @@ export default {
   padding: 10px 20px; /* Adjust padding as needed */
   border: none;
   cursor: pointer;
-  font-size: 40px;
+  /* font-size: 40px; */
   border-radius: 50em;
   width: 140px !important;
   height: 140px !important;
