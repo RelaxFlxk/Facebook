@@ -360,11 +360,7 @@ export default {
             snapshot.docChanges().forEach(async (change) => {
               console.log('getFirestore')
               if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
-                // if (this.callQueue.status !== 'confirmJob') {
                 await this.getBooking()
-                // } else {
-                //   await this.getBookingOnlyWait()
-                // }
                 this.updateProcessOhrichUpdate()
               }
             })
