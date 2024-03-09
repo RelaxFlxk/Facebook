@@ -551,6 +551,7 @@ export default {
             storeFrontQueueEmpId: parseInt(this.$session.getAll().data.empId),
             servicePoint: this.$session.getAll().data.counter
           }
+          this.callQueue.status = 'confirmJob'
           await axios
             .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
             .then(async res => {

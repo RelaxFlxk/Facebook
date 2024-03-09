@@ -1067,10 +1067,12 @@ export default {
                   if (this.checkRef === false) {
                     this.checkRef = true
                     await this.getBooking()
+                    await this.updateNotifyByShopId()
                     this.updateProcessOhrichUpdate()
                   } else {
                     if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
                       await this.getBooking()
+                      await this.updateNotifyByShopId()
                       this.updateProcessOhrichUpdate()
                     }
                   }
@@ -1182,60 +1184,7 @@ export default {
         return null
       }
     },
-    playSound () {
-      let playerPrefix = document.getElementById('playerPrefix')
-      let playerQueue = document.getElementById('playerQueue')
-      // let playerSuffix = document.getElementById('playerSuffix')
-      let playerCounter = document.getElementById('playerCounter')
-      try {
-        if (playerPrefix.paused && playerQueue.paused && playerCounter.paused) {
-          let res = this.dataListPlay[0]
-          var vid = document.getElementById('videoAds')
-          playerQueue.src = res.audio_url
-          playerCounter.src = this.tableAudioList[this.tableId]
-          vid.pause()
-          this.audio = res.audio_url
-          this.tableTarget = this.tableAudioList[this.tableId]
-          this.timeCount = 1
-          playerPrefix.play()
-          playerPrefix.onended = (event) => {
-            playerQueue.load()
-            playerQueue.play()
-            playerQueue.onended = (event) => {
-              playerCounter.load()
-              playerCounter.play()
-              playerCounter.onended = (event) => {
-                if (this.timeCount < this.repeatRound) {
-                  this.timeCount++
-                  playerPrefix.play()
-                  playerPrefix.onended = (event) => {
-                    playerQueue.play()
-                    playerQueue.onended = (event) => {
-                      playerCounter.play()
-                      playerCounter.onended = (event) => {
-                        vid.play()
-                        this.dataListPlay = this.dataListPlay.slice(1)
-                        if (this.dataListPlay.length > 0) {
-                          this.playSound()
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        playerQueue.pause()
-        playerQueue.currentTime = 0
-      } catch (error) {
-        console.log('Error playSound', error)
-        playerPrefix.pause()
-        playerQueue.pause()
-        playerCounter.pause()
-      }
-    },
-    playSoundBooking (audioUrl, servicePoint) {
+    playSoundBooking (audioUrl, servicePoint, storeFrontQueue) {
       let playerTV = document.getElementById('playerTV')
       let video = document.getElementById('videoAds')
       try {
@@ -1266,7 +1215,7 @@ export default {
           playNext()
         } else {
           setTimeout(() => {
-            this.playSoundBooking(audioUrl, servicePoint)
+            this.playSoundBooking(audioUrl, servicePoint, storeFrontQueue)
           }, 2000)
         }
       } catch (error) {
@@ -1307,7 +1256,6 @@ export default {
           .then(async response => {
             if (response.data) {
               const data = response.data
-              await this.updateNotifyByShopId()
               if (data.status) {
                 arrDataService = data.dataService
                 arrDataWaiting = data.dataWaiting
@@ -1326,7 +1274,8 @@ export default {
       if (this.statusSound) {
         arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
           const audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
-          this.playingSound.push({audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint})
+
+          this.playingSound.push({storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint})
         }
         )
       }
@@ -1334,7 +1283,7 @@ export default {
         this.playingSound.reverse()
         for (let index = this.playingSound.length - 1; index >= 0; index--) {
           let sound = this.playingSound[index]
-          this.playSoundBooking(sound.audioUrl, sound.servicePoint)
+          this.playSoundBooking(sound.audioUrl, sound.servicePoint, sound.storeFrontQueue)
           this.playingSound.pop()
         }
       }
