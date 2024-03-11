@@ -68,25 +68,14 @@
               {{item.CREATE_DATEchatStory}}
               </p>
           </div>
-          <div v-if="item.Message" class="mb-2" style="display: flex;justify-content: flex-start;flex-direction: column;align-items: flex-end;flex-direction: row-reverse;">
+          <div v-if="item.Message" class="mb-2" :style="'display: flex;justify-content: flex-start;align-items: flex-end;' + ((item.from === 'admin') ? 'flex-direction: column;flex-direction: row-reverse;' : '')">
             <!-- <p style="font-size: 12px;" class="mr-1 ma-0  font-weight-bold">{{item.CREATE_DATEtime}}</p> -->
-            <div v-if="item.Message" color="#007bff" class="pa-2 pl-4 ml-3" max-width="auto" style="word-break: break-word; background-color:#007bff ;border-radius: 20px 20px 0px 20px;;min-width: 60px;text-align: left;">
+            <div v-if="item.Message" color="#007bff" class="pa-2 pl-4 ml-3" max-width="auto" :style="'word-break: break-word; background-color:#007bff;min-width: 60px;text-align: left;'+((item.from === 'admin') ? 'border-radius: 20px 20px 0px 20px;' : 'border-radius: 20px 20px 20px 0px;')">
               <p style="color:#FFFFFF" class="ma-0">{{item.Message}}</p>
             </div>
-          <!-- <v-card v-if="item.Img" class="pa-0 ml-8 mt-2" max-width="auto" > -->
-            <!-- <p style="font-size: 12px;" class="mr-1 ma-0  font-weight-bold">{{item.CREATE_DATEtime}}</p> -->
-            <!-- <v-img
-                  v-if="item.Img"
-                  class="text-center mt-2"
-                  max-height="100"
-                  max-width="150"
-                  :src="item.Img"
-                  @click="SelectImg(item.Img)" -->
-                <!-- ></v-img> -->
-          <!-- </v-card> -->
-          <p  style="font-size: 12px;" class="mr-1 ma-0 font-weight-regular">{{item.CREATE_DATEtime}}</p>
+            <p  style="font-size: 12px;" :class="((item.from === 'admin') ? 'mr-1' : 'ml-3') + ' ma-0 font-weight-regular'">{{item.CREATE_DATEtime}}</p>
           </div>
-          <div v-if="item.Img" class="mb-2" style="display: flex;justify-content: flex-start;flex-direction: column;align-items: flex-end;flex-direction: row-reverse;">
+          <div v-if="item.Img" class="mb-2" :style="'display: flex;justify-content: flex-start;'+ ((item.from === 'admin') ? 'flex-direction: column;align-items: flex-end;flex-direction: row-reverse;' : '')">
             <!-- <p style="font-size: 12px;" class="mr-1 ma-0  font-weight-bold">{{item.CREATE_DATEtime}}</p> -->
             <!-- <v-card v-if="item.Message" color="#007bff" class="pa-2 ml-5" max-width="auto" style="word-break: break-word;">
               <p style="color:#FFFFFF" class="ma-0">{{item.Message}}</p>
@@ -96,13 +85,12 @@
             <v-img
                   v-if="item.Img"
                   class="text-center mt-2 ml-3"
-                  max-height="100"
                   max-width="150"
                   :src="item.Img"
                   @click="SelectImg(item.Img)"
                 ></v-img>
           <!-- </v-card> -->
-          <p style="font-size: 12px;" class="mr-1 ma-0 font-weight-regular">{{item.CREATE_DATEtime}}</p>
+            <p style="font-size: 12px;" class="mr-1 ma-0 font-weight-regular">{{item.CREATE_DATEtime}}</p>
           </div>
         </div>
         </v-card-text>
@@ -302,6 +290,7 @@ export default {
       showImg: '',
       filesUpdateImgCover: null,
       jobNo: null,
+      userId: null,
       formMessage: {
         jobNo: '',
         Message: '',
@@ -320,6 +309,8 @@ export default {
     async getChatHistory (item) {
       console.log('item', item)
       this.jobNo = item.jobNo
+      this.userId = item.userId
+      console.log(this.userId)
       await this.getData()
       await this.getEmp()
       await this.setMessage(item)
@@ -333,14 +324,49 @@ export default {
       await axios
         .get(this.DNS_IP + '/PushMessage_LOG/get?shopId=' + this.shopId + '&jobNo=' + this.jobNo).then((response) => {
           let rs = response.data
-          console.log('getData', rs)
           if (rs.length > 0) {
             this.history = rs.reverse()
+            rs.map((row) => {
+              console.log(row['CREATE_DATE'])
+              let timestamp = new Date(row['CREATE_DATE'])
+              row['from'] = 'admin'
+              row['timestamp'] = timestamp.getTime()
+              return row
+            })
             // this.dialogHistory = true
           }
         }).catch((error) => {
           console.log('error function addData : ', error)
         })
+
+      if (this.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8') {
+        const params = {
+          userId: this.userId
+        }
+        await axios
+          .post('https://joyridegetmessage-2nzdbsglia-an.a.run.app', params).then((response) => {
+            let rs = response.data.data
+            if (rs.length > 0) {
+              rs.map((row) => {
+                row['from'] = 'user'
+                row['Message'] = ''
+                if (row.message.type === 'text') {
+                  row['Message'] = row.message.text
+                } else {
+                  row['Img'] = row.message.publicUrl
+                }
+                let timestamp = new Date(row['timestamp'])
+                row['timestamp'] += 25200000
+                row['CREATE_DATEtime'] = timestamp.getHours() + ':' + timestamp.getMinutes()
+                this.history.push(row)
+                return row
+              })
+            }
+          }).catch((error) => {
+            console.log('error function addData : ', error)
+          })
+        this.history.sort((a, b) => a.timestamp - b.timestamp)
+      }
     },
     async getEmp () {
       let path = ''

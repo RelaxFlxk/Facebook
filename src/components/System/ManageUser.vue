@@ -358,6 +358,16 @@
               </template>
               <template v-if="session.data.USER_ROLE === 'user'">
                     <v-btn
+                    v-if="session.data.userName === item.userName && session.data.shopId === 'Ub7cbc419244731cdd682354dd0e57cef'"
+                      color="green"
+                      fab
+                      small
+                      dark
+                      @click.stop="connectGoogleCalendar(item)"
+                    >
+                      <v-icon> mdi-google-plus </v-icon>
+                    </v-btn>
+                    <v-btn
                     v-if="session.data.userName === item.userName"
                       color="blue"
                       fab
@@ -372,6 +382,7 @@
           </v-data-table>
         </v-card>
       </div>
+      <GoogleCalendarCmp ref="GoogleCalendarRef" />
     </v-main>
   </div>
 </template>
@@ -381,13 +392,15 @@ import adminLeftMenu from '../Sidebar.vue' // เมนู
 import JsonExcel from 'vue-json-excel' // https://www.npmjs.com/package/vue-json-excel
 import XLSX from 'xlsx' // import xlsx
 import readXlsxFile from 'read-excel-file'
+import GoogleCalendarCmp from '../Core/GoogleCalendarCmp.vue'
 
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
     downloadExcel: JsonExcel,
     XLSX,
-    readXlsxFile
+    readXlsxFile,
+    GoogleCalendarCmp
   },
   created () {
     setInterval(this.getNowGlobal, 1000)
@@ -508,6 +521,10 @@ export default {
     await this.getData(this.DNS_IP, this.path, this.session.data.shopId)
   },
   methods: {
+    connectGoogleCalendar (item) {
+      console.log('test', item)
+      this.$refs.GoogleCalendarRef.loginGoogleCalendarEmp(item)
+    },
     async getData (DNS_IP, PATH, shopId) {
       // Clear Data ทุกครั้ง
       this.dataItem = []

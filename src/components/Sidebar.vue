@@ -66,8 +66,36 @@
           </template>
         </div>
       <v-spacer></v-spacer>
+        <div  v-if="session.data.USER_ROLE === 'admin'"  class="progress-mobile d-block d-sm-none" :style="progressMobileStyle"  @click.stop="isOpenSetup = !isOpenSetup">
+          <progress :value="progress" min="0" max="100" style="height:0;width:0;"></progress>
+          <div class="progress-value-mobile">{{ progress }}%</div>
+        </div>
+        <v-card  v-if="session.data.USER_ROLE === 'admin'"  class="d-none d-sm-block" @click.stop="isOpenSetup = !isOpenSetup">
+          <div class="d-flex flex-row p-1">
+          <div class="col-3 p-0">
+          <div class="progress-desktop" :style="progressDesktopStyle">
+             <progress :value="progress" min="0" max="100" style="height:0;width:0;"></progress>
+             <div class="progress-value">{{ progress }}%</div>
+          </div>
+           </div>
+           <div class="d-flex flex-row justify-content-between align-items-center">
+            <div>
+              <span class="complete-span px-2">Complete Setup</span>
+            </div>
+            <div>
+              <v-icon class="icon-setup">mdi-chevron-right </v-icon>
+            </div>
+           </div>
+          </div>
+        </v-card>
+        <v-btn  v-if="session.data.USER_ROLE === 'user' || session.data.USER_ROLE === 'admin'" icon @click.stop="onOpenNoti">
+         <div class="icon-with-badge">
+         <v-icon color="white">mdi-bell</v-icon>
+          <span :class="isNoti ? 'badge' :''"></span>
+         </div>
+      </v-btn>
       <v-avatar class="mr-3" @click="dialogLogOut = true">
-        <v-img :src="session.data.shopImge"></v-img>
+        <v-img :src="session.data.shopImge ? session.data.shopImge : require('@/assets/LogoDefault.jpg')"></v-img>
       </v-avatar>
       <v-toolbar-title>{{ session.data.shopName }}</v-toolbar-title>
         <!-- <v-list-item-avatar>
@@ -659,6 +687,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+     <SidebarNoti v-if="session.data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin'"  :isOpen="isOpenNoti" :closeDrawer="closeDrawer" :listDataUnread="listDataUnread" :listDataReaded="listDataReaded" :taps="dataTapSidebarNoti" :onClickReadedNoti="onClickReadedNoti"/>
+     <SidebarSetupGuide v-if="session.data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin'"  :isOpen="isOpenSetup" :closeDrawer="closeSetup" :shopName="session.data.shopName" :progress="progress" :setup="dataSetupGuide" :updateSetUp="updateSetUp" :onClickComplete="onClickComplete"/>
+     <Dialogfinish v-if="session.data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin'"  :shopName="session.data.shopName" :isOpenCompleted="isOpenCompleted" :closeCompleted="closeCompleted" :url="linkUrlLine"/>
   </div>
 </template>
 
@@ -666,9 +697,13 @@
 import axios from 'axios' // api
 import moment from 'moment-timezone'
 import waitingAlert from './waitingAlert.vue'
+import { SidebarNoti, SidebarSetupGuide, Dialogfinish } from './SetupGuide/index'
 export default {
   components: {
-    waitingAlert
+    waitingAlert,
+    SidebarNoti,
+    SidebarSetupGuide,
+    Dialogfinish
   },
   data () {
     return {
@@ -717,7 +752,18 @@ export default {
       packagePlanValue: false,
       paymentStatus: '',
       dateCheckBill: '',
-      lineOaStatus: 'False'
+      lineOaStatus: 'False',
+      isOpenNoti: false,
+      progress: 0,
+      isOpenSetup: false,
+      dataSetupGuide: [],
+      isOpenCompleted: false,
+      isNewShop: false,
+      isNoti: false,
+      listDataUnread: [],
+      listDataReaded: [],
+      dataLineConfig: {},
+      dataTapSidebarNoti: [ { key: 'appointment', icon: 'mdi-calendar-month-outline', label: 'Appointment' }, { key: 'news', icon: 'mdi-newspaper', label: 'News' } ]
     }
   },
   // beforeCreate () {
@@ -726,11 +772,40 @@ export default {
   //     this.$router.push('/Core/Login?' + this.$route.query)
   //   }
   // },
-  computed: {},
+  computed: {
+    progressDesktopStyle () {
+      return `background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(#1B437C ${this.progress ? this.progress : 0}%, #E3E6E9 0)`
+    },
+    progressDesktopAfterStyle () {
+      return `
+      content: '${this.progress}%';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #1B437C;
+      font-weight: bold;
+      font-size: 14px;`
+    },
+    progressMobileStyle () {
+      return `background: radial-gradient(closest-side, #1B437C 79%, transparent 80% 100%), conic-gradient(#E3E6E9 ${this.progress ? this.progress : 0}%, #A4C3E3 0);`
+    },
+    linkUrlLine () {
+      if (this.$session.getAll().data.timeSlotStatus === 'True') {
+        return `https://liff.line.me/${this.dataLineConfig.liffBookingFormEmpID}?shopId=${this.$session.getAll().data.shopId}`
+      } else {
+        return `https://liff.line.me/${this.dataLineConfig.liffBookingFormID}?shopId=${this.$session.getAll().data.shopId}`
+      }
+    }
+  },
   async mounted () {
+    document.addEventListener('click', this.closeDrawerOnClickOutside)
     if (this.$session.getAll().data.shopActive === 'inactive') {
       this.$router.push('/Core/Login')
     } else {
+      this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+      this.getFirestore()
+      await this.getShopSetUp()
       this.getShop()
       this.checkImageUrl(this.session.data.shopImge)
         .then(async (status) => {
@@ -757,7 +832,6 @@ export default {
       // } else {
       //   this.paymentStatus = 'fix'
       // }
-
       let trialsVersionDate = this.$session.getAll().data.trialsVersionDate || ''
       let billingEndDate = this.$session.getAll().data.billingEndDate || ''
       if (trialsVersionDate === '' || moment().format('YYYY-MM-DD HH:mm') > trialsVersionDate) {
@@ -776,8 +850,6 @@ export default {
           }
         }
       }
-      console.log('session', this.session)
-      console.log('router', this.$route.fullPath)
       this.billingCustomerId = this.session.data.billingCustomerId || ''
       // this.$root.$refs.BoardControl.closeSetTime()
       this.$root.$emit('closeSetTime')
@@ -805,13 +877,17 @@ export default {
       }
     }
   },
+  beforeDestroy () {
+    // ลบการจัดการคลิกไปยังพื้นหลังหน้าเมื่อคอมโพนентถูกทำลาย
+    document.removeEventListener('click', this.closeDrawerOnClickOutside)
+  },
   methods: {
     async getShop () {
       await axios
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.session.data.shopId)
         .then(response => {
           let rs = response.data
-          // console.log('rssssssssssss', rs)
+          console.log(rs, this.session.data.shopId)
           if (rs.status === false) {
             this.logout()
           } else {
@@ -1230,7 +1306,6 @@ export default {
         default:
     // code block
       }
-      console.log('textValue', textValue[0].type)
     },
     storeFrontChk () {
       this.booking = [
@@ -1475,7 +1550,241 @@ export default {
         )
         .then(async response => {
         })
+    },
+    closeDrawer () {
+      this.isOpenNoti = false
+    },
+    closeSetup () {
+      this.isOpenSetup = false
+    },
+    onOpenNoti () {
+      this.GetNotiBookingUnRead()
+      this.GetNotiBookingReading()
+      this.isOpenNoti = true
+    },
+    onOpenSetup () {
+      this.isOpenSetup = true
+    },
+    async getShopSetUp () {
+      await axios
+        .get(this.DNS_IP + '/Task_Transaction/getCheck?shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          if (response !== null) {
+            if (response.data !== null) {
+              this.progress = response.data.percentage ? response.data.percentage : 0
+              if (response.data.setupGuide && response.data.setupGuide.length > 0) {
+                this.dataSetupGuide = response.data.setupGuide
+                if (response.data.percentage < 100) {
+                  this.isOpenSetup = true
+                }
+              } else {
+                this.dataSetupGuide = []
+              }
+              // if (this.progress === 100) {
+              //   this.isNewShop = false
+              //   this.isOpenSetup = false
+
+              //   let session = JSON.parse(localStorage.getItem('sessionData'))
+              //   session.IsNewShop = 0
+              //   this.$session.start()
+              //   this.$session.set('data', session)
+              //   localStorage.clear()
+              //   localStorage.setItem('sessionData', JSON.stringify(session))
+              // } else {
+              //   if (response.data.setupGuide && response.data.setupGuide.length > 0) {
+              //     this.dataSetupGuide = response.data.setupGuide
+              //     this.isOpenSetup = true
+              //   } else {
+              //     this.dataSetupGuide = []
+              //   }
+              // }
+            }
+          }
+        })
+    },
+    closeDrawerOnClickOutside (event) {
+      if (!this.$el.contains(event.target) && (this.isOpenSetup || this.isOpenNoti)) {
+        this.isOpenNoti = false
+        this.isOpenSetup = false
+      }
+    },
+    async closeCompleted () {
+      try {
+        if (this.$session.getAll().isNewShop === 1) {
+          await axios
+            .post(
+              // eslint-disable-next-line quotes
+              this.DNS_IP + "/sys_shop/edit/" + this.$session.getAll().data.shopId, {IsNewShop: 0}
+            )
+            .then(async response => {
+              this.getShop()
+            })
+        }
+      } catch (error) {
+        console.log('Error ', error)
+      }
+
+      this.isOpenCompleted = false
+    },
+    async updateSetUp (taskid, isComplete) {
+      try {
+        if (taskid === 1) {
+          this.$router.push('/Master/Flow')
+        } else if (taskid === 2) {
+          this.$router.push('/Master/Branch')
+        } else if (taskid === 3) {
+          this.$router.push('/Master/Employee')
+        }
+        this.isOpenSetup = false
+        if (!isComplete) {
+          const body = { shopId: this.$session.getAll().data.shopId, taskId: taskid }
+          await axios
+            .post(
+              this.DNS_IP + '/Task_Transaction/add', body)
+            .then(async response => {
+              if (response.data) {
+                if (response.data.status) {
+                  await this.getShopSetUp()
+                }
+              }
+            })
+        }
+      } catch (error) {
+        console.log('Error updateSetUp', error)
+      }
+    },
+    async getFirestore () {
+      this.firestore = this.$firebase.firestore()
+      const FieldPath = this.$firebase.firestore.FieldPath
+      this.firestore.collection('BetaskLinked')
+        .where(FieldPath.documentId(), '==', this.$session.getAll().data.shopId)
+        .onSnapshot((snapshot) => {
+          if (snapshot.empty) {
+            this.setNewNotifyApp()
+          } else {
+            snapshot.forEach((doc) => {
+              if (doc.data().activeBooking === '1') {
+                console.log('getFirestore --> activeBooking')
+                this.isNoti = true
+              } else {
+                this.isNoti = false
+              }
+            })
+          }
+        })
+    },
+    async GetNotiBookingUnRead () {
+      try {
+        console.log('[Start GetNotiBookingUnRead]')
+        try {
+          await axios
+            .get(
+              this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId + '&IsNotify=False&limit=10')
+            .then(async response => {
+              if (response.data) {
+                console.log('[Data GetNotiBookingUnRead]', response.data)
+                if (response.data.status !== false) {
+                  this.listDataUnread = response.data
+                } else {
+                  this.listDataUnread = []
+                }
+              }
+            })
+        } catch (error) {
+          console.log('Error updateSetUp', error)
+        }
+      } catch (error) {
+        console.log('Error updateSetUp', error)
+      }
+    },
+    async GetNotiBookingReading () {
+      try {
+        await axios
+          .get(
+            this.DNS_IP + '/booking_view/get?shopId=' + this.$session.getAll().data.shopId + '&IsNotify=True&limit=5')
+          .then(async response => {
+            if (response.data) {
+              console.log('[Data GetNotiBookingReading]', response.data)
+              if (response.data.status !== false) {
+                this.listDataReaded = response.data
+              } else {
+                this.listDataReaded = []
+              }
+            }
+          })
+      } catch (error) {
+        console.log('Error updateSetUp', error)
+      }
+    },
+    async updateReadNoti (bookNo) {
+      try {
+        let body = {shopId: this.$session.getAll().data.shopId}
+        await axios
+          .post(
+            'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/BetaskNotify-ProcessBookingNotify', body)
+          .then(async response => {
+            if (response.data) {
+              this.UpdateBookingIsNotifyByShopId(bookNo)
+              console.log('GetNotiBooking ->', response.data)
+            }
+          })
+      } catch (error) {
+        console.log('Error updateSetUp', error)
+      }
+    },
+    async UpdateBookingIsNotifyByShopId (bookNo) {
+      try {
+        let body = {
+          bookNo: bookNo
+        }
+        await axios
+          .post(
+            this.DNS_IP + '/Booking/editIsNotifyByShopId/' + this.$session.getAll().data.shopId, body)
+          .then(async response => {
+          })
+      } catch (error) {
+        console.log('Error updateSetUp', error)
+      }
+    },
+    async setNewNotifyApp () {
+      try {
+        let body = {shopId: this.$session.getAll().data.shopId}
+        await axios
+          .post(
+            'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/BetaskNotify-ProcessBookingSetNew', body)
+          .then(async response => {
+            if (response.data) {
+              console.log('ProcessBookingSetNew ->', response.data)
+            }
+          })
+      } catch (error) {
+        console.log('Error ProcessBookingSetNew', error)
+      }
+    },
+    onClickComplete () {
+      console.log('onClickComplete')
+      this.isOpenCompleted = true
+    },
+    onClickReadedNoti (itemNoti) {
+      try {
+        console.log('onClickReadedNoti', itemNoti)
+        if (itemNoti.bookNo !== '') {
+          if (itemNoti.IsNotify === 'False') {
+            this.updateReadNoti(itemNoti.bookNo)
+          }
+          this.$router.push({ path: this.$session.getAll().data.timeSlotStatus === 'True' ? '/Master/BookingListBeautyEmp' : '/Master/BookingListBeauty',
+            query: { bookNoNoti: itemNoti.bookNo, customerName: itemNoti.bookingDataCustomerName, dueDate: itemNoti.dueDate.substring(0, 7), masBranchID: itemNoti.masBranchID } }).catch(err => {
+            if (err.name !== 'NavigationDuplicated') {
+              throw err
+            }
+          })
+          this.isOpenNoti = false
+        }
+      } catch (error) {
+        console.log('onClickReadedNoti -> ', error)
+      }
     }
+
   }
 }
 </script>
@@ -1494,5 +1803,56 @@ export default {
   width: 50px;
   height: 50px;
 }
+.icon-with-badge {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.icon-with-badge .badge {
+  position: absolute;
+  top: 0px;
+  right: -1px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  min-width: 10px;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.complete-span, .icon-setup{
+  font-size: 0.70rem;
+  color: #1B437C;
+}
+
+.progress-desktop, .progress-mobile {
+  width: 41px;
+  height: 41px;
+  border-radius: 50%;
+  position: relative;
+}
+.progress-value-mobile{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ddd;
+  font-weight: bold;
+  font-size: 13px;
+}
+.progress-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #1B437C;
+  font-weight: bold;
+  font-size: 13px;
+}
 </style>
