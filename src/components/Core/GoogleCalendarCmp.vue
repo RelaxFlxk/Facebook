@@ -192,10 +192,40 @@ export default {
   },
   methods: {
     async UseGoogleCalendar () {
+      console.log('TEST_!@#!@#!@#!@#!@#!@#!@#!@#!@')
       await this.getShop()
       if (this.refreshToken === null || this.refreshToken === '') {
         await this.handleClickLoginByUse()
       }
+    },
+    async loginGoogleCalendarEmp (item) {
+      console.log('!!!!', item)
+      if (item.empId !== null || item.empId !== '') {
+        let empId = item.empId
+        await this.handleClickLoginByEmp(empId)
+      }
+    },
+    async handleClickLoginByEmp (empId) {
+      this.$gAuth
+        .getAuthCode()
+        .then((authCode) => {
+          // on success
+          console.log('authCode', authCode)
+          axios
+            .post(this.webHookUrl + 'GoogleCalendar-createToken', {code: authCode}, {timeout: 5000})
+            // .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
+            .then(async (response) => {
+              // this.checkLogin = true
+              console.log('token', response.data)
+              await this.UpdateRefreshTokenEmp(empId, response.data)
+            }).catch((err) => {
+              console.log('err', err)
+            })
+        })
+        .catch((error) => {
+          console.log('error login', error)
+          // on fail do something
+        })
     },
     async handleClickLoginByUse () {
       this.$gAuth
@@ -227,13 +257,14 @@ export default {
       //   this.bookNo = 'BK143157651684727414315'
       await this.getShop()
       if (this.refreshToken === null || this.refreshToken === '') {
-        await this.handleClickLogin(status, bookNo)
+        // await this.handleClickLogin(status, bookNo)
       } else {
         await this.getBooking(this.bookNo)
         await this.getBookingData(this.bookNo)
         await this.getFlow(this.bookingItem[0].flowId)
         if (this.statusGoogleCalendarEmp === 'True') {
           await this.getEmp(this.bookingItem[0].bookingEmpFlow)
+          // await this.setTokenByEmp()
         }
         if (this.evenStatus === 'Add') {
           let allItem = await this.buliDataEmp('Add')
@@ -251,6 +282,7 @@ export default {
     async buliDataEmp (status) {
       let item = {}
       item.refreshToken = this.refreshToken
+      console.log('this.refreshToken', this.refreshToken)
       item.Summmary = this.bookingItem[0].flowName + ' - ' + this.bookingData.filter((a) => a.fieldName === 'ชื่อ')[0].fieldValue
       let Description = ''
       this.bookingData.forEach((a) => {
@@ -267,6 +299,7 @@ export default {
       await this.getSysUser()
       console.log('this.attendeesEmail', this.attendeesEmail)
       item.attendees = this.attendeesEmail
+      // console.log('this.empItem', this.empItem)
       if (this.statusGoogleCalendarEmp === 'True') {
         if (status === 'Add') {
           try {
@@ -287,7 +320,25 @@ export default {
             console.log(error)
           }
         }
+        if (this.shopId === 'Ub7cbc419244731cdd682354dd0e57cef') {
+          try {
+            if (this.empItem[0].refreshTokenGoogleCalendar) {
+              let data = await this.getRefreshTotokenEmp(this.empItem[0].refreshTokenGoogleCalendar)
+              if (data) {
+                console.log('$$$$$$$$$', data)
+                item.refreshToken = data
+                if (this.session.data.contactEmail) {
+                  let obj = {'email': this.session.data.contactEmail}
+                  item.attendees.push(obj)
+                }
+              }
+            }
+          } catch (error) {
+            item.refreshToken = this.refreshToken
+          }
+        }
       }
+      console.log(this.flowItem)
       if (this.flowItem[0].GoogleCalendarMeet === 'True') {
         item.requestId = this.bookingItem[0].bookNo
         if (this.bookingItem[0].bookingDataCustomerEmail !== null && this.bookingItem[0].bookingDataCustomerEmail !== '') {
@@ -305,7 +356,7 @@ export default {
       //   this.bookNo = 'BK143157651684727414315'
       await this.getShop()
       if (this.refreshToken === null || this.refreshToken === '') {
-        await this.handleClickLogin(status, bookNo)
+        // await this.handleClickLogin(status, bookNo)
       } else {
         await this.getBooking(this.bookNo)
         await this.getBookingData(this.bookNo)
@@ -403,6 +454,19 @@ export default {
     //   console.log(dateTime)
     //   return dateTime
     // },
+    async UpdateRefreshTokenEmp (empId, res) {
+      console.log('res', res)
+      const refreshToken = res.refresh_token
+      const item = {
+        refreshTokenGoogleCalendar: refreshToken
+      }
+      await axios
+        .post(this.DNS_IP + '/empSelect/edit/' + parseInt(empId), item)
+        .then(async response => {
+          console.log('response', response)
+        })
+        .catch((err) => { console.log('error', err) })
+    },
     async UpdateRefreshToken (res) {
       console.log('res', res)
       const refreshToken = res.refresh_token
@@ -566,14 +630,23 @@ export default {
       await axios.get(this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId).then(async (response) => {
         let rs = response.data
         if (rs.length > 0) {
-          await this.getAccess_token()
           // await this.getSysUser()
-          console.log('rs', rs)
-          // this.refreshToken = rs[0].refreshTokenGoogleCalendar
+          if (this.shopId === 'Ub7cbc419244731cdd682354dd0e57cef') {
+            console.log('_____IF')
+            if (rs[0].refreshTokenGoogleCalendar) {
+              await this.getRefreshTotoken(rs[0].refreshTokenGoogleCalendar)
+            } else {
+              this.refreshToken = ''
+            }
+          } else {
+            console.log('_____ELSE')
+            await this.getAccess_token()
+          }
           // saichongot123@gmail.com 1//0g96maaiJcjKnCgYIARAAGBASNwF-L9IrvFA4GuAGtvfLf5ZfmSDxoXxBeym4BpxaJjVoc5SrB176u4FsYYoCCWa7rrwdAh-CZkA
           // this.refreshToken = '1//0gYwyLYeD179cCgYIARAAGBASNwF-L9Ir4eWR6-pPbjgYzJYPqm74y0-JiXqw5EmCbKduRf5VF0c1BIgD37qsWdtqt7bENC5uBss'
           this.statusGoogleCalendarEmp = rs[0].statusGoogleCalendarEmp
-        //   this.expireDate = rs[0].expireDateGoogleCalendar
+          //   this.expireDate = rs[0].expireDateGoogleCalendar
+          console.log('this.refreshToken', this.refreshToken)
         }
       })
     },
@@ -585,6 +658,41 @@ export default {
           this.refreshToken = rs[0].access_token
         }
       })
+    },
+    async getRefreshTotokenEmp (refreshToken) {
+      let dt = {
+        refreshToken: refreshToken
+      }
+      let token = null
+      await axios
+        .post(this.webHookUrl + 'GoogleCalendar-GetToken', dt)
+        .then(async (response) => {
+          console.log(response)
+          if (response.data.access_token) {
+            token = response.data.access_token
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      console.log('token', token)
+      return token
+    },
+    async getRefreshTotoken (refreshToken) {
+      let dt = {
+        refreshToken: refreshToken
+      }
+      await axios
+        .post(this.webHookUrl + 'GoogleCalendar-GetToken', dt)
+        .then(async (response) => {
+          console.log(response)
+          if (response.data.access_token) {
+            this.refreshToken = response.data.access_token
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     async getSysUser () {
       await axios.get(this.DNS_IP + '/system_user/get?shopId=' + this.shopId + '&USER_ROLE=admin').then(response => {

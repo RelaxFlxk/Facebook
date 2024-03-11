@@ -214,7 +214,7 @@
                           required
                         ></v-autocomplete>
                       </v-col> -->
-                      <!-- <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
+                      <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
                         <v-checkbox
                           label="เชื่อมต่อกับ Google Calendar"
                           false-value="False"
@@ -236,7 +236,7 @@
                           true-value="True"
                           v-model="formUpdate.statusGoogleCalendarEmp"
                         ></v-checkbox>
-                      </v-col> -->
+                      </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="6" class="mt-6">
@@ -693,7 +693,7 @@ export default {
       console.log('this.cat', this.categorySub)
     },
     editDataByBookingField (item) {
-      console.log('item1111111111111111111111111111', item)
+      // console.log('item1111111111111111111111111111', item)
       this.dialogEdit = true
       this.getDataById(item[0])
       this.validate('UPDATE')
