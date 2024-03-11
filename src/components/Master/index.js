@@ -50,6 +50,7 @@ import AdminStampStep from './AdminStampStep.vue'
 import BookingByUserEmp from './BookingByUserEmp.vue'
 import BookingListQueueMonitoringVideoOhrich from './BookingListQueueMonitoringVideoOhrich.vue'
 import BookingListQueueMonitoringVideoOhrichV1 from './BookingListQueueMonitoringVideoOhrichV1.vue'
+import BookingListQueueTestPlaySound from './BookingListQueueTestPlaySound.vue'
 // import BookingListBeautyEmpTestRedis from './BookingListBeautyEmpTestRedis.vue'
 
 export default {
@@ -105,5 +106,6 @@ export default {
   BookingWalkin,
   CheckBookingList,
   BookingListQueueMonitoringVideoOhrich,
-  BookingListQueueMonitoringVideoOhrichV1
+  BookingListQueueMonitoringVideoOhrichV1,
+  BookingListQueueTestPlaySound
 }

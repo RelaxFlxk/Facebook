@@ -172,6 +172,11 @@ export default new Router({
     component: Master.BookingListQueueMonitoringVideoOhrichV1
   },
   {
+    path: '/Master/BookingListQueueTestPlaySound',
+    name: 'BookingListQueueTestPlaySound',
+    component: Master.BookingListQueueTestPlaySound
+  },
+  {
     path: '/Master/BookingList',
     name: 'BookingList',
     component: Master.BookingList
