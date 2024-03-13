@@ -676,6 +676,19 @@
                                 ></v-text-field>
                             </v-col>
                           </v-row>
+                          <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
+                            <v-col cols="8" class="pa-0 mt-1" style="display: flex;justify-content: flex-start;align-items: center;">
+                              <v-text-field
+                                class="px-4"
+                                v-model="formAdd.OnsiteEndTime"
+                                label="ระบุเวลาการทำงาน (ถ้ามีโปรดระบุ)"
+                                outlined
+                                type="number"
+                                dense
+                              ></v-text-field>
+                              <p> นาที</p>
+                            </v-col>
+                          </v-row>
                           <v-row>
                             <v-col style="display: flex;justify-content: flex-start;">
                             <v-checkbox
@@ -909,19 +922,6 @@
                               ></v-checkbox>
                             </v-col>
                           </v-row>
-                          <!-- <v-row v-if="formAdd.checkOnsite === 'True'">
-                            <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
-                              <v-text-field
-                                class="px-4"
-                                v-model="formAdd.OnsiteEndTime"
-                                label="ระบุเวลาการทำงาน (ถ้ามีโปรดระบุ)"
-                                outlined
-                                type="number"
-                                dense
-                              ></v-text-field>
-                              <p> นาที</p>
-                            </v-col>
-                          </v-row> -->
                           <v-row>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
                               <v-checkbox
@@ -1210,6 +1210,19 @@
                                 ></v-text-field>
                             </v-col>
                           </v-row>
+                          <v-row v-if="$session.getAll().data.timeSlotStatus !== 'True'">
+                            <v-col cols="8" class="pa-0 mt-1" style="display: flex;justify-content: flex-start;align-items: center;">
+                              <v-text-field
+                                class="px-4"
+                                v-model="formUpdate.OnsiteEndTime"
+                                label="ระบุเวลาการทำงาน (ถ้ามีโปรดระบุ)"
+                                outlined
+                                type="number"
+                                dense
+                              ></v-text-field>
+                              <p> นาที</p>
+                            </v-col>
+                          </v-row>
                           <v-row>
                             <v-col style="display: flex;justify-content: flex-start;">
                             <v-checkbox
@@ -1452,19 +1465,6 @@
                               ></v-checkbox>
                             </v-col>
                           </v-row>
-                          <!-- <v-row v-if="formUpdate.checkOnsite === 'True'">
-                            <v-col cols="8" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;">
-                              <v-text-field
-                                class="px-4"
-                                v-model="formUpdate.OnsiteEndTime"
-                                label="ระบุเวลาการทำงาน (ถ้ามีโปรดระบุ)"
-                                outlined
-                                type="number"
-                                dense
-                              ></v-text-field>
-                              <p> นาที</p>
-                            </v-col>
-                          </v-row> -->
                           <v-row>
                             <v-col class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="$session.getAll().data.timeSlotStatus === 'True'">
                               <v-checkbox

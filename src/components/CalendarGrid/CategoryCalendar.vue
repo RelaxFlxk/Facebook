@@ -187,10 +187,6 @@ export default {
       type: Array,
       default: () => []
     },
-    categoriesCheckBox: {
-      type: Array,
-      default: () => []
-    },
     flowName: {
       type: Array,
       default: () => []
@@ -203,7 +199,7 @@ export default {
   data () {
     return {
       menu: false,
-      value: this.focus
+      value: ''
     //   type: 'month',
     //   types: ['month', 'week', 'day', '4day'],
     //   mode: 'stack',
@@ -222,9 +218,9 @@ export default {
   },
   watch: {
     focus (newQuestion, oldQuestion) {
-      // if (newQuestion !== oldQuestion) {
-      this.value = newQuestion
-      // }
+      if (newQuestion !== oldQuestion) {
+        this.value = newQuestion
+      }
     },
     value (newQuestion, oldQuestion) {
       this.sendDataToParent(newQuestion)
@@ -237,15 +233,9 @@ export default {
         let color = this.colors[key]
         return color
       } else {
-        let data = this.categories.filter((a) => a === event.category).length > 0 ? this.categories.filter((a) => a === event.category)[0] : []
-        if (this.categoriesCheckBox.filter((a) => a === data).length > 0) {
-          let key = this.categoriesCheckBox.findIndex((item) => item === event.category)
-          let color = this.colors[key]
-          // console.log('color', color)
-          return color
-        } else {
-          // console.log('ELSE')
-        }
+        let key = this.categories.findIndex((item) => item === event.category)
+        let color = this.colors[key]
+        return color
       }
     },
     sendDataToParent (newQuestion) {
@@ -299,7 +289,7 @@ export default {
       // return true
     },
     getEvents () {
-      // console.log('@@@@@@@@@', this.events)
+      console.log('@@@@@@@@@', this.events)
     },
     rnd (a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a

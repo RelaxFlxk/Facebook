@@ -15895,6 +15895,7 @@ export default {
     },
     async updateLimitBookingEdit (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, limitBookingCount) {
       let result = []
+      console.log('!@#!@#!@#!@#!@#', this.dataEdit)
       let dt = {
         dueDateOld: dueDateOld,
         dueDateTimeOld: dueDateTimeOld,
@@ -15908,7 +15909,8 @@ export default {
         timeSelect: dueDateTimeNew,
         shopId: item.shopId,
         userId: this.userId,
-        limitBookingCount: limitBookingCount
+        limitBookingCount: limitBookingCount,
+        bookNo: this.dataEdit.bookNo
       }
       await axios.post(this.DNS_IP + '/Booking/updateLimitBookingEdit', dt).then(async response => {
         result = response.data
