@@ -2655,7 +2655,7 @@
                           dark
                           color="white"
                           :style="styleCloseBt"
-                          @click="dialogRemove = false"
+                          @click="dialogRemove = false , sendRemarkRemove = false"
                           >
                           X
                         </v-btn>
@@ -2664,6 +2664,10 @@
                   </v-row>
                 <v-row>
                   <v-col cols= "12">
+                  <v-checkbox
+                    v-model="sendRemarkRemove"
+                    label="แจ้งเตือนหมายเหตุในการยกเลิก"
+                  ></v-checkbox>
                   <v-textarea
                     v-model="remarkRemove"
                     outlined
@@ -8208,7 +8212,8 @@ export default {
       dialogImg: false,
       showImg: '',
       dataCloseJob: [],
-      dataCloseJobData: []
+      dataCloseJobData: [],
+      sendRemarkRemove: false
     }
   },
   beforeCreate () {
@@ -15698,6 +15703,7 @@ export default {
           // this.getDataCalendaBooking()
           this.dataCancelReady = true
           this.dialogRemove = false
+          this.sendRemarkRemove = false
           this.remarkRemove = ''
           this.bookNo = ''
         })
@@ -15715,7 +15721,8 @@ export default {
           dueDate: item.dueDateText,
           flowName: item.flowName,
           shopId: this.$session.getAll().data.shopId,
-          tell: this.$session.getAll().data.contactTel
+          tell: this.$session.getAll().data.contactTel,
+          sendRemarkRemove: this.sendRemarkRemove
         }
         axios
           .post(this.DNS_IP + '/Booking/pushMsgCancelBook', dt)

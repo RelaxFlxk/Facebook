@@ -1,56 +1,32 @@
 <template>
-  <div :style="{ backgroundColor: shopColor, height: '100%', width: '100%' }">
-      <div :class="`d-flex ${isPortrait ? 'flex-column':'flex-row'}`">
-          <BookingUseOhrich :bookingUse="dataService" :isPortrait="isPortrait"/>
-          <div v-if="!isPortrait"  class="col-7 d-flex flex-column">
-              <div class="mt-5">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-              <source :src="videoLinkMonition" type="video/webm">
-            </video>
-               <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-              </div>
-              <div class="d-flex flex-row justify-content-between mx-4 mt-5 h-100">
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(0,6)" time="10"/>
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(6,12)" time="10 - 20"/>
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(12)" time="20 - 30"/>
-            </div>
-          </div>
-      </div>
-     <div v-if="isPortrait" class="col-12 d-flex flex-row justify-content-between height-card">
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(0,6)" time="10"/>
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(6,12)" time="10 - 20"/>
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(12)" time="20 - 30"/>
-     </div>
-      <div v-if="isPortrait" class="d-flex flex-row justify-content-between">
-          <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-              <source :src="videoLinkMonition" type="video/webm">
-           </video>
-          <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-     </div>
-      <div :class="`d-flex flex-row justify-content-between mx-3 ${isPortrait ? '' : 'mt-3'}`">
-          <div class="col-6 py-0">
-            <v-icon class="mr-3" large>
-             {{ wifiIcon }}
-             </v-icon>
-             <v-btn icon
-                      large
-                      color="#695988"
-                      @click="changeStatusSound('off')"
-                      v-if="statusSound === true"
-                    >
-                    <v-icon>mdi-volume-high</v-icon>
-                    </v-btn>
-                    <v-btn icon
-                      large
-                      color="#695988"
-                      @click="changeStatusSound('on')"
-                      v-else
-                    >
-                    <v-icon>mdi-volume-off</v-icon>
-                    </v-btn>
-                  </div>
-          <div class="col-6 py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span></div>
-      </div>
+  <div>
+    <br>
+    <br>
+    <br>
+     <v-container>
+    <v-row>
+      <v-col cols="12" class="text-center">
+        <h1>{{queuePlay}}</h1>
+      </v-col>
+      <v-col cols="12" class="text-center">
+        <v-btn icon
+              large
+              color="red"
+              @click="changeStatusSound('off')"
+              v-if="statusSound === true"
+            >
+              <v-icon>mdi-volume-high</v-icon>
+            </v-btn>
+            <v-btn icon
+              large
+              color="green"
+              @click="changeStatusSound('on')"
+              v-else
+            >
+              <v-icon>mdi-volume-off</v-icon>
+            </v-btn>
+      </v-col>
+      </v-row>
       <v-row v-show="hideSound === true">
         <audio id="playerTV" controls="controls">
           Your browser does not support the audio format.
@@ -73,6 +49,7 @@
           {{history}}
         </v-col>
       </v-row>
+     </v-container>
   </div>
 </template>
 <script>
@@ -115,6 +92,7 @@ export default {
   },
   data () {
     return {
+      queuePlay: '',
       orientation: '',
       statusSound: true,
       dateStartShow: '',
@@ -989,209 +967,78 @@ export default {
   },
 
   async mounted () {
-    this.checkOrientation()
-    this.setupEventListeners()
-
-    this.fetchInitialData()
-  },
-  destroyed () {
-    window.removeEventListener('resize', this.checkOrientation)
-  },
-  beforeDestroy () {
-    this.$root.$off('dataReturn')
-    clearInterval(this.interval)
+    this.getFirestorePlaySound()
   },
   methods: {
-    checkOrientation () {
-      this.isPortrait = window.innerHeight > window.innerWidth
-    },
-    setupEventListeners () {
-      window.addEventListener('resize', this.checkOrientation)
-      window.addEventListener('orientationchange', this.checkOrientation)
-      document.querySelector('body').requestFullscreen()
-    },
-    async fetchInitialData () {
-      await Promise.all([this.getShop(), this.getBooking(), this.getFirestore()])
-      this.startDateTimeInterval()
-    },
-    startDateTimeInterval () {
-      this.interval = setInterval(() => {
-        this.currentTime = moment().format('DD/MMM/YYYY HH:mm')
-      }, 1000)
-    },
-    replaceFunc (text) {
-      let itemText = text.split('')
-      let textFill = ''
-      for (let i = 1; i < itemText.length; i++) {
-        let d = itemText[i]
-        if (d === '0') {
-          textFill = textFill + ' zero'
-        } else if (d === '1') {
-          textFill = textFill + ' one'
-        } else if (d === '2') {
-          textFill = textFill + ' two'
-        } else if (d === '3') {
-          textFill = textFill + ' three'
-        } else if (d === '4') {
-          textFill = textFill + ' four'
-        } else if (d === '5') {
-          textFill = textFill + ' five'
-        } else if (d === '6') {
-          textFill = textFill + ' six'
-        } else if (d === '7') {
-          textFill = textFill + ' seven'
-        } else if (d === '8') {
-          textFill = textFill + ' eight'
-        } else if (d === '9') {
-          textFill = textFill + ' nine'
-        }
-      }
-      if (itemText[0] === 'เ') {
-        return itemText[0] + itemText[1] + ' ' + textFill
-      } else {
-        return itemText[0] + ' ' + textFill
-      }
-    },
-    async getFirestore () {
+    getFirestorePlaySound () {
       try {
         this.firestore = this.$firebase.firestore()
         const FieldPath = this.$firebase.firestore.FieldPath
-        this.firestore.collection('ProcessOhrichUpdate')
-          .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
-          .onSnapshot((snapshot) => {
+        this.firestore.collection('ProcessOhrichSound')
+          .where(FieldPath.documentId(), '==', (this.$session.getAll().data.masBranchID).toString())
+          .onSnapshot(async (snapshot) => {
             if (snapshot.empty) {
-              this.updateProcessOhrichUpdate()
+              this.setNewQueueFirebase()
             } else {
-              snapshot.docChanges().forEach(async (change) => {
-                if (change.doc.data().masBranchID === this.$session.getAll().data.masBranchID && change.doc.id === this.$session.getAll().data.userName) {
-                  if (this.checkRef === false) {
-                    this.checkRef = true
-                    await this.getBooking()
-                    await this.updateNotifyByShopId()
-                    this.updateProcessOhrichUpdate()
-                  } else {
-                    if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
-                      await this.getBooking()
-                      await this.updateNotifyByShopId()
-                      this.updateProcessOhrichUpdate()
+              for (let x = 0; x < snapshot.docChanges().length; x++) {
+                let change = snapshot.docChanges()[x]
+                if (change.doc.data().queue.length > 0) {
+                  console.log(change.doc.data().queue)
+                  for (let i = 0; i < change.doc.data().queue.length; i++) {
+                    let itemIsNotify = change.doc.data().queue[i]
+                    await this.deleteQueueFirebase(itemIsNotify.storeFrontQueue, itemIsNotify.servicePoint)
+                    this.queuePlay = itemIsNotify.storeFrontQueue
+                    const audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
+                    this.playingSound.push({storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint})
+                    console.log('storeFrontQueue : ', itemIsNotify.storeFrontQueue, '-', itemIsNotify.servicePoint)
+                    // console.log('servicePoint : ', itemIsNotify.servicePoint)
+                  }
+                  if (this.playingSound.length > 0) {
+                    this.playingSound.reverse()
+                    for (let index = this.playingSound.length - 1; index >= 0; index--) {
+                      let sound = this.playingSound[index]
+                      this.playSoundBooking(sound.audioUrl, sound.servicePoint, sound.storeFrontQueue)
+                      this.playingSound.pop()
                     }
                   }
                 }
-              })
+              }
             }
           })
       } catch (error) {
         console.log('Error getFirestore', error)
       }
     },
-    updateProcessOhrichUpdate () {
-      let body = {
-        userName: this.$session.getAll().data.userName,
-        masBranchID: this.$session.getAll().data.masBranchID
+    async deleteQueueFirebase (queue, sPoint) {
+      const params = {
+        storeFrontQueue: queue,
+        servicePoint: sPoint,
+        masBranchID: (this.$session.getAll().data.masBranchID).toString()
       }
-      axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', body)
+      await axios.post(`https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-DeleteQueueByBranch`, params)
+    },
+    async setNewQueueFirebase () {
+      const params = {
+        masBranchID: (this.$session.getAll().data.masBranchID).toString()
+      }
+      await axios.post(`https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-SetNewQueueByBranch`, params)
     },
     async changeStatusSound (text) {
       if (text === 'on') {
         this.statusSound = true
-        await this.updatestatusNotifyByShopId()
+        // await this.updatestatusNotifyByShopId()
       } else {
         this.statusSound = false
       }
     },
-    async updatestatusNotifyByShopId () {
-      const params = {
-        statusNotify: 'True',
-        shopId: this.$session.getAll().data.shopId,
-        masBranchID: this.$session.getAll().data.masBranchID
-      }
-      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotifyOhrich`, params)
-    },
-    async getMessageNoInterval (storeFrontQueue, dueDateDay) {
-      try {
-        let branchId = this.$session.getAll().data.masBranchID || 2185
-        let url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=${this.$session.getAll().data.shopId}&masBranchID=${branchId}&storeFrontQueue=${storeFrontQueue}&CREATE_DATE=${dueDateDay}`
-        await axios
-          .get(
-            url
-          ).then(async (response) => {
-            if (response.data.status !== false) {
-              let result = await this.generateSound(response.data[0])
-              await this.updateMessage(response.data[0].id, result)
-            }
-          })
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    updateMessage (id, result) {
-      const params = {
-        statusNotify: 'True',
-        audioFile: result.audio_url
-      }
-      axios.post(`${this.DNS_IP}/callQueues/edit/${id}`, params)
-    },
-    async generateSound (item) {
-      try {
-        // eslint-disable-next-line no-tabs
-        this.tableId = item.servicePoint.replace('	  ', '').replace(' ', '').trim()
-        let storeFrontQueue = item.storeFrontQueue
-        storeFrontQueue = this.replaceFunc(storeFrontQueue.replace('A', 'เอ'))
-        let result
-        let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
-        item.audioFile = null
-        if (oldSound.length > 0) {
-          item.audioFile = oldSound[0].audioFile
-        } else {
-          // let branchId = this.$session.getAll().data.masBranchID || 2185
-          await axios
-            .get(
-              `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull`
-            ).then(async (response) => {
-              if (response.data.length > 0 && typeof response.data.status === 'undefined') {
-                item.audioFile = response.data[0].audioFile
-              }
-            })
-        }
-        if (item.audioFile === null) {
-          var params = {
-            text: ' ' + storeFrontQueue,
-            text_delay: ' ' + storeFrontQueue,
-            speaker: this.speakerId,
-            volume: 1,
-            speed: 0.75,
-            type_media: 'wav'
-          }
-          await axios
-            .post(
-              'https://api-voice.botnoi.ai/openapi/v1/generate_audio',
-              params,
-              { headers: { 'Botnoi-Token': 'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0' } }
-            ).then((res) => {
-              this.dataListPlay.push(res.data)
-              this.playSound()
-              result = res.data
-            })
-        } else {
-          let res = { text: item.storeFrontQueue, audio_url: item.audioFile }
-          this.dataListPlay.push(res)
-          this.playSound()
-          result = res
-        }
-        return result
-      } catch (e) {
-        console.log(e)
-        return null
-      }
-    },
     playSoundBooking (audioUrl, servicePoint, storeFrontQueue) {
       let playerTV = document.getElementById('playerTV')
-      let video = document.getElementById('videoAds')
+      // let video = document.getElementById('videoAds')
       try {
         if (playerTV.paused) {
           let roundCount = 0
           let maxRounds = 2
-          video.pause()
+          // video.pause()
           let playList = [
             'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1',
             audioUrl,
@@ -1208,7 +1055,7 @@ export default {
               roundCount++
               playNext()
             } else {
-              video.play()
+              // video.play()
             }
           }
           playerTV.onended = playNext
@@ -1222,94 +1069,6 @@ export default {
         console.log('Error playSound', error)
         playerTV.pause()
       }
-    },
-    playOnceAndRemove (playList) {
-      let playerTV = document.getElementById('playerTV')
-      console.log('playOnceAndRemove', playList)
-      let index = 0
-      let playNext = () => {
-        if (index < playList.length) {
-          playerTV.src = playList[index++]
-          playerTV.load()
-          playerTV.play()
-        }
-      }
-      playNext()
-      playerTV.removeEventListener('ended', this.playOnceAndRemove)
-    },
-    async getShop () {
-      await axios
-        .get(`${this.DNS_IP}/sys_shop/get?shopId=${this.$session.getAll().data.shopId}`)
-        .then(response => {
-          let data = response.data
-          if (data.length > 0) {
-            this.shopColor = data[0].secondaryColor
-            this.videoLinkMonition = data[0].videoLinkMonition
-          }
-        })
-    },
-    async getBooking () {
-      let arrDataService = []
-      let arrDataWaiting = []
-      try {
-        await axios.get(`${this.DNS_IP}/booking_view/getQueueOhrichTV?masBranchID=${this.$session.getAll().data.masBranchID}`)
-          .then(async response => {
-            if (response.data) {
-              const data = response.data
-              if (data.status) {
-                arrDataService = data.dataService
-                arrDataWaiting = data.dataWaiting
-              } else {
-                arrDataService = []
-                arrDataWaiting = []
-              }
-            }
-          })
-      } catch (error) {
-        console.log('Error')
-      }
-      this.dataService = arrDataService
-      this.dataWaiting = arrDataWaiting
-      // playSound
-      if (this.statusSound) {
-        arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
-          const audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
-
-          this.playingSound.push({storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint})
-        }
-        )
-      }
-      if (this.playingSound.length > 0) {
-        this.playingSound.reverse()
-        for (let index = this.playingSound.length - 1; index >= 0; index--) {
-          let sound = this.playingSound[index]
-          this.playSoundBooking(sound.audioUrl, sound.servicePoint, sound.storeFrontQueue)
-          this.playingSound.pop()
-        }
-      }
-    },
-    async updateNotifyByShopId () {
-      const params = {
-        statusNotify: 'True',
-        shopId: this.$session.getAll().data.shopId,
-        masBranchID: this.$session.getAll().data.masBranchID
-      }
-      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotifyOhrich`, params)
-    },
-    updateMessageSound (bookNo, audioUrl) {
-      try {
-        const params = {
-          statusNotify: 'True',
-          audioFile: audioUrl
-        }
-        axios.post(`${this.DNS_IP}/callQueues/edit/${bookNo}`, params)
-      } catch (error) {
-        console.log('Error updateMessageSound', error)
-      }
-    },
-    checkWiFiStatus () {
-      console.log('navigator.onLine', navigator.onLine)
-      this.wifiStatus = navigator.onLine ? 'connected' : 'disconnected'
     }
   }
 }
