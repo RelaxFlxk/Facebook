@@ -3626,7 +3626,7 @@
                             <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-account-reactivate </v-icon> เปลี่ยนพนักงาน On site </v-list-item-title>
                           </v-list-item>
                           <v-list-item v-if="item.statusBt === 'confirmJob' && showOnsite === 'ไม่แสดง'" @click="ShowImg(item)">
-                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-package-variant-closed </v-icon> ตรวจสอบรายการที่ปิดแล้ว </v-list-item-title>
+                            <v-list-item-title><v-icon color="#73777B" class="mr-2"> mdi-package-variant-closed </v-icon> ตรวจสอบการทำงาน </v-list-item-title>
                           </v-list-item>
                           <v-hover v-slot:default="{ hover }">
                           <v-list-item v-if="item.statusBt === 'cancel'" @click.stop="(dialogDelete = true), getDataById(item)">
@@ -3750,6 +3750,15 @@
                 </div>
             </div>
             <!-- <h5 class="font-weight-bold m-6 mb-5 text-center">ตรวจสอบรูป</h5> -->
+            <div style="display: flex;justify-content: center;">
+              <v-btn
+                color="primary"
+                elevation="2"
+                small
+                dark
+                @click="SaveImg()"
+              >Save Image</v-btn>
+            </div>
             <h6 class="font-weight-bold ml-6">Before</h6>
               <v-slide-group
                   v-if="showImgItem"
@@ -3762,12 +3771,12 @@
                     >
                       <v-card width="150px" class="ma-2 pa-1">
                         <v-img
-                                :src="itemImg2.beforeImage"
-                                max-height="130"
-                                aspect-ratio="1.7"
-                                contain
-                                @click="SelectImg(itemImg2.beforeImage)"
-                              ></v-img>
+                          :src="itemImg2.beforeImage"
+                          max-height="130"
+                          aspect-ratio="1.7"
+                          contain
+                          @click="SelectImg(itemImg2.beforeImage)"
+                        ></v-img>
                       </v-card>
                     </v-slide-item>
                   </v-slide-group>
@@ -8261,6 +8270,57 @@ export default {
     SelectImg (Imgitem) {
       this.showImg = Imgitem
       this.dialogImg = true
+    },
+    async SaveImg () {
+      console.log(this.showImgItem)
+      // let url = 'https://storage.googleapis.com/betask-linked/static/upload/BeforeAfter/BA9055_20240314143726435600.jpg'
+      // fetch(url)
+      //   .then((response) => response.blob())
+      //   .then((blob) => {
+      //     saveAs(blob, 'image_name.jpg')
+      //   })
+      // console.log('downloading', url)
+      for (let i = 0; i < this.showImgItem.length; i++) {
+        let d = this.showImgItem[i]
+        if (d.afterImage !== null) {
+          try {
+            // URL ของรูปภาพที่ต้องการดาวน์โหลด
+            const imageUrl = d.afterImage
+            // ดาวน์โหลดรูปภาพโดยใช้ axios
+            const response = await axios.get(imageUrl, {responseType: 'arraybuffer'})
+            // แปลงข้อมูลเป็น Base64
+            // console.log('1111', response)
+            const base64Image = Buffer.from(response.data, 'binary').toString('base64')
+            // สร้างลิงก์ดาวน์โหลด
+            const link = document.createElement('a')
+            link.href = 'data:image/jpeg;base64,' + base64Image
+            link.download = 'after' + (i + 1) + '.jpg'
+            // คลิกลิงก์เพื่อดาวน์โหลด
+            link.click()
+          } catch (error) {
+            console.error('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ:', error)
+          }
+        }
+        if (d.beforeImage !== null) {
+          try {
+            // URL ของรูปภาพที่ต้องการดาวน์โหลด
+            const imageUrl = d.beforeImage
+            // ดาวน์โหลดรูปภาพโดยใช้ axios
+            const response = await axios.get(imageUrl, {responseType: 'arraybuffer'})
+            // แปลงข้อมูลเป็น Base64
+            // console.log('1111', response)
+            const base64Image = Buffer.from(response.data, 'binary').toString('base64')
+            // สร้างลิงก์ดาวน์โหลด
+            const link = document.createElement('a')
+            link.href = 'data:image/jpeg;base64,' + base64Image
+            link.download = 'before' + (i + 1) + '.jpg'
+            // คลิกลิงก์เพื่อดาวน์โหลด
+            link.click()
+          } catch (error) {
+            console.error('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ:', error)
+          }
+        }
+      }
     },
     async ShowImg (item) {
       console.log(';sfsdfsdf', item)
@@ -15548,8 +15608,10 @@ export default {
       setTimeout(() => this.onCancelChk(), 500)
     },
     async updateLimitBookingCancel (item, dueDateOld, dueDateTimeOld) {
+      console.log('------------', item, dueDateOld, dueDateTimeOld)
       let result = []
       let dt = {
+        bookNo: item.bookNo,
         flowId: item.flowId,
         dateSelect: dueDateOld,
         timeSelect: dueDateTimeOld,
@@ -15874,6 +15936,7 @@ export default {
         })
     },
     async updateLimitBookingChange (item, dueDateOld, dueDateTimeOld, dueDateNew, dueDateTimeNew, limitBookingCount) {
+      console.log('item--------------', item)
       let result = []
       let dt = {
         dueDateOld: dueDateOld,
@@ -15886,6 +15949,7 @@ export default {
         timeSelect: dueDateTimeNew,
         shopId: item.shopId,
         userId: item.userId,
+        bookNo: item.bookNo,
         limitBookingCount: limitBookingCount
       }
       await axios.post(this.DNS_IP + '/Booking/updateLimitBookingChangeTime', dt).then(async response => {
