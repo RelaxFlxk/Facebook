@@ -3659,10 +3659,10 @@
           </v-col>
           <!-- end data table -->
         </v-row>
-        <v-dialog v-model="dialogShowImg" max-width="400px">
+        <v-dialog v-model="dialogShowImg" max-width="600px">
           <v-card class="pa-3">
             <div v-for="(CloseJob , keyCloseJob) in dataCloseJob" :key="'a' + keyCloseJob">
-              <div class="mx-6 pa-3 ma-2">
+              <div class="mx-6 pa-3 ma-2" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0">
                 <v-row class="pa-5">
                   <v-col cols="3" md="3" sm="12"  class="pa-0 ma-0" style="display: flex;align-items: flex-start;justify-content: flex-end;padding-left: 11px !important;">
                     <v-avatar size="65" v-if="CloseJob.memberPicture">
@@ -3754,20 +3754,21 @@
                 </div>
             </div>
             <!-- <h5 class="font-weight-bold m-6 mb-5 text-center">ตรวจสอบรูป</h5> -->
-            <div style="display: flex;justify-content: center;">
+            <div style="display: flex;justify-content: center;" class="mt-3" v-if="showImgItem.length > 0">
               <v-btn
                 color="primary"
                 elevation="2"
                 small
                 dark
                 @click="SaveImg()"
-              >Save Image</v-btn>
+              >ดาวน์โหลดรูปภาพทั้งหมด</v-btn>
             </div>
             <h6 class="font-weight-bold ml-6">Before</h6>
               <v-slide-group
                   v-if="showImgItem"
                     class="pa-4 pt-0 mt-n1"
                     color="primary"
+                    show-arrows
                   >
                     <v-slide-item
                       v-for="(itemImg2, i2) in showImgItem"
@@ -3786,9 +3787,10 @@
                   </v-slide-group>
               <h6 class="font-weight-bold ml-6">After</h6>
               <v-slide-group
-              v-if="showImgItem"
+                    v-if="showImgItem"
                     class="pa-4 pt-0 mt-n1"
                     color="primary"
+                    show-arrows
                   >
                     <v-slide-item
                       v-for="(itemImg, i) in showImgItem"
@@ -8278,54 +8280,60 @@ export default {
     },
     async SaveImg () {
       console.log(this.showImgItem)
-      // let url = 'https://storage.googleapis.com/betask-linked/static/upload/BeforeAfter/BA9055_20240314143726435600.jpg'
-      // fetch(url)
-      //   .then((response) => response.blob())
-      //   .then((blob) => {
-      //     saveAs(blob, 'image_name.jpg')
-      //   })
-      // console.log('downloading', url)
       for (let i = 0; i < this.showImgItem.length; i++) {
         let d = this.showImgItem[i]
         if (d.afterImage !== null) {
           try {
-            // URL ของรูปภาพที่ต้องการดาวน์โหลด
-            const imageUrl = d.afterImage
-            // ดาวน์โหลดรูปภาพโดยใช้ axios
-            const response = await axios.get(imageUrl, {responseType: 'arraybuffer'})
-            // แปลงข้อมูลเป็น Base64
-            // console.log('1111', response)
-            const base64Image = Buffer.from(response.data, 'binary').toString('base64')
-            // สร้างลิงก์ดาวน์โหลด
-            const link = document.createElement('a')
-            link.href = 'data:image/jpeg;base64,' + base64Image
-            link.download = 'after' + (i + 1) + '.jpg'
-            // คลิกลิงก์เพื่อดาวน์โหลด
-            link.click()
+            await axios.post(this.DNS_IP + '/job/image-to-base64', { imageUrl: d.afterImage })
+              .then(async (response) => {
+                console.log('response', response)
+                const base64Image = response.data.base64Image
+                const imgName = 'after' + (i + 1) + '.jpg'
+                await this.downloadBase64Image(base64Image, imgName)
+              })
+              .catch((error) => {
+                console.log('เกิดข้อผิดพลาดในการร้องขอข้อมูล Base64 ของรูปภาพ:', error)
+              })
           } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ:', error)
+            console.log('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ:', error)
           }
         }
         if (d.beforeImage !== null) {
           try {
-            // URL ของรูปภาพที่ต้องการดาวน์โหลด
-            const imageUrl = d.beforeImage
-            // ดาวน์โหลดรูปภาพโดยใช้ axios
-            const response = await axios.get(imageUrl, {responseType: 'arraybuffer'})
-            // แปลงข้อมูลเป็น Base64
-            // console.log('1111', response)
-            const base64Image = Buffer.from(response.data, 'binary').toString('base64')
-            // สร้างลิงก์ดาวน์โหลด
-            const link = document.createElement('a')
-            link.href = 'data:image/jpeg;base64,' + base64Image
-            link.download = 'before' + (i + 1) + '.jpg'
-            // คลิกลิงก์เพื่อดาวน์โหลด
-            link.click()
+            await axios.post(this.DNS_IP + '/job/image-to-base64', { imageUrl: d.beforeImage })
+              .then(async (response) => {
+                console.log('response', response)
+                const base64Image = response.data.base64Image
+                const imgName = 'before' + (i + 1) + '.jpg'
+                await this.downloadBase64Image(base64Image, imgName)
+              })
+              .catch((error) => {
+                console.log('เกิดข้อผิดพลาดในการร้องขอข้อมูล Base64 ของรูปภาพ:', error)
+              })
           } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ:', error)
+            console.log('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ:', error)
           }
         }
       }
+    },
+    async downloadBase64Image (base64Data, fileName) {
+      // สร้าง Blob จากข้อมูล base64
+      const blob = await this.base64ToBlob(base64Data)
+      // สร้างลิงก์ดาวน์โหลด
+      const link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = fileName
+      // คลิกลิงก์เพื่อดาวน์โหลด
+      link.click()
+    },
+    base64ToBlob (base64Data) {
+      const byteCharacters = atob(base64Data)
+      const byteNumbers = new Array(byteCharacters.length)
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i)
+      }
+      const byteArray = new Uint8Array(byteNumbers)
+      return new Blob([byteArray], { type: 'image/jpeg' })
     },
     async ShowImg (item) {
       console.log(';sfsdfsdf', item)
