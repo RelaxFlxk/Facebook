@@ -62,6 +62,7 @@
         {{ categories }}
         {{ names }} -->
         <v-calendar
+        v-if="categories.length > 0"
         ref="calendar"
         v-model="value"
         color="primary"
@@ -233,7 +234,7 @@ export default {
         let color = this.colors[key]
         return color
       } else {
-        let key = this.categories.findIndex((item) => item === event.category)
+        let key = this.categoriesItem.findIndex((item) => item.empFirst_NameTH === event.category)
         let color = this.colors[key]
         return color
       }

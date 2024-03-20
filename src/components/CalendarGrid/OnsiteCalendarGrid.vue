@@ -71,6 +71,15 @@
             no-title
             >
             </v-date-picker>
+              <v-btn
+              small
+              color="success"
+              class="my-2"
+              :loading="loading"
+              @click="ExportJob()">
+                <v-icon left>mdi-file-excel</v-icon>
+                Export
+              </v-btn>
               <v-sheet elevation="2" class="pa-2 px-3 py-6 ma-1">
               <h6 class="text-center font-weight-black">EVENT COLOR</h6>
               <div style="display: flex;justify-content: space-around;">
@@ -94,7 +103,7 @@
             </v-sheet>
             <v-expansion-panels v-model="panel" multiple class="pa-2">
               <v-expansion-panel>
-                <v-expansion-panel-header>บริการ</v-expansion-panel-header>
+                <v-expansion-panel-header>{{ 'บริการ ' + '( ' + flowName.length + ' )' }}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <div class="pa-1"  v-for="(item , index) in flowName" :key="index">
                     <h6 style="display: flex;align-items: center;">
@@ -105,11 +114,16 @@
                 </v-expansion-panel-content>
               </v-expansion-panel>
               <v-expansion-panel>
-                <v-expansion-panel-header>พนักงาน</v-expansion-panel-header>
+                <v-expansion-panel-header>{{ 'พนักงาน ' + '( ' + categoriesCheckBox.length + ' )' }}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <!-- Filter ช่างได้ -->
                   <!-- {{ categoriesCheckBoxs }} -->
                   <div class="pa-1" v-if="categoriesCheckBox.length > 0">
+                    <v-checkbox
+                      hide-details
+                      v-model="checkboxAll"
+                      label="All"
+                    ></v-checkbox>
                     <v-checkbox
                       :color="colors[index2]"
                       hide-details
@@ -195,6 +209,7 @@ import moment from 'moment' // แปลง date
 import FullCalendar from './FullCalendar.vue'
 // import CalendarCategory from './CalendarCategory.vue'
 import CategoryCalendar from './CategoryCalendar.vue'
+import XLSX from 'xlsx' // import xlsx
 export default {
   components: {
     CategoryCalendar,
@@ -273,11 +288,23 @@ export default {
       eventsItem: [],
       empDayoff: [],
       dataJob: [],
-      TT: []
+      TT: [],
+      checkboxAll: true,
+      loading: false,
     }
   },
   watch: {
     // whenever question changes, this function will run
+    async checkboxAll (newQuestion, oldQuestion) {
+      console.log('checkboxAll', newQuestion)
+      console.log('this.categories', this.categories.length)
+      console.log('this.categoriesCheckBox', this.categoriesCheckBox.length)
+      if (newQuestion === true) {
+        this.categories = this.categoriesCheckBox
+      } else if (newQuestion === false) {
+        this.categories = []
+      }
+    },
     async colsSize (newQuestion, oldQuestion) {
       if (newQuestion === 'md' || newQuestion === 'lg' || newQuestion === 'xl') {
       } else {
@@ -297,6 +324,9 @@ export default {
       }
     },
     async categories (newQuestion, oldQuestion) {
+      if (newQuestion.length !== this.categoriesCheckBox.length) {
+        this.checkboxAll = null
+      }
       this.updateSelect()
     }
   },
@@ -310,6 +340,80 @@ export default {
     // await this.$refs.calendar.checkChange()
   },
   methods: {
+    async ExportJob () {
+      this.loading = true
+      let job = await this.getExportJob()
+      let jobData = await this.getExportJobData()
+      let dataExport = []
+      for (let i = 0; i < job.length; i++) {
+        const element = job[i]
+        let obj = {
+          บริการ: element.flowName,
+          สถานะ: element.RECORD_STATUS === 'N' ? 'ยังไม่ปิดงาน' : 'ปิดงานแล้ว',
+          ขั้นตอนปัจจุบัน: element.stepTitle || '',
+          พนักงานที่รับผิดชอบ: element.empFirst_NameTH,
+          วันที่นัดหมาย: moment(element.dueDate).format('YYYY-MM-DD'),
+          เวลา: element.timeText
+        }
+        for (let a = 0; a < jobData.length; a++) {
+          const dt = jobData[a]
+          if (dt.jobNo === element.jobNo) {
+            obj[dt.fieldName] = dt.fieldValue
+          }
+        }
+        dataExport.push(obj)
+      }
+      await this.Send_XLSX(dataExport)
+      this.loading = false
+    },
+    Send_XLSX (data) {
+      var info = XLSX.utils.json_to_sheet(data)
+      var wb = XLSX.utils.book_new() // make Workbook of Excel
+      XLSX.utils.book_append_sheet(wb, info, 'worksheet1') // sheetAName is name of Worksheet
+      XLSX.writeFile(wb, 'file.xls') // name of the file is 'book.xlsx'
+    },
+    async getExportJob () {
+      let month = moment(this.focus).format('YYYY-MM')
+      let job = []
+      try {
+        await axios
+        .get(this.DNS_IP + '/job/get-reportJob?shopId=' + this.shopId + '&dueDate=' + month)
+        .then(async (response) => {
+          let rs = response.data
+          if (rs.status === false) {
+            job = []
+          } else {
+            job = rs
+            console.log('job', job)
+          }
+        })
+        return job
+      } catch (error) {
+        console.log('getJob-error', error)
+        return job
+      }
+    },
+    async getExportJobData () {
+      let month = moment(this.focus).format('YYYY-MM')
+      let jobData = []
+      try {
+        await axios
+        .get(this.DNS_IP + '/job/get-reportJobData?shopId=' + this.shopId + '&dueDate=' + month)
+        .then(async (response) => {
+          let rs = response.data
+          if (rs.status === false) {
+            jobData = []
+          } else {
+            jobData = rs
+            console.log('jobData', jobData)
+          }
+        })
+        return jobData
+      } catch (error) {
+        console.log('getJob-error', error)
+        return jobData
+      }
+    },
     clickMore (data) {
       this.type = 'day'
       this.focus = data
