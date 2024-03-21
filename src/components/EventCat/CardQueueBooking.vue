@@ -102,7 +102,7 @@ export default {
 
 .btn-event {
     width: 100%;
-    height: 37px !important;
+    height: 45px !important;
 }
 
 .text-event {

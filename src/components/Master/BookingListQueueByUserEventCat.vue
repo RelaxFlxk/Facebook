@@ -1,5 +1,5 @@
 <template>
-  <v-main class="main" :style="{ backgroundColor: shopColor }">
+  <v-main  :style="{ backgroundColor: shopColor }">
     <div class="p-4">
       <div class="d-flex flex-row justify-content-between">
         <div>
@@ -298,6 +298,10 @@ export default {
 }
 </script>
 <style scoped>
+.main-queue{
+  height: 'unset' !important;
+  border-radius: 'unser' !important;
+}
 /deep/ .v-select__slot>.v-label {
   color: white !important;
 }
