@@ -871,7 +871,6 @@ export default {
       this.$OmiseCard.configure({
         publicKey: this.$omise_public_key
       })
-      console.log('this.chkDateSchedule', this.chkDateSchedule)
       if (this.chkDateSchedule === '' || this.chkDateSchedule !== moment(moment(new Date(), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')) {
         this.chkSchedule()
       }
@@ -1119,6 +1118,18 @@ export default {
                 { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' },
                 { title: 'แสดงผลคิวหน้าร้าน', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoring', type: 'booking' },
                 { title: 'แสดงผลคิวหน้าร้าน วิดีโอ', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoringVideo', type: 'booking' }
+              ]
+            } else if (this.$session.getAll().data.shopId === 'Ue26280cb7c25119d75055cd07391b5e8') {
+              this.booking = [
+                { title: 'จัดการลิ้งค์', icon: 'mdi-link-variant', to: '/Master/ManageLink', type: 'booking' },
+                // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },
+                { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingField', type: 'booking' },
+                { title: 'รายชื่อลูกค้านัดหมาย', icon: 'mdi-account-edit', to: '/Master/BookingListBeauty', type: 'booking' },
+                { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' },
+                { title: 'จัดการเวลานัดหมาย', icon: 'mdi-table-edit', to: '/Master/BookingWalkin', type: 'booking' },
+                { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' },
+                { title: 'แสดงผลคิวหน้าร้าน', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoring', type: 'booking' },
+                { title: 'แสดงผลคิวหน้าร้าน วิดีโอ', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoringVideoEventCat', type: 'booking' }
               ]
             } else {
               this.booking = [
@@ -1499,7 +1510,6 @@ export default {
       this.chkDateSchedule = moment(moment(new Date(), 'YYYY-MM-DD').toDate()).format('YYYY-MM-DD')
       this.snackbarSchedule = false
       if (this.billingCustomerId !== '') {
-        console.log('this.chkDateSchedule2', this.chkDateSchedule)
         await axios
           .get(this.DNS_IP + '/omise/getSchedule?billingCustomerId=' + this.billingCustomerId)
           .then(async response => {

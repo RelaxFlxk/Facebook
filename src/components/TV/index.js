@@ -4,11 +4,15 @@ import BookingUse from './BookingUse.vue'
 import BookingUseOhrich from './BookingUseOhrich.vue'
 import CardQueueSummary from './CardQueueSummary.vue'
 import CardWaitingAll from './CardWaitingAll.vue'
+import BookingUseEventCat from './BookingUseEventCat.vue'
+import CardSubService from './CardSubService'
 export {
   CardWaiting,
   BookingUse,
+  BookingUseEventCat,
   CardQueueSummary,
   CardWaitingAll,
   BookingUseOhrich,
-  CardWaitingOhrich
+  CardWaitingOhrich,
+  CardSubService
 }

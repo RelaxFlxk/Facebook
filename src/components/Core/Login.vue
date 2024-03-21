@@ -648,6 +648,8 @@ export default {
         } else if (dataitem.USER_ROLE === 'storeFront') {
           if (dataitem.shopId === 'Ue9f527da07ff2da05246ea3f62671493') {
             this.$router.push('/Master/BookingListQueueByUserOhrich')
+          } else if (dataitem.shopId === 'Ue26280cb7c25119d75055cd07391b5e8') {
+            this.$router.push('/Master/BookingListQueueByUserEventCat')
           } else {
             this.$router.push('/Master/BookingListQueueByUser')
           }

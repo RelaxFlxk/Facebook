@@ -135,8 +135,6 @@ Vue.mixin({
       let dataLineConfig = []
       await axios.get(this.DNS_IP + '/lineconfig/get?shopId=' + shopId).then(response => {
         let rs = response.data
-        console.log('getDataLineConfig shopId', shopId)
-        console.log('getDataLineConfig', rs)
         if (rs.status === false) {
           dataLineConfig = {
             liffMainID: '1656581804-7KRQyqo5',

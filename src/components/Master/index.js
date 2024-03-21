@@ -51,6 +51,8 @@ import BookingByUserEmp from './BookingByUserEmp.vue'
 import BookingListQueueMonitoringVideoOhrich from './BookingListQueueMonitoringVideoOhrich.vue'
 import BookingListQueueMonitoringVideoOhrichV1 from './BookingListQueueMonitoringVideoOhrichV1.vue'
 import BookingListQueueTestPlaySound from './BookingListQueueTestPlaySound.vue'
+import BookingListQueueByUserEventCat from './BookingListQueueByUserEventCat'
+import BookingListQueueMonitoringVideoEventCat from './BookingListQueueMonitoringVideoEventCat'
 // import BookingListBeautyEmpTestRedis from './BookingListBeautyEmpTestRedis.vue'
 
 export default {
@@ -107,5 +109,7 @@ export default {
   CheckBookingList,
   BookingListQueueMonitoringVideoOhrich,
   BookingListQueueMonitoringVideoOhrichV1,
-  BookingListQueueTestPlaySound
+  BookingListQueueTestPlaySound,
+  BookingListQueueByUserEventCat,
+  BookingListQueueMonitoringVideoEventCat
 }
