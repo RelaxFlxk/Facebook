@@ -156,28 +156,8 @@ export default {
       dataSound: [],
       playingSound: [],
       empList: [4300, 4301, 4302, 4303, 4304, 4305, 4306, 4307, 4308, 4309, 4310, 4311, 4312, 4313, 4314, 4315, 4316, 4317, 4318],
-      dataList: [{ storeFrontQueue: '8', empNo: 4317, IsNotify: 'False' }],
       dataListTest1: [1, 2, 3, 4, 5, 6, 7],
-      dataListTest2: [1, 2, 3, 4, 5, 6],
-      dataServiceTest: [{ storeFrontQueue: '100', empNo: 4300, IsNotify: 'True' },
-        { storeFrontQueue: '200', empNo: 4301, IsNotify: 'True' },
-        { storeFrontQueue: '300', empNo: 4302, IsNotify: 'True' },
-        { storeFrontQueue: '4', empNo: 4303, IsNotify: 'True' },
-        { storeFrontQueue: '5', empNo: 4304, IsNotify: 'True' },
-        { storeFrontQueue: '6', empNo: 4305, IsNotify: 'True' },
-        { storeFrontQueue: '7', empNo: 4306, IsNotify: 'True' },
-        { storeFrontQueue: '8', empNo: 4307, IsNotify: 'True' },
-        { storeFrontQueue: '9', empNo: 4308, IsNotify: 'True' },
-        { storeFrontQueue: '10', empNo: 4309, IsNotify: 'True' },
-        { storeFrontQueue: '11', empNo: 4310, IsNotify: 'True' },
-        { storeFrontQueue: '12', empNo: 4311, IsNotify: 'True' },
-        { storeFrontQueue: '13', empNo: 4312, IsNotify: 'True' },
-        { storeFrontQueue: '14', empNo: 4313, IsNotify: 'True' },
-        { storeFrontQueue: '15', empNo: 4314, IsNotify: 'True' },
-        { storeFrontQueue: '16', empNo: 4315, IsNotify: 'True' },
-        { storeFrontQueue: '17', empNo: 4316, IsNotify: 'True' },
-        { storeFrontQueue: '18', empNo: 4317, IsNotify: 'True' },
-        { storeFrontQueue: '19', empNo: 4318, IsNotify: 'True' }]
+      dataListTest2: [1, 2, 3, 4, 5, 6]
     }
   },
 
@@ -220,16 +200,12 @@ export default {
             if (snapshot.empty) {
               this.updateProcessUpdate()
             } else {
-              snapshot.docChanges().forEach(async (change) => {
-                if (change.doc.id === this.$session.getAll().data.userName) {
-                  if (change.doc.data().active === '1') {
-                    console.log('getFirestore', this.$session.getAll().data.userName)
-                    await this.getBooking()
-                    await this.updateNotifyByShopId()
-                    this.updateProcessUpdate()
-                  }
-                }
-              })
+              const doc = snapshot.docs.find(doc => doc.id === this.$session.getAll().data.userName)
+              if (doc && doc.data().active === '1') {
+                this.updateProcessUpdate()
+                this.getBooking()
+                this.updateNotifyByShopId()
+              }
             }
           })
       } catch (error) {
@@ -379,7 +355,6 @@ export default {
             if (response.data) {
               const res = response.data
               if (res.status) {
-                // await this.updateNotifyByShopId()
                 arrDataService = res.data.map(element => {
                   if (element.empNo !== '') {
                     let servicePoint = this.empList.indexOf(parseInt(element.empNo))
