@@ -1,7 +1,7 @@
 <template>
   <div :class="`d-flex flex-row mx-4 ${isPortrait ? '' : 'mt-5'}`">
     <div
-      :class="`d-flex flex-row  align-items-center card-service p-2 mx-2}`"
+      class="d-flex flex-row  align-items-center card-service p-2 mx-2"
       v-for="(data,index) in booking"
       :key="index"
     >
