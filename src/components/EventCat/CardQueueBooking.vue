@@ -12,7 +12,7 @@
                                     <v-icon size="70" color="#000000">mdi-cat</v-icon>
                                 </div>
                                 <div>
-                                    <strong class="text-queue">{{queueItem.storeFrontQueue}}</strong>
+                                    <span class="text-queue">{{queueItem.storeFrontQueue}}</span>
                                 </div>
                             </div>
                             <div>
@@ -21,7 +21,7 @@
                                     <div class="d-flex flex-column">
                                         <div><v-icon size="25">mdi-bell-ring</v-icon></div>
                                         <div>
-                                            <strong class="text-white text-event">เรียกคิว</strong>
+                                            <span class="text-white text-event">เรียกคิว</span>
                                         </div>
                                     </div>
                                 </v-btn>
@@ -31,22 +31,22 @@
                             <div class="w-100 mr-1">
                                 <v-btn class="btn-event w-100 px-1" color="success" rounded :disabled="queueItem.statusQueue !== 'confirmjob'"
                                 @click="returnQueue(queueItem)"
-                                    elevation="1"><v-icon>mdi-clipboard-arrow-down-outline</v-icon><strong
-                                        :class="`${queueItem.statusQueue === 'waiting' ? '' : 'text-white' } mx-1`">คืนคิว</strong></v-btn>
+                                    elevation="1"><v-icon>mdi-clipboard-arrow-down-outline</v-icon><span
+                                        :class="`${queueItem.statusQueue === 'waiting' ? '' : 'text-white' } mx-1 text-sub-event`">คืนคิว</span></v-btn>
                             </div>
                             <div class="w-100 mr-1">
                                 <v-btn class="btn-event w-100 px-1" rounded color="#1B437C"
                                 @click="callQueueAgain(queueItem)"
                                 :disabled="queueItem.statusQueue !== 'confirmjob'"><v-icon
-                                        class="text-white">mdi-refresh</v-icon><strong
-                                        :class="`${queueItem.statusQueue === 'waiting' ? '' : 'text-white'} `">เรียกคิวซ้ำ</strong></v-btn>
+                                        class="text-white">mdi-refresh</v-icon><span
+                                        :class="`${queueItem.statusQueue === 'waiting' ? '' : 'text-white'} text-sub-event`">เรียกคิวซ้ำ</span></v-btn>
                             </div>
                             <div class="w-100">
                                 <v-btn class="btn-event w-100 px-1" rounded color="#F38383"
                                 @click="closingWork(queueItem)"
                                 :disabled="queueItem.statusQueue === 'confirmjob' ? false : true"><v-icon
                                 class="text-white">mdi-check-circle-outline</v-icon>
-                                    <strong :class="`${queueItem.statusQueue  === 'waiting' ? '' : 'text-white'} `">ปิดงาน</strong></v-btn>
+                                    <span :class="`${queueItem.statusQueue  === 'waiting' ? '' : 'text-white'} text-sub-event`">ปิดงาน</span></v-btn>
                             </div>
                         </div>
                     </div>
@@ -107,10 +107,14 @@ export default {
 
 .text-event {
     font-size: 15px;
+    font-weight: 600;
 }
-
+.text-sub-event {
+    font-weight: 600;
+}
 .text-queue {
     font-size: 50px;
+    font-weight: 600;
 }
 .btn-delete {
     background-color: #FA4F00;

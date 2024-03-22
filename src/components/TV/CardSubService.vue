@@ -1,12 +1,12 @@
 <template>
-  <div class="d-flex flex-row mx-4 mt-5">
+  <div :class="`d-flex flex-row mx-4 ${isPortrait ? '' : 'mt-5'}`">
     <div
-      :class="`d-flex flex-row  align-items-center card-service p-2 mx-2 ${isPortrait ? 'w-100 col' : ''}`"
+      :class="`d-flex flex-row  align-items-center card-service p-2 mx-2}`"
       v-for="(data,index) in booking"
       :key="index"
     >
       <div class="mr-1">
-        <v-icon size="25" :color="shopColor">mdi-cat</v-icon>
+        <v-icon :size="`${isPortrait ? '20' : '25'}`" :color="shopColor">mdi-cat</v-icon>
       </div>
       <div class="mr-1">
         <strong class="text-service">{{data.storeFrontQueue}}</strong>
@@ -47,4 +47,11 @@ export default {
 }
 
 }
+@media screen and (orientation: portrait) {
+  .text-service {
+  font-size: 1.5vh;
+}
+}
+
+@media screen and (orientation: landscape) {}
 </style>

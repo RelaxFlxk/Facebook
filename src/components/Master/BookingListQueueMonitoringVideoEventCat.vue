@@ -1,7 +1,7 @@
 <template>
   <div :style="{ backgroundColor: shopColor, height: '100%', width: '100%' }">
     <div :class="`d-flex ${isPortrait ? 'flex-column' : 'flex-row'}`">
-      <BookingUseEventCat class="ml-5" :isDark="true" :bookingUse="dataService.slice(0,6)" :isPortrait="isPortrait" />
+      <BookingUseEventCat :class="`${isPortrait ? '' : 'ml-5'}`" :isDark="true" :bookingUse="dataService.slice(0,6)" :isPortrait="isPortrait" />
       <div v-if="!isPortrait" class="col-7 d-flex flex-column">
         <div class="mt-5 w-100" style="text-align: center;">
           <img class="img-promot"
@@ -27,11 +27,11 @@
     <div v-if="isPortrait">
       <CardSubService :isPortrait="isPortrait" :shopColor="shopColor" :booking="dataService.slice(6,10)" :empList="empList"/>
       <CardSubService :isPortrait="isPortrait" :shopColor="shopColor" :booking="dataService.slice(10,14)" :empList="empList"/>
-      <CardSubService :isPortrait="isPortrait" :shopColor="shopColor" :booking="dataService.slice(14,18)" :empList="empList"/>
+      <CardSubService :isPortrait="isPortrait" :shopColor="shopColor" :booking="dataService.slice(14,19)" :empList="empList"/>
     </div>
-    <div v-if="isPortrait" class="d-flex flex-row justify-content-between w-100">
+    <div v-if="isPortrait" :class="`${isPortrait ? 'justify-content-center' : 'justify-content-between'} d-flex flex-row w-100`">
       <img
-          width="100%"
+          width="85%"
           :src="require('@/assets/fream-queue.png')"
       />
       <!-- <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%"
