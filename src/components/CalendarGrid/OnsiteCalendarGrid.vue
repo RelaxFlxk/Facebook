@@ -119,7 +119,6 @@
                   <!-- Filter ช่างได้ -->
                   <!-- {{ categoriesCheckBoxs }} -->
                   <div class="pa-1" v-if="categoriesCheckBox.length > 0">
-                    {{ checkboxAll }}
                     <div style="display: flex;justify-content: space-between;">
                       <v-checkbox
                         hide-details
