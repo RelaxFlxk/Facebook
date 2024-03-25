@@ -191,6 +191,11 @@ export default {
     // await this.checkTypeEvenEmp()
   },
   methods: {
+    validateEmail (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      console.log('emailRegex.test(email)', emailRegex.test(email))
+      return emailRegex.test(email)
+    },
     async UseGoogleCalendar () {
       console.log('TEST_!@#!@#!@#!@#!@#!@#!@#!@#!@')
       await this.getShop()
@@ -303,7 +308,7 @@ export default {
       if (this.statusGoogleCalendarEmp === 'True') {
         if (status === 'Add') {
           try {
-            if (this.empItem[0].empEmail !== null) {
+            if (this.validateEmail(this.empItem[0].empEmail)) {
               let obj = {'email': this.empItem[0].empEmail}
               item.attendees.push(obj)
             }
@@ -312,7 +317,7 @@ export default {
           }
         } else if (status === 'Edit') {
           try {
-            if (this.empItem[0].empEmail !== null) {
+            if (this.validateEmail(this.empItem[0].empEmail)) {
               let obj = {'email': this.empItem[0].empEmail}
               item.attendees.push(obj)
             }
