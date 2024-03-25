@@ -119,11 +119,30 @@
                   <!-- Filter ช่างได้ -->
                   <!-- {{ categoriesCheckBoxs }} -->
                   <div class="pa-1" v-if="categoriesCheckBox.length > 0">
-                    <v-checkbox
-                      hide-details
-                      v-model="checkboxAll"
-                      label="All"
-                    ></v-checkbox>
+                    {{ checkboxAll }}
+                    <div style="display: flex;justify-content: space-between;">
+                      <v-checkbox
+                        hide-details
+                        v-model="checkboxAll"
+                        label="ทั้งหมด"
+                        false-value="None"
+                        true-value="All"
+                      ></v-checkbox>
+                      <v-checkbox
+                        v-model="checkboxAll"
+                        hide-details
+                        label="มีงาน"
+                        false-value="None"
+                        true-value="Job"
+                      ></v-checkbox>
+                      <v-checkbox
+                        v-model="checkboxAll"
+                        hide-details
+                        label="ว่าง"
+                        false-value="None"
+                        true-value="NoneJob"
+                      ></v-checkbox>
+                    </div>
                     <v-checkbox
                       :color="colors[index2]"
                       hide-details
@@ -256,27 +275,39 @@ export default {
       focus: null,
       events: [],
       eventsMaster: [],
+      // colors: [
+      //   '#FE6F5E',
+      //   '#E4CC51',
+      //   '#C32876',
+      //   '#532A75',
+      //   '#57472E',
+      //   '#B93424',
+      //   '#B66D2F',
+      //   '#024B55',
+      //   '#568455',
+      //   '#FF9B8E',
+      //   '#57A298',
+      //   '#009076',
+      //   '#722211',
+      //   '#A10057',
+      //   '#89ACBC',
+      //   '#222E75',
+      //   '#705899',
+      //   '#696BC5',
+      //   '#123249',
+      //   '#0A3E28'
+      // ],
       colors: [
-        '#FE6F5E',
-        '#E4CC51',
-        '#C32876',
-        '#532A75',
-        '#57472E',
-        '#B93424',
-        '#B66D2F',
-        '#024B55',
-        '#568455',
-        '#FF9B8E',
-        '#57A298',
-        '#009076',
-        '#722211',
-        '#A10057',
-        '#89ACBC',
-        '#222E75',
-        '#705899',
-        '#696BC5',
-        '#123249',
-        '#0A3E28'
+        '#FE6F5E', '#E4CC51', '#C32876', '#532A75', '#57472E', '#B93424', '#B66D2F', '#024B55', '#568455', '#FF9B8E',
+        '#57A298', '#009076', '#722211', '#A10057', '#89ACBC', '#222E75', '#705899', '#696BC5', '#123249', '#0A3E28',
+        '#FE7D6E', '#E4D651', '#C42877', '#542B74', '#57482F', '#BA3624', '#B66E30', '#014C55', '#578556', '#FF9D8D',
+        '#58A299', '#009176', '#732111', '#A20058', '#8AACBD', '#232F75', '#705999', '#6A6CC6', '#133349', '#0B3F28',
+        '#FF6F5D', '#E4CB50', '#C22875', '#522974', '#57462D', '#B83423', '#B66C2E', '#014A54', '#558355', '#FF9A8D',
+        '#57A197', '#008F75', '#722011', '#A00056', '#88ABBB', '#212D74', '#6F5898', '#686AC4', '#113148', '#0A3D27',
+        '#FD6F5D', '#E5CC52', '#C42977', '#542B73', '#57472E', '#B93423', '#B66D2F', '#024C56', '#578456', '#FF9B8F',
+        '#58A197', '#009077', '#732311', '#A20058', '#8AACBD', '#222F74', '#705999', '#6A6BC5', '#123148', '#0A3E29',
+        '#FF6E5D', '#E5CC51', '#C42876', '#542B73', '#57472E', '#B93323', '#B66D2E', '#024D55', '#568456', '#FF9C8D',
+        '#57A198', '#009176', '#732011', '#A10057', '#8AABBD', '#232F74', '#705999', '#6A6BC4', '#133048', '#0A3E28'
       ],
       names: [],
       // categories: ['AAAAAA', 'BBBBBB']
@@ -289,7 +320,7 @@ export default {
       empDayoff: [],
       dataJob: [],
       TT: [],
-      checkboxAll: true,
+      checkboxAll: 'All',
       loading: false,
     }
   },
@@ -297,11 +328,29 @@ export default {
     // whenever question changes, this function will run
     async checkboxAll (newQuestion, oldQuestion) {
       console.log('checkboxAll', newQuestion)
-      console.log('this.categories', this.categories.length)
-      console.log('this.categoriesCheckBox', this.categoriesCheckBox.length)
-      if (newQuestion === true) {
+      // console.log('this.categories', this.categories.length)
+      // console.log('this.categoriesCheckBox', this.categoriesCheckBox.length)
+      if (newQuestion === 'All') {
         this.categories = this.categoriesCheckBox
-      } else if (newQuestion === false) {
+      } else if (newQuestion === 'Job') {
+        let dt = []
+        for (let index = 0; index < this.categoriesCheckBox.length; index++) {
+          const element = this.categoriesCheckBox[index]
+          if (this.eventsMaster.filter((item) => item.category === element).length > 0) {
+            dt.push(element)
+          }
+        }
+        this.categories = dt
+      } else if (newQuestion === 'NoneJob') {
+        let dt = []
+        for (let index = 0; index < this.categoriesCheckBox.length; index++) {
+          const element = this.categoriesCheckBox[index]
+          if (this.eventsMaster.filter((item) => item.category === element).length === 0) {
+            dt.push(element)
+          }
+        }
+        this.categories = dt
+      } else if (newQuestion === 'None') {
         this.categories = []
       }
     },
@@ -324,7 +373,10 @@ export default {
       }
     },
     async categories (newQuestion, oldQuestion) {
-      if (newQuestion.length !== this.categoriesCheckBox.length) {
+      if (newQuestion.length !== this.categoriesCheckBox.length && this.checkboxAll === 'None') {
+        this.checkboxAll = 'None'
+      }
+      if (newQuestion.length !== this.categoriesCheckBox.length && this.checkboxAll !== 'None') {
         this.checkboxAll = null
       }
       this.updateSelect()
@@ -351,6 +403,7 @@ export default {
           บริการ: element.flowName,
           สถานะ: element.RECORD_STATUS === 'N' ? 'ยังไม่ปิดงาน' : 'ปิดงานแล้ว',
           ขั้นตอนปัจจุบัน: element.stepTitle || '',
+          ที่อยู่: element.address || '',
           พนักงานที่รับผิดชอบ: element.empFirst_NameTH,
           วันที่นัดหมาย: moment(element.dueDate).format('YYYY-MM-DD'),
           เวลา: element.timeText
@@ -362,6 +415,7 @@ export default {
           }
         }
         dataExport.push(obj)
+        console.log(dataExport)
       }
       await this.Send_XLSX(dataExport)
       this.loading = false
@@ -548,9 +602,9 @@ export default {
       // console.log('getEventEmp', this.DNS_IP)
       let month = moment(this.focus).format('YYYY-MM')
       console.log('month', month)
-      let param = this.DNS_IP + `/CalendarGridTime/get?shopId=${this.shopId}&start=${month}`
+      let param = this.DNS_IP + `/CalendarGridTime/get?shopId=${this.shopId}&start=${month}&type=onsite`
       if (this.session.data.USER_ROLE === 'onsite') {
-        param = this.DNS_IP + `/CalendarGridTime/get?shopId=${this.shopId}&start=${month}&empId=${this.session.data.empId}`
+        param = this.DNS_IP + `/CalendarGridTime/get?shopId=${this.shopId}&start=${month}&empId=${this.session.data.empId}&type=onsite`
       }
       await axios
         .get(param)
