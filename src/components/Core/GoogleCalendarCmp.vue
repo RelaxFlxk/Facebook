@@ -217,7 +217,7 @@ export default {
           // on success
           console.log('authCode', authCode)
           axios
-            .post(this.webHookUrl + 'GoogleCalendar-createToken', {code: authCode}, {timeout: 5000})
+            .post(this.webHookUrl + 'GoogleCalendar-createToken', {code: authCode}, {timeout: 10000})
             // .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
             .then(async (response) => {
               // this.checkLogin = true
@@ -239,7 +239,7 @@ export default {
           // on success
           console.log('authCode', authCode)
           axios
-            .post(this.webHookUrl + 'GoogleCalendar-createToken', {code: authCode}, {timeout: 5000})
+            .post(this.webHookUrl + 'GoogleCalendar-createToken', {code: authCode}, {timeout: 10000})
             // .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
             .then(async (response) => {
               // this.checkLogin = true
@@ -492,7 +492,7 @@ export default {
           // on success
           console.log('authCode', authCode)
           axios
-            .post(this.webHookUrl + 'GoogleCalendar-createToken', {code: authCode}, {timeout: 5000})
+            .post(this.webHookUrl + 'GoogleCalendar-createToken', {code: authCode}, {timeout: 10000})
             // .post('http://localhost:5002/be-linked-a7cdc/asia-southeast1/GoogleCalendar-createToken', {code: authCode})
             .then(async (response) => {
               // this.checkLogin = true
@@ -551,7 +551,7 @@ export default {
         eventId: this.eventId
       }
       axios
-        .post(this.webHookUrl + 'GoogleCalendar-getEvent', dt, {timeout: 5000})
+        .post(this.webHookUrl + 'GoogleCalendar-getEvent', dt, {timeout: 10000})
         .then(async (response) => {
           console.log('getEvent', response.data)
           if (response.data.status === 200) {
@@ -576,7 +576,7 @@ export default {
       }
       let rsData = []
       await axios
-        .post(this.webHookUrl + 'GoogleCalendar-getEvent', itemGet, {timeout: 5000})
+        .post(this.webHookUrl + 'GoogleCalendar-getEvent', itemGet, {timeout: 10000})
         .then(async (response) => {
           console.log('getEvent', response.data)
           if (response.data.status === 200) {
@@ -609,7 +609,7 @@ export default {
       if (this.bookingItem[0].googleCalendarEventId !== null) {
         try {
           await axios
-            .post(this.webHookUrl + 'GoogleCalendar-updateEvent', itemUpdate, {timeout: 5000})
+            .post(this.webHookUrl + 'GoogleCalendar-updateEvent', itemUpdate, {timeout: 10000})
             .then(async (response) => {
               console.log('updateEvent11', response.data)
             }).catch((err) => {
@@ -626,7 +626,7 @@ export default {
         eventId: this.bookingItem[0].googleCalendarEventId
       }
       await axios
-        .post(this.webHookUrl + 'GoogleCalendar-deleteEvent', dt, {timeout: 5000})
+        .post(this.webHookUrl + 'GoogleCalendar-deleteEvent', dt, {timeout: 10000})
         .then(async (response) => {
           console.log('deleteEvent', response.data)
         })
