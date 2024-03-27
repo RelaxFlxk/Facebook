@@ -8248,6 +8248,9 @@ export default {
               let DTitem = item.userId
               console.log('DTITEM', DTitem)
               this.dialogConfirmCancel = false
+              if (this.statusGoogleCalendar === 'True') {
+                this.connectGoogleCalendar('Add', dt.bookNo)
+              }
               if (DTitem !== 'user-skip') {
                 if (this.statusSearch === 'no') {
                   await this.getBookingList()

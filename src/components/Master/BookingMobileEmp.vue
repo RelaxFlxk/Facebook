@@ -4079,6 +4079,7 @@ export default {
             .then(async response => {
               console.log('statusGoogleCalendar', this.statusGoogleCalendar)
               if (this.statusGoogleCalendar === 'True') {
+                console.log('TEST----')
                 await this.connectGoogleCalendar('Edit', dt.bookNo)
               }
               this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')

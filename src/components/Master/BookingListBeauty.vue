@@ -4698,6 +4698,75 @@
                             ></v-select>
                             </v-col>
                           </v-row>
+                          <!-- แก้ไขเวลาสำหรับ joyride -->
+                          <v-row v-else-if="$session.getAll().data.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8'">
+                            <v-col class="pb-0">
+                              <v-menu
+                                v-model="menuDateEdit"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="dateEdit"
+                                    label="วันที่นัดหมาย"
+                                    prepend-icon="mdi-calendar"
+                                    readonly
+                                    v-bind="attrs"
+                                    dense
+                                    outlined
+                                    v-on="on"
+                                    required
+                                    :rules="[rules.required]"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="dateEdit"
+                                  :allowed-dates="allowedDatesEdit"
+                                  @input="menuDateEdit = false, setLimitBookingEdit(dateEdit)"
+                                  :min="
+                                    new Date(
+                                      Date.now() -
+                                        new Date().getTimezoneOffset() * 60000
+                                    )
+                                      .toISOString()
+                                      .substr(0, 10)
+                                  "
+                                ></v-date-picker>
+                                <!-- <v-date-picker
+                                  v-model="dateEdit"
+                                  @input="menuDate = false"
+                                ></v-date-picker> -->
+                              </v-menu>
+                            </v-col>
+                            <v-col class="pb-0">
+                              <!-- <v-select
+                              v-model="timeEdit"
+                              :items="timeavailable"
+                              label="เวลา"
+                              menu-props="auto"
+                              outlined
+                              dense
+                            ></v-select> -->
+                            <v-select
+                              v-if="dateEdit !== ''"
+                              v-model="timeEdit"
+                              :items="timeavailable"
+                              label="เวลา"
+                              item-text="text"
+                              item-value="text"
+                              persistent-hint
+                              return-object
+                              outlined
+                              dense
+                              required
+                              :rules ="[rules.required]"
+                            ></v-select>
+                            </v-col>
+                          </v-row>
                           <v-row v-if="$session.getAll().data.shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
                             <v-col class="pt-0 pb-0">
                               <v-radio-group v-model="formEdit.radiosRemark" row  required :rules ="[rules.required]">
@@ -10127,7 +10196,7 @@ export default {
         setTime = timeJson[0].setTime || []
         console.log('IF')
       } else {
-        console.log('ELSE')
+        console.log('ELSE###', JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime))
         setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
       }
       if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) }).length > 0) {
@@ -10182,7 +10251,8 @@ export default {
           this.timeavailable = TimeData
         }
       } else {
-        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
+        console.log('this.timeavailable ELSEEEEE@@@@@', this.timeavailable)
+        console.log('----', this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) }))
         // LimitBookingBy Flow
         // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formEdit.flowId })[0].setTime) || []
         // LimitBookingBy masBranch
@@ -12944,7 +13014,7 @@ export default {
         if (item.text !== 'ทั้งหมด') {
           let checkBranchByFlow = item.allData.masBranchID || 'All'
           if ((checkBranchByFlow === this.formEdit.masBranchID.toString()) || checkBranchByFlow === 'All') {
-            console.log('eeeeeee', item.allData.flowName)
+            // console.log('eeeeeee', item.allData.flowName)
             dataFilter.push(item)
           }
         }
@@ -16288,25 +16358,25 @@ export default {
       // this.SetallowedDatesEdit()
       this.dateEdit = ''
       // this.dateEdit = dt.dueDateDay
-      console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
+      // console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
       this.timeavailable = []
       // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
       let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId }) || []
-      console.log('dtTime', dtTime)
+      // console.log('dtTime', dtTime)
       await this.setLimitBookingEdit(dt.dueDateDay)
       let setTime = []
       if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
         let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dt.dueDateDay).getDay())
         setTime = timeJson[0].setTime || []
-        console.log('IF')
+        // console.log('IF')
       } else {
-        console.log('ELSE')
+        // console.log('ELSE')
         setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
       }
       if (dtTime.length > 0) {
         this.statusShowMap = dtTime[0].allData.checkOnsite || 'False'
         // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-        console.log('timeavailable', dtTime.map(item => item.allData.setTime))
+        // console.log('timeavailable', dtTime.map(item => item.allData.setTime))
         if (dtTime.map(item => item.allData.setTime)[0] === null || dtTime.map(item => item.allData.setTime)[0] === '') {
           this.timeavailable = []
           this.timeEdit = ''
@@ -16329,7 +16399,7 @@ export default {
       console.log('setDataEdit', dt)
       await this.getPackage(dt)
       if (this.dataPackage.length > 0) {
-        console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
+        // console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
         if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
           var dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
           this.dataPackageDefault = true
@@ -16799,6 +16869,7 @@ export default {
               this.date = ''
               this.time = ''
             } else {
+              console.log('------------', response)
               // await this.confirmChkAddBookingAgain(response.data)
               if (this.statusSearch === 'no') {
                 await this.getBookingList()
@@ -16811,7 +16882,6 @@ export default {
               if (this.getSelectText) {
                 this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
-              // this.getDataCalendaBooking()
               this.dialogBookingAgain = false
               this.$swal('เรียบร้อย', 'นัดหมายอีกครั้ง เรียบร้อย', 'success')
               this.dataEditReady = true
