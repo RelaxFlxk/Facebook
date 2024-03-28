@@ -149,7 +149,7 @@
                       v-model="categories"
                       :label="item2"
                       :value="item2"
-                      @click="filterEmp(item2, index2)"
+                      @click="filterEmp(item2, index2), maplegnht()"
                     ></v-checkbox>
                   </div>
                 </v-expansion-panel-content>
@@ -321,14 +321,17 @@ export default {
       TT: [],
       checkboxAll: 'All',
       loading: false,
+      newQuestionlength: ''
     }
   },
   watch: {
     // whenever question changes, this function will run
     async checkboxAll (newQuestion, oldQuestion) {
       console.log('checkboxAll', newQuestion)
+      this.newQuestionlength = newQuestion
       // console.log('this.categories', this.categories.length)
       // console.log('this.categoriesCheckBox', this.categoriesCheckBox.length)
+
       if (newQuestion === 'All') {
         this.categories = this.categoriesCheckBox
       } else if (newQuestion === 'Job') {
@@ -372,12 +375,6 @@ export default {
       }
     },
     async categories (newQuestion, oldQuestion) {
-      if (newQuestion.length !== this.categoriesCheckBox.length && this.checkboxAll === 'None') {
-        this.checkboxAll = 'None'
-      }
-      if (newQuestion.length !== this.categoriesCheckBox.length && this.checkboxAll !== 'None') {
-        this.checkboxAll = null
-      }
       this.updateSelect()
     }
   },
@@ -391,6 +388,13 @@ export default {
     // await this.$refs.calendar.checkChange()
   },
   methods: {
+    async maplegnht () {
+      if (this.newQuestionlength.length !== this.categories.length) {
+        this.checkboxAll = null
+      } else {
+        this.checkboxAll = 'All'
+      }
+    },
     async ExportJob () {
       this.loading = true
       let job = await this.getExportJob()
@@ -430,16 +434,16 @@ export default {
       let job = []
       try {
         await axios
-        .get(this.DNS_IP + '/job/get-reportJob?shopId=' + this.shopId + '&dueDate=' + month)
-        .then(async (response) => {
-          let rs = response.data
-          if (rs.status === false) {
-            job = []
-          } else {
-            job = rs
-            console.log('job', job)
-          }
-        })
+          .get(this.DNS_IP + '/job/get-reportJob?shopId=' + this.shopId + '&dueDate=' + month)
+          .then(async (response) => {
+            let rs = response.data
+            if (rs.status === false) {
+              job = []
+            } else {
+              job = rs
+              console.log('job', job)
+            }
+          })
         return job
       } catch (error) {
         console.log('getJob-error', error)
@@ -451,16 +455,16 @@ export default {
       let jobData = []
       try {
         await axios
-        .get(this.DNS_IP + '/job/get-reportJobData?shopId=' + this.shopId + '&dueDate=' + month)
-        .then(async (response) => {
-          let rs = response.data
-          if (rs.status === false) {
-            jobData = []
-          } else {
-            jobData = rs
-            console.log('jobData', jobData)
-          }
-        })
+          .get(this.DNS_IP + '/job/get-reportJobData?shopId=' + this.shopId + '&dueDate=' + month)
+          .then(async (response) => {
+            let rs = response.data
+            if (rs.status === false) {
+              jobData = []
+            } else {
+              jobData = rs
+              console.log('jobData', jobData)
+            }
+          })
         return jobData
       } catch (error) {
         console.log('getJob-error', error)
