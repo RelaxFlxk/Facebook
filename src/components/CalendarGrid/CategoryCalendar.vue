@@ -234,7 +234,7 @@ export default {
         let color = this.colors[key]
         return color
       } else {
-        let key = this.categoriesItem.findIndex((item) => item.empFirst_NameTH === event.category)
+        let key = this.categoriesItem.findIndex((item) => item.empFull_NameTH === event.category)
         let color = this.colors[key]
         return color
       }

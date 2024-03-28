@@ -83,7 +83,28 @@
               <v-sheet elevation="2" class="pa-2 px-3 py-6 ma-1">
               <h6 class="text-center font-weight-black">EVENT COLOR</h6>
               <div style="display: flex;justify-content: space-around;">
-                <v-switch
+                <!-- {{ typeColor }} -->
+                <div class="radio-switch">
+                  <label class="radio-switch-label" for="radio-switch-All"  @click="typeColorStatus('Flow')" :style="{
+                    backgroundColor:
+                    typeColor === 'Flow' ? '#5987d6' : 'rgb(240 240 240)',
+                    color: typeColor === 'Flow' ? '#fff' : 'rgb(89 135 214 / 78%)',
+                    borderRadius:
+                    typeColor === 'Flow'
+                        ? '10px'
+                        : '10px 0px 0px 10px'
+                  }">บริการ
+                  </label>
+                  <label class="radio-switch-label" for="radio-switch-low" @click="typeColorStatus('Emp')" :style="{
+                    backgroundColor:
+                    typeColor === 'Emp' ? '#5987d6' : 'rgb(240 240 240)',
+                    color: typeColor === 'Emp' ? '#fff' : 'rgb(89 135 214 / 78%)',
+                    borderRadius:
+                    typeColor === 'Emp' ? '10px' : '0px 10px 10px 0px'
+                  }">พนักงาน
+                  </label>
+                </div>
+                <!-- <v-switch
                 v-model="typeColor"
                 hide-details
                 inset
@@ -98,7 +119,7 @@
                 :true-value="typesColor[1]"
                 :false-value="typesColor[0]"
                 label="พนักงาน"
-              ></v-switch>
+              ></v-switch> -->
               </div>
             </v-sheet>
             <v-expansion-panels v-model="panel" multiple class="pa-2">
@@ -122,6 +143,8 @@
                     <div style="display: flex;justify-content: space-between;">
                       <v-checkbox
                         hide-details
+                        on-icon="mdi-checkbox-marked-circle"
+                        off-icon="mdi-checkbox-blank-circle-outline"
                         v-model="checkboxAll"
                         label="ทั้งหมด"
                         false-value="None"
@@ -129,6 +152,8 @@
                       ></v-checkbox>
                       <v-checkbox
                         v-model="checkboxAll"
+                        on-icon="mdi-checkbox-marked-circle"
+                        off-icon="mdi-checkbox-blank-circle-outline"
                         hide-details
                         label="มีงาน"
                         false-value="None"
@@ -136,12 +161,15 @@
                       ></v-checkbox>
                       <v-checkbox
                         v-model="checkboxAll"
+                        on-icon="mdi-checkbox-marked-circle"
+                        off-icon="mdi-checkbox-blank-circle-outline"
                         hide-details
                         label="ว่าง"
                         false-value="None"
                         true-value="NoneJob"
                       ></v-checkbox>
                     </div>
+                    <v-divider></v-divider>
                     <v-checkbox
                       :color="colors[index2]"
                       hide-details
@@ -321,6 +349,7 @@ export default {
       TT: [],
       checkboxAll: 'All',
       loading: false,
+      toggle_EVENT: undefined,
       newQuestionlength: ''
     }
   },
@@ -388,11 +417,20 @@ export default {
     // await this.$refs.calendar.checkChange()
   },
   methods: {
+    async typeColorStatus (data) {
+      this.typeColor = data
+    },
     async maplegnht () {
-      if (this.newQuestionlength.length !== this.categories.length) {
-        this.checkboxAll = null
-      } else {
-        this.checkboxAll = 'All'
+      try {
+        if (this.newQuestionlength && this.categories.length) {
+          if (this.newQuestionlength.length !== this.categories.length) {
+            this.checkboxAll = null
+          } else {
+            this.checkboxAll = 'All'
+          }
+        }
+      } catch (error) {
+        console.log(error)
       }
     },
     async ExportJob () {
@@ -407,7 +445,7 @@ export default {
           สถานะ: element.RECORD_STATUS === 'N' ? 'ยังไม่ปิดงาน' : 'ปิดงานแล้ว',
           ขั้นตอนปัจจุบัน: element.stepTitle || '',
           ที่อยู่: element.address || '',
-          พนักงานที่รับผิดชอบ: element.empFirst_NameTH,
+          พนักงานที่รับผิดชอบ: element.empFull_NameTH,
           วันที่นัดหมาย: moment(element.dueDate).format('YYYY-MM-DD'),
           เวลา: element.timeText
         }
@@ -572,14 +610,14 @@ export default {
             for (let i = 0; i < rs.length; i++) {
               let d = rs[i]
               if (d.USER_ROLE === 'onsite') {
-                // console.log('empId', d)
+                console.log('empId', d)
                 d.value = d.empId
-                d.text = d.empFirst_NameTH
+                d.text = d.empFull_NameTH
                 this.categoriesItem.push(d)
-                this.categories.push(d.empFirst_NameTH)
-                this.categoriesCheckBox.push(d.empFirst_NameTH)
+                this.categories.push(d.empFull_NameTH)
+                this.categoriesCheckBox.push(d.empFull_NameTH)
                 let dayOff = {
-                  'empName': d.empFirst_NameTH,
+                  'empName': d.empFull_NameTH,
                   'typeDayCustom': d.typeDayCustom,
                   'dateDayCustom': JSON.parse(d.dateDayCustom) || [],
                   'dateDayoffValue': JSON.parse(d.dateDayoffValue) || []
@@ -747,5 +785,60 @@ export default {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #e0e0e0;
+}
+
+.radio-switch-input {
+  display: flex;
+}
+
+.radio-switch-label {
+  display: block;
+  width: 90px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  color: #33333300;
+  cursor: pointer;
+}
+
+.radio-switch-label[for="radio-switch-All"] {
+  background-color: #007bff ;
+  color: #fff;
+  width: 90px;
+  height: 40px;
+  display: flex;
+  padding: 10px;
+  place-content: center;
+  align-items: center;
+  border-radius: 10px 0px 0px 10px;
+  /* text-shadow: rgb(255, 255, 255) 1px 1px 5px; */
+  font-weight: bold;
+}
+
+.radio-switch-label[for="radio-switch-low"] {
+  background-color: #007bff ;
+  color: #fff;
+  width: 90px;
+  height: 40px;
+  padding: 10px;
+  display: flex;
+  place-content: center;
+  align-items: center;
+  /* text-shadow: rgb(255, 255, 255) 1px 1px 5px; */
+  font-weight: bold;
+}
+.radio-switch-label[for="radio-switch-low"],
+.radio-switch-label[for="radio-switch-All"] {
+  background-color: #dbaee100;
+}
+.radio-switch {
+  display: flex;
+  margin-top: 15px;
+  align-items: stretch;
+  padding-bottom: 40px;
+  height: 40px;
+  background-color: rgb(240 240 240);
+  border-radius: 30px;
+  /* filter: drop-shadow(2px 4px 6px #ddd); */
 }
 </style>
