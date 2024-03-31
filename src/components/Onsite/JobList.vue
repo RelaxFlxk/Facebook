@@ -281,118 +281,129 @@
               >รายละเอียดนัดหมาย</v-btn>
             </v-col>
            </v-row>
+           <v-row class="mt-2 mb-1 px-3" v-if="shopId == 'U9f316c85400fd716ea8c80d7cd5b61f8'">
+            <v-col cols="12" class="text-center pa-1">
+              <v-btn
+                color="rgb(33 150 243)"
+                rounded
+                dark
+                block
+                @click="getMedication(item)"
+              >บันทึกข้อมูลยา</v-btn>
+            </v-col>
+           </v-row>
              </v-card>
             <div class="mx-6 pa-3 ma-2">
               <div v-if="shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
                 <v-row>
-                <v-col cols="6" class="pb-0 text-center"><p class="font-weight-bold mb-0">Before</p></v-col>
-                <v-col cols="6" class="pb-0 text-center"><p class="font-weight-bold mb-0">After</p></v-col>
-              </v-row>
-              <v-row v-for="(itemBeforeAfter, indexBeforeAfter) in item.dataBeforeAfter" :key="indexBeforeAfter">
-                <v-col cols="6" class="pb-0">
-                  <div v-if="itemBeforeAfter.beforeImage" class="pa-3" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;display: flex;justify-content: center;align-items: center;">
-                    <v-img
-                    @click="refUploadBefore(indexBeforeAfter)"
-                      aspect-ratio="2"
-                      contain
-                      min-height="150"
-                      :src="itemBeforeAfter.beforeImage"
+                  <v-col cols="6" class="pb-0 text-center"><p class="font-weight-bold mb-0">Before</p></v-col>
+                  <v-col cols="6" class="pb-0 text-center"><p class="font-weight-bold mb-0">After</p></v-col>
+                </v-row>
+                <v-row v-for="(itemBeforeAfter, indexBeforeAfter) in item.dataBeforeAfter" :key="indexBeforeAfter">
+                  <v-col cols="6" class="pb-0">
+                    <div v-if="itemBeforeAfter.beforeImage" class="pa-3" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;display: flex;justify-content: center;align-items: center;">
+                      <v-img
+                      @click="refUploadBefore(indexBeforeAfter)"
+                        aspect-ratio="2"
+                        contain
+                        min-height="150"
+                        :src="itemBeforeAfter.beforeImage"
+                      ></v-img>
+                    </div>
+                    <v-card v-else @click="refUploadBefore(indexBeforeAfter)" height="177" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;display: flex;justify-content: center;align-items: center;">
+                      <v-icon  class="mx-2 mr-2  iconify" style="font-size:80px;" color="#8A8D9F"  data-icon="fluent:scan-camera-48-regular"></v-icon>
+                    </v-card>
+                      <v-row >
+                        <v-col cols="12" class="text-center" style="display: none;">
+                          <v-file-input
+                          :id="'uploadBefore' + indexBeforeAfter"
+                          hide-input
+                          class="pt-0 ml-6"
+                          color="info"
+                          accept="image/*"
+                          @change="selectImgUpdate(itemBeforeAfter,'before')"
+                          v-model="itemBeforeAfter.filesBefore"
+                          prepend-icon="mdi-camera"
+                        >
+                      </v-file-input>
+                        </v-col>
+                        <v-col cols="12" class="text-center" >
+                          <v-btn
+                          v-if="itemBeforeAfter.beforeImage"
+                          class="mt-1"
+                          icon
+                          dark
+                          small
+                          color="#F38383"
+                          @click="deleteBeforeAfter(itemBeforeAfter,'before')"
+                        >
+                          <v-icon dark>
+                            mdi-delete-circle
+                          </v-icon>
+                        </v-btn>
+                        </v-col>
+                      </v-row>
+                  </v-col>
+                  <v-col cols="6" class="pb-0">
+                    <div v-if="itemBeforeAfter.afterImage" class="pa-3" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;display: flex;justify-content: center;align-items: center;">
+                      <v-img
+                      @click="refUploadAfter(indexBeforeAfter)"
+                        aspect-ratio="2"
+                        contain
+                        min-height="150"
+                        :src="itemBeforeAfter.afterImage"
                     ></v-img>
-                  </div>
-                  <v-card v-else @click="refUploadBefore(indexBeforeAfter)" height="177" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;display: flex;justify-content: center;align-items: center;">
-                    <v-icon  class="mx-2 mr-2  iconify" style="font-size:80px;" color="#8A8D9F"  data-icon="fluent:scan-camera-48-regular"></v-icon>
-                  </v-card>
+                    </div>
+                    <v-card v-else height="177" @click="refUploadAfter(indexBeforeAfter)" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;display: flex;justify-content: center;align-items: center;">
+                      <v-icon  class="mx-2 mr-2  iconify" style="font-size:80px;" color="#8A8D9F"  data-icon="fluent:scan-camera-48-regular"></v-icon>
+                    </v-card>
                     <v-row >
-                      <v-col cols="12" class="text-center" style="display: none;">
-                        <v-file-input
-                        :id="'uploadBefore' + indexBeforeAfter"
-                        hide-input
-                        class="pt-0 ml-6"
-                        color="info"
-                        accept="image/*"
-                        @change="selectImgUpdate(itemBeforeAfter,'before')"
-                        v-model="itemBeforeAfter.filesBefore"
-                        prepend-icon="mdi-camera"
-                      >
-                    </v-file-input>
-                      </v-col>
-                      <v-col cols="12" class="text-center" >
-                        <v-btn
-                        v-if="itemBeforeAfter.beforeImage"
-                        class="mt-1"
-                        icon
-                        dark
-                        small
-                        color="#F38383"
-                        @click="deleteBeforeAfter(itemBeforeAfter,'before')"
-                      >
-                        <v-icon dark>
-                          mdi-delete-circle
-                        </v-icon>
-                      </v-btn>
-                      </v-col>
+                        <v-col cols="12" class="text-center" style="display: none;">
+                          <v-file-input
+                          :id="'uploadAfter' + indexBeforeAfter"
+                          hide-input
+                          class="pt-0 ml-6"
+                          color="info"
+                          accept="image/*"
+                          @change="selectImgUpdate(itemBeforeAfter,'after')"
+                          v-model="itemBeforeAfter.filesAfter"
+                          prepend-icon="mdi-camera"
+                        ></v-file-input>
+                        </v-col>
+                        <v-col cols="12" class="text-center" >
+                          <v-btn
+                          v-if="itemBeforeAfter.afterImage"
+                          class="mt-1"
+                          icon
+                          dark
+                          small
+                          color="#F38383"
+                          @click="deleteBeforeAfter(itemBeforeAfter,'after')"
+                        >
+                          <v-icon dark>
+                            mdi-delete-circle
+                          </v-icon>
+                        </v-btn>
+                        </v-col>
                     </v-row>
-                </v-col>
-                <v-col cols="6" class="pb-0">
-                  <div v-if="itemBeforeAfter.afterImage" class="pa-3" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;display: flex;justify-content: center;align-items: center;">
-                    <v-img
-                    @click="refUploadAfter(indexBeforeAfter)"
-                      aspect-ratio="2"
-                      contain
-                      min-height="150"
-                      :src="itemBeforeAfter.afterImage"
-                  ></v-img>
-                  </div>
-                  <v-card v-else height="177" @click="refUploadAfter(indexBeforeAfter)" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;display: flex;justify-content: center;align-items: center;">
-                    <v-icon  class="mx-2 mr-2  iconify" style="font-size:80px;" color="#8A8D9F"  data-icon="fluent:scan-camera-48-regular"></v-icon>
-                  </v-card>
-                  <v-row >
-                      <v-col cols="12" class="text-center" style="display: none;">
-                        <v-file-input
-                        :id="'uploadAfter' + indexBeforeAfter"
-                        hide-input
-                        class="pt-0 ml-6"
-                        color="info"
-                        accept="image/*"
-                        @change="selectImgUpdate(itemBeforeAfter,'after')"
-                        v-model="itemBeforeAfter.filesAfter"
-                        prepend-icon="mdi-camera"
-                      ></v-file-input>
-                      </v-col>
-                      <v-col cols="12" class="text-center" >
-                        <v-btn
-                        v-if="itemBeforeAfter.afterImage"
-                        class="mt-1"
-                        icon
-                        dark
-                        small
-                        color="#F38383"
-                        @click="deleteBeforeAfter(itemBeforeAfter,'after')"
-                      >
-                        <v-icon dark>
-                          mdi-delete-circle
-                        </v-icon>
-                      </v-btn>
-                      </v-col>
-                  </v-row>
-                </v-col>
-                <v-col cols="12" class="pb-0 pt-0 text-center mt-2" v-if="item.dataBeforeAfter.length > 1" >
-                  <v-btn
-                    rounded
-                    dark
-                    color="#F38383"
-                    @click="deleteBeforeAfterAll(itemBeforeAfter)"
-                  >
-                    <v-icon left>
-                      mdi-delete-circle
-                    </v-icon>
-                    ลบรูปทั้งหมดในแถว
-                  </v-btn>
-                </v-col>
-                <v-col cols="12" class="pt-0 text-center mt-2" v-if="indexBeforeAfter === (item.dataBeforeAfter.length - 1)">
-                    <v-icon color="#173053 " class=""  dark x-large @click="addBeforeAfter(item.dataBeforeAfter, item)">mdi-table-plus</v-icon>
-                </v-col>
-              </v-row>
+                  </v-col>
+                  <v-col cols="12" class="pb-0 pt-0 text-center mt-2" v-if="item.dataBeforeAfter.length > 1" >
+                    <v-btn
+                      rounded
+                      dark
+                      color="#F38383"
+                      @click="deleteBeforeAfterAll(itemBeforeAfter)"
+                    >
+                      <v-icon left>
+                        mdi-delete-circle
+                      </v-icon>
+                      ลบรูปทั้งหมดในแถว
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="12" class="pt-0 text-center mt-2" v-if="indexBeforeAfter === (item.dataBeforeAfter.length - 1)">
+                      <v-icon color="#173053 " class=""  dark x-large @click="addBeforeAfter(item.dataBeforeAfter, item)">mdi-table-plus</v-icon>
+                  </v-col>
+                </v-row>
               </div>
               <v-btn
                 class="mt-4"
@@ -982,6 +993,7 @@
             </v-sheet>
         </v-footer>
         <ChatHistory ref="ChatHistory"></ChatHistory>
+        <Medication ref="Medication"></Medication>
       </div>
     </v-main>
   </div>
@@ -992,13 +1004,15 @@ import adminLeftMenu from '../Sidebar.vue' // เมนู
 import moment from 'moment-timezone' // แปลง date
 import VuetifyMoney from '../VuetifyMoney.vue'
 import ChatHistory from '../Master/ChatHistory.vue'
+import Medication from './Medication.vue'
 
 export default {
   name: 'JobList',
   components: {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney,
-    ChatHistory
+    ChatHistory,
+    Medication
   },
   watch: {
     // whenever question changes, this function will run
@@ -1143,6 +1157,9 @@ export default {
     await this.setDefault()
   },
   methods: {
+    async getMedication (item) {
+      this.$refs.Medication.openDialog(item)
+    },
     SelectImg (Imgitem) {
       this.showImg = Imgitem
       this.dialogImg = true
