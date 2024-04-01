@@ -11985,23 +11985,25 @@ export default {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
+      console.log('datause1', datause)
       for (let i = 0; i < datause.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
         let d = datause[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
-        console.log('s.dataSelect', dataSelect)
+        // console.log('s.dataSelect', dataSelect)
         if (dataSelect.length > 0) {
           var datauseSelect = dataSelect.sort((a, b) => {
             if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
             return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
           })
-
+          console.log('datauseSelect', datauseSelect)
           for (let x = 0; x < datauseSelect.length; x++) {
             runNo++
             let t = datauseSelect[x]
             let s = {}
             // console.log('fastTrack')
             // console.log('s.t', t)
+            console.log('t', t)
             if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
               s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
             } else {
@@ -12059,6 +12061,10 @@ export default {
             s.packagePoint = t.packagePoint || ''
             s.packageExpire = t.packageExpire || ''
             s.empFull_NameTH = t.empFull_NameTH || ''
+            s.statusUpload1 = t.statusUpload1 || 'False'
+            s.statusUpload2 = t.statusUpload2 || 'False'
+            s.fileUpload1 = t.fileUpload1 || '[]'
+            s.fileUpload2 = t.fileUpload2 || '[]'
             dataExport.push(s)
           }
         }
@@ -12086,6 +12092,10 @@ export default {
       s.packagePoint = ''
       s.packageExpire = ''
       s.empFull_NameTH = ''
+      s.statusUpload1 = 'False'
+      s.statusUpload2 = 'False'
+      s.fileUpload1 = '[]'
+      s.fileUpload2 = '[]'
       dataExport.push(s)
       runNo = 0
       var datause2 = this.dataItemTime.sort((a, b) => {
@@ -12136,7 +12146,7 @@ export default {
               s.timeDueHtext = ''
             }
             serviceDetail = serviceDetail.trim() || t.flowName
-            console.log('t', t)
+            console.log('t2', t)
             s.type = 'ปกติ'
             s.runNo = runNo
             s.dateBooking = this.format_dateNotime(this.timeTable)
@@ -12163,7 +12173,12 @@ export default {
             s.packagePoint = t.packagePoint || ''
             s.packageExpire = t.packageExpire || ''
             s.empFull_NameTH = t.empFull_NameTH || ''
+            s.statusUpload1 = t.statusUpload1 || 'False'
+            s.statusUpload2 = t.statusUpload2 || 'False'
+            s.fileUpload1 = t.fileUpload1 || '[]'
+            s.fileUpload2 = t.fileUpload2 || '[]'
             dataExport.push(s)
+            // console.log('t', t)
           }
         }
       }
@@ -12175,6 +12190,7 @@ export default {
       var dataexport = []
       let checkPackageShow = this.dataexport.filter(el => { return el.packageName !== '' }).length
       console.log('checkPackageShow', checkPackageShow)
+      console.log('dataexport', dataexport)
       for (var i = 0; i < this.dataexport.length; i++) {
         var a = this.dataexport[i]
         let data2 = {}
@@ -12186,7 +12202,9 @@ export default {
           fieldValues = t.fieldValue
           data2[fieldNames] = fieldValues
           // dataOb.push({fieldNames: fieldValues})
+          // console.log('G', t)
         }
+        console.log('a', a)
         let data1 = {
           'ประเภท': a.type,
           'ลำดับ': a.runNo,
@@ -12204,6 +12222,38 @@ export default {
           'พนักงานรับนัดหมาย': a.empFull_NameTH
           // 'หมายเหตุเพิ่มเติม': a.remark
         }
+        let data4 = {}
+        let fileUpload = []
+        if (a.statusUpload1 === 'True') {
+          let jsDT1 = JSON.parse(a.fileUpload1)
+          // console.log('jsDT1', jsDT1, jsDT1.length)
+          if (jsDT1.length > 0) {
+            for (let element = 0; element < jsDT1.length; element++) {
+              let dt = jsDT1[element]
+              // console.log('dt1', dt)
+              fileUpload.push(dt)
+              // data1[`fileUpdate${element + 1}`] = dt
+            }
+          }
+        }
+        if (a.statusUpload2 === 'True') {
+          let jsDT2 = JSON.parse(a.fileUpload2)
+          console.log('jsDT2', jsDT2)
+          if (jsDT2.length > 0) {
+            for (let element = 0; element < jsDT2.length; element++) {
+              let dt = jsDT2[element]
+              // console.log('dt2', dt)
+              // data1[`fileUpdate${element + 1}`] = dt
+              fileUpload.push(dt)
+            }
+          }
+        }
+        if (fileUpload.length > 0) {
+          for (let element = 0; element < fileUpload.length; element++) {
+            let dt = fileUpload[element]
+            data4[`fileUpload${element + 1}`] = dt
+          }
+        }
         if (checkPackageShow > 0) {
           let data3 = {
             'แพ็คเกจที่ใช้': a.packageName,
@@ -12211,10 +12261,20 @@ export default {
             'จำนวนการใช้ทั้งหมด': a.packageAmount,
             'พนักงานที่รับนัดหมาย': a.empFull_NameTH
           }
-          let dataSum = Object.assign({}, data1, data2, data3)
+          let dataSum = null
+          if (fileUpload.length > 0) {
+            dataSum = Object.assign({}, data1, data2, data4, data3)
+          } else {
+            dataSum = Object.assign({}, data1, data2, data3)
+          }
           dataexport.push(dataSum)
         } else {
-          let dataSum = Object.assign({}, data1, data2)
+          let dataSum = null
+          if (fileUpload.length > 0) {
+            dataSum = Object.assign({}, data1, data2, data4)
+          } else {
+            dataSum = Object.assign({}, data1, data2)
+          }
           dataexport.push(dataSum)
         }
       }
@@ -12233,6 +12293,7 @@ export default {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
+      console.log('dataUse', datause)
       let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
       await axios
         .get(url)
@@ -12279,6 +12340,10 @@ export default {
           s.packagePoint = t.packagePoint || ''
           s.packageExpire = t.packageExpire || ''
           s.memberName = t.memberName || ''
+          s.statusUpload1 = t.statusUpload1 || 'False'
+          s.statusUpload2 = t.statusUpload2 || 'False'
+          s.fileUpload1 = t.fileUpload1 || '[]'
+          s.fileUpload2 = t.fileUpload2 || '[]'
           dataExport.push(s)
         }
       }
@@ -12306,6 +12371,10 @@ export default {
       s.packagePoint = ''
       s.packageExpire = ''
       s.empFull_NameTH = ''
+      s.statusUpload1 = 'False'
+      s.statusUpload2 = 'False'
+      s.fileUpload1 = '[]'
+      s.fileUpload2 = '[]'
       dataExport.push(s)
       runNo = 0
       var datause2 = this.filteredSelect.sort((a, b) => {
@@ -12342,6 +12411,10 @@ export default {
           s.packagePoint = t.packagePoint || ''
           s.packageExpire = t.packageExpire || ''
           s.memberName = t.memberName || ''
+          s.statusUpload1 = t.statusUpload1 || 'False'
+          s.statusUpload2 = t.statusUpload2 || 'False'
+          s.fileUpload1 = t.fileUpload1 || '[]'
+          s.fileUpload2 = t.fileUpload2 || '[]'
           dataExport.push(s)
         }
       }
@@ -12385,6 +12458,38 @@ export default {
           'ชื่อ LINE': a.memberName
           // 'หมายเหตุเพิ่มเติม': a.remark
         }
+        let data4 = {}
+        let fileUpload = []
+        if (a.statusUpload1 === 'True') {
+          let jsDT1 = JSON.parse(a.fileUpload1)
+          // console.log('jsDT1', jsDT1, jsDT1.length)
+          if (jsDT1.length > 0) {
+            for (let element = 0; element < jsDT1.length; element++) {
+              let dt = jsDT1[element]
+              // console.log('dt1', dt)
+              fileUpload.push(dt)
+              // data1[`fileUpdate${element + 1}`] = dt
+            }
+          }
+        }
+        if (a.statusUpload2 === 'True') {
+          let jsDT2 = JSON.parse(a.fileUpload2)
+          console.log('jsDT2', jsDT2)
+          if (jsDT2.length > 0) {
+            for (let element = 0; element < jsDT2.length; element++) {
+              let dt = jsDT2[element]
+              // console.log('dt2', dt)
+              // data1[`fileUpdate${element + 1}`] = dt
+              fileUpload.push(dt)
+            }
+          }
+        }
+        if (fileUpload.length > 0) {
+          for (let element = 0; element < fileUpload.length; element++) {
+            let dt = fileUpload[element]
+            data4[`fileUpload${element + 1}`] = dt
+          }
+        }
         if (checkPackageShow > 0) {
           let data3 = {
             'แพ็คเกจที่ใช้': a.packageName,
@@ -12392,10 +12497,20 @@ export default {
             'จำนวนการใช้ทั้งหมด': a.packageAmount,
             'พนักงานที่รับนัดหมาย': a.empFull_NameTH
           }
-          let dataSum = Object.assign({}, data1, data2, data3)
+          let dataSum = null
+          if (fileUpload.length > 0) {
+            dataSum = Object.assign({}, data1, data2, data4, data3)
+          } else {
+            dataSum = Object.assign({}, data1, data2, data3)
+          }
           dataexport.push(dataSum)
         } else {
-          let dataSum = Object.assign({}, data1, data2)
+          let dataSum = null
+          if (fileUpload.length > 0) {
+            dataSum = Object.assign({}, data1, data2, data4)
+          } else {
+            dataSum = Object.assign({}, data1, data2)
+          }
           dataexport.push(dataSum)
         }
       }
@@ -13539,7 +13654,7 @@ export default {
                 urlApi
               )
               .then(async response => {
-                console.log('getData', response.data)
+                console.log('getData-------', response.data)
                 if (response.data.length > 0) {
                   for (let i = 0; i < response.data.length; i++) {
                     let d = response.data[i]
@@ -13563,6 +13678,10 @@ export default {
                     s.chkConfirm = false
                     s.chkCancel = false
                     s.jobNo = d.jobNo
+                    s.statusUpload1 = d.statusUpload1 || 'False'
+                    s.statusUpload2 = d.statusUpload2 || 'False'
+                    s.fileUpload1 = d.fileUpload1 || '[]'
+                    s.fileUpload2 = d.fileUpload2 || '[]'
                     s.empFull_NameTH = d.empFull_NameTH
                     s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
                     s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
@@ -14014,6 +14133,10 @@ export default {
               } else {
                 s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
               }
+              s.statusUpload1 = d.statusUpload1 || 'False'
+              s.statusUpload2 = d.statusUpload2 || 'False'
+              s.fileUpload1 = d.fileUpload1 || '[]'
+              s.fileUpload2 = d.fileUpload2 || '[]'
               s.shopId = d.shopId
               s.dueDateDay = d.dueDateDay
               s.statusVIP = d.statusVIP

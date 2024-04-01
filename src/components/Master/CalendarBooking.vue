@@ -649,6 +649,7 @@ export default {
           .then(async responses => {
             this.monthData = []
             this.eventInfo = []
+            console.log('res---------', responses.data)
             for (var x = 0; x < responses.data.length; x++) {
               var e = responses.data[x]
               let dueDate = e.dueDate
@@ -678,6 +679,10 @@ export default {
                 }
               }
               let s = {}
+              s.statusUpload1 = e.statusUpload1 || 'False'
+              s.statusUpload2 = e.statusUpload2 || 'False'
+              s.fileUpload1 = e.fileUpload1 || '[]'
+              s.fileUpload2 = e.fileUpload2 || '[]'
               s.bookNo = e.bookNo
               s.flowId = e.flowId
               s.flowName = e.flowName
@@ -1206,18 +1211,19 @@ export default {
       // console.log('bookingData', this.bookingData)
       // console.log('this.editedItemSeleteField', this.editedItemSeleteField)
       // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
-      console.log('this.dataItemTime', this.dataItemTime)
+      // console.log('this.dataItemTime', this.dataItemTime)
       await this.getBookingData()
       // console.log('')
       var datause = this.dataItemTime.sort((a, b) => {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
+      // console.log('----datause', datause)
       for (let i = 0; i < datause.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
         let d = datause[i]
-        console.log('d.timeDueHtext', d.timeDueHtext)
-        console.log('this.dataItemTimesChange', this.dataItemTimesChange)
+        // console.log('d.timeDueHtext', d.timeDueHtext)
+        // console.log('this.dataItemTimesChange', this.dataItemTimesChange)
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
         console.log('s.dataSelect fastTrack', dataSelect)
         if (dataSelect.length > 0) {
@@ -1267,7 +1273,7 @@ export default {
             })
             // serviceDetail = serviceDetail.trim() || t.flowName
             serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
-            console.log('serviceDetail', serviceDetail)
+            // console.log('serviceDetail', serviceDetail)
 
             s.type = this.dataTypeJob3
             s.runNo = runNo
@@ -1284,6 +1290,10 @@ export default {
             s.empFull_NameTH = t.empFull_NameTH
             s.extraJob = t.extraJob ? this.dataTypeJob2 : ''
             s.carModel = t.bookingDataCustomerCarModel || ''
+            s.statusUpload1 = t.statusUpload1 || 'False'
+            s.statusUpload2 = t.statusUpload2 || 'False'
+            s.fileUpload1 = t.fileUpload1 || '[]'
+            s.fileUpload2 = t.fileUpload2 || '[]'
             // s.carModel = this.getDataFromFieldName(this.bookingData[t.bookNo], 'รุ่นรถ')
             // s.carModel = (s.carModel.length > 0) ? s.carModel[0].fieldValue : ''
             s.tel = t.tel
@@ -1316,6 +1326,10 @@ export default {
       s.empFull_NameTH = ''
       s.dueDateTimeStamp = ''
       s.carModel = ''
+      s.statusUpload1 = 'False'
+      s.statusUpload2 = 'False'
+      s.fileUpload1 = '[]'
+      s.fileUpload2 = '[]'
       s.dataFiled = []
       dataExport.push(s)
       runNo = 0
@@ -1327,7 +1341,7 @@ export default {
         console.log('i', i)
         let d = datause2[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && !el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
-        console.log('s.dataSelect !fastTrack' + 'TTT', dataSelect)
+        // console.log('s.dataSelect !fastTrack' + 'TTT', dataSelect)
         // console.log('this.BookingDataList', this.bookingData)
         if (dataSelect.length > 0) {
           var datauseSelect2 = dataSelect.sort((a, b) => {
@@ -1381,7 +1395,7 @@ export default {
             // serviceDetail = t.displayFlowName.trim() || t.flowName
             // serviceDetail = serviceDetail.trim() || t.flowName
             serviceDetail = serviceDetail.trim() ? t.flowName + ' : ' + serviceDetail.trim() : t.flowName
-            console.log('serviceDetail', serviceDetail)
+            // console.log('serviceDetail', serviceDetail)
             s.type = 'ปกติ'
             s.runNo = runNo
             s.dateBooking = t.dueDateDay
@@ -1402,6 +1416,10 @@ export default {
             s.carModel = t.bookingDataCustomerCarModel || ''
             s.dataFiled = this.bookingData[t.bookNo] || []
             // console.log('sortDataExport2', s)
+            s.statusUpload1 = t.statusUpload1 || 'False'
+            s.statusUpload2 = t.statusUpload2 || 'False'
+            s.fileUpload1 = t.fileUpload1 || '[]'
+            s.fileUpload2 = t.fileUpload2 || '[]'
             sortDataExport2.push(s)
           }
           // console.log('IFIFIFIFIFIF')
@@ -1448,7 +1466,44 @@ export default {
           // 'พนักงานรับนัดหมาย': a.empFull_NameTH,
           // 'หมายเหตุเพิ่มเติม': a.remark
         }
-        let dataSum = Object.assign({}, data1, data2)
+        let data4 = {}
+        let fileUpload = []
+        if (a.statusUpload1 === 'True') {
+          let jsDT1 = JSON.parse(a.fileUpload1)
+          // console.log('jsDT1', jsDT1, jsDT1.length)
+          if (jsDT1.length > 0) {
+            for (let element = 0; element < jsDT1.length; element++) {
+              let dt = jsDT1[element]
+              // console.log('dt1', dt)
+              fileUpload.push(dt)
+              // data1[`fileUpdate${element + 1}`] = dt
+            }
+          }
+        }
+        if (a.statusUpload2 === 'True') {
+          let jsDT2 = JSON.parse(a.fileUpload2)
+          console.log('jsDT2', jsDT2)
+          if (jsDT2.length > 0) {
+            for (let element = 0; element < jsDT2.length; element++) {
+              let dt = jsDT2[element]
+              // console.log('dt2', dt)
+              // data1[`fileUpdate${element + 1}`] = dt
+              fileUpload.push(dt)
+            }
+          }
+        }
+        if (fileUpload.length > 0) {
+          for (let element = 0; element < fileUpload.length; element++) {
+            let dt = fileUpload[element]
+            data4[`fileUpload${element + 1}`] = dt
+          }
+        }
+        let dataSum = null
+        if (fileUpload.length > 0) {
+          dataSum = Object.assign({}, data1, data2, data4)
+        } else {
+          dataSum = Object.assign({}, data1, data2)
+        }
         dataexport.push(dataSum)
       }
       console.log('dataexport', dataexport)
