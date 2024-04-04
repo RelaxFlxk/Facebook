@@ -3659,10 +3659,10 @@
           </v-col>
           <!-- end data table -->
         </v-row>
-        <v-dialog v-model="dialogShowImg" max-width="400px">
+        <v-dialog v-model="dialogShowImg" max-width="600px">
           <v-card class="pa-3">
             <div v-for="(CloseJob , keyCloseJob) in dataCloseJob" :key="'a' + keyCloseJob">
-              <div class="mx-6 pa-3 ma-2">
+              <div class="mx-6 pa-3 ma-2" v-if="dataCloseJobData.filter((dt) => dt.jobNo === CloseJob.jobNo).length > 0">
                 <v-row class="pa-5">
                   <v-col cols="3" md="3" sm="12"  class="pa-0 ma-0" style="display: flex;align-items: flex-start;justify-content: flex-end;padding-left: 11px !important;">
                     <v-avatar size="65" v-if="CloseJob.memberPicture">
@@ -3754,20 +3754,21 @@
                 </div>
             </div>
             <!-- <h5 class="font-weight-bold m-6 mb-5 text-center">ตรวจสอบรูป</h5> -->
-            <div style="display: flex;justify-content: center;">
+            <div style="display: flex;justify-content: center;" class="mt-3" v-if="showImgItem.length > 0">
               <v-btn
                 color="primary"
                 elevation="2"
                 small
                 dark
                 @click="SaveImg()"
-              >Save Image</v-btn>
+              >ดาวน์โหลดรูปภาพทั้งหมด</v-btn>
             </div>
             <h6 class="font-weight-bold ml-6">Before</h6>
               <v-slide-group
                   v-if="showImgItem"
                     class="pa-4 pt-0 mt-n1"
                     color="primary"
+                    show-arrows
                   >
                     <v-slide-item
                       v-for="(itemImg2, i2) in showImgItem"
@@ -3786,9 +3787,10 @@
                   </v-slide-group>
               <h6 class="font-weight-bold ml-6">After</h6>
               <v-slide-group
-              v-if="showImgItem"
+                    v-if="showImgItem"
                     class="pa-4 pt-0 mt-n1"
                     color="primary"
+                    show-arrows
                   >
                     <v-slide-item
                       v-for="(itemImg, i) in showImgItem"
@@ -4629,6 +4631,75 @@
                             </div>
                           </template>
                           <v-row v-if="checkSelectText !== 'confirmJob'">
+                            <v-col class="pb-0">
+                              <v-menu
+                                v-model="menuDateEdit"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="dateEdit"
+                                    label="วันที่นัดหมาย"
+                                    prepend-icon="mdi-calendar"
+                                    readonly
+                                    v-bind="attrs"
+                                    dense
+                                    outlined
+                                    v-on="on"
+                                    required
+                                    :rules="[rules.required]"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="dateEdit"
+                                  :allowed-dates="allowedDatesEdit"
+                                  @input="menuDateEdit = false, setLimitBookingEdit(dateEdit)"
+                                  :min="
+                                    new Date(
+                                      Date.now() -
+                                        new Date().getTimezoneOffset() * 60000
+                                    )
+                                      .toISOString()
+                                      .substr(0, 10)
+                                  "
+                                ></v-date-picker>
+                                <!-- <v-date-picker
+                                  v-model="dateEdit"
+                                  @input="menuDate = false"
+                                ></v-date-picker> -->
+                              </v-menu>
+                            </v-col>
+                            <v-col class="pb-0">
+                              <!-- <v-select
+                              v-model="timeEdit"
+                              :items="timeavailable"
+                              label="เวลา"
+                              menu-props="auto"
+                              outlined
+                              dense
+                            ></v-select> -->
+                            <v-select
+                              v-if="dateEdit !== ''"
+                              v-model="timeEdit"
+                              :items="timeavailable"
+                              label="เวลา"
+                              item-text="text"
+                              item-value="text"
+                              persistent-hint
+                              return-object
+                              outlined
+                              dense
+                              required
+                              :rules ="[rules.required]"
+                            ></v-select>
+                            </v-col>
+                          </v-row>
+                          <!-- แก้ไขเวลาสำหรับ joyride -->
+                          <v-row v-else-if="$session.getAll().data.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8'">
                             <v-col class="pb-0">
                               <v-menu
                                 v-model="menuDateEdit"
@@ -8278,54 +8349,60 @@ export default {
     },
     async SaveImg () {
       console.log(this.showImgItem)
-      // let url = 'https://storage.googleapis.com/betask-linked/static/upload/BeforeAfter/BA9055_20240314143726435600.jpg'
-      // fetch(url)
-      //   .then((response) => response.blob())
-      //   .then((blob) => {
-      //     saveAs(blob, 'image_name.jpg')
-      //   })
-      // console.log('downloading', url)
       for (let i = 0; i < this.showImgItem.length; i++) {
         let d = this.showImgItem[i]
         if (d.afterImage !== null) {
           try {
-            // URL ของรูปภาพที่ต้องการดาวน์โหลด
-            const imageUrl = d.afterImage
-            // ดาวน์โหลดรูปภาพโดยใช้ axios
-            const response = await axios.get(imageUrl, {responseType: 'arraybuffer'})
-            // แปลงข้อมูลเป็น Base64
-            // console.log('1111', response)
-            const base64Image = Buffer.from(response.data, 'binary').toString('base64')
-            // สร้างลิงก์ดาวน์โหลด
-            const link = document.createElement('a')
-            link.href = 'data:image/jpeg;base64,' + base64Image
-            link.download = 'after' + (i + 1) + '.jpg'
-            // คลิกลิงก์เพื่อดาวน์โหลด
-            link.click()
+            await axios.post(this.DNS_IP + '/job/image-to-base64', { imageUrl: d.afterImage })
+              .then(async (response) => {
+                console.log('response', response)
+                const base64Image = response.data.base64Image
+                const imgName = 'after' + (i + 1) + '.jpg'
+                await this.downloadBase64Image(base64Image, imgName)
+              })
+              .catch((error) => {
+                console.log('เกิดข้อผิดพลาดในการร้องขอข้อมูล Base64 ของรูปภาพ:', error)
+              })
           } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ:', error)
+            console.log('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ:', error)
           }
         }
         if (d.beforeImage !== null) {
           try {
-            // URL ของรูปภาพที่ต้องการดาวน์โหลด
-            const imageUrl = d.beforeImage
-            // ดาวน์โหลดรูปภาพโดยใช้ axios
-            const response = await axios.get(imageUrl, {responseType: 'arraybuffer'})
-            // แปลงข้อมูลเป็น Base64
-            // console.log('1111', response)
-            const base64Image = Buffer.from(response.data, 'binary').toString('base64')
-            // สร้างลิงก์ดาวน์โหลด
-            const link = document.createElement('a')
-            link.href = 'data:image/jpeg;base64,' + base64Image
-            link.download = 'before' + (i + 1) + '.jpg'
-            // คลิกลิงก์เพื่อดาวน์โหลด
-            link.click()
+            await axios.post(this.DNS_IP + '/job/image-to-base64', { imageUrl: d.beforeImage })
+              .then(async (response) => {
+                console.log('response', response)
+                const base64Image = response.data.base64Image
+                const imgName = 'before' + (i + 1) + '.jpg'
+                await this.downloadBase64Image(base64Image, imgName)
+              })
+              .catch((error) => {
+                console.log('เกิดข้อผิดพลาดในการร้องขอข้อมูล Base64 ของรูปภาพ:', error)
+              })
           } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ:', error)
+            console.log('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ:', error)
           }
         }
       }
+    },
+    async downloadBase64Image (base64Data, fileName) {
+      // สร้าง Blob จากข้อมูล base64
+      const blob = await this.base64ToBlob(base64Data)
+      // สร้างลิงก์ดาวน์โหลด
+      const link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = fileName
+      // คลิกลิงก์เพื่อดาวน์โหลด
+      link.click()
+    },
+    base64ToBlob (base64Data) {
+      const byteCharacters = atob(base64Data)
+      const byteNumbers = new Array(byteCharacters.length)
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i)
+      }
+      const byteArray = new Uint8Array(byteNumbers)
+      return new Blob([byteArray], { type: 'image/jpeg' })
     },
     async ShowImg (item) {
       console.log(';sfsdfsdf', item)
@@ -10119,7 +10196,7 @@ export default {
         setTime = timeJson[0].setTime || []
         console.log('IF')
       } else {
-        console.log('ELSE')
+        console.log('ELSE###', JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime))
         setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
       }
       if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) }).length > 0) {
@@ -10174,7 +10251,8 @@ export default {
           this.timeavailable = TimeData
         }
       } else {
-        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
+        console.log('this.timeavailable ELSEEEEE@@@@@', this.timeavailable)
+        console.log('----', this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) }))
         // LimitBookingBy Flow
         // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formEdit.flowId })[0].setTime) || []
         // LimitBookingBy masBranch
@@ -11907,23 +11985,25 @@ export default {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
+      console.log('datause1', datause)
       for (let i = 0; i < datause.length; i++) {
         // var d = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === item.timeDueHtext })[i]
         let d = datause[i]
         let dataSelect = this.dataItemTimesChange.filter(el => { return el.timeDueHtext === d.timeDueHtext && el.fastTrack && (el.statusBtText === 'ยืนยันแล้ว' || el.statusBtText === 'รับรถแล้ว') })
-        console.log('s.dataSelect', dataSelect)
+        // console.log('s.dataSelect', dataSelect)
         if (dataSelect.length > 0) {
           var datauseSelect = dataSelect.sort((a, b) => {
             if (a.dueDateTimeStamp < b.dueDateTimeStamp) return -1
             return a.dueDateTimeStamp > b.dueDateTimeStamp ? 1 : 0
           })
-
+          console.log('datauseSelect', datauseSelect)
           for (let x = 0; x < datauseSelect.length; x++) {
             runNo++
             let t = datauseSelect[x]
             let s = {}
             // console.log('fastTrack')
             // console.log('s.t', t)
+            console.log('t', t)
             if (dataExport.filter(el => { return el.timeDueHtext === this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )' }).length === 0) {
               s.timeDueHtext = this.format_dateNotime(this.timeTable) + ' ' + d.timeDueHtext + ' ( ' + dataSelect.length.toString() + ' )'
             } else {
@@ -11981,6 +12061,10 @@ export default {
             s.packagePoint = t.packagePoint || ''
             s.packageExpire = t.packageExpire || ''
             s.empFull_NameTH = t.empFull_NameTH || ''
+            s.statusUpload1 = t.statusUpload1 || 'False'
+            s.statusUpload2 = t.statusUpload2 || 'False'
+            s.fileUpload1 = t.fileUpload1 || '[]'
+            s.fileUpload2 = t.fileUpload2 || '[]'
             dataExport.push(s)
           }
         }
@@ -12008,6 +12092,10 @@ export default {
       s.packagePoint = ''
       s.packageExpire = ''
       s.empFull_NameTH = ''
+      s.statusUpload1 = 'False'
+      s.statusUpload2 = 'False'
+      s.fileUpload1 = '[]'
+      s.fileUpload2 = '[]'
       dataExport.push(s)
       runNo = 0
       var datause2 = this.dataItemTime.sort((a, b) => {
@@ -12058,7 +12146,7 @@ export default {
               s.timeDueHtext = ''
             }
             serviceDetail = serviceDetail.trim() || t.flowName
-            console.log('t', t)
+            console.log('t2', t)
             s.type = 'ปกติ'
             s.runNo = runNo
             s.dateBooking = this.format_dateNotime(this.timeTable)
@@ -12085,7 +12173,12 @@ export default {
             s.packagePoint = t.packagePoint || ''
             s.packageExpire = t.packageExpire || ''
             s.empFull_NameTH = t.empFull_NameTH || ''
+            s.statusUpload1 = t.statusUpload1 || 'False'
+            s.statusUpload2 = t.statusUpload2 || 'False'
+            s.fileUpload1 = t.fileUpload1 || '[]'
+            s.fileUpload2 = t.fileUpload2 || '[]'
             dataExport.push(s)
+            // console.log('t', t)
           }
         }
       }
@@ -12097,6 +12190,7 @@ export default {
       var dataexport = []
       let checkPackageShow = this.dataexport.filter(el => { return el.packageName !== '' }).length
       console.log('checkPackageShow', checkPackageShow)
+      console.log('dataexport', dataexport)
       for (var i = 0; i < this.dataexport.length; i++) {
         var a = this.dataexport[i]
         let data2 = {}
@@ -12108,7 +12202,9 @@ export default {
           fieldValues = t.fieldValue
           data2[fieldNames] = fieldValues
           // dataOb.push({fieldNames: fieldValues})
+          // console.log('G', t)
         }
+        console.log('a', a)
         let data1 = {
           'ประเภท': a.type,
           'ลำดับ': a.runNo,
@@ -12126,6 +12222,38 @@ export default {
           'พนักงานรับนัดหมาย': a.empFull_NameTH
           // 'หมายเหตุเพิ่มเติม': a.remark
         }
+        let data4 = {}
+        let fileUpload = []
+        if (a.statusUpload1 === 'True') {
+          let jsDT1 = JSON.parse(a.fileUpload1)
+          // console.log('jsDT1', jsDT1, jsDT1.length)
+          if (jsDT1.length > 0) {
+            for (let element = 0; element < jsDT1.length; element++) {
+              let dt = jsDT1[element]
+              // console.log('dt1', dt)
+              fileUpload.push(dt)
+              // data1[`fileUpdate${element + 1}`] = dt
+            }
+          }
+        }
+        if (a.statusUpload2 === 'True') {
+          let jsDT2 = JSON.parse(a.fileUpload2)
+          console.log('jsDT2', jsDT2)
+          if (jsDT2.length > 0) {
+            for (let element = 0; element < jsDT2.length; element++) {
+              let dt = jsDT2[element]
+              // console.log('dt2', dt)
+              // data1[`fileUpdate${element + 1}`] = dt
+              fileUpload.push(dt)
+            }
+          }
+        }
+        if (fileUpload.length > 0) {
+          for (let element = 0; element < fileUpload.length; element++) {
+            let dt = fileUpload[element]
+            data4[`fileUpload${element + 1}`] = dt
+          }
+        }
         if (checkPackageShow > 0) {
           let data3 = {
             'แพ็คเกจที่ใช้': a.packageName,
@@ -12133,10 +12261,20 @@ export default {
             'จำนวนการใช้ทั้งหมด': a.packageAmount,
             'พนักงานที่รับนัดหมาย': a.empFull_NameTH
           }
-          let dataSum = Object.assign({}, data1, data2, data3)
+          let dataSum = null
+          if (fileUpload.length > 0) {
+            dataSum = Object.assign({}, data1, data2, data4, data3)
+          } else {
+            dataSum = Object.assign({}, data1, data2, data3)
+          }
           dataexport.push(dataSum)
         } else {
-          let dataSum = Object.assign({}, data1, data2)
+          let dataSum = null
+          if (fileUpload.length > 0) {
+            dataSum = Object.assign({}, data1, data2, data4)
+          } else {
+            dataSum = Object.assign({}, data1, data2)
+          }
           dataexport.push(dataSum)
         }
       }
@@ -12155,6 +12293,7 @@ export default {
         if (a.timeDuetext < b.timeDuetext) return -1
         return a.timeDuetext > b.timeDuetext ? 1 : 0
       })
+      console.log('dataUse', datause)
       let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.session.data.shopId}&masBranchID=${this.masBranchID}&statusBt=is null`
       await axios
         .get(url)
@@ -12201,6 +12340,10 @@ export default {
           s.packagePoint = t.packagePoint || ''
           s.packageExpire = t.packageExpire || ''
           s.memberName = t.memberName || ''
+          s.statusUpload1 = t.statusUpload1 || 'False'
+          s.statusUpload2 = t.statusUpload2 || 'False'
+          s.fileUpload1 = t.fileUpload1 || '[]'
+          s.fileUpload2 = t.fileUpload2 || '[]'
           dataExport.push(s)
         }
       }
@@ -12228,6 +12371,10 @@ export default {
       s.packagePoint = ''
       s.packageExpire = ''
       s.empFull_NameTH = ''
+      s.statusUpload1 = 'False'
+      s.statusUpload2 = 'False'
+      s.fileUpload1 = '[]'
+      s.fileUpload2 = '[]'
       dataExport.push(s)
       runNo = 0
       var datause2 = this.filteredSelect.sort((a, b) => {
@@ -12264,6 +12411,10 @@ export default {
           s.packagePoint = t.packagePoint || ''
           s.packageExpire = t.packageExpire || ''
           s.memberName = t.memberName || ''
+          s.statusUpload1 = t.statusUpload1 || 'False'
+          s.statusUpload2 = t.statusUpload2 || 'False'
+          s.fileUpload1 = t.fileUpload1 || '[]'
+          s.fileUpload2 = t.fileUpload2 || '[]'
           dataExport.push(s)
         }
       }
@@ -12307,6 +12458,38 @@ export default {
           'ชื่อ LINE': a.memberName
           // 'หมายเหตุเพิ่มเติม': a.remark
         }
+        let data4 = {}
+        let fileUpload = []
+        if (a.statusUpload1 === 'True') {
+          let jsDT1 = JSON.parse(a.fileUpload1)
+          // console.log('jsDT1', jsDT1, jsDT1.length)
+          if (jsDT1.length > 0) {
+            for (let element = 0; element < jsDT1.length; element++) {
+              let dt = jsDT1[element]
+              // console.log('dt1', dt)
+              fileUpload.push(dt)
+              // data1[`fileUpdate${element + 1}`] = dt
+            }
+          }
+        }
+        if (a.statusUpload2 === 'True') {
+          let jsDT2 = JSON.parse(a.fileUpload2)
+          console.log('jsDT2', jsDT2)
+          if (jsDT2.length > 0) {
+            for (let element = 0; element < jsDT2.length; element++) {
+              let dt = jsDT2[element]
+              // console.log('dt2', dt)
+              // data1[`fileUpdate${element + 1}`] = dt
+              fileUpload.push(dt)
+            }
+          }
+        }
+        if (fileUpload.length > 0) {
+          for (let element = 0; element < fileUpload.length; element++) {
+            let dt = fileUpload[element]
+            data4[`fileUpload${element + 1}`] = dt
+          }
+        }
         if (checkPackageShow > 0) {
           let data3 = {
             'แพ็คเกจที่ใช้': a.packageName,
@@ -12314,10 +12497,20 @@ export default {
             'จำนวนการใช้ทั้งหมด': a.packageAmount,
             'พนักงานที่รับนัดหมาย': a.empFull_NameTH
           }
-          let dataSum = Object.assign({}, data1, data2, data3)
+          let dataSum = null
+          if (fileUpload.length > 0) {
+            dataSum = Object.assign({}, data1, data2, data4, data3)
+          } else {
+            dataSum = Object.assign({}, data1, data2, data3)
+          }
           dataexport.push(dataSum)
         } else {
-          let dataSum = Object.assign({}, data1, data2)
+          let dataSum = null
+          if (fileUpload.length > 0) {
+            dataSum = Object.assign({}, data1, data2, data4)
+          } else {
+            dataSum = Object.assign({}, data1, data2)
+          }
           dataexport.push(dataSum)
         }
       }
@@ -12936,7 +13129,7 @@ export default {
         if (item.text !== 'ทั้งหมด') {
           let checkBranchByFlow = item.allData.masBranchID || 'All'
           if ((checkBranchByFlow === this.formEdit.masBranchID.toString()) || checkBranchByFlow === 'All') {
-            console.log('eeeeeee', item.allData.flowName)
+            // console.log('eeeeeee', item.allData.flowName)
             dataFilter.push(item)
           }
         }
@@ -13461,7 +13654,7 @@ export default {
                 urlApi
               )
               .then(async response => {
-                console.log('getData', response.data)
+                console.log('getData-------', response.data)
                 if (response.data.length > 0) {
                   for (let i = 0; i < response.data.length; i++) {
                     let d = response.data[i]
@@ -13485,6 +13678,10 @@ export default {
                     s.chkConfirm = false
                     s.chkCancel = false
                     s.jobNo = d.jobNo
+                    s.statusUpload1 = d.statusUpload1 || 'False'
+                    s.statusUpload2 = d.statusUpload2 || 'False'
+                    s.fileUpload1 = d.fileUpload1 || '[]'
+                    s.fileUpload2 = d.fileUpload2 || '[]'
                     s.empFull_NameTH = d.empFull_NameTH
                     s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
                     s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
@@ -13936,6 +14133,10 @@ export default {
               } else {
                 s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
               }
+              s.statusUpload1 = d.statusUpload1 || 'False'
+              s.statusUpload2 = d.statusUpload2 || 'False'
+              s.fileUpload1 = d.fileUpload1 || '[]'
+              s.fileUpload2 = d.fileUpload2 || '[]'
               s.shopId = d.shopId
               s.dueDateDay = d.dueDateDay
               s.statusVIP = d.statusVIP
@@ -16280,25 +16481,25 @@ export default {
       // this.SetallowedDatesEdit()
       this.dateEdit = ''
       // this.dateEdit = dt.dueDateDay
-      console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
+      // console.log('dataFlowSelectEdit', this.dataFlowSelectEdit)
       this.timeavailable = []
       // let dtTime = await this.branch.filter(item => { return item.value === this.formEdit.masBranchID })
       let dtTime = this.dataFlowSelectEdit.filter(item => { return item.value === this.formEdit.flowId }) || []
-      console.log('dtTime', dtTime)
+      // console.log('dtTime', dtTime)
       await this.setLimitBookingEdit(dt.dueDateDay)
       let setTime = []
       if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTimebyday === 'True') {
         let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dt.dueDateDay).getDay())
         setTime = timeJson[0].setTime || []
-        console.log('IF')
+        // console.log('IF')
       } else {
-        console.log('ELSE')
+        // console.log('ELSE')
         setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formEdit.flowId) })[0].allData.setTime) || []
       }
       if (dtTime.length > 0) {
         this.statusShowMap = dtTime[0].allData.checkOnsite || 'False'
         // console.log('test', JSON.parse(dtTime.map(item => item.allData.setTime)))
-        console.log('timeavailable', dtTime.map(item => item.allData.setTime))
+        // console.log('timeavailable', dtTime.map(item => item.allData.setTime))
         if (dtTime.map(item => item.allData.setTime)[0] === null || dtTime.map(item => item.allData.setTime)[0] === '') {
           this.timeavailable = []
           this.timeEdit = ''
@@ -16321,7 +16522,7 @@ export default {
       console.log('setDataEdit', dt)
       await this.getPackage(dt)
       if (this.dataPackage.length > 0) {
-        console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
+        // console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
         if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
           var dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
           this.dataPackageDefault = true
@@ -16791,6 +16992,7 @@ export default {
               this.date = ''
               this.time = ''
             } else {
+              console.log('------------', response)
               // await this.confirmChkAddBookingAgain(response.data)
               if (this.statusSearch === 'no') {
                 await this.getBookingList()
@@ -16803,7 +17005,6 @@ export default {
               if (this.getSelectText) {
                 this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
               }
-              // this.getDataCalendaBooking()
               this.dialogBookingAgain = false
               this.$swal('เรียบร้อย', 'นัดหมายอีกครั้ง เรียบร้อย', 'success')
               this.dataEditReady = true

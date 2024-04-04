@@ -100,6 +100,16 @@
                           ></v-text-field>
                       </v-col>
                       <v-col cols="6" class="pb-0">
+                          <v-switch
+                            v-model="formUpdate.showShopName"
+                            inset
+                          >
+                            <template v-slot:label>
+                              <div class="mt-0">แสดงชื่อร้านหน้า นัดหมาย</div>
+                            </template>
+                          </v-switch>
+                      </v-col>
+                      <v-col cols="6" class="pb-0">
                           <v-text-field
                             outlined
                             label="เบอร์โทรศัพท์"
@@ -130,7 +140,7 @@
                             inset
                           >
                             <template v-slot:label>
-                              <div class="mt-3">Dark Mode</div>
+                              <div class="mt-0">Dark Mode</div>
                             </template>
                           </v-switch>
                       </v-col>
@@ -496,7 +506,8 @@ export default {
         statusCustomerEdit: 'False',
         statusCustomerEditNoTime: 'False',
         countCustomerEdit: '',
-        countDayCustomerEdit: ''
+        countDayCustomerEdit: '',
+        showShopName: ''
 
       },
       countCustomerEditItem: [1, 2, 3, 4, 5, 6, 7],
@@ -771,6 +782,11 @@ export default {
       } else {
         this.formUpdate.darkMode = false
       }
+      if (this.formUpdate.showShopName === 'True') {
+        this.formUpdate.showShopName = true
+      } else {
+        this.formUpdate.showShopName = false
+      }
       if (this.formUpdate.bookingthankText === null) {
         this.formUpdate.bookingthankText = ''
       } else {
@@ -846,6 +862,12 @@ export default {
             } else {
               darkMode = 'False'
             }
+            var showShopName = ''
+            if (this.formUpdate.showShopName === true) {
+              showShopName = 'True'
+            } else {
+              showShopName = 'False'
+            }
             let bookingthankText = ''
             if (this.formUpdate.bookingthankText === '') {
               bookingthankText = ''
@@ -886,7 +908,8 @@ export default {
               statusCustomerEdit: this.formUpdate.statusCustomerEdit,
               statusCustomerEditNoTime: this.formUpdate.statusCustomerEditNoTime,
               countCustomerEdit: this.formUpdate.countCustomerEdit,
-              countDayCustomerEdit: this.formUpdate.countDayCustomerEdit
+              countDayCustomerEdit: this.formUpdate.countDayCustomerEdit,
+              showShopName: showShopName
             }
             await axios
               .post(
