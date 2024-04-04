@@ -256,7 +256,7 @@
       <v-card v-if="jobEvent">
         <v-card-title>{{ jobEvent.item[0].flowName }}</v-card-title>
         <v-divider></v-divider>
-        <v-card-text style="height: 300px;">
+        <v-card-text >
           <h3 class="mb-1" style="color: #2e76f6;">{{ jobEvent.startTime + '-' + jobEvent.endTime }}</h3>
           <h5 class="font-weight-black mb-1" style="color: rgb(93 93 93);">{{ format_dateNotime(jobEvent.item[0].dueDate) }}</h5>
           <div v-for="(dt, index) in jobEvent.jobData" :key="index" v-if="jobEvent.jobData.length > 0">
