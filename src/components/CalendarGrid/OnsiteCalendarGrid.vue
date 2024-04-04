@@ -199,6 +199,7 @@
             :flowName="flowName"
             @send-data="changeData"
             @more="clickMore"
+            @showEvent="getShowEvent"
             ></FullCalendar>
             <CategoryCalendar
               v-else
@@ -214,6 +215,7 @@
               :empDayoff="empDayoff"
               :flowName="flowName"
               @send-data="changeData"
+              @showEvent="getShowEvent"
               >
               </CategoryCalendar>
           </div>
@@ -235,6 +237,7 @@
                 :empDayoff="empDayoff"
                 :flowName="flowName"
                 @send-data="changeData"
+                @showEvent="getShowEvent"
                 >
                 </CategoryCalendar>
               </div>
@@ -245,6 +248,56 @@
           :interval-count="24-7" -->
     </v-col>
   </v-row>
+  <v-dialog
+      v-model="dialogEvent"
+      scrollable
+      max-width="500px"
+    >
+      <v-card v-if="jobEvent">
+        <v-card-title>{{ jobEvent.item[0].flowName }}</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text style="height: 300px;">
+          <h3 class="mb-1" style="color: #2e76f6;">{{ jobEvent.startTime + '-' + jobEvent.endTime }}</h3>
+          <h5 class="font-weight-black mb-1" style="color: rgb(93 93 93);">{{ format_dateNotime(jobEvent.item[0].dueDate) }}</h5>
+          <div v-for="(dt, index) in jobEvent.jobData" :key="index" v-if="jobEvent.jobData.length > 0">
+            <h5 class="font-weight-black mb-1" style="color: rgb(93 93 93);" v-if="dt.fieldName === 'ชื่อ'">{{ dt.fieldValue }}</h5>
+            <p class="mb-1" v-else>{{ dt.fieldValue }}</p>
+          </div>
+          <div style="display: flex;align-items: flex-start;">
+            <v-icon color="rgb(255 146 146)">mdi-map-marker</v-icon>
+            <p class="mb-1">
+              {{ jobEvent.item[0].address }}
+            </p>
+          </div>
+          <v-chip
+            v-if="jobEvent.item[0].RECORD_STATUS === 'N'"
+            class="ma-2"
+            color="green"
+            text-color="white"
+          >
+            {{jobEvent.status}}
+          </v-chip>
+          <v-chip
+            v-else
+            class="ma-2"
+            color="red"
+            text-color="white"
+          >
+          {{jobEvent.status}}
+          </v-chip>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions style="display: flex;justify-content: flex-end;">
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="dialogEvent = false"
+          >
+            ปิด
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   <!-- <FullCalendar :events="TT"></FullCalendar> -->
   </v-main>
 </template>
@@ -283,10 +336,13 @@ export default {
   },
   data () {
     return {
+      dialogEvent: false,
+      dia: null,
       panel: [0, 1],
       type: 'month',
-      types: ['month', 'week', 'day', '4day', 'category'],
-      typeColor: 'Flow',
+      types: ['month', 'day', 'category'],
+      // types: ['month', 'week', 'day', '4day', 'category'],
+      typeColor: 'Emp',
       typesColor: ['Flow', 'Emp'],
       mode: 'stack',
       modes: ['stack', 'column'],
@@ -300,6 +356,7 @@ export default {
       session: this.$session.getAll(),
       shopId: this.$session.getAll().data.shopId,
       focus: null,
+      pickerDate: null,
       events: [],
       eventsMaster: [],
       // colors: [
@@ -350,7 +407,9 @@ export default {
       checkboxAll: 'All',
       loading: false,
       toggle_EVENT: undefined,
-      newQuestionlength: ''
+      newQuestionlength: '',
+      jobEvent: null,
+      jobEventData: []
     }
   },
   watch: {
@@ -367,8 +426,14 @@ export default {
         let dt = []
         for (let index = 0; index < this.categoriesCheckBox.length; index++) {
           const element = this.categoriesCheckBox[index]
-          if (this.eventsMaster.filter((item) => item.category === element).length > 0) {
-            dt.push(element)
+          if (this.type === 'day' || this.type === 'category') {
+            if ((this.eventsMaster.filter((item) => item.category === element && (moment(item.start).format('YYYY-MM-DD') === this.focus)).length > 0) && (this.eventsMaster.filter((item) => (moment(item.start).format('YYYY-MM-DD') === this.focus)).length > 0)) {
+              dt.push(element)
+            }
+          } else {
+            if (this.eventsMaster.filter((item) => item.category === element).length > 0) {
+              dt.push(element)
+            }
           }
         }
         this.categories = dt
@@ -376,8 +441,14 @@ export default {
         let dt = []
         for (let index = 0; index < this.categoriesCheckBox.length; index++) {
           const element = this.categoriesCheckBox[index]
-          if (this.eventsMaster.filter((item) => item.category === element).length === 0) {
-            dt.push(element)
+          if (this.type === 'day' || this.type === 'category') {
+            if ((this.eventsMaster.filter((item) => item.category === element).length === 0) && (this.eventsMaster.filter((item) => (moment(item.start).format('YYYY-MM-DD') === this.focus)).length > 0)) {
+              dt.push(element)
+            }
+          } else {
+            if (this.eventsMaster.filter((item) => item.category === element).length === 0) {
+              dt.push(element)
+            }
           }
         }
         this.categories = dt
@@ -397,11 +468,92 @@ export default {
         let monthnewQuestion = moment(newQuestion).format('YYYY-MM')
         let montholdQuestion = moment(oldQuestion).format('YYYY-MM')
         if (monthnewQuestion !== montholdQuestion) {
-          console.log('getDATA')
+          // console.log('getDATA')
           this.events = []
           await this.setEvent()
+          this.updateSelect()
+        } else {
+          let daynewQuestion = moment(newQuestion).format('YYYY-MM-DD')
+          let dayoldQuestion = moment(oldQuestion).format('YYYY-MM-DD')
+          console.log('daynewQuestion', daynewQuestion, dayoldQuestion)
+          if (daynewQuestion !== dayoldQuestion) {
+            // this.updateSelect()
+            // console.log('this.checkboxAll', this.checkboxAll)
+            if (this.checkboxAll === 'All') {
+              this.categories = this.categoriesCheckBox
+            } else if (this.checkboxAll === 'Job') {
+              let dt = []
+              for (let index = 0; index < this.categoriesCheckBox.length; index++) {
+                const element = this.categoriesCheckBox[index]
+                if (this.type === 'day' || this.type === 'category') {
+                  if ((this.eventsMaster.filter((item) => item.category === element && (moment(item.start).format('YYYY-MM-DD') === this.focus)).length > 0) && (this.eventsMaster.filter((item) => (moment(item.start).format('YYYY-MM-DD') === this.focus)).length > 0)) {
+                    dt.push(element)
+                  }
+                } else {
+                  if (this.eventsMaster.filter((item) => item.category === element).length > 0) {
+                    dt.push(element)
+                  }
+                }
+              }
+              this.categories = dt
+            } else if (this.checkboxAll === 'NoneJob') {
+              let dt = []
+              for (let index = 0; index < this.categoriesCheckBox.length; index++) {
+                const element = this.categoriesCheckBox[index]
+                if (this.type === 'day' || this.type === 'category') {
+                  if ((this.eventsMaster.filter((item) => item.category === element).length === 0) && (this.eventsMaster.filter((item) => (moment(item.start).format('YYYY-MM-DD') === this.focus)).length > 0)) {
+                    dt.push(element)
+                  }
+                } else {
+                  if (this.eventsMaster.filter((item) => item.category === element).length === 0) {
+                    dt.push(element)
+                  }
+                }
+              }
+              this.categories = dt
+            } else if (this.checkboxAll === 'None') {
+              this.categories = []
+            }
+            this.updateSelect()
+          }
         }
       }
+    },
+    async type (newQuestion, oldQuestion) {
+      if (this.checkboxAll === 'All') {
+        this.categories = this.categoriesCheckBox
+      } else if (this.checkboxAll === 'Job') {
+        let dt = []
+        for (let index = 0; index < this.categoriesCheckBox.length; index++) {
+          const element = this.categoriesCheckBox[index]
+          if (this.type === 'day' || this.type === 'category') {
+            if ((this.eventsMaster.filter((item) => item.category === element && (moment(item.start).format('YYYY-MM-DD') === this.focus)).length > 0) && (this.eventsMaster.filter((item) => (moment(item.start).format('YYYY-MM-DD') === this.focus)).length > 0)) {
+              dt.push(element)
+            }
+          } else {
+            if (this.eventsMaster.filter((item) => item.category === element).length > 0) {
+              dt.push(element)
+            }
+          }
+        }
+        this.categories = dt
+      } else if (this.checkboxAll === 'NoneJob') {
+        let dt = []
+        for (let index = 0; index < this.categoriesCheckBox.length; index++) {
+          const element = this.categoriesCheckBox[index]
+          if (this.type === 'day' || this.type === 'category') {
+
+          } else {
+            if ((this.eventsMaster.filter((item) => item.category === element).length === 0) && (this.eventsMaster.filter((item) => (moment(item.start).format('YYYY-MM-DD') === this.focus)).length > 0)) {
+              dt.push(element)
+            }
+          }
+        }
+        this.categories = dt
+      } else if (this.checkboxAll === 'None') {
+        this.categories = []
+      }
+      this.updateSelect()
     },
     async categories (newQuestion, oldQuestion) {
       this.updateSelect()
@@ -432,6 +584,13 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    async getShowEvent (data) {
+      this.jobEvent = data
+      let jobDataShow = await this.getJobDataShow(data.item[0].bookNo)
+      this.jobEvent['jobData'] = jobDataShow
+      console.log('this.jobEvent', this.jobEvent)
+      this.dialogEvent = true
     },
     async ExportJob () {
       this.loading = true
@@ -532,8 +691,27 @@ export default {
       return event.color
     },
     async updateSelect () {
-      this.events = this.eventsMaster.filter(item => this.categories.includes(item.category))
-      console.log(this.events)
+      // console.log('type', this.type)
+      let dt = []
+      for (let index = 0; index < this.eventsMaster.length; index++) {
+        const element = this.eventsMaster[index]
+        if (this.type === 'day' || this.type === 'category') {
+          // console.log('if1')
+          if (moment(element.start).format('YYYY-MM-DD') === this.focus) {
+            if (this.categories.includes(element.category)) {
+              dt.push(element)
+            }
+          }
+        } else {
+          // console.log('else1')
+          if (this.categories.includes(element.category)) {
+            dt.push(element)
+          }
+        }
+      }
+      // this.events = this.eventsMaster.filter(item => this.categories.includes(item.category))
+      this.events = dt
+      // console.log(this.events)
     },
     setToday () {
       this.focus = moment().format('YYYY-MM-DD')
@@ -552,7 +730,7 @@ export default {
       this.dataJob = []
       // let params = null
       let month = moment(this.focus).format('YYYY-MM')
-      let params = this.DNS_IP + '/job/getCalendarGrid?shopId=' + this.shopId + '&checkOnsite=True' + '&dueDate=' + month
+      let params = this.DNS_IP + '/job/get-JobCalendarGrid?shopId=' + this.shopId + '&checkOnsite=True' + '&dueDate=' + month
       await axios
         .get(params)
         .then(async (response) => {
@@ -564,6 +742,22 @@ export default {
             console.log('this.dataJob', this.dataJob)
           }
         })
+    },
+    async getJobDataShow (bookNo) {
+      let jobData = []
+      let params = this.DNS_IP + '/job/get-JobDataCalendarGrid?bookNo=' + bookNo
+      await axios
+        .get(params)
+        .then(async (response) => {
+          let rs = response.data
+          if (rs.status === false) {
+            jobData = []
+          } else {
+            jobData = rs
+            console.log('jobData', jobData)
+          }
+        })
+      return jobData
     },
     async getFlow () {
       await axios
@@ -689,6 +883,7 @@ export default {
             let end = new Date(moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('YYYY-MM-DD HH:mm:ss'))
             let findIndex = this.flowName.findIndex((item) => item.value === element.flowId)
             let flowName = this.flowName.filter((item) => item.value === element.flowId)[0].text
+            let jobdata = this.dataJob.filter((item) => item.bookNo === element.refID) || []
             // console.log('moment', moment())
             // console.log('start', start, ' - ', end)
             events.push({
@@ -698,7 +893,8 @@ export default {
               color: this.colors[findIndex],
               timed: true,
               category: this.categoriesItem.filter((item) => item.value === element.empId)[0].text,
-              item: this.dataJob.filter((item) => item.bookNo === element.refID),
+              item: jobdata,
+              status: jobdata.RECORD_STATUS === 'N' ? 'ยังไม่ปิดงาน' : 'ปิดงานแล้ว',
               startTime: moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm'),
               endTime: moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm')
             })
@@ -709,7 +905,8 @@ export default {
               color: this.colors[findIndex],
               timed: true,
               category: this.categoriesItem.filter((item) => item.value === element.empId)[0].text,
-              item: this.dataJob.filter((item) => item.bookNo === element.refID),
+              item: jobdata,
+              status: (jobdata.length > 0 && jobdata[0].RECORD_STATUS === 'N') ? 'ยังไม่ปิดงาน' : 'ปิดงานแล้ว',
               startTime: moment(element.start, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm'),
               endTime: moment(element.end, 'ddd, DD MMM YYYY HH:mm:ss [GMT]').tz('Asia/Bangkok').format('HH:mm')
             })

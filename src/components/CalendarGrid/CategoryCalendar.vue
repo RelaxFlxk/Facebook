@@ -15,6 +15,7 @@
           </v-btn>
           <v-btn
             outlined
+            @click="setToday"
           >
             Today
           </v-btn>
@@ -64,7 +65,7 @@
         <v-calendar
         v-if="categories.length > 0"
         ref="calendar"
-        v-model="value"
+        v-model="focus"
         color="primary"
         type="category"
         category-show-all
@@ -77,6 +78,7 @@
         :event-color="getEventColor"
         locale="th-TH"
         :event-timed="isTimedEvent"
+        @click:event="clickEvent"
         @change="getEvents"
         >
         <template #event="{ event }">
@@ -89,18 +91,18 @@
         <div v-else>
           {{ event }}
         </div> -->
-        <div v-if="event.item.length > 0" class="eventIF">
+        <div v-if="event.item.length > 0 && event.status === 'ยังไม่ปิดงาน'" class="eventIF">
                 <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
                     <p class="ma-0">{{ event.item[0].flowName}}</p>
                 </div>
                 <p class="mb-1"><v-icon small color="#FFFFFF">mdi-map-marker-outline</v-icon> {{ event.item[0].address }}</p>
-                </div>
-                <div v-else class="eventElse">
-                    <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
-                    <p class="ma-0">{{ event.name}}</p>
-                </div>
-                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime }}</p>
-            </div>
+        </div>
+        <div v-else class="eventElse">
+          <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
+            <p class="ma-0">{{ event.name}}</p>
+          </div>
+          <p class="mb-1"> {{ event.status }}</p>
+        </div>
         </template>
         <template #interval="{ date, category}">
         <!-- Custom content for the interval -->
@@ -219,6 +221,7 @@ export default {
   },
   watch: {
     focus (newQuestion, oldQuestion) {
+      console.log('forcus-----', newQuestion)
       if (newQuestion !== oldQuestion) {
         this.value = newQuestion
       }
@@ -228,6 +231,10 @@ export default {
     }
   },
   methods: {
+    clickEvent (event) {
+      // console.log('event!!!!"', event)
+      this.$emit('showEvent', event.event)
+    },
     getEventColor (event) {
       if (this.typeColor === 'Flow') {
         let key = this.flowName.findIndex((item) => item.text === event.name)
@@ -239,15 +246,18 @@ export default {
         return color
       }
     },
+    setToday () {
+      this.value = moment().format('YYYY-MM-DD')
+    },
     sendDataToParent (newQuestion) {
       // ส่งข้อมูลไปยังคอมโพเนนต์แม่ ผ่านการส่งเหตุการณ์ (event) ชื่อว่า 'send-data'
       this.$emit('send-data', newQuestion)
     },
     prev () {
-      this.$refs.calendar.prev()
+      this.value = moment(this.focus).subtract(1, 'days').format('YYYY-MM-DD')
     },
     next () {
-      this.$refs.calendar.next()
+      this.value = moment(this.focus).add(1, 'days').format('YYYY-MM-DD')
     },
     momentTitle (focus) {
       return moment(focus).format('ddd, MMM D, YYYY')
