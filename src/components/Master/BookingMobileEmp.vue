@@ -1432,12 +1432,14 @@ export default {
     console.log('statusGoogleCalendar', this.statusGoogleCalendar, this.statusGoogleCalendarEmp)
     this.dateCheckBill = moment().format('YYYY-MM')
     await this.beforeCreate()
-    console.log('this.$session.getAll()', this.$session.getAll())
   },
   methods: {
-    async connectGoogleCalendar (status, bookNo) {
+    connectGoogleCalendarNoSession (status, bookNo) {
       console.log('status !!!', status)
-      this.$refs.GoogleCalendarRef.checkTypeEvenEmp(status, bookNo)
+      this.$refs.GoogleCalendarRef.checkTypeEvenEmpNoSession(status, bookNo, this.$session.getAll().data.shopId, this.DNS_IP)
+    },
+    async connectGoogleCalendar (status, bookNo) {
+      this.connectGoogleCalendarNoSession(status, bookNo)
     },
     async getShop () {
       await axios
@@ -2756,6 +2758,7 @@ export default {
     // }
       // console.log(JSON.parse(localStorage.getItem('sessionData')))
       if (JSON.parse(localStorage.getItem('sessionData')) !== null) {
+        console.log('beforeCreateIF')
         if (JSON.parse(localStorage.getItem('sessionData')).shopId === this.$route.query.shopId) {
           this.$session.start()
           this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
@@ -2786,6 +2789,7 @@ export default {
           this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
         }
       } else {
+        console.log('beforeCreateELSE')
         if (!this.$session.exists()) {
           this.$router.push('/Core/Login?bookNo=' + this.$route.query.bookNo + '&shopId=' + this.$route.query.shopId)
         } else {

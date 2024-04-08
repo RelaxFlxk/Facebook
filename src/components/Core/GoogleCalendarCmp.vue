@@ -1,153 +1,145 @@
 <template>
-    <div v-show="false">
-      <v-row>
-        <v-container>
-        <v-col cols="12">
-          <v-btn
-        elevation="2"
-        @click="handleClickLogin"
-        color="green"
-        >Google Log in</v-btn>
-        </v-col>
-        <v-col cols="12">
-        <!-- <v-row v-if="checkLogin"> -->
-          <v-card>
-            <v-card-text>
-              <v-row>
-                <v-col cols="12" class="pb-0 pt-0">
-                  <v-text-field
-                    v-model="refreshToken"
-                    label="refreshToken"
-                    outlined
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" class="pb-0 pt-0">
-                  <v-text-field
-                    v-model="eventId"
-                    label="eventId"
-                    outlined
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-btn
-                    elevation="2"
-                    color="orange"
-                    @click="getEvent()"
-                    >Get Event</v-btn>
-                </v-col>
-                <!-- <v-col cols="12" class="pb-0 pt-0">
-                  <v-text-field
-                    v-model="calendarId"
-                    label="calendarId"
-                    outlined
-                  ></v-text-field>
-                </v-col> -->
-              </v-row>
-            </v-card-text>
-          </v-card>
-          <hr>
-          <v-card>
-            <v-card-text>
-              <v-row>
-                <v-col cols="12" class="pb-0 pt-0">
-                  <v-text-field
-                    v-model="Summmary"
-                    label="Summmary"
-                    outlined
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" class="pb-0 pt-0">
-                  <v-text-field
-                    v-model="Description"
-                    label="Description"
-                    outlined
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" class="pb-0 pt-0">
-                  <v-text-field
-                    v-model="Location"
-                    label="Location"
-                    outlined
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" class="pb-0 pt-0">
-                  <v-menu
-                    v-model="menu1"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="StartDate"
-                        label="StartDate"
-                        prepend-icon="mdi-calendar"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
+  <div v-show="false">
+    <!-- <v-row>
+      <v-container>
+      <v-col cols="12">
+        <v-btn
+      elevation="2"
+      @click="handleClickLogin"
+      color="green"
+      >Google Log in</v-btn>
+      </v-col>
+      <v-col cols="12">
+        <v-card>
+          <v-card-text>
+            <v-row>
+              <v-col cols="12" class="pb-0 pt-0">
+                <v-text-field
+                  v-model="refreshToken"
+                  label="refreshToken"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="pb-0 pt-0">
+                <v-text-field
+                  v-model="eventId"
+                  label="eventId"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-btn
+                  elevation="2"
+                  color="orange"
+                  @click="getEvent()"
+                  >Get Event</v-btn>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+        <hr>
+        <v-card>
+          <v-card-text>
+            <v-row>
+              <v-col cols="12" class="pb-0 pt-0">
+                <v-text-field
+                  v-model="Summmary"
+                  label="Summmary"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="pb-0 pt-0">
+                <v-text-field
+                  v-model="Description"
+                  label="Description"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="pb-0 pt-0">
+                <v-text-field
+                  v-model="Location"
+                  label="Location"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="pb-0 pt-0">
+                <v-menu
+                  v-model="menu1"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
                       v-model="StartDate"
-                      @input="menu1 = false"
-                    ></v-date-picker>
-                  </v-menu>
-                </v-col>
-                <v-col cols="12" class="pb-0 pt-0">
-                  <v-menu
-                    v-model="menu2"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="EndDate"
-                        label="EndDate"
-                        prepend-icon="mdi-calendar"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
+                      label="StartDate"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="StartDate"
+                    @input="menu1 = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" class="pb-0 pt-0">
+                <v-menu
+                  v-model="menu2"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
                       v-model="EndDate"
-                      @input="menu2 = false"
-                    ></v-date-picker>
-                  </v-menu>
-                </v-col>
-                <v-col cols="12" class="pb-0 pt-0">
-                  <v-btn
-                    elevation="2"
-                    color="info"
-                    @click="createEvent()"
-                    >CREATE Event</v-btn>
-                </v-col>
-                <v-col cols="12">
-                  <v-btn
-                    elevation="2"
-                    color="orange"
-                    @click="updateEvent()"
-                    >Update Event</v-btn>
-                </v-col>
-                <v-col cols="12">
-                  <v-btn
-                    elevation="2"
-                    color="error"
-                    @click="deleteEvent()"
-                    >delete Event</v-btn>
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </v-col>
-        </v-container>
-      </v-row>
-    </div>
+                      label="EndDate"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="EndDate"
+                    @input="menu2 = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" class="pb-0 pt-0">
+                <v-btn
+                  elevation="2"
+                  color="info"
+                  @click="createEvent()"
+                  >CREATE Event</v-btn>
+              </v-col>
+              <v-col cols="12">
+                <v-btn
+                  elevation="2"
+                  color="orange"
+                  @click="updateEvent()"
+                  >Update Event</v-btn>
+              </v-col>
+              <v-col cols="12">
+                <v-btn
+                  elevation="2"
+                  color="error"
+                  @click="deleteEvent()"
+                  >delete Event</v-btn>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      </v-container>
+    </v-row> -->
+  </div>
 </template>
 <script>
 import axios from 'axios' // api
@@ -254,12 +246,43 @@ export default {
           // on fail do something
         })
     },
+    async checkTypeEvenEmpNoSession (status, bookNo, shopId, DNS_IP) {
+      this.shopId = shopId
+      this.DNS_IP = DNS_IP
+      this.eventId = ''
+      this.calendarId = '66h6jueetal14hcm8vn7an38p8@google.com'
+      this.refreshToken = ''
+      this.expireDate = ''
+      this.checkLogin = false
+      this.Summmary = ''
+      this.Description = ''
+      this.Location = ''
+      this.menu1 = false
+      this.menu2 = false
+      this.StartDate = ''
+      this.EndDate = ''
+      this.bookingItem = []
+      this.bookingData = []
+      this.flowItem = []
+      this.empItem = []
+      this.evenStatus = ''
+      this.attendeesEmail = []
+      this.bookNo = ''
+      this.statusGoogleCalendarEmp = ''
+      this.webHookUrl = 'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/'
+      console.log('2this.DNS_IP', this.DNS_IP)
+      console.log('2------', this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
+      console.log('status!!', status)
+      await this.checkTypeEvenEmp(status, bookNo)
+    },
     async checkTypeEvenEmp (status, bookNo) {
       console.log('status!!', status)
       this.evenStatus = status
       //   this.evenStatus = 'Add'
       this.bookNo = bookNo
       //   this.bookNo = 'BK143157651684727414315'
+      console.log('this.DNS_IP', this.DNS_IP)
+      console.log('------', this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
       await this.getShop()
       if (this.refreshToken === null || this.refreshToken === '') {
         // await this.handleClickLogin(status, bookNo)
@@ -359,6 +382,8 @@ export default {
       //   this.evenStatus = 'Add'
       this.bookNo = bookNo
       //   this.bookNo = 'BK143157651684727414315'
+      console.log('this.DNS_IP', this.DNS_IP)
+      console.log('this.shopId', this.shopId)
       await this.getShop()
       if (this.refreshToken === null || this.refreshToken === '') {
         // await this.handleClickLogin(status, bookNo)
@@ -705,10 +730,14 @@ export default {
         if (rs.length > 0) {
           console.log('system_user', rs)
           rs.forEach((item) => {
-            let obj = {
-              'email': item.userName
+            try {
+              if (this.validateEmail(item.userName)) {
+                let obj = {'email': item.userName}
+                this.attendeesEmail.push(obj)
+              }
+            } catch (error) {
+              console.log(error)
             }
-            this.attendeesEmail.push(obj)
           })
         }
       })
