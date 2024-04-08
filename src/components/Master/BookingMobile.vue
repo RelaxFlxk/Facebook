@@ -1253,9 +1253,14 @@ export default {
     console.log('this.$session.getAll()', this.$session.getAll())
   },
   methods: {
-    async connectGoogleCalendar (status, bookNo) {
+    connectGoogleCalendarNoSession (status, bookNo) {
       console.log('status !!!', status)
-      this.$refs.GoogleCalendarRef.checkTypeEven(status, bookNo)
+      this.$refs.GoogleCalendarRef.checkTypeEvenNoSession(status, bookNo, this.$session.getAll().data.shopId, this.DNS_IP)
+    },
+    async connectGoogleCalendar (status, bookNo) {
+      // console.log('status !!!', status)
+      // this.$refs.GoogleCalendarRef.checkTypeEven(status, bookNo)
+      this.connectGoogleCalendarNoSession(status, bookNo)
     },
     async getShop () {
       await axios

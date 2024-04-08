@@ -376,6 +376,35 @@ export default {
       }
       return item
     },
+    async checkTypeEvenNoSession (status, bookNo, shopId, DNS_IP) {
+      this.shopId = shopId
+      this.DNS_IP = DNS_IP
+      this.eventId = ''
+      this.calendarId = '66h6jueetal14hcm8vn7an38p8@google.com'
+      this.refreshToken = ''
+      this.expireDate = ''
+      this.checkLogin = false
+      this.Summmary = ''
+      this.Description = ''
+      this.Location = ''
+      this.menu1 = false
+      this.menu2 = false
+      this.StartDate = ''
+      this.EndDate = ''
+      this.bookingItem = []
+      this.bookingData = []
+      this.flowItem = []
+      this.empItem = []
+      this.evenStatus = ''
+      this.attendeesEmail = []
+      this.bookNo = ''
+      this.statusGoogleCalendarEmp = ''
+      this.webHookUrl = 'https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/'
+      console.log('2this.DNS_IP', this.DNS_IP)
+      console.log('2------', this.DNS_IP + '/sys_shop/get?shopId=' + this.shopId)
+      console.log('status!!', status)
+      await this.checkTypeEven(status, bookNo)
+    },
     async checkTypeEven (status, bookNo) {
       console.log('status!!', status)
       this.evenStatus = status
