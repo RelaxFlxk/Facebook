@@ -5,8 +5,8 @@
   "targets": {
     "be-linked-a7cdc": {
       "hosting": {
-        "betask-linked-admin-test-calendar": [
-          "betask-linked-admin-test-calendar"
+        "betask-linked-admin": [
+          "betask-linked-admin"
         ]
       }
     }

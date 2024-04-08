@@ -1,7 +1,7 @@
 {
   "hosting": [
     {
-      "site": "betask-linked-admin-test-calendar",
+      "site": "betask-linked-admin",
       "public": "dist",
       "headers": [
         {
