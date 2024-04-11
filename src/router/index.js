@@ -16,6 +16,7 @@ import Pepsico from '@/components/Pepsico'
 import Message from '@/components/StepMessage'
 import BeChat from '@/components/BeChat'
 import CalendarGrid from '@/components/CalendarGrid'
+import Watersize from '@/components/FixWatersize'
 
 Vue.use(Router)
 
@@ -25,6 +26,11 @@ export default new Router({
     path: '*',
     name: 'Login',
     component: Core.Login
+  },
+  {
+    path: '/Watersize',
+    name: 'Watersize',
+    component: Watersize.OverviewFlow
   },
   {
     path: '/Onsite/OnsiteCalendarGrid',
