@@ -1166,6 +1166,12 @@ export default {
           // { title: 'ReportEmp', icon: 'mdi-account-clock-outline', to: '/Dashbord/ReportEmpMain', type: 'Dashboard' }
           // { title: 'Performance', icon: 'mdi-application-settings', to: '/Dashbord/Performance', type: 'Dashboard' }
         ]
+        if (this.$session.getAll().data.category === '7') {
+          this.Dashboard.push(
+            { title: 'งานในศูนย์', icon: 'mdi-cog-transfer', to: '/Dashbord/Report', type: 'Dashboard' }
+          )
+        }
+        // console.log('this.$session.getAll().data', this.$session.getAll().data.category)
         if (this.$session.getAll().data.USER_ROLE === 'admin' || this.$session.getAll().data.USER_ROLE === 'user') {
           if (this.$session.getAll().data.showOnsite === 'แสดง') {
             this.Dashboard.push(

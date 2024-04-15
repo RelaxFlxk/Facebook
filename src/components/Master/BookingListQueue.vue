@@ -31,7 +31,7 @@
         <template v-else>
         <v-form ref="form_search" v-model="validSearch" lazy-validation v-if="dialogwidth === '50%'">
           <v-row>
-            <v-col cols="3">
+            <v-col cols="2">
               <v-select
                 v-model="masBranchID"
                 background-color="white"
@@ -51,7 +51,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="2">
               <v-select
                 style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
                 v-model="flowSelect"
@@ -72,7 +72,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="2">
               <v-menu
                 ref="menu"
                 v-model="menuStart"
@@ -131,7 +131,7 @@
                 </template>
               </v-select>
             </v-col> -->
-            <v-col cols="3" class="pt-0">
+            <v-col cols="4" class="pt-0">
               <v-text-field
                 v-model="search"
                 append-icon="mdi-magnify"
@@ -140,6 +140,17 @@
                 hide-details
               ></v-text-field>
             </v-col>
+            <v-col cols="1">
+            <v-btn
+            color="primary"
+            class="ma-2"
+            outlined
+            @click="exportExcel()"
+            >
+              <v-icon>mdi-calendar-multiselect</v-icon>
+              Export
+            </v-btn>
+          </v-col>
           </v-row>
           <v-row v-if="DataFlowItem.filter(el => { return el.value !== 'allFlow' }).length > 0">
             <v-col col="auto" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3" style="display: flex;justify-content: center;">
@@ -706,6 +717,7 @@ import pdfMake from 'pdfmake'
 import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
 import moment from 'moment-timezone'
 import printJS from 'print-js'
+import XLSX from 'xlsx' // import xlsx
 
 export default {
   components: {
@@ -2264,6 +2276,68 @@ export default {
           }
         }
       }
+    },
+
+    async exportExcel () {
+      const dataBooking = []
+      const data = [['BookNo', 'เลขคิว', 'บริการภาษาไทย', 'บริการภาษาอังกฤษ', 'วันที่นัดหมาย', 'สถานะ', 'ชื่อลูกค้า', 'เบอร์โทร', 'ชื่อ Line', 'รูป Line']]
+      for (let i = 0; i < this.itemBooking.length; i++) {
+        dataBooking[i] = []
+        let item = this.itemBooking[i]
+
+        // let memberName = item.memberName ? item.memberName : '-'
+
+        let statusBt = item.statusBt
+        if (statusBt === 'confirm') {
+          statusBt = 'จองคิว'
+        }
+        if (statusBt === 'cancel') {
+          statusBt = 'ลบคิว'
+        }
+        if (statusBt === 'confirmJob') {
+          statusBt = 'เรียกคิวแล้ว'
+        }
+        if (statusBt === 'closeJob') {
+          statusBt = 'ปิดงาน'
+        } else {
+          statusBt = 'ไม่มีสถานะ'
+        }
+        let rowData = [
+          '"' + item.bookNo ? item.bookNo : '-' + '"',
+          '"' + item.storeFrontQueue ? item.storeFrontQueue : '-' + '"',
+          '"' + item.flowName ? item.flowName : '-' + '"',
+          '"' + item.flowNameEn ? item.flowNameEn : '-' + '"',
+          '"' + item.dueDateText ? item.dueDateText : '-' + '"',
+          '"' + statusBt + '"',
+          '"' + item.bookingDataCustomerName ? item.bookingDataCustomerName : '-' + '"',
+          '"' + item.bookingDataCustomerTel ? item.bookingDataCustomerTel : '-' + '"',
+          '"' + item.memberName && item.memberName !== null && item.memberName !== '' ? item.memberName : '-' + '"',
+          '"' + item.memberPicture ? item.memberPicture : '-' + '"'
+        ]
+        console.log(rowData)
+        dataBooking[i].push(rowData.join(','))
+
+        let dataListA = dataBooking[i].join('')
+        let dataListArray = dataListA.replace(/"/g, '').split(',')
+        // console.log('dataListArray', dataListArray)
+        data.push(dataListArray)
+      }
+      console.log('itemnie', dataBooking)
+      // Populate data array with shop data
+
+      const ws = XLSX.utils.aoa_to_sheet(data)
+
+      const today = new Date()
+      const year = today.getFullYear()
+      const month = (today.getMonth() + 1).toString().padStart(2, '0') // +1 เพราะเดือนเริ่มที่ 0
+      const day = today.getDate().toString().padStart(2, '0')
+      const hours = today.getHours().toString().padStart(2, '0')
+      const minutes = today.getMinutes().toString().padStart(2, '0')
+
+      const formattedDate = `${day}-${month}-${year}-${hours}-${minutes}`
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+      XLSX.writeFile(wb, 'BookingListQueue_' + formattedDate + '.xlsx')
     }
   }
 }

@@ -54,12 +54,13 @@
           :interval-format="customIntervalFormat"
           locale="th-TH"
           short-intervals
+          @click:event="clickEvent"
           @change="getEvents"
         >
         <template #event="{ event }">
             <!-- {{ event }} -->
         <div v-if="type === 'month'">
-            <div v-if="event.item.length > 0" class="eventIF">
+            <div v-if="event.item.length > 0 && event.status === 'ยังไม่ปิดงาน'" class="eventIF">
                 <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
                     <p class="ma-0">{{ event.item[0].flowName}}</p>
                 </div>
@@ -69,11 +70,11 @@
                     <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
                     <p class="ma-0">{{ event.name}}</p>
                 </div>
-                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime }}</p>
+                <p class="mb-1"> {{ event.status }}</p>
             </div>
         </div>
         <div v-if="type === 'week'">
-            <div v-if="event.item.length > 0" class="eventIF">
+            <div v-if="event.item.length > 0 && event.status === 'ยังไม่ปิดงาน'" class="eventIF">
                 <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
                     <p class="ma-0">{{ event.item[0].flowName}}</p>
                 </div>
@@ -83,11 +84,11 @@
                     <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
                     <p class="ma-0">{{ event.name}}</p>
                 </div>
-                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime }}</p>
+                <p class="mb-1"> {{ event.status }}</p>
             </div>
         </div>
         <div v-if="type === 'day'">
-            <div v-if="event.item.length > 0" class="eventIF">
+            <div v-if="event.item.length > 0 && event.status === 'ยังไม่ปิดงาน'" class="eventIF">
                 <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
                     <p class="ma-0">{{ event.item[0].flowName}}</p>
                 </div>
@@ -97,11 +98,11 @@
                     <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
                     <p class="ma-0">{{ event.name}}</p>
                 </div>
-                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime}}</p>
+                <p class="mb-1"> {{ event.status}}</p>
             </div>
         </div>
         <div v-if="type === '4day'">
-            <div v-if="event.item.length > 0" class="eventIF">
+            <div v-if="event.item.length > 0 && event.status === 'ยังไม่ปิดงาน'" class="eventIF">
                 <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
                     <p class="ma-0">{{ event.item[0].flowName}}</p>
                 </div>
@@ -111,7 +112,7 @@
                     <div class="ma-0 pa-0 font-weight-black" style="display:flex;justify-content:space-between;">
                     <p class="ma-0">{{ event.name}}</p>
                 </div>
-                <p class="mb-1"> {{ event.startTime + ' - ' + event.endTime }}</p>
+                <p class="mb-1"> {{ event.status }}</p>
             </div>
         </div>
         </template>
@@ -192,6 +193,10 @@ export default {
   methods: {
     Test (event) {
       this.$emit('more', event.date)
+    },
+    clickEvent (event) {
+      // console.log('event!!!!"', event)
+      this.$emit('showEvent', event.event)
     },
     sendDataToParent (newQuestion) {
       // ส่งข้อมูลไปยังคอมโพเนนต์แม่ ผ่านการส่งเหตุการณ์ (event) ชื่อว่า 'send-data'

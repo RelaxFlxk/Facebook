@@ -80,6 +80,7 @@
               :append-outer-icon="searchOther ? 'mdi-refresh-circle' : ''"
               append-icon="mdi-text-box-search"
               label="ค้นหาทั้งหมด"
+              hide-details
               @click:append-outer="refreshData()"
               @click:append="searchAny()"
               outlined
@@ -120,29 +121,21 @@
           </v-col>
         </v-row> -->
         <v-row>
-          <!-- <v-col :cols="colsWidth" class="text-h6" color="#ABB1C7"> นัดส่ง:</v-col> -->
-          <!-- <v-card-title
-            class="text-h6"
-            color="#ABB1C7"
-            style="margin-bottom: 10px;"
-          >
-            นัดส่ง:
-          </v-card-title> -->
-          <!-- <v-col cols="8">
-            <strong class="text-h6">นัดส่ง:</strong>
-            <v-chip color="#DE6467" text-color="white">
+          <v-col :cols="colsWidthTitle" style="display: flex;justify-content: flex-start;align-items: stretch;">
+            <h6>นัดส่ง</h6>
+            <v-chip small class="ml-2" color="#DE6467" text-color="white">
               ภายใน 2 วัน
             </v-chip>
 
-            <v-chip color="#FED966" text-color="white">
+            <v-chip small class="ml-2" color="#FED966" text-color="white">
               ภายใน 4 วัน
             </v-chip>
 
-            <v-chip color="#4F93D0" text-color="white">
+            <v-chip small class="ml-2" color="#4F93D0" text-color="white">
               มากกว่า 4 วัน
             </v-chip>
-          </v-col> -->
-          <v-col cols="12" class="text-right" text color="#ABB1C7" v-if="allJob.length > 0">
+          </v-col>
+          <v-col  class="text-right" color="#ABB1C7" v-if="allJob.length > 0">
             <v-btn-toggle>
             <v-btn
               text
@@ -614,12 +607,63 @@
                v-for="(itemsJob, indexJob) in allJob.filter(row => { return row.stepId == item.stepId })" :key="indexJob"
               >
                 <v-card class="cardItemNew">
-                  <div style="display: flex;justify-content: flex-start;align-items: baseline;" v-for="(items, index) in JobDataItem.filter(row => { return row.jobId == itemsJob.jobId })" :key="index">
+                  <!-- {{ itemsJob.totalDateDiff }} -->
+                  <div style="position: relative;top: 7px;">
+                    <div style="display: flex;justify-content: flex-start;align-items: baseline;" v-for="(items, index) in JobDataItem.filter(row => { return row.jobId == itemsJob.jobId })" :key="index">
                       <v-icon color="#525252" class="mr-1" small style="font-size: 8px;" v-if="items.showCard === 'True' && items.fieldValue !== ''">
                         mdi-checkbox-multiple-blank-circle
                         </v-icon>
                       <p class="ma-0 mb-1" v-if="items.showCard === 'True' && items.fieldValue !== ''">
                         {{  items.fieldValue}}</p>
+                    </div>
+                    <!-- แจ้งเตือนเวลาที่ต้องส่งมอบงาน -->
+                    <div style="position: absolute;top: -18px;right: -6px;">
+                    <v-tooltip top
+                                v-if="parseInt(itemsJob.totalDateDiff) <= 2"
+                                color="#DE6467"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      color="#DE6467"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#DE6467;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             <v-tooltip top
+                                v-else-if="parseInt(itemsJob.totalDateDiff) <= 4 &&parseInt(itemsJob.totalDateDiff) >= 2"
+                                color="#FED966"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      color="#FED966"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#FED966;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             <v-tooltip top
+                                v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
+                                color="#4F93D0"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      color="#4F93D0"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#4F93D0;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                  </div>
                   </div>
                   <div style="display: flex;justify-content: flex-start;align-items: flex-start;">
                     <v-icon color="#525252" class="mr-2" v-if="JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== '' && JobDataItem.find(row => row.jobId === itemsJob.jobId).empStep !== null">mdi-clipboard-account</v-icon>
@@ -764,6 +808,47 @@
                         <span>แชท</span>
                       </v-tooltip>
                     </v-btn>
+                    <!-- update satatus car -->
+                    <v-btn
+                      color="primary"
+                      class="buttonGroup"
+                      elevation="2"
+                      icon
+                      small
+                    >
+                    <v-tooltip top
+                            color="#4F93D0"
+                            >
+                            <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                              v-if="
+                                allJob.filter(row => {
+                                  return row.jobId == itemsJob.jobId
+                                })[0].checkCar == 'False'"
+                              color="#9E9E9E"
+                              depressed
+                              @click="updateStatusCars(itemsJob.jobId, 'False')"
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              mdi-car
+                            </v-icon>
+
+                            <v-icon
+                              v-else
+                              color="#4F93D0"
+                              depressed
+                              @click="updateStatusCars(itemsJob.jobId, 'True')"
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              mdi-car
+                            </v-icon>
+                            </template>
+                            <span>สถานะ รถอยู่ / รถไม่อยู่</span>
+                            </v-tooltip>
+                    </v-btn>
+                          <!-- end update satatus car -->
                   </div>
 
                 </v-card>
@@ -1071,6 +1156,7 @@
                       colored-border
                     >
                       <v-row class=" allFrame pb-3">
+                        <!-- วันส่งรถลูกค้า -->
                         <!-- <v-col cols="2">
                           <v-chip
                             v-if="parseInt(itemsJob.totalDateDiff) <= 2"
@@ -1114,13 +1200,70 @@
                         </v-col> -->
                         <!-- end diffDate -->
                         <v-col cols="12" class="text-left pa-0 pl-4 pt-3">
-                          <div style="display: flex;justify-content: flex-start;align-items: baseline;" v-for="(items, index) in JobDataItem.filter(row => { return row.jobId == itemsJob.jobId })" :key="index">
+                          <!-- <div style="display: flex;justify-content: flex-start;align-items: baseline;" v-for="(items, index) in JobDataItem.filter(row => { return row.jobId == itemsJob.jobId })" :key="index">
                               <v-icon color="#525252" class="mr-1" small style="font-size: 8px;" v-if="items.showCard === 'True' && items.fieldValue !== ''">
                                 mdi-checkbox-multiple-blank-circle
                                 </v-icon>
                               <p class="ma-0 mb-1" v-if="items.showCard === 'True' && items.fieldValue !== ''">
                                 {{  items.fieldValue}}</p>
-                          </div>
+                          </div> -->
+                          <div style="position: relative;top: 7px;">
+                    <div style="display: flex;justify-content: flex-start;align-items: baseline;" v-for="(items, index) in JobDataItem.filter(row => { return row.jobId == itemsJob.jobId })" :key="index">
+                      <v-icon color="#525252" class="mr-1" small style="font-size: 8px;" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                        mdi-checkbox-multiple-blank-circle
+                        </v-icon>
+                      <p class="ma-0 mb-1" v-if="items.showCard === 'True' && items.fieldValue !== ''">
+                        {{ items.fieldValue }}</p>
+                    </div>
+                    <!-- แจ้งเตือนเวลาที่ต้องส่งมอบงาน -->
+                    <div style="position: absolute;top: -18px;right: -6px;">
+                    <v-tooltip top
+                                v-if="parseInt(itemsJob.totalDateDiff) <= 2"
+                                color="#DE6467"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      color="#DE6467"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#DE6467;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             <v-tooltip top
+                                v-else-if="parseInt(itemsJob.totalDateDiff) <= 4 &&parseInt(itemsJob.totalDateDiff) >= 2"
+                                color="#FED966"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      color="#FED966"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#FED966;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                             <v-tooltip top
+                                v-else-if="parseInt(itemsJob.totalDateDiff) >= 4"
+                                color="#4F93D0"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      color="#4F93D0"
+                                    >
+                                      mdi-alarm-light
+                                    </v-icon>
+                                  </template>
+                                  <span style="background-color:#4F93D0;">{{ itemsJob.totalDateDiff }}</span>
+                             </v-tooltip>
+                  </div>
+                  </div>
                         </v-col>
                         <v-col cols="12" class="text-left pa-0 pl-4 pt-3">
                           <div style="display: flex;justify-content: flex-start;align-items: flex-start;">
@@ -1269,6 +1412,47 @@
                                 <span>แชท</span>
                               </v-tooltip>
                             </v-btn>
+                            <!-- update satatus car -->
+                            <v-btn
+                              color="primary"
+                              class="buttonGroup"
+                              elevation="2"
+                              icon
+                              small
+                            >
+                            <v-tooltip top
+                                    color="#4F93D0"
+                                    >
+                                    <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                      v-if="
+                                        allJob.filter(row => {
+                                          return row.jobId == itemsJob.jobId
+                                        })[0].checkCar == 'False'"
+                                      color="#9E9E9E"
+                                      depressed
+                                      @click="updateStatusCars(itemsJob.jobId, 'False')"
+                                      v-bind="attrs"
+                                      v-on="on"
+                                    >
+                                      mdi-car
+                                    </v-icon>
+
+                                    <v-icon
+                                      v-else
+                                      color="#4F93D0"
+                                      depressed
+                                      @click="updateStatusCars(itemsJob.jobId, 'True')"
+                                      v-bind="attrs"
+                                      v-on="on"
+                                    >
+                                      mdi-car
+                                    </v-icon>
+                                    </template>
+                                    <span>สถานะ รถอยู่ / รถไม่อยู่</span>
+                                    </v-tooltip>
+                            </v-btn>
+                          <!-- end update satatus car -->
                           </div>
                           <!-- <v-tooltip top
                             color="#DE6467">
@@ -1450,6 +1634,15 @@ export default {
         case 'md': return '12'
         case 'lg': return '4'
         case 'xl': return '4'
+      }
+    },
+    colsWidthTitle () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '12'
+        case 'sm': return '12'
+        case 'md': return '8'
+        case 'lg': return '8'
+        case 'xl': return '8'
       }
     },
     classWork () {
@@ -2365,8 +2558,8 @@ export default {
       }
     },
     async updateStatusCars (item, status) {
-      console.log(this.formUpdate.jobId)
-      console.log(item)
+      console.log('1', this.formUpdate.jobId)
+      console.log('2', item)
       this.$swal({
         title: 'อัพเดท สถานะรถ ใช่หรือไม่?',
         type: 'question',
