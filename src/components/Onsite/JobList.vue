@@ -2011,17 +2011,18 @@ export default {
           .then((response) => {
             let rs = response.data
             if (rs.status === false) {
-              return null
+              return []
             } else {
               return rs
             }
           })
           .catch((error) => {
             console.log(error)
+            return []
           })
       } catch (err) {
         console.log('getJoyRideDrug', err)
-        return null
+        return []
       }
     },
     async createBubbleDrug (drug) {
@@ -2127,60 +2128,61 @@ export default {
     },
     async pushmessageDrug (job) {
       const drug = await this.getJoyRideJobDrug(job.jobNo)
-      const bubbleMsg = await this.createBubbleDrug(drug)
-
-      let pushText = {
-        'to': job.lineUserId,
-        'messages': [
-          {
-            'type': 'flex',
-            'altText': 'ข้อมูลยา',
-            'contents': {
-              'type': 'bubble',
-              'hero': {
-                'type': 'image',
-                'url': 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/static%2FJoy%20Ride%20Content%20(1).jpg?alt=media&token=0f1b009d-2246-40c5-8276-60a2d738eaa6',
-                'size': 'full',
-                'aspectRatio': '1:1',
-                'aspectMode': 'cover'
-              },
-              'body': {
-                'type': 'box',
-                'layout': 'vertical',
-                'contents': [
-                  {
-                    'type': 'text',
-                    'text': 'ข้อมูลยา',
-                    'weight': 'bold',
-                    'size': 'xl'
-                  },
-                  {
-                    'type': 'text',
-                    'text': 'รายการยาที่คุณหมอสั่ง',
-                    'size': 'sm'
-                  },
-                  {
-                    'type': 'box',
-                    'layout': 'vertical',
-                    'contents': bubbleMsg,
-                    'margin': 'lg',
-                    'paddingBottom': '20px'
-                  }
-                ]
-              },
-              'styles': {
+      if (drug.length > 0) {
+        const bubbleMsg = await this.createBubbleDrug(drug)
+        let pushText = {
+          'to': job.lineUserId,
+          'messages': [
+            {
+              'type': 'flex',
+              'altText': 'ข้อมูลยา',
+              'contents': {
+                'type': 'bubble',
                 'hero': {
-                  'backgroundColor': '#eeeeee'
+                  'type': 'image',
+                  'url': 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/static%2FJoy%20Ride%20Content%20(1).jpg?alt=media&token=0f1b009d-2246-40c5-8276-60a2d738eaa6',
+                  'size': 'full',
+                  'aspectRatio': '1:1',
+                  'aspectMode': 'cover'
+                },
+                'body': {
+                  'type': 'box',
+                  'layout': 'vertical',
+                  'contents': [
+                    {
+                      'type': 'text',
+                      'text': 'ข้อมูลยา',
+                      'weight': 'bold',
+                      'size': 'xl'
+                    },
+                    {
+                      'type': 'text',
+                      'text': 'รายการยาที่คุณหมอสั่ง',
+                      'size': 'sm'
+                    },
+                    {
+                      'type': 'box',
+                      'layout': 'vertical',
+                      'contents': bubbleMsg,
+                      'margin': 'lg',
+                      'paddingBottom': '20px'
+                    }
+                  ]
+                },
+                'styles': {
+                  'hero': {
+                    'backgroundColor': '#eeeeee'
+                  }
                 }
               }
             }
-          }
-        ]
+          ]
+        }
+        await axios
+          .post(this.DNS_IP + '/line/pushmessage?shopId=' + this.shopId, pushText)
+          .then(console.log(job))
+          .catch((error) => console.log('error', error))
       }
-      await axios
-        .post(this.DNS_IP + '/line/pushmessage?shopId=' + this.shopId, pushText)
-        .then(console.log(job))
-        .catch((error) => console.log('error', error))
     },
     pushMessageCloseJob (jobId) {
       let updateStatusSend = {
