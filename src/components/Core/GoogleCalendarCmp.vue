@@ -181,6 +181,7 @@ export default {
   },
   async mounted () {
     // await this.checkTypeEvenEmp()
+    // this.setTimeEmp()
   },
   methods: {
     validateEmail (email) {
@@ -323,7 +324,7 @@ export default {
       const timezone = 'Asia/Bangkok'
       const dateSelect = moment.tz(`${this.bookingItem[0].dueDateDay} ${this.bookingItem[0].timeDue}`, 'YYYY-MM-DD HH:mm', timezone).format()
       item.StartDate = dateSelect
-      item.EndDate = dateSelect
+      item.EndDate = await this.setTimeEmp(dateSelect, this.bookingItem)
       await this.getSysUser()
       console.log('this.attendeesEmail', this.attendeesEmail)
       item.attendees = this.attendeesEmail
@@ -450,7 +451,7 @@ export default {
       const timezone = 'Asia/Bangkok'
       const dateSelect = moment.tz(`${this.bookingItem[0].dueDateDay} ${this.bookingItem[0].timeDue}`, 'YYYY-MM-DD HH:mm', timezone).format()
       item.StartDate = dateSelect
-      item.EndDate = dateSelect
+      item.EndDate = await this.setTimeFlow(dateSelect, this.bookingItem[0].flowId)
       await this.getSysUser()
       console.log('this.attendeesEmail', this.attendeesEmail)
       item.attendees = this.attendeesEmail
@@ -484,6 +485,7 @@ export default {
         let rs = response.data
         if (rs.length > 0) {
           this.flowItem = rs
+          console.log('FLOW-----------!!!!!', this.flowItem)
         }
       })
     },
@@ -494,6 +496,98 @@ export default {
           this.empItem = rs
         }
       })
+    },
+    async setTimeEmp (dateSelect, bookingData) {
+      // this.flowItem
+      let date = moment(dateSelect).format('YYYY-MM-DD')
+      let time = moment(dateSelect).format('HH:mm')
+      // console.log('time', time)
+      let timeSlot = bookingData[0].timeSlotCustomer || 1
+      // console.log('timeSlot', timeSlot)
+      let countTime = 60
+      try {
+        let setTime = await this.getTimeEmp(date, bookingData[0].bookingEmpFlow)
+        // console.log(setTime)
+        if (setTime.length === 0 || setTime.length === 1) {
+          countTime = 60
+        } else {
+          let firtIndex = setTime.findIndex((item) => item.value === time)
+          // console.log('firtIndex', firtIndex)
+          let filterTime = setTime.filter((item, index) => index >= firtIndex && index <= ((timeSlot + firtIndex)))
+          // console.log('filterTime', filterTime)
+          if (timeSlot !== filterTime.length) {
+            let previousTime = moment(setTime[0].value, 'HH:mm')
+            let currentTime = moment(setTime[1].value, 'HH:mm')
+            const diffMinutes = currentTime.diff(previousTime, 'minutes')
+            countTime = diffMinutes * timeSlot
+            // console.log('diffMinutes', diffMinutes)
+          } else {
+            let previousTime = moment(filterTime[0].value, 'HH:mm')
+            let currentTime = moment(filterTime[filterTime.length - 1].value, 'HH:mm')
+            // console.log('previousTime', previousTime)
+            // console.log('currentTime', currentTime)
+            const diffMinutes = currentTime.diff(previousTime, 'minutes')
+            countTime = diffMinutes
+            // console.log('diffMinutesElse', diffMinutes)
+          }
+        }
+        // console.log('countTime', countTime)
+      } catch (error) {
+        console.error('Error fetching flow data:', error)
+        countTime = 60
+      }
+      const timezone = 'Asia/Bangkok'
+      let dtInput = moment(dateSelect).format('YYYY-MM-DD HH:mm')
+      const dt = moment.tz(dtInput, 'YYYY-MM-DD HH:mm', timezone)
+      const EndDateTime = dt.clone().add(countTime, 'minutes').format('YYYY-MM-DD HH:mm')
+      let dataReturn = moment.tz(`${EndDateTime}`, 'YYYY-MM-DD HH:mm', timezone).format()
+      // console.log('dataReturn', dataReturn)
+      return dataReturn
+    },
+    async getTimeEmp (dateSelect, empId) {
+      try {
+        const response = await axios.get(this.DNS_IP + '/empSelect/get?empId=' + empId)
+        const rs = response.data
+        if (rs.length > 0) {
+          let setTime = []
+          if (rs[0].setTimebyday === 'True') {
+            let timeData = JSON.parse(rs[0].setTime)
+            let timeJson = timeData.filter((items) => items.value === new Date(dateSelect).getDay()) || []
+            // console.log('timeJson', timeJson)
+            setTime = timeJson[0].setTime || []
+          } else {
+            setTime = JSON.parse(rs[0].setTime) || []
+          }
+          return setTime
+        }
+      } catch (error) {
+        console.error('Error fetching flow data:', error)
+        return []
+      }
+    },
+    async setTimeFlow (dateSelect, flowId) {
+      const timezone = 'Asia/Bangkok'
+      let dtInput = moment(dateSelect).format('YYYY-MM-DD HH:mm')
+      const dt = moment.tz(dtInput, 'YYYY-MM-DD HH:mm', timezone)
+      // console.log('dt', dt)
+      let countTime = 60
+      try {
+        const response = await axios.get(this.DNS_IP + '/flow/get?flowId=' + flowId)
+        const rs = response.data
+        if (rs.length > 0) {
+          console.log('FLOW-------!!!!!', rs)
+          countTime = rs[0].OnsiteEndTime === 0 ? 60 : rs[0].OnsiteEndTime
+          const EndDateTime = dt.clone().add(countTime, 'minutes').format('YYYY-MM-DD HH:mm')
+          let dataReturn = moment.tz(`${EndDateTime}`, 'YYYY-MM-DD HH:mm', timezone).format()
+          // คืนค่า countTime หรือ EndDateTime ตามที่ต้องการ
+          return dataReturn // หรือ return EndDateTime ตามที่คุณต้องการ
+        }
+      } catch (error) {
+        console.error('Error fetching flow data:', error)
+        const EndDateTime = dt.clone().add(countTime, 'minutes').format('YYYY-MM-DD HH:mm')
+        let dataReturn = moment.tz(`${EndDateTime}`, 'YYYY-MM-DD HH:mm', timezone).format()
+        return dataReturn
+      }
     },
     // async checkExpireDate (expireDate) {
     //   // const timestamp = 1684397395837
