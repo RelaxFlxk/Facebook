@@ -1,6 +1,6 @@
 <template>
     <div class="col d-flex flex-column">
-      <div class="d-flex flex-row">
+      <div class="d-flex flex-row col">
         <div class="col-6 d-flex flex-column justify-content-center align-items-center">
             <div><span class="text-Header">Number</span></div>
              <div><span class="text-sub">หมายเลขคิว</span></div>
