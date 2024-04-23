@@ -1,7 +1,7 @@
 <template>
   <div id="app-container">
     <main :class="`${ isPortrait ? '' : 'd-flex align-items-center'}`">
-    <div :class="`d-flex ${isPortrait ? 'flex-column' : 'flex-row'}`">
+    <div :class="`d-flex ${isPortrait ? 'flex-column' : 'flex-row col-12 w-100'}`">
       <BookingUseOhrich :bookingUse="dataService" :isPortrait="isPortrait" />
       <div v-if="!isPortrait" class="col-7 d-flex flex-column">
         <div class="mt-5">
@@ -17,18 +17,18 @@
             allowfullscreen></iframe>
         </div>
         <div class="d-flex flex-row justify-content-between mx-4 mt-5 h-100">
-          <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(0, 6)" time="10" />
+          <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(0, 6)" time="10"  />
           <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(6, 12)" time="10 - 20" />
           <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(12)" time="20 - 30" />
         </div>
       </div>
     </div>
     <div v-if="isPortrait" class="col-12 d-flex flex-row  height-card">
-      <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(0, 6)" time="10" />
-      <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(6, 12)" time="10 - 20" />
-      <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(12)" time="20 - 30" />
+      <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(0, 6)" time="10" :isPortrait="isPortrait" />
+      <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(6, 12)" time="10 - 20" :isPortrait="isPortrait" />
+      <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(12)" time="20 - 30" :isPortrait="isPortrait" />
     </div>
-    <div v-if="isPortrait" class="d-flex flex-row justify-content-between">
+    <div v-if="isPortrait" class="d-flex  flex-row justify-content-between">
       <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%"
         autoplay muted autopictureinpicture controls loop="true"
         poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">

@@ -1,11 +1,11 @@
 <template>
-    <div class="col-4 p-0 div-waiting d-flex flex-column justify-content-between mr-1">
+    <div :class="`${isPortrait ? 'col' :'col-4 mr-1 p-0' } div-waiting d-flex flex-column justify-content-between `">
         <div v-if="groupQueueItem && groupQueueItem.length > 6" class="div-top h-100 d-flex justify-content-center">
             <span class="text-number-waiting">{{ groupQueueItem[0]+ ' ~ ' + groupQueueItem[groupQueueItem.length - 1] }}</span>
         </div>
         <div v-else-if="groupQueueItem && groupQueueItem.length > 0" :class="`div-top h-100 `">
             <div  :class="`d-flex flex-wrap justify-content-center`">
-                <div v-for="(item, index) in groupQueueItem" :key="index" class="pa-1 text-number-waiting col-4 d-flex  justify-content-center">
+                <div v-for="(item, index) in groupQueueItem" :key="index" :class="`pa-1 text-number-waiting col-4 d-flex  justify-content-center`">
                     {{ item }}
                 </div>
                   </div>
