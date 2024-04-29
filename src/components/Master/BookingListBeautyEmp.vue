@@ -613,7 +613,18 @@
                 </v-text-field>
             </v-col>
           </v-row>
-          <v-row justify="end">
+          <!-- {{tagItemSelect}}
+            <v-col cols="auto" class="pr-0 pl-1 pt-3">
+          <v-chip-group v-model="tagItemSelect" column multiple>
+    <v-chip v-for="(tag, index) in tagItem" :key="index" :value="tag.text"
+      :items="items"
+      label="Select Item"
+      multiple>
+      {{ tag.text }}
+    </v-chip>
+  </v-chip-group>
+</v-col> -->
+<v-row justify="end">
             <v-col :cols="resCol === 'sm' ? '3' : '4'" class="pr-0 pl-0 pt-3">
                 <v-text-field
                   class="textserch"
@@ -649,6 +660,8 @@
               </v-btn>
             </v-col>
           </v-row>
+          <v-row>
+</v-row>
           </div>
         <v-row>
           <!-- EXPORT -->
@@ -3058,7 +3071,7 @@
                     </v-row>
                     </template>
                   </template>
-                  <template v-slot:[`item.action5`]="{ item }">
+                  <template v-slot:[`item.memberDataTagName`]="{ item }">
                     <div>
                       <v-row v-if="item.memberDataTag.length === 0 " style="justify-content: flex-end;">
                         <div v-if="item.memberId !== ''" style="color:grey;">ไม่มีมีป้ายกำกับ</div>
@@ -3166,6 +3179,114 @@
                       </v-row>
                     </div>
                   </template>
+                  <!-- <template v-slot:[`item.memberDataTagName`]="{ item }">
+                    <div>
+                      <v-row v-if="item.memberDataTag.length === 0 " style="justify-content: flex-end;">
+                        <div v-if="item.memberId !== ''" style="color:grey;">ไม่มีมีป้ายกำกับ</div>
+                        <v-tooltip bottom >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                  class="ml-1"
+                                  fab
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  dark
+                                  icon
+                                  v-if="item.memberId !== ''"
+                                  x-small
+                                  color="teal"
+                                  @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
+                                >
+                                  <v-icon dark>
+                                    mdi-tag-plus
+                                  </v-icon>
+                              </v-btn>
+                            </template>
+                            <span>เพิ่มป้ายกำกับ1</span>
+                          </v-tooltip>
+                          <div  v-if="item.memberId == ''" style="margin: auto;color: grey;">
+                            ไม่มีป้ายกำกับ
+                          </div>
+                      </v-row>
+                      <v-row  style="display: flex;justify-content: center;padding-top: 0px;" align="center" v-if="item.memberDataTag.length > 0 ">
+                          <div v-if="item.tagDataShow.length === 1" style="font-weight: 600;font-size: 16px;color: #2BC155;">
+                            {{item.tagDataShow[0].text}}
+                          </div>
+                          <div v-if="item.tagDataShow.length === 2" style="font-weight: 600;font-size: 16px;color: #2BC155;display: flex;justify-content: center;">
+                            <div class="mr-2">{{item.tagDataShow[0].text}}</div>
+                            <div>{{item.tagDataShow[1].text}}</div>
+                          </div>
+                          <div v-if="item.tagDataShow.length > 2" style="font-weight: 600;font-size: 16px;color: #2BC155;display: flex;justify-content: center;margin-bottom: 5px;">
+                            <div class="mr-3">{{item.tagDataShow[0].text}}</div>
+                            <div class="mr-2">{{item.tagDataShow[1].text}}</div>
+                          </div>
+                          <div v-if="item.tagDataShow.length === 1 || item.tagDataShow.length === 2">
+                            <v-tooltip bottom >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                  class="ml-1"
+                                  fab
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  dark
+                                  icon
+                                  v-if="item.memberId !== ''"
+                                  x-small
+                                  color="teal"
+                                  @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
+                                >
+                                  <v-icon dark>
+                                    mdi-tag-plus
+                                  </v-icon>
+                              </v-btn>
+                            </template>
+                            <span>เพิ่มป้ายกำกับ2</span>
+                          </v-tooltip>
+                          </div>
+                          <div v-if="item.tagDataShow.length > 2" class="ma-0" style="margin-top: 2 !important;color: grey;font-size: 13px;display:flex">
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                  class="ml-1"
+                                  fab
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  dark
+                                  icon
+                                  v-if="item.memberId !== ''"
+                                  x-small
+                                  color="teal"
+                                  @click="getTagData(), dialogTag = true, tagData = item.memberDataTag, bookNo = item.bookNo, memberId = item.memberId"
+                                >
+                                  <v-icon dark>
+                                    mdi-tag-plus
+                                  </v-icon>
+                              </v-btn>
+                            </template>
+                            <span>เพิ่มป้ายกำกับ3</span>
+                          </v-tooltip>
+                            <v-menu rounded="xl" offset-x open-on-hover :close-on-content-click="false">
+                              <template v-slot:activator="{ on, attrs }">
+                                <div style="margin: auto;text-decoration: underline;text-decoration-thickness: 2px;" v-bind="attrs" v-on="on">
+                                  See more + {{item.tagDataShow.length - 2}}
+                                </div>
+                              </template>
+                              <v-list>
+                                <v-list-item
+                                  v-for="(item2, index) in item.tagDataShow"
+                                  :key="index"
+                                >
+                                  <v-list-item-title>
+                                    <v-icon color="teal">
+                                      mdi-tag-plus
+                                    </v-icon>{{ item2.text }}</v-list-item-title>
+                                </v-list-item>
+                              </v-list>
+                            </v-menu>
+                        </div>
+                      </v-row>
+                    </div>
+                  </template> -->
                   <template v-slot:[`item.action2`]="{ item }">
                     <v-row>
                       <v-col>
@@ -6031,6 +6152,11 @@
                         <v-col cols="9">
                           <v-row>
                             <v-col cols="8"><h4>คุณ {{ items.name }}</h4></v-col>
+                            <v-col cols="10" v-if="items.memberDataTag.length > 0"  class="pt-0 pb-0">
+                          <v-chip v-for="(tag, index) in items.tagDataShow" :key="index" class="mr-2 mb-2">
+                            {{ tag.text }}
+                          </v-chip>
+                      </v-col>
                             <v-col cols="4" class="text-right">{{items.licenseNo}}</v-col>
                           </v-row>
                           โทร {{ items.tel }}
@@ -7137,6 +7263,7 @@ export default {
       fieldNameItem: [],
       flowfieldNameitem: [],
       DataflowId: '',
+      tagItemSelect: [],
       breadcrumbs: [
         {
           text: 'Home',
@@ -10624,6 +10751,7 @@ export default {
                   s.dateReturn = d.dateReturn || ''
                   s.packageId = d.packageId || ''
                   s.tokenPackage = d.tokenPackage || ''
+                  s.memberDataTagName = []
                   s.memberDataTag = JSON.parse(d.memberDataTag) || []
                   if (s.memberDataTag.length > 0) {
                     s.tagDataShow = []
@@ -10639,6 +10767,7 @@ export default {
                       }
                     }
                   }
+                  s.memberDataTagName = s.memberDataTagName.join(', ')
                   this.countAll = this.countAll + 1
                   if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                     s.chkConfirm = true
@@ -11457,6 +11586,10 @@ export default {
     },
     async getDataCalendaBooking () {
       console.log('this.$session.id()', this.$session.id())
+      try {
+        await this.getTagData()
+      } catch (e) { console.log(e) }
+
       if (this.$session.id() !== undefined) {
         console.log('getDataCalendaBooking')
         try {
@@ -13276,6 +13409,7 @@ export default {
           { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
           { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center', sortable: false },
           { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false },
+          // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
           // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center' },
           { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
         ]
@@ -13366,6 +13500,7 @@ export default {
               { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
               { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '120' },
+              // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
               // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
@@ -13383,6 +13518,7 @@ export default {
               { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
               { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '120' },
+              // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
               // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               // { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' }
@@ -13401,12 +13537,13 @@ export default {
               { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
-              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '150' },
               // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               // { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
               { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center', sortable: false },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '160' },
+              // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '120' }
             ]
           } else {
@@ -13419,12 +13556,13 @@ export default {
               { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
-              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '150' },
               // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               // { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
               { text: 'ชื่อพนักงาน', value: 'empFull_NameTH', align: 'center', sortable: false },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '160' },
+              // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '120' }
             ]
           }
@@ -13440,8 +13578,9 @@ export default {
               { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120', sortable: false },
-              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '160' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '150' },
+              // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           } else {
             this.columnsSelected = [
@@ -13453,8 +13592,9 @@ export default {
               { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120', sortable: false },
-              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '160' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '150' },
+              // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           }
         } else if (text === 'confirmJob') {
@@ -13468,10 +13608,11 @@ export default {
               { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
               { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
-              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '150' },
               { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
+              // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
               // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           } else {
@@ -13483,10 +13624,11 @@ export default {
               { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
               { text: 'พนักงานช่าง', value: 'bookingEmpFlowName', sortable: false, width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
-              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '150' },
               { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
+              // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
               // { text: 'หมายเหตุเรียกกลับ', value: 'remarkReturn', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           }
@@ -13504,6 +13646,7 @@ export default {
               { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
+              // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
           } else {
             this.columnsSelected = [
@@ -13517,9 +13660,11 @@ export default {
               { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center', width: '120' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', width: '170' },
+              // { text: 'memberDataTagName', value: 'memberDataTagName', align: 'center', sortable: false },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }]
           }
         }
+        // console.log('cccc', this.dataItemSelect)
       }
       this.checkTypeSort()
       // }
@@ -13527,6 +13672,7 @@ export default {
     updateTimeTablefromChild (timeTable) {
       this.timeTable = timeTable
     },
+
     async getTimesChange (text) {
       try {
         this.dataItemTimesChange = []
@@ -13636,6 +13782,22 @@ export default {
                     s.statusUpload2 = d.statusUpload2 || 'False'
                     s.fileUpload1 = d.fileUpload1 || '[]'
                     s.fileUpload2 = d.fileUpload2 || '[]'
+
+                    s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                    if (s.memberDataTag.length > 0) {
+                      s.tagDataShow = []
+                      let memberDataTag = s.memberDataTag
+                      for (let i = 0; i < memberDataTag.length; i++) {
+                        let d = memberDataTag[i]
+                        let x = {}
+                        let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                        if (checkTagItem.length > 0) {
+                          x.text = checkTagItem[0].text
+                          x.value = checkTagItem[0].value
+                          s.tagDataShow.push(x)
+                        }
+                      }
+                    }
                     dataItems.push(s)
                   }
                 }
@@ -13806,7 +13968,9 @@ export default {
       }
     },
     async getBookingList () {
-      await this.getTagData()
+      try {
+        await this.getTagData()
+      } catch (e) { console.log(e) }
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
 
@@ -13983,21 +14147,32 @@ export default {
               s.tokenPackage = d.tokenPackage || ''
               s.menuItem = d.menuItem || []
               s.menuPrice = d.menuPrice || ''
-              s.memberDataTag = JSON.parse(d.memberDataTag) || []
-              if (s.memberDataTag.length > 0) {
-                s.tagDataShow = []
-                let memberDataTag = s.memberDataTag
-                for (let i = 0; i < memberDataTag.length; i++) {
-                  let d = memberDataTag[i]
-                  let x = {}
-                  let checkTagItem = this.tagItem.filter(el => { return el.value === d })
-                  if (checkTagItem.length > 0) {
-                    x.text = checkTagItem[0].text
-                    x.value = checkTagItem[0].value
-                    s.tagDataShow.push(x)
+
+              s.memberDataTagName = []
+
+              try {
+                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                if (s.memberDataTag.length > 0) {
+                  s.tagDataShow = []
+                  let memberDataTag = s.memberDataTag
+                  for (let i = 0; i < memberDataTag.length; i++) {
+                    let d = memberDataTag[i]
+                    let x = {}
+                    let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                    if (checkTagItem.length > 0) {
+                      x.text = checkTagItem[0].text
+                      x.value = checkTagItem[0].value
+                      s.tagDataShow.push(x)
+                      s.memberDataTagName.push(x.text)
+                    }
                   }
                 }
+                s.memberDataTagName = s.memberDataTagName.join(', ')
+              } catch (error) {
+                s.tagDataShow = []
+                console.log(error)
               }
+
               this.countAll = this.countAll + 1
               if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                 s.chkConfirm = true
@@ -14160,20 +14335,28 @@ export default {
               s.tokenPackage = d.tokenPackage || ''
               s.menuItem = d.menuItem || []
               s.menuPrice = d.menuPrice || ''
-              s.memberDataTag = JSON.parse(d.memberDataTag) || []
-              if (s.memberDataTag.length > 0) {
-                s.tagDataShow = []
-                let memberDataTag = s.memberDataTag
-                for (let i = 0; i < memberDataTag.length; i++) {
-                  let d = memberDataTag[i]
-                  let x = {}
-                  let checkTagItem = this.tagItem.filter(el => { return el.value === d })
-                  if (checkTagItem.length > 0) {
-                    x.text = checkTagItem[0].text
-                    x.value = checkTagItem[0].value
-                    s.tagDataShow.push(x)
+              s.memberDataTagName = []
+              try {
+                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                if (s.memberDataTag.length > 0) {
+                  s.tagDataShow = []
+                  let memberDataTag = s.memberDataTag
+                  for (let i = 0; i < memberDataTag.length; i++) {
+                    let d = memberDataTag[i]
+                    let x = {}
+                    let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                    if (checkTagItem.length > 0) {
+                      x.text = checkTagItem[0].text
+                      x.value = checkTagItem[0].value
+                      s.tagDataShow.push(x)
+                      s.memberDataTagName.push(x.text)
+                    }
                   }
                 }
+                s.memberDataTagName = s.memberDataTagName.join(', ')
+              } catch (error) {
+                s.tagDataShow = []
+                console.log(error)
               }
               this.countAll = this.countAll + 1
               if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
@@ -14241,13 +14424,14 @@ export default {
             this.dataItemTime.push(h)
           }
         }
-        console.log('dataItemTime', this.dataItemTime)
         // await this.getTimesChange('update')
+        console.log('bookNoNoti', this.$route.query.bookNoNoti)
         if (this.$route.query.bookNoNoti) {
           let checkBook = dataItems.filter(el => { return el.bookNo === this.$route.query.bookNoNoti })
           if (checkBook.length > 0) {
             this.getSelectText = checkBook[0].statusBt
             this.searchAll2 = checkBook[0].cusName
+            // this.searchAll2 = checkBook[0].tagName
           }
         }
         if (this.getSelectText) {
@@ -14257,6 +14441,7 @@ export default {
         }
         this.dataReady = true
       }
+      // console.log('tagItem', this.tagItem)
     },
     async getBookingField () {
       // this.bookingField = []

@@ -1,292 +1,203 @@
 <template>
   <div>
-        <v-row no-gutters>
-          <v-col cols="4">
-            <v-menu
-              v-model="menuDate"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="today"
-                  label="วันที่"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="today"
-                @input="(menuDate = false), getBookingList(), dataReturnReady = true"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
-          <v-col cols="4">
-            <v-select
-              :items="DataFlowName"
-              v-model="flowId"
-              dense
-              outlined
-              filled
-              @change="getBookingList(), dataReturnReady = true"
-              hide-details
-              label="ประเภทบริการ"
-              prepend-inner-icon="mdi-format-list-bulleted"
-              class="ma-2"
-            >
-            </v-select>
-          </v-col>
-          <v-col cols="4">
-            <v-select
-              :items="DataBranchName"
-              v-model="masBranchName"
-              @change="getBookingList(), dataReturnReady = true"
-              dense
-              outlined
-              filled
-              hide-details
-              label="สาขา"
-              prepend-inner-icon="mdi-map-marker"
-              class="ma-2"
-              :readonly="checkReadOnlyBranch"
-            ></v-select>
-          </v-col>
-          <v-col cols="12">
-            <v-alert
-              color="primary"
-              dark
-              icon="mdi-account-clock"
-              border="left"
-            >
-              จำนวนลูกค้าต่อวัน : {{ countCus || 0 }}
-            </v-alert>
-          </v-col>
-          <v-col cols="12">
-            <v-card elevation="7" v-if="dataReady">
-              <v-card-text>
-                <v-sheet height="64">
-                  <v-toolbar dense>
-                    <v-btn
-                      fab
-                      text
-                      small
-                      color="grey darken-2"
-                      @click="prev(), dataReturnReady = true"
-                    >
-                      <v-icon small>
-                        mdi-chevron-left
-                      </v-icon>
-                    </v-btn>
-                    <v-btn
-                      fab
-                      text
-                      small
-                      color="grey darken-2"
-                      @click="next(), dataReturnReady = true"
-                    >
-                      <v-icon small>
-                        mdi-chevron-right
-                      </v-icon>
-                    </v-btn>
-                    <v-toolbar-title v-if="$refs.calendar">{{
-                      $refs.calendar.title
-                    }}</v-toolbar-title>
+    <v-row no-gutters>
+      <v-col cols="4">
+        <v-menu v-model="menuDate" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+          offset-y min-width="auto">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field v-model="today" label="วันที่" prepend-icon="mdi-calendar" readonly v-bind="attrs"
+              v-on="on"></v-text-field>
+          </template>
+          <v-date-picker v-model="today"
+            @input="(menuDate = false), getBookingList(), dataReturnReady = true"></v-date-picker>
+        </v-menu>
+      </v-col>
+      <v-col cols="4">
+        <v-select :items="DataFlowName" v-model="flowId" dense outlined filled
+          @change="getBookingList(), dataReturnReady = true" hide-details label="ประเภทบริการ"
+          prepend-inner-icon="mdi-format-list-bulleted" class="ma-2">
+        </v-select>
+      </v-col>
+      <v-col cols="4">
+        <v-select :items="DataBranchName" v-model="masBranchName" @change="getBookingList(), dataReturnReady = true"
+          dense outlined filled hide-details label="สาขา" prepend-inner-icon="mdi-map-marker" class="ma-2"
+          :readonly="checkReadOnlyBranch"></v-select>
+      </v-col>
+      <v-col cols="12">
+        <v-alert color="primary" dark icon="mdi-account-clock" border="left">
+          จำนวนลูกค้าต่อวัน : {{ countCus || 0 }}
+        </v-alert>
+      </v-col>
+      <v-col cols="12">
+        <v-card elevation="7" v-if="dataReady">
+          <v-card-text>
+            <v-sheet height="64">
+              <v-toolbar dense>
+                <v-btn fab text small color="grey darken-2" @click="prev(), dataReturnReady = true">
+                  <v-icon small>
+                    mdi-chevron-left
+                  </v-icon>
+                </v-btn>
+                <v-btn fab text small color="grey darken-2" @click="next(), dataReturnReady = true">
+                  <v-icon small>
+                    mdi-chevron-right
+                  </v-icon>
+                </v-btn>
+                <v-toolbar-title v-if="$refs.calendar">{{
+          $refs.calendar.title
+        }}</v-toolbar-title>
 
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      :loading="loadingExcel"
-                      :disabled="loadingExcel"
-                      color="success" @click="exportExcel()" v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
-                      <v-icon right class="white--text">mdi-microsoft-excel</v-icon>
-                      &nbsp;Export
+                <v-spacer></v-spacer>
+                <v-btn :loading="loadingExcel" :disabled="loadingExcel" color="success" @click="exportExcel()"
+                  v-if="dataItemTimesChange.length > 0 && $session.getAll().data.shopId !== 'U9084920b3005bd1dcb57af1ae6bdba32'">
+                  <v-icon right class="white--text">mdi-microsoft-excel</v-icon>
+                  &nbsp;Export
+                </v-btn>
+                &nbsp;
+                <v-menu bottom right>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
+                      <span>{{ typeToLabel[type] }}</span>
+                      <v-icon right>
+                        mdi-menu-down
+                      </v-icon>
                     </v-btn>
-                    &nbsp;
-                    <v-menu
-                      bottom
-                      right
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          outlined
-                          color="grey darken-2"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <span>{{ typeToLabel[type] }}</span>
-                          <v-icon right>
-                            mdi-menu-down
-                          </v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-item class="vlistitem" @click="type = 'week', getBookingList(), dataReturnReady = true">
+                  </template>
+                  <v-list>
+                    <!-- <v-list-item class="vlistitem" @click="type = 'week', getBookingList(), dataReturnReady = true">
                           <v-list-item-title>Week</v-list-item-title>
-                        </v-list-item>
-                        <v-list-item class="vlistitem" @click="type = 'month', getBookingList(), dataReturnReady = true">
-                          <v-list-item-title>Month</v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </v-toolbar>
-                </v-sheet>
-                <v-sheet>
-                  <v-calendar
-                    ref="calendar"
-                    :now="today"
-                    v-model="today"
-                    :events="events"
-                    locale="th-TH"
-                    @click:event="showEvent"
-                    color="primary"
-                    :type="type"
-                  >
-                  <template v-slot:day-label="{ day }">
-                    <span style="font-size:20px !important;">{{day}}</span>
-                  </template>
-                  <template v-slot:day="{ date }">
-                    <div v-if="eventInfo[date] && eventInfo[date].all > 0" :class="(date === today) ? 'today' : ''">
-                      <v-row>
-                        <v-col>
-                          <v-progress-linear
-                            :value="eventInfo[date].allPercent"
-                            :color="(eventInfo[date].allPercent >= 100) ? 'red lighten-1' : ((eventInfo[date].allPercent < 80) ? 'green lighten-1' : 'yellow lighten-1' ) "
-                            height="20"
-                            style="cursor: pointer"
-                            @click.native="openTaskList(date, 'all')"
-                          >
-                            <template v-slot:default="{}">
-                              {{ eventInfo[date].all }} / {{ countCus }}
-                            </template>
-                          </v-progress-linear>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col class="text-center mb-1 mt-0">
-                          <v-badge
-                            avatar
-                            bordered
-                            overlap
-                            color="orange darken-1"
-                            v-if="eventInfo[date].fastTrack > 0"
-                            class="mr-1"
-                            style="cursor: pointer"
-                            @click.native="openTaskList(date, 'fastTrack')"
-                          >
-                            <template v-slot:badge>
-                              <v-avatar class="mb-1" color="orange darken-1">
-                                {{eventInfo[date].fastTrack}}
-                              </v-avatar>
-                            </template>
-
-                            <v-avatar size="40" color="orange darken-3">
-                              <v-icon dark>
-                                  mdi-flash
-                              </v-icon>
-                            </v-avatar>
-                          </v-badge>
-                          <v-badge
-                            avatar
-                            bordered
-                            overlap
-                            color="blue darken-1"
-                            v-if="eventInfo[date].normal > 0 || eventInfo[date].normalExtra > 0"
-                            class="mr-1"
-                            style="cursor: pointer"
-                            @click.native="openTaskList(date, 'normal')"
-                          >
-                            <template v-slot:badge>
-                              <v-avatar class="mb-1" color="blue darken-1" v-if="eventInfo[date].normal - eventInfo[date].normalExtra > 0">
-                                {{eventInfo[date].normal - eventInfo[date].normalExtra}}
-                              </v-avatar>
-                              <v-avatar class="mb-1" color="red darken-1" v-if="eventInfo[date].normalExtra > 0">
-                                {{eventInfo[date].normalExtra}}
-                              </v-avatar>
-                            </template>
-
-                            <v-avatar size="40" color="blue darken-3">
-                              <v-icon dark>
-                                  mdi-clock-outline
-                              </v-icon>
-                            </v-avatar>
-                          </v-badge>
-                        </v-col>
-                      </v-row>
-                    </div>
-                  </template>
-                  </v-calendar>
-                </v-sheet>
-              </v-card-text>
-            </v-card>
-            <div class="text-center">
-              <v-dialog v-model="dialog" width="600">
-                <v-card>
-                  <v-card-title class="grey lighten-2">
-                    รายชื่อลูกค้านัดหมาย
-                  </v-card-title>
-                  <br />
-                  <template v-for="(sumItems, index1) in dataSummary">
-                    <v-row v-bind:key="'sum'+index1" no-gutters>
-                    <template v-for="(items, index2) in sumItems">
-                      <v-col cols="auto" v-bind:key="'sum'+index1+index2">
-                        <v-chip
-                          class="ma-2"
-                          :color="index1 + ' darken-2'"
-                          text-color="white"
-                        >
-                          <v-avatar
-                            left
-                            :class="index1 + ' darken-4'"
-                          >
-                            {{items.length}}
-                          </v-avatar>
-                          {{index2}}
-                        </v-chip>
+                        </v-list-item> -->
+                    <v-list-item class="vlistitem" @click="type = 'month', getBookingList(), dataReturnReady = true">
+                      <v-list-item-title>Month</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-toolbar>
+            </v-sheet>
+            <v-sheet>
+              <v-calendar ref="calendar" :now="today" v-model="today" :events="events" locale="th-TH"
+                @click:event="showEvent" color="primary" :type="type">
+                <template v-slot:day-label="{ day }">
+                  <span style="font-size:20px !important;">{{ day }}</span>
+                </template>
+                <template v-slot:day="{ date }">
+                  <div v-if="eventInfo[date] && eventInfo[date].all > 0" :class="(date === today) ? 'today' : ''">
+                    <v-row>
+                      <v-col>
+                        <v-progress-linear :value="eventInfo[date].allPercent"
+                          :color="(eventInfo[date].allPercent >= 100) ? 'red lighten-1' : ((eventInfo[date].allPercent < 80) ? 'green lighten-1' : 'yellow lighten-1')"
+                          height="20" style="cursor: pointer" @click.native="openTaskList(date, 'all')">
+                          <template v-slot:default="{ }">
+                            {{ eventInfo[date].all }} / {{ countCus }}
+                          </template>
+                        </v-progress-linear>
                       </v-col>
-                    </template>
                     </v-row>
+                    <v-row>
+                      <v-col class="text-center mb-1 mt-0">
+                        <v-badge avatar bordered overlap color="orange darken-1" v-if="eventInfo[date].fastTrack > 0"
+                          class="mr-1" style="cursor: pointer" @click.native="openTaskList(date, 'fastTrack')">
+                          <template v-slot:badge>
+                            <v-avatar class="mb-1" color="orange darken-1">
+                              {{ eventInfo[date].fastTrack }}
+                            </v-avatar>
+                          </template>
+
+                          <v-avatar size="40" color="orange darken-3">
+                            <v-icon dark>
+                              mdi-flash
+                            </v-icon>
+                          </v-avatar>
+                        </v-badge>
+                        <v-badge avatar bordered overlap color="blue darken-1"
+                          v-if="eventInfo[date].normal > 0 || eventInfo[date].normalExtra > 0" class="mr-1"
+                          style="cursor: pointer" @click.native="openTaskList(date, 'normal')">
+                          <template v-slot:badge>
+                            <v-avatar class="mb-1" color="blue darken-1"
+                              v-if="eventInfo[date].normal - eventInfo[date].normalExtra > 0">
+                              {{ eventInfo[date].normal - eventInfo[date].normalExtra }}
+                            </v-avatar>
+                            <v-avatar class="mb-1" color="red darken-1" v-if="eventInfo[date].normalExtra > 0">
+                              {{ eventInfo[date].normalExtra }}
+                            </v-avatar>
+                          </template>
+
+                          <v-avatar size="40" color="blue darken-3">
+                            <v-icon dark>
+                              mdi-clock-outline
+                            </v-icon>
+                          </v-avatar>
+                        </v-badge>
+                      </v-col>
+                    </v-row>
+                  </div>
+                </template>
+              </v-calendar>
+            </v-sheet>
+          </v-card-text>
+        </v-card>
+        <div class="text-center">
+          <v-dialog v-model="dialog" width="600">
+            <v-card>
+              <v-card-title class="grey lighten-2">
+                รายชื่อลูกค้านัดหมาย
+              </v-card-title>
+              <br />
+              <template v-for="(sumItems, index1) in dataSummary">
+                <v-row v-bind:key="'sum' + index1" no-gutters>
+                  <template v-for="(items, index2) in sumItems">
+                    <v-col cols="auto" v-bind:key="'sum' + index1 + index2">
+                      <v-chip class="ma-2" :color="index1 + ' darken-2'" text-color="white">
+                        <v-avatar left :class="index1 + ' darken-4'">
+                          {{ items.length }}
+                        </v-avatar>
+                        {{ index2 }}
+                      </v-chip>
+                    </v-col>
                   </template>
-                  <v-card-text
-                    v-for="(items, index) in dataCalendar"
-                    :key="index"
-                  >
-                    <v-card elevation="2">
-                      <v-list-item :style="((items.bgcolor) ? 'background-color:' + items.bgcolor + ' !important' : '') ">
-                        <v-list-item-content>
-                          <v-row style="color:#fff;">
-                            <v-col cols="3">
-                              <h3>{{items.timeText}}</h3><br>
-                              <!-- <h3>{{items.timeDue}}</h3><br> -->
-                              <v-icon dark class="mr-1" v-if="items.fastTrack === 'true' || items.fastTrack === 'True'">
-                                  mdi-flash
-                              </v-icon>
-                              <v-icon dark class="mr-1" v-else-if="items.extraJob === 'true' || items.extraJob === 'True'">
-                                  mdi-alarm-plus
-                              </v-icon>
-                              <v-icon dark class="mr-1" v-else>
-                                  mdi-clock-outline
-                              </v-icon>
+                </v-row>
+              </template>
+              <v-card-text v-for="(items, index) in dataCalendar" :key="index">
+                <v-card elevation="2">
+                  <v-list-item :style="((items.bgcolor) ? 'background-color:' + items.bgcolor + ' !important' : '')">
+                    <v-list-item-content>
+                      <v-row style="color:#fff;">
+                        <v-col cols="3">
+                          <h3>{{ items.timeText }}</h3><br>
+                          <!-- <h3>{{items.timeDue}}</h3><br> -->
+                          <v-icon dark class="mr-1" v-if="items.fastTrack === 'true' || items.fastTrack === 'True'">
+                            mdi-flash
+                          </v-icon>
+                          <v-icon dark class="mr-1" v-else-if="items.extraJob === 'true' || items.extraJob === 'True'">
+                            mdi-alarm-plus
+                          </v-icon>
+                          <v-icon dark class="mr-1" v-else>
+                            mdi-clock-outline
+                          </v-icon>
+                        </v-col>
+                        <v-col cols="9">
+                          <v-row>
+                            <v-col cols="8">
+                              <h4>คุณ {{ items.name }}</h4>
                             </v-col>
-                            <v-col cols="9">
-                              <v-row>
-                                <v-col cols="8"><h4>คุณ {{ items.name }}</h4></v-col>
-                                <v-col cols="4" class="text-right">{{items.licenseNo}}</v-col>
-                              </v-row>
-                              {{ items.serviceDetail }}<br>
-                              โทร {{ items.tel }}<br>
-                              <template v-if="items.carModel !== ''">รุ่นรถ {{ items.carModel }}<br></template>
-                              {{ items.bookingEmpFlowName === '' ? '' : 'พนักงาน ' + items.bookingEmpFlowName }}<br>
-                              <!-- {{ format_dateFUllTime(items.dueDate) }} -->
-                              <!-- {{ items.dueDateFix }} -->
-                              <div>{{ items.dueDateFix.split(' ')[0].split('-')[2] + '/' + items.dueDateFix.split(' ')[0].split('-')[1] + '/' + items.dueDateFix.split(' ')[0].split('-')[0] }}</div>
-                              <div>{{items.dueDateFix.split(' ')[1] + ' น.' + items.dueDateEnd}}</div>
-                            </v-col>
+                            <v-col cols="4" class="text-right">{{ items.licenseNo }}</v-col>
                           </v-row>
-                          <!-- <v-list-item-subtitle>
+                          <v-col cols="12 ps-0" v-if="items.memberDataTag.length > 0">
+                          <v-chip v-for="(tag, index) in items.tagDataShow" :key="index" small class="mr-2 mb-2">
+                            {{ tag.text }}
+                          </v-chip>
+                      </v-col>
+                          {{ items.serviceDetail }}<br>
+                          โทร {{ items.tel }}<br>
+                          <template v-if="items.carModel !== ''">รุ่นรถ {{ items.carModel }}<br></template>
+                          {{ items.bookingEmpFlowName === '' ? '' : 'พนักงาน ' + items.bookingEmpFlowName }}<br>
+                          <!-- {{ format_dateFUllTime(items.dueDate) }} -->
+                          <!-- {{ items.dueDateFix}} -->
+                          <div>{{ items.dueDateFix.split(' ')[0].split('-')[2] + '/' + items.dueDateFix.split(' ')[0].split('-')[1] + '/' + items.dueDateFix.split(' ')[0].split('-')[0] }}</div>
+                          <div>{{ items.dueDateFix.split(' ')[1] + ' น.' + items.dueDateEnd }}</div>
+                        </v-col>
+                      </v-row>
+                      <!-- <v-list-item-subtitle>
                             <v-btn
                               color="success"
                               fab
@@ -310,25 +221,25 @@
                               <v-icon dark> mdi-phone-cancel </v-icon>
                             </v-btn>
                           </v-list-item-subtitle> -->
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-card>
-                  </v-card-text>
-
-                  <v-divider></v-divider>
-
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="dialog = false">
-                      ยืนยัน
-                    </v-btn>
-                  </v-card-actions>
+                    </v-list-item-content>
+                  </v-list-item>
                 </v-card>
-              </v-dialog>
-            </div>
-          </v-col>
-        </v-row>
-      </div>
+              </v-card-text>
+
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="dialog = false">
+                  ยืนยัน
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </div>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 <script>
 import axios from 'axios' // api
@@ -386,9 +297,12 @@ export default {
       masBranchName: '',
       flowId: '',
       type: 'month',
+      // typeToLabel: {
+      //   month: 'Month',
+      //   week: 'Week'
+      // },
       typeToLabel: {
-        month: 'Month',
-        week: 'Week'
+        month: 'Month'
       },
       eventInfo: [],
       monthData: null,
@@ -472,7 +386,7 @@ export default {
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
-            this.DataFlowName.push({text: 'ทั้งหมด', value: 'allFlow'})
+            this.DataFlowName.push({ text: 'ทั้งหมด', value: 'allFlow' })
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
               d.text = d.flowName
@@ -492,8 +406,8 @@ export default {
       await axios
         .get(
           this.DNS_IP +
-            '/master_branch/get?shopId=' +
-            this.$session.getAll().data.shopId
+          '/master_branch/get?shopId=' +
+          this.$session.getAll().data.shopId
         )
         .then(async response => {
           let rs = response.data
@@ -509,6 +423,11 @@ export default {
             this.DataBranchName = []
           }
         })
+    },
+    async getTagData () {
+      console.log('getTagData')
+      this.tagItem = await this.getDataFromAPI('/Mas_Tag/get', 'tagId', 'tagName', '')
+      console.log(this.tagItem)
     },
     async getBookingData (today) {
       this.bookingData = []
@@ -571,7 +490,9 @@ export default {
       }
     },
     async getBookingList (param, dateMonth) {
-      console.log('getBookingList')
+      try {
+        await this.getTagData()
+      } catch (e) { console.log(e) }
       if (param !== undefined) {
         this.paramUse = param
       } else {
@@ -648,7 +569,7 @@ export default {
               e.dueDateEnd = endTime || ''
               if (typeof this.eventInfo[dueDate] === 'undefined') {
                 this.monthData[dueDate] = []
-                this.eventInfo[dueDate] = {'timeDue': e.timeDue, 'all': 0, 'allPercent': 0, 'fastTrack': 0, 'extraJob': 0, 'normal': 0, 'normalExtra': 0}
+                this.eventInfo[dueDate] = { 'timeDue': e.timeDue, 'all': 0, 'allPercent': 0, 'fastTrack': 0, 'extraJob': 0, 'normal': 0, 'normalExtra': 0 }
               }
               this.monthData[dueDate].push(e)
               if (e.statusBt) {
@@ -704,6 +625,7 @@ export default {
               s.timeDueHtext = e.timeDueH + ':00'
               s.timeDuetext = e.timeDue
               s.timeDueEnd = endTime
+              s.dueDateFix = e.dueDateFix || ''
               if (e.statusUseBt === 'use' && e.statusBt === 'confirm') {
                 s.chkConfirm = true
                 s.chkCancel = false
@@ -731,6 +653,33 @@ export default {
               if (chkTime.length === 0) {
                 dataItemTimes.push(s)
               }
+              let memberDataTag = s.memberDataTag || []
+              let checkType = typeof s.memberDataTag
+              // console.log('type', checkType)
+              // console.log('memberDataTag', memberDataTag)
+              // console.log('memTag', s.memberDataTag)
+
+              try {
+                s.memberDataTag = checkType === 'string' ? JSON.parse(s.memberDataTag) : memberDataTag
+                if (Array.isArray(s.memberDataTag) && s.memberDataTag.length > 0) {
+                  s.tagDataShow = []
+                  let memberDataTag = s.memberDataTag
+                  for (let i = 0; i < memberDataTag.length; i++) {
+                    let e = memberDataTag[i]
+                    let x = {}
+                    let checkTagItem = this.tagItem.filter(el => { return el.value === e })
+                    if (checkTagItem.length > 0) {
+                      x.text = checkTagItem[0].text
+                      x.value = checkTagItem[0].value
+                      s.tagDataShow.push(x)
+                    }
+                  }
+                }
+              } catch (error) {
+                s.tagDataShow = []
+                console.log(error)
+              }
+              console.log('dueDateFix', e.dueDateFix)
               // s.cusName = this.getDataFromFieldName(this.bookingData[e.bookNo], 'ชื่อ')
               // s.cusReg = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เลขทะเบียน')
               // s.tel = this.getDataFromFieldName(this.bookingData[e.bookNo], 'เบอร์โทร')
@@ -765,7 +714,7 @@ export default {
               this.dataRemoveExport = this.dataItemTimesChange.filter(el => { return el.statusBt === 'cancel' })
             }
           })
-      // -------   S T A R T   W E E K   ---------
+        // -------   S T A R T   W E E K   ---------
       } else if (this.type === 'week') {
         let url = ''
         if (this.flowId === 'allFlow') {
@@ -804,43 +753,43 @@ export default {
                 if (parseInt(d.name) <= d.d50) {
                   s.color = 'blue'
                   s.name =
-                  'คล่อง : ' +
-                  d.name.toString() +
-                  '/' +
-                  this.countCus.toString()
+                    'คล่อง : ' +
+                    d.name.toString() +
+                    '/' +
+                    this.countCus.toString()
                 }
                 if (parseInt(d.name) <= d.d70 && parseInt(d.name) >= d.d50) {
                   console.log('70')
                   s.color = 'deep-purple'
                   s.name =
-                  'ติดขัด : ' +
-                  d.name.toString() +
-                  '/' +
-                  this.countCus.toString()
+                    'ติดขัด : ' +
+                    d.name.toString() +
+                    '/' +
+                    this.countCus.toString()
                 }
                 if (parseInt(d.name) <= d.d90 && parseInt(d.name) >= d.d70) {
                   console.log('90')
                   s.color = 'red accent-1'
                   s.name =
-                  'ติดขัด : ' +
-                  d.name.toString() +
-                  '/' +
-                  this.countCus.toString()
+                    'ติดขัด : ' +
+                    d.name.toString() +
+                    '/' +
+                    this.countCus.toString()
                 }
                 if (parseInt(d.name) === this.countCus) {
                   s.color = 'red'
                   s.name =
-                  'เต็ม : ' +
-                  d.name.toString() +
-                  '/' +
-                  this.countCus.toString()
+                    'เต็ม : ' +
+                    d.name.toString() +
+                    '/' +
+                    this.countCus.toString()
                 }
                 this.events.push(s)
               }
             }
             if (this.events.length === 0 || this.events.status === false) {
               this.events = []
-            // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
+              // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
             } else {
               let url = ''
               if (this.flowId === 'allFlow') {
@@ -873,22 +822,22 @@ export default {
                       if (e.statusBt === 'confirm') {
                         f.color = 'green'
                         f.name =
-                        'ยืนยัน เวลา ' +
-                        e.timeDue +
-                        ' โมง : ' +
-                        e.name.toString()
+                          'ยืนยัน เวลา ' +
+                          e.timeDue +
+                          ' โมง : ' +
+                          e.name.toString()
                       } else if (e.statusBt === 'confirmJob') {
                         f.color = 'info'
                         f.name =
-                        'รับรถ : ' +
-                        e.name.toString()
+                          'รับรถ : ' +
+                          e.name.toString()
                       } else {
                         f.color = 'red'
                         f.name =
-                        'ยกเลิก เวลา ' +
-                        e.timeDue +
-                        ' โมง : ' +
-                        e.name.toString()
+                          'ยกเลิก เวลา ' +
+                          e.timeDue +
+                          ' โมง : ' +
+                          e.name.toString()
                       }
                     } else {
                       f.start = e.start + ' ' + e.timeDue + ':00'
@@ -896,10 +845,10 @@ export default {
                       f.statusBt = e.statusBt
                       f.color = 'orange'
                       f.name =
-                      'รอยืนยัน เวลา ' +
-                      e.timeDue +
-                      ' โมง : ' +
-                      e.name.toString()
+                        'รอยืนยัน เวลา ' +
+                        e.timeDue +
+                        ' โมง : ' +
+                        e.name.toString()
                     }
                     this.events.push(f)
                   }
@@ -907,11 +856,11 @@ export default {
             }
             console.log('events', this.events)
           })
-        // eslint-disable-next-line handle-callback-err
+          // eslint-disable-next-line handle-callback-err
           .catch(error => {
             console.log(error)
             this.dataReady = true
-          //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
+            //   this.$router.push('/system/Errorpage?returnLink=' + returnLink)
           })
       }
     },
@@ -1003,6 +952,36 @@ export default {
         d.tel = d.bookingDataCustomerTel || ''
         d.carModel = d.bookingDataCustomerCarModel || ''
         d.displayFlowName = d.displayFlowName || ''
+        let memberDataTag = d.memberDataTag || []
+        let checkType = typeof d.memberDataTag
+        // console.log('testTag', memberDataTag)
+        // console.log('memTag', d.memberDataTag)
+
+        try {
+          if (checkType === 'string') {
+            d.memberDataTag = JSON.parse(d.memberDataTag)
+          } else {
+            d.memberDataTag = memberDataTag
+          }
+          if (Array.isArray(d.memberDataTag) && d.memberDataTag.length > 0) {
+            d.tagDataShow = []
+            let memberDataTag = d.memberDataTag
+            for (let i = 0; i < memberDataTag.length; i++) {
+              let e = memberDataTag[i]
+              let x = {}
+              let checkTagItem = this.tagItem.filter(el => { return el.value === e })
+              if (checkTagItem.length > 0) {
+                x.text = checkTagItem[0].text
+                x.value = checkTagItem[0].value
+                d.tagDataShow.push(x)
+              }
+            }
+          }
+
+          // console.log('dTag', d.memberDataTag)
+        } catch (error) {
+          console.log(error)
+        }
         this.dataCalendar.push(d)
       }
       this.dataCalendar.sort((a, b) => {
@@ -1033,17 +1012,17 @@ export default {
       let url = ''
       if (this.type === 'week') {
         url = this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.session.data.shopId +
-            "&DATE_FORMAT(dueDate,'%%Y-%%m-%%d %%H')=" +
-            moment(moment(new Date(event.event.start)), 'YYYY-MM-DD HH').format('YYYY-MM-DD HH') +
-            '&statusBt=' + event.event.statusBt
+          '/booking_view/get?shopId=' +
+          this.session.data.shopId +
+          "&DATE_FORMAT(dueDate,'%%Y-%%m-%%d %%H')=" +
+          moment(moment(new Date(event.event.start)), 'YYYY-MM-DD HH').format('YYYY-MM-DD HH') +
+          '&statusBt=' + event.event.statusBt
       } else {
         url = this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.session.data.shopId +
-            '&dueDate=' + event.event.start + ' ' + event.event.timeDue +
-            '&statusBt=' + event.event.statusBt
+          '/booking_view/get?shopId=' +
+          this.session.data.shopId +
+          '&dueDate=' + event.event.start + ' ' + event.event.timeDue +
+          '&statusBt=' + event.event.statusBt
       }
       console.log('url', url)
       await axios
@@ -1203,10 +1182,10 @@ export default {
               // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
               let convertTextField = ''
               if (tempField.length > 0) {
-              // console.log('fieldType', row.fieldType)
+                // console.log('fieldType', row.fieldType)
                 if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-                // console.log('optionField', row.optionField)
-                // console.log('fieldValue', tempField[0].fieldValue)
+                  // console.log('optionField', row.optionField)
+                  // console.log('fieldValue', tempField[0].fieldValue)
                   if (tempField[0].fieldValue) {
                     let checkValue = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })
                     if (checkValue.length > 0) {
@@ -1328,10 +1307,10 @@ export default {
               // serviceDetail += (tempField.length > 0 ? tempField[0].fieldValue + ' ' : '')
               let convertTextField = ''
               if (tempField.length > 0) {
-              // console.log('fieldType', row.fieldType)
+                // console.log('fieldType', row.fieldType)
                 if (row.fieldType === 'Selects' || row.fieldType === 'Autocompletes' || row.fieldType === 'Radio') {
-                // console.log('optionField', row.optionField)
-                // console.log('fieldValue', tempField[0].fieldValue)
+                  // console.log('optionField', row.optionField)
+                  // console.log('fieldValue', tempField[0].fieldValue)
                   if (tempField[0].fieldValue) {
                     let checkValue = JSON.parse(row.optionField).filter(el => { return el.value === tempField[0].fieldValue })
                     if (checkValue.length > 0) {
@@ -1512,6 +1491,7 @@ export default {
 .vlistitem {
   background-color: #1B437C;
 }
+
 .today {
   background-color: #C1DFFF;
 }

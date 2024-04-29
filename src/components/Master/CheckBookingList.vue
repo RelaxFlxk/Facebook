@@ -185,6 +185,7 @@ export default {
           width: '120px'
         },
         { text: 'ชื่อลูกค้า', value: 'cusName', sortable: true, align: 'left' },
+        { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: true, align: 'center' },
         { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
       ],
       desserts: [],
@@ -244,7 +245,15 @@ export default {
       }
       // console.log(JSON.stringify(this.$session.getAll().data))
     },
+    async getTagData () {
+      this.tagItem = await this.getDataFromAPI('/Mas_Tag/get', 'tagId', 'tagName', '')
+    },
     async getBookingList () {
+      try {
+        await this.getTagData()
+      } catch (error) {
+        console.log(error)
+      }
       this.dataReady = false
       this.BookingDataListWait = []
       let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$route.query.shopId}&statusBt=confirm&dueDate=${this.dateStart}`
@@ -323,7 +332,7 @@ export default {
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
-                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                // s.memberDataTag = JSON.parse(d.memberDataTag) || []
                 if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                   s.chkConfirm = true
                   s.chkCancel = false
@@ -344,13 +353,39 @@ export default {
                 s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
                 s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                 s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+
+                s.memberDataTagName = []
+
+                try {
+                  s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                  if (s.memberDataTag.length > 0) {
+                    s.tagDataShow = []
+                    let memberDataTag = s.memberDataTag
+                    for (let i = 0; i < memberDataTag.length; i++) {
+                      let d = memberDataTag[i]
+                      let x = {}
+                      let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                      if (checkTagItem.length > 0) {
+                        x.text = checkTagItem[0].text
+                        x.value = checkTagItem[0].value
+                        s.tagDataShow.push(x)
+                        s.memberDataTagName.push(x.text)
+                      }
+                    }
+                  }
+                  s.memberDataTagName = s.memberDataTagName.join(', ')
+                } catch (error) {
+                  s.tagDataShow = []
+                  console.log(error)
+                }
                 dataItems.push(s)
                 // console.log('this.countWaiting', this.countWaiting)
               } else {
                 console.log('BookingNo no bookingData', d.bookNo)
               }
             }
-            console.log('dataItems', dataItems)
+            // console.log('tagItem', this.tagItem)
+            // console.log('dataItems', dataItems)
             if (dataItems.length > 0) {
               this.desserts = dataItems.filter(el => { return el.bookNo !== this.bookNo })
             } else {
@@ -377,6 +412,11 @@ export default {
       }
     },
     async getCheckWait () {
+      try {
+        await this.getTagData()
+      } catch (error) {
+        console.log(error)
+      }
       this.dataReady = false
       this.BookingDataListWait = []
       let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$route.query.shopId}&statusBt=is null`
@@ -455,7 +495,7 @@ export default {
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
-                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                // s.memberDataTag = JSON.parse(d.memberDataTag) || []
                 if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                   s.chkConfirm = true
                   s.chkCancel = false
@@ -476,12 +516,36 @@ export default {
                 s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
                 s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                 s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+                s.memberDataTagName = []
+                try {
+                  s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                  if (s.memberDataTag.length > 0) {
+                    s.tagDataShow = []
+                    let memberDataTag = s.memberDataTag
+                    for (let i = 0; i < memberDataTag.length; i++) {
+                      let d = memberDataTag[i]
+                      let x = {}
+                      let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                      if (checkTagItem.length > 0) {
+                        x.text = checkTagItem[0].text
+                        x.value = checkTagItem[0].value
+                        s.tagDataShow.push(x)
+                        s.memberDataTagName.push(x.text)
+                      }
+                    }
+                  }
+                  s.memberDataTagName = s.memberDataTagName.join(', ')
+                } catch (error) {
+                  s.tagDataShow = []
+                  console.log(error)
+                }
                 dataItems.push(s)
                 // console.log('this.countWaiting', this.countWaiting)
               } else {
                 console.log('BookingNo no bookingData', d.bookNo)
               }
             }
+            // console.log('tagItem', this.tagItem)
             console.log('dataItems', dataItems)
             if (dataItems.length > 0) {
               this.desserts = dataItems.filter(el => { return el.bookNo !== this.bookNo })

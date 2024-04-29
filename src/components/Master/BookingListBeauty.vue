@@ -3366,7 +3366,7 @@
                     </v-row>
                     </template>
                   </template>
-                  <template v-slot:[`item.action5`]="{ item }">
+                  <template v-slot:[`item.memberDataTagName`]="{ item }">
                     <div>
                       <v-row v-if="item.memberDataTag.length === 0 " style="justify-content: flex-end;margin: auto;">
                         <div v-if="item.memberId !== ''" style="color:grey;">ไม่มีมีป้ายกำกับ</div>
@@ -10998,21 +10998,23 @@ export default {
                   s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
                   s.menuItem = d.menuItem || []
                   s.menuPrice = d.menuPrice || ''
-                  s.memberDataTag = JSON.parse(d.memberDataTag) || []
-                  if (s.memberDataTag.length > 0) {
-                    s.tagDataShow = []
-                    let memberDataTag = s.memberDataTag
-                    for (let i = 0; i < memberDataTag.length; i++) {
-                      let d = memberDataTag[i]
-                      let x = {}
-                      let checkTagItem = this.tagItem.filter(el => { return el.value === d })
-                      if (checkTagItem.length > 0) {
-                        x.text = checkTagItem[0].text
-                        x.value = checkTagItem[0].value
-                        s.tagDataShow.push(x)
-                      }
-                    }
-                  }
+                  // s.memberDataTagName = []
+                  // s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                  // if (s.memberDataTag.length > 0) {
+                  //   s.tagDataShow = []
+                  //   let memberDataTag = s.memberDataTag
+                  //   for (let i = 0; i < memberDataTag.length; i++) {
+                  //     let d = memberDataTag[i]
+                  //     let x = {}
+                  //     let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                  //     if (checkTagItem.length > 0) {
+                  //       x.text = checkTagItem[0].text
+                  //       x.value = checkTagItem[0].value
+                  //       s.tagDataShow.push(x)
+                  //     }
+                  //   }
+                  // }
+                  // s.memberDataTagName = s.memberDataTagName.join(', ')
                   this.countAll = this.countAll + 1
                   if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                     s.chkConfirm = true
@@ -13404,6 +13406,7 @@ export default {
             // t.flowNameShow = serviceDetail
             // t.flowNameShow = t.displayFlowName || t.flowName
             t.flowNameShow = t.displayFlowName ? (t.flowName + ' : ' + t.displayFlowName) : t.flowName
+
             this.dataItemSelect.push(t)
           }
         } else {
@@ -13456,7 +13459,7 @@ export default {
               { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false },
               { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
-              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '150' },
               // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               // { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
@@ -13473,7 +13476,7 @@ export default {
               { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false },
               { text: 'เงินมัดจำ', value: 'action40', sortable: false, align: 'center' },
-              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '150' },
               // { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
               { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
               // { text: 'หมายเหตุที่ยกเลิก', value: 'remarkRemove', sortable: false, align: 'center' },
@@ -13493,7 +13496,7 @@ export default {
               { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120', sortable: false },
-              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '160' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '150' },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           } else {
@@ -13505,7 +13508,7 @@ export default {
               { text: 'บริการ', value: 'flowNameShow', width: '150', sortable: false },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120', sortable: false },
-              { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '160' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '160' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '150' },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           }
@@ -13533,7 +13536,7 @@ export default {
                 { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
                 { text: 'เลขทะเบียน', value: 'cusReg', width: '120' },
                 { text: 'เบอร์โทร', value: 'tel', sortable: false },
-                { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
+                { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '150' },
                 { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
                 { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
                 { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
@@ -13547,7 +13550,7 @@ export default {
                 // { text: 'วันและเวลานัดหมาย', value: 'dueDate' },
                 { text: 'บริการ', value: 'flowNameShow', sortable: false, width: '150' },
                 { text: 'เบอร์โทร', value: 'tel', sortable: false },
-                { text: 'ป้ายชื่อกำกับ', value: 'action5', sortable: false, align: 'center', width: '150' },
+                { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '150' },
                 { text: 'คุณสมบัติเพิ่มเติม', value: 'action3', sortable: false, align: 'center' },
                 { text: 'Confirm นัดล่วงหน้า', value: 'action2', sortable: false, align: 'center' },
                 { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '120' },
@@ -13717,6 +13720,22 @@ export default {
                     s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
                     s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
                     s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+
+                    s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                    if (s.memberDataTag.length > 0) {
+                      s.tagDataShow = []
+                      let memberDataTag = s.memberDataTag
+                      for (let i = 0; i < memberDataTag.length; i++) {
+                        let d = memberDataTag[i]
+                        let x = {}
+                        let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                        if (checkTagItem.length > 0) {
+                          x.text = checkTagItem[0].text
+                          x.value = checkTagItem[0].value
+                          s.tagDataShow.push(x)
+                        }
+                      }
+                    }
                     dataItems.push(s)
                   }
                 }
@@ -14021,20 +14040,28 @@ export default {
               s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
               s.menuItem = d.menuItem || []
               s.menuPrice = d.menuPrice || ''
-              s.memberDataTag = JSON.parse(d.memberDataTag) || []
-              if (s.memberDataTag.length > 0) {
-                s.tagDataShow = []
-                let memberDataTag = s.memberDataTag
-                for (let i = 0; i < memberDataTag.length; i++) {
-                  let d = memberDataTag[i]
-                  let x = {}
-                  let checkTagItem = this.tagItem.filter(el => { return el.value === d })
-                  if (checkTagItem.length > 0) {
-                    x.text = checkTagItem[0].text
-                    x.value = checkTagItem[0].value
-                    s.tagDataShow.push(x)
+              s.memberDataTagName = []
+              try {
+                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                if (s.memberDataTag.length > 0) {
+                  s.tagDataShow = []
+                  let memberDataTag = s.memberDataTag
+                  for (let i = 0; i < memberDataTag.length; i++) {
+                    let d = memberDataTag[i]
+                    let x = {}
+                    let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                    if (checkTagItem.length > 0) {
+                      x.text = checkTagItem[0].text
+                      x.value = checkTagItem[0].value
+                      s.tagDataShow.push(x)
+                      s.memberDataTagName.push(x.text)
+                    }
                   }
                 }
+                s.memberDataTagName = s.memberDataTagName.join(', ')
+              } catch (error) {
+                s.tagDataShow = []
+                console.log(error)
               }
               this.countAll = this.countAll + 1
               if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
@@ -14081,6 +14108,7 @@ export default {
             //   console.log('BookingNo no bookingData', d.bookNo)
             // }
             }
+            console.log('dataItemsnn', dataItems)
           }
         })
         // eslint-disable-next-line handle-callback-err
@@ -14194,21 +14222,6 @@ export default {
               s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
               s.menuItem = d.menuItem || []
               s.menuPrice = d.menuPrice || ''
-              s.memberDataTag = JSON.parse(d.memberDataTag) || []
-              if (s.memberDataTag.length > 0) {
-                s.tagDataShow = []
-                let memberDataTag = s.memberDataTag
-                for (let i = 0; i < memberDataTag.length; i++) {
-                  let d = memberDataTag[i]
-                  let x = {}
-                  let checkTagItem = this.tagItem.filter(el => { return el.value === d })
-                  if (checkTagItem.length > 0) {
-                    x.text = checkTagItem[0].text
-                    x.value = checkTagItem[0].value
-                    s.tagDataShow.push(x)
-                  }
-                }
-              }
               this.countAll = this.countAll + 1
               if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                 s.chkConfirm = true
@@ -14239,6 +14252,24 @@ export default {
               // s.cusName = (s.cusName.length > 0) ? s.cusName[0].fieldValue : ''
               // s.cusReg = (s.cusReg.length > 0) ? s.cusReg[0].fieldValue : ''
               // s.tel = (s.tel.length > 0) ? s.tel[0].fieldValue : ''
+              s.memberDataTagName = []
+              s.memberDataTag = JSON.parse(d.memberDataTag) || []
+              if (s.memberDataTag.length > 0) {
+                s.tagDataShow = []
+                let memberDataTag = s.memberDataTag
+                for (let i = 0; i < memberDataTag.length; i++) {
+                  let d = memberDataTag[i]
+                  let x = {}
+                  let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                  if (checkTagItem.length > 0) {
+                    x.text = checkTagItem[0].text
+                    x.value = checkTagItem[0].value
+                    s.tagDataShow.push(x)
+                    s.memberDataTagName.push(x.text)
+                  }
+                }
+              }
+              s.memberDataTagName = s.memberDataTagName.join(', ')
               dataItems.push(s)
               // console.log('this.countWaiting', this.countWaiting)
             // } else {

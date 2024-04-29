@@ -2253,6 +2253,21 @@ export default {
                   // if (chkTime.length === 0) {
                   //   dataItemTimes.push(s)
                   // }
+                  s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                  if (s.memberDataTag.length > 0) {
+                    s.tagDataShow = []
+                    let memberDataTag = s.memberDataTag
+                    for (let i = 0; i < memberDataTag.length; i++) {
+                      let d = memberDataTag[i]
+                      let x = {}
+                      let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                      if (checkTagItem.length > 0) {
+                        x.text = checkTagItem[0].text
+                        x.value = checkTagItem[0].value
+                        s.tagDataShow.push(x)
+                      }
+                    }
+                  }
                   dataItems.push(s)
                 }
               }

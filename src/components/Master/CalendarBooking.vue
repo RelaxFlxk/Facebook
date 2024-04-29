@@ -149,9 +149,9 @@
                         </v-btn>
                       </template>
                       <v-list>
-                        <v-list-item class="vlistitem" @click="type = 'week', getBookingList()">
+                        <!-- <v-list-item class="vlistitem" @click="type = 'week', getBookingList()">
                           <v-list-item-title>Week</v-list-item-title>
-                        </v-list-item>
+                        </v-list-item> -->
                         <v-list-item class="vlistitem" @click="type = 'month', getBookingList()">
                           <v-list-item-title>Month</v-list-item-title>
                         </v-list-item>
@@ -279,6 +279,8 @@
                     v-for="(items, index) in dataCalendar"
                     :key="index"
                   >
+                  <!-- {{ items.tagDataShow }}
+                  {{ items.memberDataTag }} -->
                     <v-card elevation="2">
                       <v-list-item :style="((items.bgcolor) ? 'background-color:' + items.bgcolor + ' !important' : '') ">
                         <v-list-item-content>
@@ -299,15 +301,26 @@
                             <v-col cols="9">
                               <v-row>
                                 <v-col cols="8"><h4>คุณ {{ items.name }}</h4></v-col>
-                                <v-col cols="4" class="text-right">{{items.licenseNo}}</v-col>
+                                 <!-- <v-col cols="10" v-if="items.memberDataTag.length > 0" class="pt-0 pb-0">
+                              <v-chip v-for="(tag, index) in items.tagDataShow" :key="index"
+                              small class="mr-2 mb-2" >
+                                {{ tag.text }}
+                              </v-chip>
+                            </v-col> -->
+                            <v-col cols="4" class="text-right">{{items.licenseNo}}</v-col>
                               </v-row>
+                               <v-col cols="12 ps-0" v-if="items.memberDataTag.length > 0">
+                          <v-chip v-for="(tag, index) in items.tagDataShow" :key="index" small class="mr-2 mb-2">
+                            {{ tag.text }}
+                          </v-chip>
+                      </v-col>
                               {{ items.serviceDetail }}<br>
                               โทร {{ items.tel }}
                               {{ items.carModel === '' ? '' : 'รุ่นรถ ' + items.carModel }}<br>
                               {{ items.bookingEmpFlowName === '' ? '' : 'พนักงาน ' + items.bookingEmpFlowName }}<br>
-                              <!-- {{ format_dateFUllTime(items.dueDate) }} -->
-                              <div>{{ items.dueDateFix.split(' ')[0].split('-')[2] + '/' + items.dueDateFix.split(' ')[0].split('-')[1] + '/' + items.dueDateFix.split(' ')[0].split('-')[0] }}</div>
-                              <div>{{items.dueDateFix.split(' ')[1] + ' น.' + items.dueDateEnd}}</div>
+                              <!-- {{ items.dueDateFix }} -->
+                          <div>{{ items.dueDateFix.split(' ')[0].split('-')[2] + '/' + items.dueDateFix.split(' ')[0].split('-')[1] + '/' + items.dueDateFix.split(' ')[0].split('-')[0] }}</div>
+                          <div>{{ items.dueDateFix.split(' ')[1] + ' น.' + items.dueDateEnd }}</div>
                             </v-col>
                           </v-row>
                           <!-- <v-list-item-subtitle>
@@ -562,6 +575,11 @@ export default {
           })
         })
     },
+    async getTagData () {
+      console.log('getTagData')
+      this.tagItem = await this.getDataFromAPI('/Mas_Tag/get', 'tagId', 'tagName', '')
+      console.log(this.tagItem)
+    },
     getDataFromFieldName (data, key) {
       if (data !== undefined) {
         return data.filter(function (el) {
@@ -599,6 +617,12 @@ export default {
       }
     },
     async getBookingList () {
+      try {
+        await this.getTagData()
+      } catch (error) {
+        console.log(error)
+      }
+
       // this.getBookingData()
       // if (this.masBranchName) {
       //   this.masBranchName = this.masBranchName
@@ -741,6 +765,34 @@ export default {
               s.tel = e.bookingDataCustomerTel || ''
               s.carModel = e.bookingDataCustomerCarModel || ''
               s.displayFlowName = e.displayFlowName || ''
+              let memberDataTag = s.memberDataTag || []
+              let checkType = typeof s.memberDataTag
+              // console.log('type', checkType)
+              // console.log('memberDataTag', memberDataTag)
+              // console.log('memTag', s.memberDataTag)
+
+              try {
+                s.memberDataTag = checkType === 'string' ? JSON.parse(s.memberDataTag) : memberDataTag
+                if (Array.isArray(s.memberDataTag) && s.memberDataTag.length > 0) {
+                  s.tagDataShow = []
+                  let memberDataTag = s.memberDataTag
+                  for (let i = 0; i < memberDataTag.length; i++) {
+                    let e = memberDataTag[i]
+                    let x = {}
+                    let checkTagItem = this.tagItem.filter(el => { return el.value === e })
+                    if (checkTagItem.length > 0) {
+                      x.text = checkTagItem[0].text
+                      x.value = checkTagItem[0].value
+                      s.tagDataShow.push(x)
+                    }
+                  }
+                }
+
+                // console.log('dTag', d.memberDataTag)
+              } catch (error) {
+                s.tagDataShow = []
+                console.log(error)
+              }
               dataItems.push(s)
             }
             this.dataReady = true
@@ -956,6 +1008,7 @@ export default {
     },
     openTaskList (date, type) {
       console.log('start TaskList')
+      console.log('start gett', this.tagItem)
       this.dataSummary = []
       this.dataCalendar = []
       let targetData = null
@@ -1009,8 +1062,41 @@ export default {
         d.tel = d.bookingDataCustomerTel || ''
         d.carModel = d.bookingDataCustomerCarModel || ''
         d.displayFlowName = d.displayFlowName || ''
+        let memberDataTag = d.memberDataTag || []
+
+        let checkType = typeof d.memberDataTag
+        // console.log('type', checkType)
+        // console.log('memberDataTag', memberDataTag)
+        // console.log('memTag', d.memberDataTag)
+
+        try {
+          if (checkType === 'string') {
+            d.memberDataTag = JSON.parse(d.memberDataTag)
+          } else {
+            d.memberDataTag = memberDataTag
+          }
+          if (Array.isArray(d.memberDataTag) && d.memberDataTag.length > 0) {
+            d.tagDataShow = []
+            let memberDataTag = d.memberDataTag
+            for (let i = 0; i < memberDataTag.length; i++) {
+              let e = memberDataTag[i]
+              let x = {}
+              let checkTagItem = this.tagItem.filter(el => { return el.value === e })
+              if (checkTagItem.length > 0) {
+                x.text = checkTagItem[0].text
+                x.value = checkTagItem[0].value
+                d.tagDataShow.push(x)
+              }
+            }
+          }
+
+          // console.log('dTag', d.memberDataTag)
+        } catch (error) {
+          console.log(error)
+        }
         this.dataCalendar.push(d)
       }
+      console.log('data', this.dataCalendar)
       this.dataCalendar.sort((a, b) => {
         let keyA = new Date(a.dueDate)
         let keyB = new Date(b.dueDate)
@@ -1018,7 +1104,6 @@ export default {
         if (keyA > keyB) return 1
         return 0
       })
-      console.log('data', this.dataCalendar)
       this.dataSummary = this.dataCalendar.reduce((r, a) => {
         r[a.bgcolorChip] = r[a.bgcolorChip] || {}
         r[a.bgcolorChip][a.timeText] = r[a.bgcolorChip][a.timeText] || []
@@ -1087,6 +1172,22 @@ export default {
             d.tel = d.bookingDataCustomerTel || ''
             d.carModel = d.bookingDataCustomerCarModel || ''
             d.displayFlowName = d.displayFlowName || ''
+            // d.memberDataTag = JSON.parse(d.memberDataTag) || []
+            // if (d.memberDataTag.length > 0) {
+            //   d.tagDataShow = []
+            //   let memberDataTag = d.memberDataTag
+            //   for (let i = 0; i < memberDataTag.length; i++) {
+            //     let e = memberDataTag[i]
+            //     let x = {}
+            //     let checkTagItem = this.tagItem.filter(el => { return el.value === e })
+            //     if (checkTagItem.length > 0) {
+            //       x.text = checkTagItem[0].text
+            //       x.value = checkTagItem[0].value
+            //       d.tagDataShow.push(x)
+            //     }
+            //   }
+            // }
+
             this.dataCalendar.push(d)
           }
           this.dialog = true
