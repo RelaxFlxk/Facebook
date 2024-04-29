@@ -623,6 +623,27 @@ Vue.mixin({
           this.dataReady = true
           this.getDataGlobal(DNS_IP, PATH)
         })
+    },
+    async getDataFromAPI (url, fieldId, fieldName, param) {
+      let result = []
+      await axios
+        .get(this.DNS_IP + `${url}?shopId=${this.session.data.shopId}${param}`)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d[fieldName]
+              s.value = d[fieldId]
+              s.allData = d
+              result.push(s)
+            }
+          } else {
+            result = []
+          }
+        })
+      return result
     }
   }
 })
