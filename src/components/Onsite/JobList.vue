@@ -1902,7 +1902,7 @@ export default {
         )
       }
     },
-    closeJobStart (data, text = 'Alert') {
+    async closeJobStart (data, text = 'Alert') {
       this.checkPayment = this.itemFlow.filter((item) => item.value === data.flowId)[0].allData.checkPayment
       // console.log('data', data)
       console.log('itemFlow', this.itemFlow)
@@ -1926,6 +1926,9 @@ export default {
           this.closeJobSubmit('0', text)
         } else {
           this.closeJobSubmit('0')
+        }
+        if (this.shopId === 'U9f316c85400fd716ea8c80d7cd5b61f8') {
+          await this.pushmessageDrug(data)
         }
       }
       console.log('this.formDelete', this.formDelete)
@@ -1958,20 +1961,6 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-        // if (this.packageId !== '' && this.productExchangeRateId === '') {
-        //   await this.usePackage()
-        // } else if (this.packageId === '' && this.productExchangeRateId !== '') {
-        //   if (this.lineUserId !== '') {
-        //     await this.useCoin(totalPrice)
-        //   }
-        // } else if (this.packageId !== '' && this.productExchangeRateId !== '') {
-        //   if (this.lineUserId !== '') {
-        //     await this.useCoin(totalPrice)
-        //     await this.usePackage()
-        //   } else {
-        //     await this.usePackage()
-        //   }
-        // }
           if (this.totalPrice === '') {
             this.formDelete.totalPrice = totalPrice
           } else {
@@ -2011,6 +2000,189 @@ export default {
         .post(this.DNS_IP + '/job/pushClosejob/' + jobNo, updateStatusSend)
         .then(console.log(jobNo))
         .catch((error) => console.log('error', error))
+    },
+    async getJoyRideJobDrug (jobNo) {
+      try {
+        let config = {
+          method: 'get',
+          url: `${this.DNS_IP}/joyride_job_drug/get?jobNo=${jobNo}`
+        }
+        return axios.request(config)
+          .then((response) => {
+            let rs = response.data
+            if (rs.status === false) {
+              return []
+            } else {
+              return rs
+            }
+          })
+          .catch((error) => {
+            console.log(error)
+            return []
+          })
+      } catch (err) {
+        console.log('getJoyRideDrug', err)
+        return []
+      }
+    },
+    async createBubbleDrug (drug) {
+      let bubbleMsg = drug.map((row) => {
+        let temp
+        if (row.usage_type === 'external') {
+          temp = {
+            'type': 'box',
+            'layout': 'vertical',
+            'contents': [
+              {
+                'type': 'text',
+                'text': `${row.drug_name} `,
+                'weight': 'bold'
+              },
+              {
+                'type': 'box',
+                'layout': 'horizontal',
+                'contents': [
+                  {
+                    'type': 'text',
+                    'text': `${row.usage_description} `,
+                    'flex': 1,
+                    'size': 'sm'
+                  }
+                ],
+                'margin': 'sm'
+              },
+              {
+                'type': 'separator',
+                'margin': 'lg'
+              }
+            ],
+            'margin': 'lg'
+          }
+        } else {
+          let eatWhen = ''
+          let eatTime = ''
+          if (row.usage_eat_when === 'before') {
+            eatWhen = 'ก่อนอาหาร'
+            eatTime += (row.usage_eat_morning) ? 'เช้า' : ''
+            eatTime += (row.usage_eat_noon) ? ' กลางวัน' : ''
+            eatTime += (row.usage_eat_dinner) ? ' เย็น' : ''
+          } else if (row.usage_eat_when === 'after') {
+            eatWhen = 'หลังอาหาร'
+            eatTime += (row.usage_eat_morning) ? 'เช้า' : ''
+            eatTime += (row.usage_eat_noon) ? ' กลางวัน' : ''
+            eatTime += (row.usage_eat_dinner) ? ' เย็น' : ''
+          } else if (row.usage_eat_when === 'sleep') {
+            eatWhen = 'ก่อนนอน'
+          } else if (row.usage_eat_when === 'specify') {
+            eatWhen = `ทุก ${row.usage_specify_time_hour} ชม.`
+          } else if (row.usage_eat_when === 'effect') {
+            eatWhen = `เมื่อมีอาการ`
+          }
+          temp = {
+            'type': 'box',
+            'layout': 'vertical',
+            'contents': [
+              {
+                'type': 'text',
+                'text': `${row.drug_name}`,
+                'weight': 'bold'
+              },
+              {
+                'type': 'box',
+                'layout': 'horizontal',
+                'contents': [
+                  {
+                    'type': 'text',
+                    'text': `${row.usage_qty_per_time} เม็ด `,
+                    'flex': 1,
+                    'size': 'sm'
+                  },
+                  {
+                    'type': 'text',
+                    'text': `${eatWhen} `,
+                    'flex': 2,
+                    'size': 'sm',
+                    'align': 'center'
+                  },
+                  {
+                    'type': 'text',
+                    'text': `${eatTime} `,
+                    'flex': 3,
+                    'size': 'sm',
+                    'align': 'end'
+                  }
+                ],
+                'margin': 'sm'
+              },
+              {
+                'type': 'separator',
+                'margin': 'lg'
+              }
+            ],
+            'margin': 'lg'
+          }
+        }
+        return temp
+      })
+      return bubbleMsg
+    },
+    async pushmessageDrug (job) {
+      const drug = await this.getJoyRideJobDrug(job.jobNo)
+      if (drug.length > 0) {
+        const bubbleMsg = await this.createBubbleDrug(drug)
+        let pushText = {
+          'to': job.lineUserId,
+          'messages': [
+            {
+              'type': 'flex',
+              'altText': 'ข้อมูลยา',
+              'contents': {
+                'type': 'bubble',
+                'hero': {
+                  'type': 'image',
+                  'url': 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/static%2FJoy%20Ride%20Content%20(1).jpg?alt=media&token=0f1b009d-2246-40c5-8276-60a2d738eaa6',
+                  'size': 'full',
+                  'aspectRatio': '1:1',
+                  'aspectMode': 'cover'
+                },
+                'body': {
+                  'type': 'box',
+                  'layout': 'vertical',
+                  'contents': [
+                    {
+                      'type': 'text',
+                      'text': 'ข้อมูลยา',
+                      'weight': 'bold',
+                      'size': 'xl'
+                    },
+                    {
+                      'type': 'text',
+                      'text': 'รายการยาที่คุณหมอสั่ง',
+                      'size': 'sm'
+                    },
+                    {
+                      'type': 'box',
+                      'layout': 'vertical',
+                      'contents': bubbleMsg,
+                      'margin': 'lg',
+                      'paddingBottom': '20px'
+                    }
+                  ]
+                },
+                'styles': {
+                  'hero': {
+                    'backgroundColor': '#eeeeee'
+                  }
+                }
+              }
+            }
+          ]
+        }
+        await axios
+          .post(this.DNS_IP + '/line/pushmessage?shopId=' + this.shopId, pushText)
+          .then(console.log(job))
+          .catch((error) => console.log('error', error))
+      }
     },
     pushMessageCloseJob (jobId) {
       let updateStatusSend = {

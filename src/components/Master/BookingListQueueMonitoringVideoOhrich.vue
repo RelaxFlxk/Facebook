@@ -1,78 +1,86 @@
 <template>
-  <div :style="{ backgroundColor: shopColor, height: '100%', width: '100%' }">
-      <div :class="`d-flex ${isPortrait ? 'flex-column':'flex-row'}`">
-          <BookingUseOhrich :bookingUse="dataService" :isPortrait="isPortrait"/>
-          <div v-if="!isPortrait"  class="col-7 d-flex flex-column">
-              <div class="mt-5">
-              <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-              <source :src="videoLinkMonition" type="video/webm">
-            </video>
-               <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-              </div>
-              <div class="d-flex flex-row justify-content-between mx-4 mt-5 h-100">
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(0,6)" time="10"/>
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(6,12)" time="10 - 20"/>
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(12)" time="20 - 30"/>
-            </div>
-          </div>
+  <div id="app-container">
+    <main :class="`${ isPortrait ? '' : 'd-flex align-items-center'}`">
+    <div :class="`d-flex ${isPortrait ? 'flex-column' : 'flex-row col-12 w-100'}`">
+      <BookingUseOhrich :bookingUse="dataService" :isPortrait="isPortrait" />
+      <div v-if="!isPortrait" class="col-7 d-flex flex-column">
+        <div class="mt-5">
+          <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12"
+            width="100%" autoplay muted autopictureinpicture controls loop="true"
+            poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+            <source :src="videoLinkMonition" type="video/webm">
+          </video>
+          <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px"
+            :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length - 11) + '&autoplay=1&loop=1'"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+        </div>
+        <div class="d-flex flex-row justify-content-between mx-4 mt-5 h-100">
+          <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(0, 6)" time="10"  />
+          <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(6, 12)" time="10 - 20" />
+          <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(12)" time="20 - 30" />
+        </div>
       </div>
-     <div v-if="isPortrait" class="col-12 d-flex flex-row justify-content-between height-card">
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(0,6)" time="10"/>
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(6,12)" time="10 - 20"/>
-              <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(12)" time="20 - 30"/>
-     </div>
-      <div v-if="isPortrait" class="d-flex flex-row justify-content-between">
-          <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
-              <source :src="videoLinkMonition" type="video/webm">
-           </video>
-          <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-     </div>
-      <div :class="`d-flex flex-row justify-content-between mx-3 ${isPortrait ? '' : 'mt-3'}`">
-          <div class="col-6 py-0">
-            <v-icon class="mr-3" large>
-             {{ wifiIcon }}
-             </v-icon>
-             <v-btn icon
-                      large
-                      color="#695988"
-                      @click="changeStatusSound('off')"
-                      v-if="statusSound === true"
-                    >
-                    <v-icon>mdi-volume-high</v-icon>
-                    </v-btn>
-                    <v-btn icon
-                      large
-                      color="#695988"
-                      @click="changeStatusSound('on')"
-                      v-else
-                    >
-                    <v-icon>mdi-volume-off</v-icon>
-                    </v-btn>
-                  </div>
-          <div class="col-6 py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span></div>
-      </div>
-      <v-row v-show="hideSound === true">
-        <audio id="playerTV" controls="controls">
+    </div>
+    <div v-if="isPortrait" class="col-12 d-flex flex-row  height-card">
+      <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(0, 6)" time="10" :isPortrait="isPortrait" />
+      <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(6, 12)" time="10 - 20" :isPortrait="isPortrait" />
+      <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(12)" time="20 - 30" :isPortrait="isPortrait" />
+    </div>
+    <div v-if="isPortrait" class="d-flex  flex-row justify-content-between">
+      <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%"
+        autoplay muted autopictureinpicture controls loop="true"
+        poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
+        <source :src="videoLinkMonition" type="video/webm">
+      </video>
+      <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px"
+        :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length - 11) + '&autoplay=1&loop=1'"
+        title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+    </div>
+  </main>
+    <v-footer padless color="#BDE56A" :class="`d-flex flex-row justify-content-between align-items-center ${isPortrait ? '' : 'mt-3'}`">
+        <div class="col py-0">
+          <v-icon class="mr-3">
+            {{ wifiIcon }}
+          </v-icon>
+          <v-btn icon color="#695988" @click="changeStatusSound('off')" v-if="statusSound === true">
+            <v-icon>mdi-volume-high</v-icon>
+          </v-btn>
+          <v-btn icon color="#695988" @click="changeStatusSound('on')" v-else>
+            <v-icon>mdi-volume-off</v-icon>
+          </v-btn>
+        </div>
+        <div class="col d-flex justify-content-center"><span class="text-white text-footer">POWER BY BETASK CONSULTING
+          </span></div>
+        <div class="col py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span>
+        </div>
+    </v-footer>
+    <v-row v-show="hideSound === true">
+      <audio id="playerTV" controls="controls">
+        Your browser does not support the audio format.
+      </audio>
+      <v-col>
+        <audio id="playerPrefix" controls="controls">>
+          <source
+            src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
           Your browser does not support the audio format.
         </audio>
-        <v-col>
-          <audio id="playerPrefix" controls="controls">>
-            <source src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
-            Your browser does not support the audio format.
-          </audio>
-          <audio id="playerQueue" controls="controls">>
-            <source :src="audio">
-            Your browser does not support the audio format.
-          </audio>
-          <audio id="playerCounter" controls="controls">>
-            <source :src="tableTarget">
-            Your browser does not support the audio format.
-          </audio>
-        </v-col>
-        <v-col>
-          {{history}}
-        </v-col>
-      </v-row>
+        <audio id="playerQueue" controls="controls">>
+          <source :src="audio">
+          Your browser does not support the audio format.
+        </audio>
+        <audio id="playerCounter" controls="controls">>
+          <source :src="tableTarget">
+          Your browser does not support the audio format.
+        </audio>
+      </v-col>
+      <v-col>
+        {{ history }}
+      </v-col>
+    </v-row>
   </div>
 </template>
 <script>
@@ -1275,7 +1283,7 @@ export default {
         arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
           const audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
 
-          this.playingSound.push({storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint})
+          this.playingSound.push({ storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint })
         }
         )
       }
@@ -1316,23 +1324,35 @@ export default {
 
 </script>
 <style scope>
-.centered-input >>> input {
-      text-align: center
-    }
+main  {
+  flex: 1;
+}
+#app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.centered-input>>>input {
+  text-align: center
+}
+
 #margin {
   margin-top: 50px;
   margin-bottom: 40px;
 }
+
 .v_text_edit {
   Width: 255px;
   Height: 52px;
   font-size: 10px !important;
 }
+
 #subtext {
   color: #173053;
   font-size: 30px !important;
   font-weight: bold;
 }
+
 .center_screen {
   position: absolute;
   top: 50%;
@@ -1345,18 +1365,29 @@ export default {
   border: solid 1px blue;
   padding: .5rem;
 }
-.text-black >>> .v-input__slot {
+
+.text-black>>>.v-input__slot {
   color: #005fcc !important;
 }
 
-.text-datetime, .text-number-waiting{
+.text-datetime,
+.text-number-waiting {
   font-weight: 700;
 }
+
 @media screen and (orientation: portrait) {
-  .height-card{
+  .height-card {
     min-height: 16vh;
+  }
+
+  .text-footer {
+    font-size: 1.8vw;
   }
 }
 
-@media screen and (orientation: landscape) {}
+@media screen and (orientation: landscape) {
+  .text-footer {
+    font-size: 1vw;
+  }
+}
 </style>
