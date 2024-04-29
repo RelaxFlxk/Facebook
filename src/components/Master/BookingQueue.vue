@@ -373,7 +373,7 @@
                   </v-card-text>
                   <v-card-text>
                     <v-row class="white--text">
-                      <v-col cols="10" v-if="items.memberDataTag.length > 0"  class="pt-0 pb-0">
+                      <v-col cols="10" v-if="items.memberDataTag.length > 0">
                           <v-chip v-for="(tag, index) in items.tagDataShow" :key="index" class="mr-2 mb-2">
                             {{ tag.text }}
                           </v-chip>
