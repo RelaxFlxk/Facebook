@@ -13508,7 +13508,7 @@ export default {
               { text: 'บริการ', value: 'flowNameShow', width: '150', sortable: false },
               { text: 'เบอร์โทร', value: 'tel', sortable: false, width: '120' },
               { text: 'เงินมัดจำ', value: 'action40', align: 'center', width: '120', sortable: false },
-              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '160' },
+              { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: false, align: 'center', width: '150' },
               { text: 'หมายเหตุ', value: 'remark', align: 'center', sortable: false, width: '150' },
               { text: 'จัดการ', value: 'action', sortable: false, align: 'center', width: '100' }]
           }

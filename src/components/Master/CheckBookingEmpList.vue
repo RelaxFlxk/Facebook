@@ -182,7 +182,7 @@ export default {
           value: 'dueDate',
           sortable: true,
           align: 'left',
-          width: '140px'
+          width: '120px'
         },
         { text: 'ชื่อลูกค้า', value: 'cusName', sortable: true, align: 'left' },
         { text: 'ป้ายชื่อกำกับ', value: 'memberDataTagName', sortable: true, align: 'center' },
@@ -376,7 +376,6 @@ export default {
                   s.tagDataShow = []
                   console.log(error)
                 }
-
                 dataItems.push(s)
                 // console.log('this.countWaiting', this.countWaiting)
               } else {
@@ -493,7 +492,30 @@ export default {
                 s.dateReturn = d.dateReturn || ''
                 s.packageId = d.packageId || ''
                 s.tokenPackage = d.tokenPackage || ''
-                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                s.memberDataTagName = []
+
+                try {
+                  s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                  if (s.memberDataTag.length > 0) {
+                    s.tagDataShow = []
+                    let memberDataTag = s.memberDataTag
+                    for (let i = 0; i < memberDataTag.length; i++) {
+                      let d = memberDataTag[i]
+                      let x = {}
+                      let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                      if (checkTagItem.length > 0) {
+                        x.text = checkTagItem[0].text
+                        x.value = checkTagItem[0].value
+                        s.tagDataShow.push(x)
+                        s.memberDataTagName.push(x.text)
+                      }
+                    }
+                  }
+                  s.memberDataTagName = s.memberDataTagName.join(', ')
+                } catch (error) {
+                  s.tagDataShow = []
+                  console.log(error)
+                }
                 if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
                   s.chkConfirm = true
                   s.chkCancel = false
