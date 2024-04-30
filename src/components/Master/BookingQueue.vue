@@ -373,10 +373,12 @@
                   </v-card-text>
                   <v-card-text>
                     <v-row class="white--text">
-                      <v-col cols="10" v-if="items.memberDataTag.length > 0"  class="pt-0 pb-0">
-                          <v-chip v-for="(tag, index) in items.tagDataShow" :key="index" class="mr-2 mb-2">
-                            {{ tag.text }}
-                          </v-chip>
+                      <v-col cols="10" v-if="items.memberDataTag"  class="pt-0 pb-0">
+                          <div class="pa-0 ma-0" v-if="items.memberDataTag.length > 0">
+                            <v-chip v-for="(tag, index) in items.tagDataShow" :key="index" class="mr-2 mb-2">
+                              {{ tag.text }}
+                            </v-chip>
+                          </div>
                       </v-col>
                       <v-col v-if="items.cusName" cols="12" class="pt-0 pb-0">
                         คุณ {{ items.cusName }}
