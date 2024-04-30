@@ -1000,6 +1000,29 @@ export default {
       this.validate('SEARCH')
       setTimeout(() => this.searchBooking('unNoti'), 500)
     },
+    async getBookingData () {
+      this.bookingData = []
+      const dateSplit = this.today.split('-')
+      const year = String(dateSplit[0])
+      const month = String(dateSplit[1])
+      let url = ''
+      if (this.flowId === 'allFlow') {
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}`
+      } else {
+        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}&flowId=${this.flowId}`
+      }
+      // let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchName=${this.masBranchName.text}`
+      await axios
+        .get(url)
+        .then(async response => {
+          response.data.forEach((row) => {
+            if (typeof (this.bookingData[row.bookNo]) === 'undefined') {
+              this.bookingData[row.bookNo] = []
+            }
+            this.bookingData[row.bookNo].push(row)
+          })
+        })
+    },
     async searchBooking (checkNoti, item) {
       if (this.validSearch === true) {
         this.overlaySave = false
@@ -2280,7 +2303,14 @@ export default {
 
     async exportExcel () {
       const dataBooking = []
-      const data = [['BookNo', 'เลขคิว', 'บริการภาษาไทย', 'บริการภาษาอังกฤษ', 'วันที่นัดหมาย', 'สถานะ', 'ชื่อลูกค้า', 'เบอร์โทร', 'ชื่อ Line', 'รูป Line']]
+      // await this.getBookingData()
+      // console.log('', this.getBookingData)
+
+      // let databook = this.getBookingData()
+      // console.log('databook', databook)
+      // const dataExport2 = await this.getBookingData()
+      // console.log('dataExport2', dataExport2)
+      const data = [['เลขคิว', 'บริการภาษาไทย', 'บริการภาษาอังกฤษ', 'วันที่นัดหมาย', 'สถานะ', 'ชื่อลูกค้า', 'เบอร์โทร', 'ชื่อ Line', 'ประเภท', 'รายการบริการ']]
       for (let i = 0; i < this.itemBooking.length; i++) {
         dataBooking[i] = []
         let item = this.itemBooking[i]
@@ -2303,7 +2333,6 @@ export default {
           statusBt = 'ไม่มีสถานะ'
         }
         let rowData = [
-          '"' + item.bookNo ? item.bookNo : '-' + '"',
           '"' + item.storeFrontQueue ? item.storeFrontQueue : '-' + '"',
           '"' + item.flowName ? item.flowName : '-' + '"',
           '"' + item.flowNameEn ? item.flowNameEn : '-' + '"',
@@ -2311,8 +2340,7 @@ export default {
           '"' + statusBt + '"',
           '"' + item.bookingDataCustomerName ? item.bookingDataCustomerName : '-' + '"',
           '"' + item.bookingDataCustomerTel ? item.bookingDataCustomerTel : '-' + '"',
-          '"' + item.memberName && item.memberName !== null && item.memberName !== '' ? item.memberName : '-' + '"',
-          '"' + item.memberPicture ? item.memberPicture : '-' + '"'
+          '"' + item.memberName && item.memberName !== null && item.memberName !== '' ? item.memberName : '-' + '"'
         ]
         console.log(rowData)
         dataBooking[i].push(rowData.join(','))
@@ -2339,6 +2367,7 @@ export default {
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
       XLSX.writeFile(wb, 'BookingListQueue_' + formattedDate + '.xlsx')
     }
+
   }
 }
 </script>
