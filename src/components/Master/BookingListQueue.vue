@@ -949,6 +949,7 @@ export default {
           console.log('error function addData : ', error)
           return null
         })
+      console.log('BookingData', BookingData)
       this.HistoryData = BookingData || []
       this.pictureUrHistory = item.memberPicture
       // axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
@@ -999,29 +1000,6 @@ export default {
     checkSearch () {
       this.validate('SEARCH')
       setTimeout(() => this.searchBooking('unNoti'), 500)
-    },
-    async getBookingData () {
-      this.bookingData = []
-      const dateSplit = this.today.split('-')
-      const year = String(dateSplit[0])
-      const month = String(dateSplit[1])
-      let url = ''
-      if (this.flowId === 'allFlow') {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}`
-      } else {
-        url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchID=${this.masBranchName}&flowId=${this.flowId}`
-      }
-      // let url = `${this.DNS_IP}/BookingData/get?shopId=${this.$session.getAll().data.shopId}&dueDate=${year}-${month}&masBranchName=${this.masBranchName.text}`
-      await axios
-        .get(url)
-        .then(async response => {
-          response.data.forEach((row) => {
-            if (typeof (this.bookingData[row.bookNo]) === 'undefined') {
-              this.bookingData[row.bookNo] = []
-            }
-            this.bookingData[row.bookNo].push(row)
-          })
-        })
     },
     async searchBooking (checkNoti, item) {
       if (this.validSearch === true) {
@@ -2300,23 +2278,101 @@ export default {
         }
       }
     },
+    //   async exportExcel () {
+    //     const dataBooking = []
+    //     const BookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.shopId + '&masBranchID=' +
+    //           this.masBranchID + '&dueDate=' + this.dateStart)
+    //     console.log('BookingData', BookingData)
+    //     const customField = BookingData.data
+    //     const fieldNamesArray = Array.from(new Set(customField.map(item => item.fieldName)))
+    //     console.log('fieldNamesArray', fieldNamesArray)
+    //     const fielddDataArray = customField.map(item => item.fieldValue)
+
+    //     console.log('fielddDataArray', fielddDataArray)
+    //     const data = [['เลขคิว', 'บริการภาษาไทย', 'บริการภาษาอังกฤษ', 'วันที่นัดหมาย', 'สถานะ', 'ชื่อลูกค้า', 'เบอร์โทร', 'ชื่อ Line', ...fieldNamesArray]]
+    //     for (let i = 0; i < this.itemBooking.length; i++) {
+    //       dataBooking[i] = []
+    //       let item = this.itemBooking[i]
+
+    //       // let memberName = item.memberName ? item.memberName : '-'
+
+    //       let statusBt = item.statusBt
+    //       if (statusBt === 'confirm') {
+    //         statusBt = 'จองคิว'
+    //       }
+    //       if (statusBt === 'cancel') {
+    //         statusBt = 'ลบคิว'
+    //       }
+    //       if (statusBt === 'confirmJob') {
+    //         statusBt = 'เรียกคิวแล้ว'
+    //       }
+    //       if (statusBt === 'closeJob') {
+    //         statusBt = 'ปิดงาน'
+    //       } else {
+    //         statusBt = 'ไม่มีสถานะ'
+    //       }
+    //       let rowData = [
+    //         '"' + item.storeFrontQueue ? item.storeFrontQueue : '-' + '"',
+    //         '"' + item.flowName ? item.flowName : '-' + '"',
+    //         '"' + item.flowNameEn ? item.flowNameEn : '-' + '"',
+    //         '"' + item.dueDateText ? item.dueDateText : '-' + '"',
+    //         '"' + statusBt + '"',
+    //         '"' + item.bookingDataCustomerName ? item.bookingDataCustomerName : '-' + '"',
+    //         '"' + item.bookingDataCustomerTel ? item.bookingDataCustomerTel : '-' + '"',
+    //         '"' + item.memberName && item.memberName !== null && item.memberName !== '' ? item.memberName : '-' + '"'
+    //         // '"' +  ? item.bookingDataCustomerTel : '-' + '"',
+    //       ]
+    //       console.log('rowData', rowData)
+    //       dataBooking[i].push(rowData.join(','))
+    //       const groupedData = {}
+    //       customField.forEach(item => {
+    //         const keyname = item.bookNo
+    //         const fieldValue = item.fieldValue
+
+    //         if (keyname in groupedData) {
+    //           groupedData[keyname].push(fieldValue)
+    //         } else {
+    //           groupedData[keyname] = [fieldValue]
+    //         }
+    //       })
+    //       dataBooking[i].push(',' + '' + groupedData[item.bookNo])
+
+    //       let dataListA = dataBooking[i].join('')
+    //       let dataListArray = dataListA.replace(/"/g, '').split(',')
+    //       // console.log('dataListArray', dataListArray)
+    //       data.push(dataListArray)
+    //       console.log('groupedData', groupedData[item.bookNo])
+    //     }
+    //     console.log('dataEx', data)
+    //     console.log('itemnie', dataBooking)
+    //     // Populate data array with shop data
+
+    //     const ws = XLSX.utils.aoa_to_sheet(data)
+
+    //     const today = new Date()
+    //     const year = today.getFullYear()
+    //     const month = (today.getMonth() + 1).toString().padStart(2, '0') // +1 เพราะเดือนเริ่มที่ 0
+    //     const day = today.getDate().toString().padStart(2, '0')
+    //     const hours = today.getHours().toString().padStart(2, '0')
+    //     const minutes = today.getMinutes().toString().padStart(2, '0')
+
+    //     const formattedDate = `${day}-${month}-${year}-${hours}-${minutes}`
+    //     const wb = XLSX.utils.book_new()
+    //     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+    //     XLSX.writeFile(wb, 'BookingListQueue_' + formattedDate + '.xlsx')
+    //   }
+    // }
 
     async exportExcel () {
       const dataBooking = []
-      // await this.getBookingData()
-      // console.log('', this.getBookingData)
-
-      // let databook = this.getBookingData()
-      // console.log('databook', databook)
-      // const dataExport2 = await this.getBookingData()
-      // console.log('dataExport2', dataExport2)
-      const data = [['เลขคิว', 'บริการภาษาไทย', 'บริการภาษาอังกฤษ', 'วันที่นัดหมาย', 'สถานะ', 'ชื่อลูกค้า', 'เบอร์โทร', 'ชื่อ Line', 'ประเภท', 'รายการบริการ']]
+      const BookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.shopId + '&masBranchID=' +
+          this.masBranchID + '&dueDate=' + this.dateStart)
+      console.log('BookingData', BookingData)
+      const customField = BookingData.data
+      let dataExport = []
       for (let i = 0; i < this.itemBooking.length; i++) {
         dataBooking[i] = []
         let item = this.itemBooking[i]
-
-        // let memberName = item.memberName ? item.memberName : '-'
-
         let statusBt = item.statusBt
         if (statusBt === 'confirm') {
           statusBt = 'จองคิว'
@@ -2332,28 +2388,32 @@ export default {
         } else {
           statusBt = 'ไม่มีสถานะ'
         }
-        let rowData = [
-          '"' + item.storeFrontQueue ? item.storeFrontQueue : '-' + '"',
-          '"' + item.flowName ? item.flowName : '-' + '"',
-          '"' + item.flowNameEn ? item.flowNameEn : '-' + '"',
-          '"' + item.dueDateText ? item.dueDateText : '-' + '"',
-          '"' + statusBt + '"',
-          '"' + item.bookingDataCustomerName ? item.bookingDataCustomerName : '-' + '"',
-          '"' + item.bookingDataCustomerTel ? item.bookingDataCustomerTel : '-' + '"',
-          '"' + item.memberName && item.memberName !== null && item.memberName !== '' ? item.memberName : '-' + '"'
-        ]
-        console.log(rowData)
-        dataBooking[i].push(rowData.join(','))
+        let obj = {
+          เลขคิว: item.storeFrontQueue || '-',
+          บริการภาษาไทย: item.flowName || '-',
+          บริการภาษาอังกฤษ: item.flowNameEn || '-',
+          วันที่นัดหมาย: item.dueDateText || '-',
+          สถานะ: statusBt || '-',
+          ชื่อลูกค้า: item.bookingDataCustomerName || '-',
+          เบอร์โทร: item.bookingDataCustomerTel || '-',
+          ชื่อLine: item.memberName || '-'
+        }
+        for (let a = 0; a < customField.length; a++) {
+          const dt = customField[a]
 
-        let dataListA = dataBooking[i].join('')
-        let dataListArray = dataListA.replace(/"/g, '').split(',')
-        // console.log('dataListArray', dataListArray)
-        data.push(dataListArray)
+          if (dt.bookNo === item.bookNo) {
+            if (dt.fieldValue !== null || '') {
+              obj[dt.fieldName] = dt.fieldValue || '-'
+            }
+
+            console.log('dt.bookNo', dt.fieldValue)
+          }
+        }
+        dataExport.push(obj)
       }
-      console.log('itemnie', dataBooking)
       // Populate data array with shop data
 
-      const ws = XLSX.utils.aoa_to_sheet(data)
+      const ws = XLSX.utils.json_to_sheet(dataExport)
 
       const today = new Date()
       const year = today.getFullYear()
@@ -2367,7 +2427,6 @@ export default {
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
       XLSX.writeFile(wb, 'BookingListQueue_' + formattedDate + '.xlsx')
     }
-
   }
 }
 </script>
