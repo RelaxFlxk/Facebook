@@ -2995,6 +2995,7 @@ export default {
         { text: '10 นาที', value: '10' },
         { text: 'ครึ่งชั่วโมง', value: '30' },
         { text: '1 ชั่วโมง', value: '60' },
+        { text: '3 ชั่วโมง', value: '180' },
         { text: '6 ชั่วโมง', value: '360' },
         { text: '1 วัน', value: '1440' }
       ],

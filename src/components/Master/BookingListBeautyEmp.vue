@@ -3100,7 +3100,7 @@
                             ไม่มีป้ายกำกับ
                           </div>
                       </v-row>
-                      <v-row  style="display: flex;justify-content: center;padding-top: 0px;" align= "center" v-if="item.memberDataTag.length > 0 ">
+                      <v-row  style="display: flex;justify-content: center;padding-top: 0px;" align="center" v-if="item.memberDataTag.length > 0 ">
                           <div v-if="item.tagDataShow.length === 1" style="font-weight: 600;font-size: 16px;color: #2BC155;">
                             {{item.tagDataShow[0].text}}
                           </div>
