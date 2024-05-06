@@ -983,7 +983,7 @@
                             outlined
                             dense
                             required
-                            @change="priceMenuAdd = 0,drawerAdd = false,getDataCalendaBookingAdd(),SetallowedDates(),setFlowAdd(), checkTime(), date = ''"
+                            @change="priceMenuAdd = 0,drawerAdd = false, checkTime(),getDataCalendaBookingAdd(),SetallowedDates(),setFlowAdd(), date = ''"
                             :rules="[rules.required]"
                           ></v-select>
                           <template v-if="fieldNameItem">
