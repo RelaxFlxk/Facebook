@@ -13728,7 +13728,6 @@ export default {
                 urlApi
               )
               .then(async response => {
-                console.log('getData', response.data)
                 if (response.data.length > 0) {
                   for (let i = 0; i < response.data.length; i++) {
                     let d = response.data[i]
@@ -13806,6 +13805,7 @@ export default {
                     dataItems.push(s)
                   }
                 }
+                console.log('dataItemsTimesChange', dataItems)
                 if (dataItems.length === 0 || dataItems.status === false) {
                   this.dataItemCheck = []
                   // this.dataItemTime = []
