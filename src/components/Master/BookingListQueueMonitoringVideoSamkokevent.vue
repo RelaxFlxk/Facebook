@@ -49,10 +49,8 @@
                 <v-icon>mdi-volume-off</v-icon>
                 </v-btn>
             </div>
-            <div class="col d-flex justify-content-center"><span class="text-footer">POWER BY BETASK CONSULTING
-                </span></div>
-            <div class="col py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span>
-            </div>
+            <div class="col d-flex justify-content-center"><span class="text-footer">POWER BY BETASK CONSULTING</span></div>
+            <div class="col py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDate }}</span><span class="ml-4 text-datetime">{{ formattedTime }}</span></div>
         </v-footer>
     </div>
 </template>
@@ -76,8 +74,11 @@ export default {
     videoElement () {
       return this.$refs.video
     },
-    formattedDateTime () {
+    formattedTime () {
       return this.currentTime
+    },
+    formattedDate () {
+      return this.currentDate
     },
     wifiIcon () {
       switch (this.wifiStatus) {
@@ -214,7 +215,8 @@ export default {
       objInterval: null,
       text2: '',
       tableId: 0,
-      currentTime: moment().format('DD MMM YYYY HH:mm a'),
+      currentDate: moment().format('DD MMM YYYY'),
+      currentTime: moment().format('HH:mm'),
       isPortrait: true,
       wifiStatus: 'unknown',
       checkRef: false,
@@ -256,7 +258,9 @@ export default {
     },
     startDateTimeInterval () {
       this.interval = setInterval(() => {
-        this.currentTime = moment().format('DD MMM YYYY HH:mm a')
+        // this.currentTime = moment().format('DD MMM YYYY HH:mm a')
+        this.currentDate = moment().format('DD MMM YYYY')
+        this.currentTime = moment().format('HH:mm a')
       }, 1000)
     },
     async getFirestore () {
