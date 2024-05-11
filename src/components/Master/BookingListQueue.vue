@@ -293,7 +293,7 @@
               </v-btn>
             </template>
             <template v-slot:[`item.action`]="{ item }">
-              <v-row class="text-center">
+              <v-row class="text-center" v-if="item.statusBt !== 'closeJob' && item.statusBt !== 'cancel'">
                 <v-col cols="3" class="pb-0">
                   <v-btn
                     color="#24C74D"
@@ -347,6 +347,34 @@
                   </v-btn>
                 </v-col>
               </v-row>
+              <v-row class="text-center" v-if="item.statusBt === 'closeJob'">
+                <v-col cols="12" class="text-center">
+                  <v-chip
+                    class="ma-2"
+                    color="primary"
+                    text-color="white"
+                  >
+                    ปิดงานแล้ว
+                    <v-icon right>
+                      mdi-checkbox-marked-circle
+                    </v-icon>
+                  </v-chip>
+                </v-col>
+              </v-row>
+              <v-row class="text-center" v-if="item.statusBt === 'cancel'">
+                <v-col cols="12" class="text-center">
+                  <v-chip
+                    class="ma-2"
+                    color="error"
+                    text-color="white"
+                  >
+                    ยกเลิกคิวแล้ว
+                    <v-icon right>
+                      mdi-delete
+                    </v-icon>
+                  </v-chip>
+                </v-col>
+              </v-row>
             </template>
             <template v-slot:[`item.storeFrontQueue`]="{ item }">
               <v-row>
@@ -395,7 +423,6 @@
                             <strong v-if="item.value !== 'allFlow'" :class="modelslide === item.value ? 'text-white': ''">{{item.text}}</strong>
                             <strong v-else :class="modelslide === item.value ? 'text-white': ''">{{item.text}}</strong>
                           </template>
-                          <!-- <strong :class="active ? 'text-white': ''">{{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong> -->
                         </div>
                       </v-card-text>
                   </v-card>
@@ -414,42 +441,14 @@
                             <strong v-if="item.value !== 'allFlow'" >{{item.text}}</strong>
                             <strong v-if="item.value === 'allFlow'">{{item.text}}</strong>
                           </template>
-                          <!-- <strong :class="active ? 'text-white': ''">{{itemBookingCount.filter(el => { return el.flowId === item.value  })[0].countFlow}}</strong> -->
                         </div>
                       </v-card-text>
                   </v-card>
                 </v-slide-item>
               </v-slide-group>
-              <!-- <v-col col="4" v-for="(item3 , index3) in DataFlowItem.filter(el => { return el.value !== 'allFlow' })" :key="index3" style="justify-content: center;">
-                <template v-if="itemBookingCount.filter(el => { return el.flowId === item3.value  }).length > 0">
-                <v-card
-                  elevation="1"
-                  :color="(item3.text === search) ? '#C9F2DC' : 'white'"
-                  style="padding: 10px; width: 50px;"
-                  @click="searchFlow(item3)"
-                >
-                  <div class="text-center">
-                    <div>{{itemBookingCount.filter(el => { return el.flowId === item3.value  })[0].countFlow}}</div>
-                  </div>
-                </v-card>
-                <strong>{{item3.text}}</strong>
-              </template>
-              <template v-else>
-                <v-card
-                  elevation="1"
-                  color="white"
-                  style="padding: 10px; width: 50px;"
-                >
-                  <div class="text-center">
-                    <div>0</div>
-                  </div>
-                </v-card>
-                <strong>{{item3.text}}</strong>
-              </template>
-              </v-col> -->
             </v-row>
           </v-col>
-          <v-col cols="12"  v-for="(item, id) in itemBooking.filter(el => el.statusBt !== 'closeJob')" :key="id">
+          <v-col cols="12"  v-for="(item, id) in itemBooking.filter(el => el.statusBt !== 'closeJob' && el.statusBt !== 'cancel')" :key="id">
             <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
               <div mb-n5>
                 <!-- <h6 style="color:#092C4C" class="text-left font-weight-bold ml-10">{{ item.flowName }}</h6> -->
@@ -473,6 +472,7 @@
                     <p style="color:#092C4C;font-size: 48px;" class="text-left font-weight-black mt-n1 mb-n5 pa-7 pt-0" v-if="item.userId === 'user-skip' || item.userId === '' || item.userId === null || item.userId === 'data import'">{{item.storeFrontQueue}}</p>
                     <p @click.stop="openHistory(item)" style="color:#092C4C;font-size: 48px;" class="text-left font-weight-black mt-n1 mb-n5 pa-7 pt-0" v-else>{{ item.storeFrontQueue }}</p>
                     <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium mt-n10 ml-7">{{item.cusName}}</p>
+                    <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium ml-7" v-if="checkShowCount">จำนวน : {{item.countCus}}</p>
                     <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium mt-n3 ml-7">{{ languageSelect === 0 ? item.servicePoint : JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint}).length > 0 ? JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint})[0].textEn:item.servicePoint}}</p>
                   </v-col>
                   <v-col cols="4" class="pt-0">
@@ -803,7 +803,8 @@ export default {
       pictureUrHistory: '',
       dialogHistory: false,
       itemBookingCount: [],
-      setTimerCalendar: null
+      setTimerCalendar: null,
+      checkShowCount: false
     }
   },
   computed: {
@@ -818,7 +819,10 @@ export default {
     }
   },
   async mounted () {
-    if (this.$session.getAll().data.shopId === 'U9d5a7b1e4399d8b0c8eb30d7210a0ef2') {
+    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
+    this.dateStart = this.momenDate_1(new Date())
+    await this.getCustomFieldStart()
+    if (this.checkShowCount) {
       this.headers = [
         { text: 'คิว', value: 'storeFrontQueue' },
         // { text: 'วันที่นัดหมาย', value: 'dueDate' },
@@ -840,8 +844,6 @@ export default {
         { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
       ]
     }
-    this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
-    this.dateStart = this.momenDate_1(new Date())
     await this.getDataBranch()
     await this.getDataFlow()
     await this.searchBooking('unNoti')
@@ -855,6 +857,27 @@ export default {
     this.getShop()
   },
   methods: {
+    async getCustomFieldStart () {
+      this.checkShowCount = false
+      await axios
+        .get(this.DNS_IP + '/customField/get?shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              if (d.fieldName === 'จำนวนคน' || d.fieldName === 'จำนวนที่นั่ง' || d.fieldName === 'จำนวนลูกค้า' || d.fieldName === 'จำนวนกี่ท่าน') {
+                this.checkShowCount = true
+                break
+              }
+            }
+          }
+          console.log('this.checkShowCount', this.checkShowCount)
+        }).catch(async err => {
+          // this.$router.push({ name: '404' })
+          console.log('getCustomFieldStart', err)
+        })
+    },
     async removeQueue (item) {
       console.log('removeQueue', item)
       this.closeSetTimeBookingListQueue()
@@ -1006,7 +1029,9 @@ export default {
         this.overlaySave = false
         this.itemBookingUse = []
         this.itemBookingCount = []
-        // await this.getBookingDataList(this.dateStart)
+        if (this.checkShowCount) {
+          await this.getBookingDataList(this.dateStart)
+        }
         let urlApi = {}
         if (this.flowSelect === 'allFlow') {
           urlApi = this.DNS_IP +
@@ -1017,7 +1042,7 @@ export default {
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
-            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob and closeJob'
+            this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob and closeJob and cancel'
         // '&dueDate=' +
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
         } else {
@@ -1043,15 +1068,10 @@ export default {
               })
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
-                // if (this.BookingDataList[d.bookNo] !== undefined) {
-                //   d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-                //   d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
-                //   d.cusPhone = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'เบอร์โทร')
-                //   d.cusPhone = (d.cusPhone.length > 0) ? d.cusPhone[0].fieldValue : ''
-                //   d.countCus = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'จำนวนที่นั่ง')
-                //   d.countCus = (d.countCus.length > 0) ? d.countCus[0].fieldValue : ''
-                //   this.itemBookingUse.push(d)
-                // }
+                if (this.checkShowCount) {
+                  d.countCus = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'จำนวนที่นั่ง', 'จำนวนคน')
+                  d.countCus = (d.countCus.length > 0) ? d.countCus[0].fieldValue : ''
+                }
                 d.cusName = d.bookingDataCustomerName || ''
                 // s.cusReg = d.bookingDataCustomerRegisNumber || ''
                 d.cusPhone = d.bookingDataCustomerTel || ''
@@ -1093,10 +1113,10 @@ export default {
         this.overlaySave = true
       }
     },
-    getDataFromFieldName (data, key) {
+    getDataFromFieldName (data, key, key2) {
       if (data !== undefined) {
         return data.filter(function (el) {
-          return el.fieldName === key
+          return el.fieldName === key || el.fieldName === key2
         })
       } else {
         return []
@@ -2278,91 +2298,6 @@ export default {
         }
       }
     },
-    //   async exportExcel () {
-    //     const dataBooking = []
-    //     const BookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.shopId + '&masBranchID=' +
-    //           this.masBranchID + '&dueDate=' + this.dateStart)
-    //     console.log('BookingData', BookingData)
-    //     const customField = BookingData.data
-    //     const fieldNamesArray = Array.from(new Set(customField.map(item => item.fieldName)))
-    //     console.log('fieldNamesArray', fieldNamesArray)
-    //     const fielddDataArray = customField.map(item => item.fieldValue)
-
-    //     console.log('fielddDataArray', fielddDataArray)
-    //     const data = [['เลขคิว', 'บริการภาษาไทย', 'บริการภาษาอังกฤษ', 'วันที่นัดหมาย', 'สถานะ', 'ชื่อลูกค้า', 'เบอร์โทร', 'ชื่อ Line', ...fieldNamesArray]]
-    //     for (let i = 0; i < this.itemBooking.length; i++) {
-    //       dataBooking[i] = []
-    //       let item = this.itemBooking[i]
-
-    //       // let memberName = item.memberName ? item.memberName : '-'
-
-    //       let statusBt = item.statusBt
-    //       if (statusBt === 'confirm') {
-    //         statusBt = 'จองคิว'
-    //       }
-    //       if (statusBt === 'cancel') {
-    //         statusBt = 'ลบคิว'
-    //       }
-    //       if (statusBt === 'confirmJob') {
-    //         statusBt = 'เรียกคิวแล้ว'
-    //       }
-    //       if (statusBt === 'closeJob') {
-    //         statusBt = 'ปิดงาน'
-    //       } else {
-    //         statusBt = 'ไม่มีสถานะ'
-    //       }
-    //       let rowData = [
-    //         '"' + item.storeFrontQueue ? item.storeFrontQueue : '-' + '"',
-    //         '"' + item.flowName ? item.flowName : '-' + '"',
-    //         '"' + item.flowNameEn ? item.flowNameEn : '-' + '"',
-    //         '"' + item.dueDateText ? item.dueDateText : '-' + '"',
-    //         '"' + statusBt + '"',
-    //         '"' + item.bookingDataCustomerName ? item.bookingDataCustomerName : '-' + '"',
-    //         '"' + item.bookingDataCustomerTel ? item.bookingDataCustomerTel : '-' + '"',
-    //         '"' + item.memberName && item.memberName !== null && item.memberName !== '' ? item.memberName : '-' + '"'
-    //         // '"' +  ? item.bookingDataCustomerTel : '-' + '"',
-    //       ]
-    //       console.log('rowData', rowData)
-    //       dataBooking[i].push(rowData.join(','))
-    //       const groupedData = {}
-    //       customField.forEach(item => {
-    //         const keyname = item.bookNo
-    //         const fieldValue = item.fieldValue
-
-    //         if (keyname in groupedData) {
-    //           groupedData[keyname].push(fieldValue)
-    //         } else {
-    //           groupedData[keyname] = [fieldValue]
-    //         }
-    //       })
-    //       dataBooking[i].push(',' + '' + groupedData[item.bookNo])
-
-    //       let dataListA = dataBooking[i].join('')
-    //       let dataListArray = dataListA.replace(/"/g, '').split(',')
-    //       // console.log('dataListArray', dataListArray)
-    //       data.push(dataListArray)
-    //       console.log('groupedData', groupedData[item.bookNo])
-    //     }
-    //     console.log('dataEx', data)
-    //     console.log('itemnie', dataBooking)
-    //     // Populate data array with shop data
-
-    //     const ws = XLSX.utils.aoa_to_sheet(data)
-
-    //     const today = new Date()
-    //     const year = today.getFullYear()
-    //     const month = (today.getMonth() + 1).toString().padStart(2, '0') // +1 เพราะเดือนเริ่มที่ 0
-    //     const day = today.getDate().toString().padStart(2, '0')
-    //     const hours = today.getHours().toString().padStart(2, '0')
-    //     const minutes = today.getMinutes().toString().padStart(2, '0')
-
-    //     const formattedDate = `${day}-${month}-${year}-${hours}-${minutes}`
-    //     const wb = XLSX.utils.book_new()
-    //     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
-    //     XLSX.writeFile(wb, 'BookingListQueue_' + formattedDate + '.xlsx')
-    //   }
-    // }
-
     async exportExcel () {
       const dataBooking = []
       const BookingData = await axios.get(this.DNS_IP + '/BookingData/get?shopId=' + this.shopId + '&masBranchID=' +
@@ -2373,21 +2308,19 @@ export default {
       for (let i = 0; i < this.itemBooking.length; i++) {
         dataBooking[i] = []
         let item = this.itemBooking[i]
-        let statusBt = item.statusBt
-        if (statusBt === 'confirm') {
+        let statusBt = ''
+        if (item.statusBt === 'confirm') {
           statusBt = 'จองคิว'
-        }
-        if (statusBt === 'cancel') {
+        } else if (item.statusBt === 'cancel') {
           statusBt = 'ลบคิว'
-        }
-        if (statusBt === 'confirmJob') {
+        } else if (item.statusBt === 'confirmJob') {
           statusBt = 'เรียกคิวแล้ว'
-        }
-        if (statusBt === 'closeJob') {
+        } else if (item.statusBt === 'closeJob') {
           statusBt = 'ปิดงาน'
         } else {
           statusBt = 'ไม่มีสถานะ'
         }
+        console.log('statusBt', statusBt)
         let obj = {
           เลขคิว: item.storeFrontQueue || '-',
           บริการภาษาไทย: item.flowName || '-',
