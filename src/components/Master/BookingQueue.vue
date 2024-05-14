@@ -368,6 +368,8 @@
                       </v-icon>
                       <span class="white--text mr-2" style="z-index:1;">{{
                         items.timeDuetext
+                        }}{{
+                        items.dueDateEnd
                         }}</span>
                     </v-row>
                   </v-card-text>
@@ -508,7 +510,9 @@ export default {
       dataCount: []
     }
   },
-  async mounted () { },
+  async mounted () {
+    console.log('dataItemTimesChangeParent--', this.dataItemTimesChangeParent)
+  },
   methods: {
     getTimesChange () {
       this.$emit('updateTimeTable', this.timeTable)

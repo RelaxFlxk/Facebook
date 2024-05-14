@@ -98,14 +98,13 @@ export default {
     BookingUseOhrich
   },
   computed: {
-    videoElement () {
-      return this.$refs.video
-    },
+    // videoElement () {
+    //   return this.$refs.video
+    // },
     formattedDateTime () {
       return this.currentTime
     },
     wifiIcon () {
-      console.log('wifiStatus', this.wifiStatus)
       switch (this.wifiStatus) {
         case 'connected':
           return 'mdi-wifi'
@@ -120,9 +119,11 @@ export default {
     this.checkWiFiStatus()
     window.addEventListener('online', () => { this.wifiStatus = 'connected' })
     window.addEventListener('offline', () => { this.wifiStatus = 'disconnected' })
+    this.getFirestore()
   },
   data () {
     return {
+      unsubscribe: null,
       orientation: '',
       statusSound: true,
       dateStartShow: '',
@@ -1008,6 +1009,10 @@ export default {
   beforeDestroy () {
     this.$root.$off('dataReturn')
     clearInterval(this.interval)
+    clearInterval(this.intervalSound)
+    if (this.unsubscribe) {
+      this.unsubscribe()
+    }
   },
   methods: {
     checkOrientation () {
@@ -1019,7 +1024,9 @@ export default {
       document.querySelector('body').requestFullscreen()
     },
     async fetchInitialData () {
-      await Promise.all([this.getShop(), this.getBooking(), this.getFirestore()])
+      // await Promise.all([this.getShop(), this.getBooking(), this.getFirestore()])
+      await this.getShop()
+      await this.getBooking()
       this.startDateTimeInterval()
     },
     startDateTimeInterval () {
@@ -1062,27 +1069,24 @@ export default {
     },
     async getFirestore () {
       try {
+        if (this.unsubscribe) {
+          this.unsubscribe()
+        }
         this.firestore = this.$firebase.firestore()
         const FieldPath = this.$firebase.firestore.FieldPath
-        this.firestore.collection('ProcessOhrichUpdate')
+        this.unsubscribe = this.firestore.collection('ProcessOhrichUpdate')
           .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
           .onSnapshot((snapshot) => {
+            console.log('getFirestore')
             if (snapshot.empty) {
               this.updateProcessOhrichUpdate()
             } else {
               snapshot.docChanges().forEach(async (change) => {
                 if (change.doc.data().masBranchID === this.$session.getAll().data.masBranchID && change.doc.id === this.$session.getAll().data.userName) {
-                  if (this.checkRef === false) {
-                    this.checkRef = true
+                  if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
                     await this.getBooking()
                     await this.updateNotifyByShopId()
                     this.updateProcessOhrichUpdate()
-                  } else {
-                    if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
-                      await this.getBooking()
-                      await this.updateNotifyByShopId()
-                      this.updateProcessOhrichUpdate()
-                    }
                   }
                 }
               })
@@ -1222,7 +1226,7 @@ export default {
           playerTV.onended = playNext
           playNext()
         } else {
-          setTimeout(() => {
+          this.intervalSound = setTimeout(() => {
             this.playSoundBooking(audioUrl, servicePoint, storeFrontQueue)
           }, 2000)
         }
@@ -1316,7 +1320,6 @@ export default {
       }
     },
     checkWiFiStatus () {
-      console.log('navigator.onLine', navigator.onLine)
       this.wifiStatus = navigator.onLine ? 'connected' : 'disconnected'
     }
   }

@@ -395,6 +395,11 @@ export default {
             'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/stampFirstStep?shopId=' + this.shopId,
             'title': 'ลูกค้าตรวจสอบและเข้ารับบริการ',
             'type': 'customer'
+          },
+          {
+            'text': 'https://belinked-redirect-url-facebook.web.app/?liffId=' + this.dataLineConfig.liffBookingFormEmpID + '&shopId=' + this.shopId + '&source=facebook',
+            'title': 'ลิ้งค์สำหรับนัดหมายผ่าน Facebook หรือ Messenger',
+            'type': 'customer'
           }
         ]
         this.linkItem = itemLink
@@ -435,6 +440,11 @@ export default {
           {
             'text': 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/stampFirstStep?shopId=' + this.shopId,
             'title': 'ลูกค้าตรวจสอบและเข้ารับบริการ',
+            'type': 'customer'
+          },
+          {
+            'text': 'https://belinked-redirect-url-facebook.web.app/?liffId=' + this.dataLineConfig.liffBookingFormID + '&shopId=' + this.shopId + '&source=facebook',
+            'title': 'ลิ้งค์สำหรับนัดหมายผ่าน Facebook หรือ Messenger',
             'type': 'customer'
           }
         ]
