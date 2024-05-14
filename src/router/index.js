@@ -188,6 +188,11 @@ export default new Router({
     component: Master.BookingListQueueMonitoringVideoSamkokevent
   },
   {
+    path: '/Master/BookingListQueueByUserEventSamkok',
+    name: 'BookingListQueueByUserEventSamkok',
+    component: Master.BookingListQueueByUserEventSamkok
+  },
+  {
     path: '/Master/BookingListQueueMonitoringVideoOhrichV1',
     name: 'BookingListQueueMonitoringVideoOhrichV1',
     component: Master.BookingListQueueMonitoringVideoOhrichV1

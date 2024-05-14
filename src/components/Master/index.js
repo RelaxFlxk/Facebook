@@ -54,6 +54,7 @@ import BookingListQueueTestPlaySound from './BookingListQueueTestPlaySound.vue'
 import BookingListQueueByUserEventCat from './BookingListQueueByUserEventCat'
 import BookingListQueueMonitoringVideoEventCat from './BookingListQueueMonitoringVideoEventCat'
 import BookingListQueueMonitoringVideoSamkokevent from './BookingListQueueMonitoringVideoSamkokevent.vue'
+import BookingListQueueByUserEventSamkok from './BookingListQueueByUserEventSamkok.vue'
 // import BookingListBeautyEmpTestRedis from './BookingListBeautyEmpTestRedis.vue'
 
 export default {
@@ -113,5 +114,6 @@ export default {
   BookingListQueueTestPlaySound,
   BookingListQueueByUserEventCat,
   BookingListQueueMonitoringVideoEventCat,
-  BookingListQueueMonitoringVideoSamkokevent
+  BookingListQueueMonitoringVideoSamkokevent,
+  BookingListQueueByUserEventSamkok
 }
