@@ -21,7 +21,7 @@
                                         ช่องบริการ
                                     </v-card-title>
                                 </div>
-                                <v-card class="d-flex text-center mb-3" color="#ffffff"
+                                <v-card class="d-flex text-center mb-3" color="#ffffff" style="height: 96px;"
                                 v-for="(item, index) in group" :key="index">
                                     <div class="col-6 subtext">
                                         {{ item.queue }}
@@ -168,40 +168,40 @@ export default {
           serviceNo: ''
         },
         {
-          queue: 'B004',
-          serviceNo: 9
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A008',
-          serviceNo: 10
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'B005',
-          serviceNo: 16
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A009',
-          serviceNo: 11
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A010',
-          serviceNo: 12
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A011',
-          serviceNo: 13
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'B005',
-          serviceNo: 14
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A012',
-          serviceNo: 15
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'B012',
-          serviceNo: 20
+          queue: '',
+          serviceNo: ''
         }
       ],
       orientation: '',
@@ -552,8 +552,12 @@ export default {
           .then(async response => {
             if (response.data) {
               const data = response.data
+              console.log('data sen', data)
               if (data.status) {
                 arrDataService = data.dataService
+                console.log('arrDataService', arrDataService)
+                const dataq = arrDataService.map(itemq => { return itemq.storeFrontQueue || itemq.servicePoint })
+                console.log('dataq', dataq)
                 // storeFrontQueue หมายเลขคิว ,  servicePoint ช่องบริการ
                 // use dataMockQ
                 dataMock = this.dataMockQ
