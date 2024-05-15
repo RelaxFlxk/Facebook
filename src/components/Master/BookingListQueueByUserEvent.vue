@@ -87,9 +87,9 @@
       </v-card>
     </div>
     </div>
-    <v-footer fixed padless color="rgb(148 213 11)" class="text-center mt-n16"
+    <v-footer fixed padless color="#eeeeee" class="text-center mt-n16"
      style="justify-content: center;">
-      <p class="text-white" width="100%">POWERED BY BETASK CONSULTING</p>
+      <p class="text-black" width="100%">POWERED BY BETASK CONSULTING</p>
     </v-footer>
   </v-main>
 </template>
@@ -177,7 +177,7 @@ export default {
       try {
         let empId = parseInt(this.$session.getAll().data.empId) || null
         await axios
-          .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=${this.$session.getAll().data.flowId}&storeFrontQueueEmpId=${empId}`)
+          .get(`${this.DNS_IP}/booking_view/getEventQueue?masBranchID=${this.masBranchID}&flowId=${this.$session.getAll().data.flowId}&storeFrontQueueEmpId=${empId}&shopId=${this.$session.getAll().data.shopId}`)
           .then(async response => {
             if (response && response.data) {
               let data = response.data
@@ -206,7 +206,7 @@ export default {
         if (this.flowSelectCheck && this.flowSelectCheck.length > 0) {
           let empId = parseInt(this.$session.getAll().data.empId) || null
           await axios
-            .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=[${flowId}]&storeFrontQueueEmpId=${empId}`)
+            .get(`${this.DNS_IP}/booking_view/getEventQueue?masBranchID=${this.masBranchID}&flowId=[${flowId}]&storeFrontQueueEmpId=${empId}&shopId=${this.$session.getAll().data.shopId}`)
             .then(async response => {
               if (response && response.data) {
                 let data = response.data
@@ -281,7 +281,7 @@ export default {
           }
         })
         await axios
-          .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=[${flowId}]&storeFrontQueueEmpId=${this.$session.getAll().data.empId}`)
+          .get(`${this.DNS_IP}/booking_view/getEventQueue?masBranchID=${this.masBranchID}&flowId=[${flowId}]&storeFrontQueueEmpId=${this.$session.getAll().data.empId}&shopId=${this.$session.getAll().data.shopId}`)
           .then(async response => {
             if (response && response.data) {
               let data = response.data
@@ -351,7 +351,7 @@ export default {
     async getFirestore () {
       this.firestore = this.$firebase.firestore()
       const FieldPath = this.$firebase.firestore.FieldPath
-      this.firestore.collection('ProcessOhrichUpdate')
+      this.firestore.collection('EventProcess')
         .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
         .onSnapshot((snapshot) => {
           if (snapshot.empty) {
@@ -359,7 +359,7 @@ export default {
           } else {
             snapshot.docChanges().forEach(async (change) => {
               console.log('getFirestore')
-              if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
+              if (change.doc.data().active === '1') {
                 await this.getBooking()
                 this.updateProcessOhrichUpdate()
               }
@@ -372,14 +372,14 @@ export default {
         userName: this.$session.getAll().data.userName,
         masBranchID: this.$session.getAll().data.masBranchID
       }
-      axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
+      axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Event-ProcessUseNew', params)
     },
     async resetFirebaseUse () {
       let params = {
         userName: this.$session.getAll().data.userName,
         masBranchID: this.$session.getAll().data.masBranchID
       }
-      await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichNew', params)
+      await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Event-ProcessNew', params)
     },
     async removeQueue () {
       if (this.callQueue.status === 'confirmJob' || this.callQueue.status === 'confirm') {
@@ -671,7 +671,7 @@ export default {
 .main {
   overflow-x: hidden;
   height:100vh;
-  background-color: rgb(148 213 11)
+  background-color: #eeeeee
 }
 .main-card {
   border-radius: 20px !important;

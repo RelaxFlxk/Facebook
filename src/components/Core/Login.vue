@@ -651,7 +651,7 @@ export default {
           } else if (dataitem.shopId === 'Ue26280cb7c25119d75055cd07391b5e8') {
             this.$router.push('/Master/BookingListQueueByUserEventCat')
           } else if (dataitem.shopId === 'U512ca78be8cd402fd96f57d5f6aca6f3') {
-            this.$router.push('/Master/BookingListQueueByUserEventSamkok')
+            this.$router.push('/Master/BookingListQueueByUserEvent')
           } else {
             this.$router.push('/Master/BookingListQueueByUser')
           }

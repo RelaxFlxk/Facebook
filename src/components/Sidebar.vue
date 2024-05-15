@@ -1141,7 +1141,7 @@ export default {
                 { title: 'จัดการเวลานัดหมาย', icon: 'mdi-table-edit', to: '/Master/BookingWalkin', type: 'booking' },
                 { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' },
                 { title: 'แสดงผลคิวหน้าร้าน', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoring', type: 'booking' },
-                { title: 'แสดงผลคิวหน้าร้าน วิดีโอ', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoringVideoSamkokevent', type: 'booking' }
+                { title: 'แสดงผลคิวหน้าร้าน วิดีโอ', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoringVideoEvent', type: 'booking' }
               ]
             } else {
               this.booking = [
@@ -1337,10 +1337,17 @@ export default {
       }
     },
     storeFrontChk () {
-      this.booking = [
-        { title: 'รายการจัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' },
-        { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueueByUser', type: 'booking' }
-      ]
+      if (this.session.data.shopId === 'U512ca78be8cd402fd96f57d5f6aca6f3') {
+        this.booking = [
+          { title: 'รายการจัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' },
+          { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueueByUserEvent', type: 'booking' }
+        ]
+      } else {
+        this.booking = [
+          { title: 'รายการจัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' },
+          { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueueByUser', type: 'booking' }
+        ]
+      }
     },
     bookingChk () {
       if (this.$session.getAll().data.timeSlotStatus === 'True') {

@@ -183,14 +183,14 @@ export default new Router({
     component: Master.BookingListQueueMonitoringVideoEventCat
   },
   {
-    path: '/Master/BookingListQueueMonitoringVideoSamkokevent',
-    name: 'BookingListQueueMonitoringVideoSamkokevent',
-    component: Master.BookingListQueueMonitoringVideoSamkokevent
+    path: '/Master/BookingListQueueMonitoringVideoEvent',
+    name: 'BookingListQueueMonitoringVideoEvent',
+    component: Master.BookingListQueueMonitoringVideoEvent
   },
   {
-    path: '/Master/BookingListQueueByUserEventSamkok',
-    name: 'BookingListQueueByUserEventSamkok',
-    component: Master.BookingListQueueByUserEventSamkok
+    path: '/Master/BookingListQueueByUserEvent',
+    name: 'BookingListQueueByUserEvent',
+    component: Master.BookingListQueueByUserEvent
   },
   {
     path: '/Master/BookingListQueueMonitoringVideoOhrichV1',
