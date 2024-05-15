@@ -12,7 +12,7 @@
         <v-card class="p-3 p-md-5 main-card" v-if="overlay">
         <div class="d-flex flex-column">
           <div class="d-flex flex-row d-flex justify-content-between">
-            <div><h5 class="font-weight-bold m-0" >Counter {{$session.getAll().data.counter}}</h5></div>
+            <div><h5 class="font-weight-bold m-0" >Counter {{$session.getAll().data.empFirst_NameTH}}</h5></div>
             <div class="d-flex flex-sm-row">
               <div class="d-flex flex-row align-items-center mr-3" v-if="branchName !== ''">
                 <div class="mr-1"><v-icon  color="red">mdi-map-marker</v-icon></div>
@@ -545,7 +545,7 @@ export default {
             packageId: '',
             tokenPackage: '',
             storeFrontQueueEmpId: parseInt(this.$session.getAll().data.empId),
-            servicePoint: this.$session.getAll().data.counter
+            servicePoint: parseInt(this.$session.getAll().data.empFirst_NameTH)
           }
           this.callQueue.status = 'confirmJob'
           await axios
@@ -641,7 +641,7 @@ export default {
     async CallNoti () {
       let body = {
         bookNo: this.callQueue.bookNo,
-        servicePoint: this.$session.getAll().data.counter,
+        servicePoint: parseInt(this.$session.getAll().data.empFirst_NameTH),
         shopId: this.$session.getAll().data.shopId,
         storeFrontQueue: this.callQueue.storeFrontQueue,
         CREATE_USER: this.$session.getAll().data.userName,
@@ -655,7 +655,7 @@ export default {
       try {
         let body = {
           statusNotify: 'False',
-          servicePoint: this.$session.getAll().data.counter,
+          servicePoint: parseInt(this.$session.getAll().data.empFirst_NameTH),
           LAST_USER: this.$session.getAll().data.userName
         }
         await axios
