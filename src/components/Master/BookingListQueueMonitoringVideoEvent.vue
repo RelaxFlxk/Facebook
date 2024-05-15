@@ -557,8 +557,6 @@ export default {
     },
     async getBooking () {
       let arrDataService = []
-      let dataQueueList = this.dataMockQ
-      console.log('getBooking', dataQueueList)
       try {
         await axios.get(`${this.DNS_IP}/booking_view/getQueueEventTV?masBranchID=${this.masBranchID}&shopId=${this.$session.getAll().data.shopId}`)
           .then(async response => {
@@ -569,24 +567,24 @@ export default {
                 if (arrDataService.length > 0) {
                   arrDataService.forEach((service, index) => {
                     if (index < this.dataQueueList.length) {
-                      dataQueueList[index].queue = service.storeFrontQueue
-                      dataQueueList[index].serviceNo = service.servicePoint
+                      // this.dataQueueList[index].queue = service.storeFrontQueue
+                      // this.dataQueueList[index].serviceNo = service.servicePoint
                     }
                   })
                 } else {
-
+                  console.log('arrDataService -> ', this.dataMockQ)
+                  this.dataQueueList = this.dataMockQ
                 }
               } else {
                 arrDataService = []
+                this.dataQueueList = this.dataMockQ
               }
             }
           })
       } catch (error) {
         console.log('Error', error)
       }
-      console.log('complepte ', dataQueueList)
       this.dataService = arrDataService
-      this.dataQueueList = dataQueueList
       // playSound
       if (this.statusSound) {
         arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
