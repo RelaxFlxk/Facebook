@@ -545,7 +545,7 @@ export default {
             packageId: '',
             tokenPackage: '',
             storeFrontQueueEmpId: parseInt(this.$session.getAll().data.empId),
-            servicePoint: parseInt(this.$session.getAll().data.empFirst_NameTH)
+            servicePoint: this.$session.getAll().data.empFirst_NameTH
           }
           this.callQueue.status = 'confirmJob'
           await axios
@@ -641,7 +641,7 @@ export default {
     async CallNoti () {
       let body = {
         bookNo: this.callQueue.bookNo,
-        servicePoint: parseInt(this.$session.getAll().data.empFirst_NameTH),
+        servicePoint: this.$session.getAll().data.empFirst_NameTH,
         shopId: this.$session.getAll().data.shopId,
         storeFrontQueue: this.callQueue.storeFrontQueue,
         CREATE_USER: this.$session.getAll().data.userName,
@@ -655,7 +655,7 @@ export default {
       try {
         let body = {
           statusNotify: 'False',
-          servicePoint: parseInt(this.$session.getAll().data.empFirst_NameTH),
+          servicePoint: this.$session.getAll().data.empFirst_NameTH,
           LAST_USER: this.$session.getAll().data.userName
         }
         await axios

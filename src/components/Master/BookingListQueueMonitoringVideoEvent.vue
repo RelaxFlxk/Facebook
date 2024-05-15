@@ -252,7 +252,17 @@ export default {
       playingSound: [],
       empList: [4300, 4301, 4302, 4303, 4304, 4305, 4306, 4307, 4308, 4309, 4310, 4311, 4312, 4313, 4314, 4315, 4316, 4317, 4318],
       dataListTest1: [1, 2, 3, 4, 5, 6, 7],
-      dataListTest2: [1, 2, 3, 4, 5, 6]
+      dataListTest2: [1, 2, 3, 4, 5, 6],
+      tableAudioList: [
+        '',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterOne.wav?alt=media&token=0a90f02b-f23b-430c-874c-e476c7701def',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterTwo.wav?alt=media&token=7348068e-b96e-4ce4-a2d8-19b13fb6ce55',
+        'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FPleaseContactCounterThree.wav?alt=media&token=fb455275-eac7-4375-9e9b-3ee2f20182b5',
+        'https://storage.googleapis.com/ohrich-sound/PleaseContactCounterFour.wav',
+        'https://storage.googleapis.com/ohrich-sound/PleaseContactCounterFive.wav',
+        '',
+        ''
+      ]
     }
   },
 
