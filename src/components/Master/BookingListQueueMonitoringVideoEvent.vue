@@ -131,80 +131,6 @@ export default {
   data () {
     return {
       dataQueueList: [],
-      dataMockQ: [
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        },
-        {
-          queue: '',
-          serviceNo: ''
-        }
-      ],
       orientation: '',
       statusSound: true,
       dateStartShow: '',
@@ -285,6 +211,82 @@ export default {
     }
   },
   methods: {
+    getTempleteQueue () {
+      return [
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        }
+      ]
+    },
     checkOrientation () {
       this.isPortrait = window.innerHeight > window.innerWidth
     },
@@ -557,6 +559,7 @@ export default {
     },
     async getBooking () {
       let arrDataService = []
+      let dataQueueList = this.getTempleteQueue()
       try {
         await axios.get(`${this.DNS_IP}/booking_view/getQueueEventTV?masBranchID=${this.masBranchID}&shopId=${this.$session.getAll().data.shopId}`)
           .then(async response => {
@@ -566,18 +569,17 @@ export default {
                 arrDataService = data.dataService
                 if (arrDataService.length > 0) {
                   arrDataService.forEach((service, index) => {
-                    if (index < this.dataQueueList.length) {
-                      // this.dataQueueList[index].queue = service.storeFrontQueue
-                      // this.dataQueueList[index].serviceNo = service.servicePoint
+                    if (index < dataQueueList.length) {
+                      dataQueueList[index].queue = service.storeFrontQueue
+                      dataQueueList[index].serviceNo = service.servicePoint
                     }
                   })
                 } else {
-                  console.log('arrDataService -> ', this.dataMockQ)
-                  this.dataQueueList = this.dataMockQ
+                  dataQueueList = this.getTempleteQueue()
                 }
               } else {
                 arrDataService = []
-                this.dataQueueList = this.dataMockQ
+                dataQueueList = this.getTempleteQueue()
               }
             }
           })
@@ -585,6 +587,7 @@ export default {
         console.log('Error', error)
       }
       this.dataService = arrDataService
+      this.dataQueueList = dataQueueList
       // playSound
       if (this.statusSound) {
         arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
