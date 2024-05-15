@@ -52,6 +52,29 @@
             <div class="col d-flex justify-content-center"><span class="text-footer">POWER BY BETASK CONSULTING</span></div>
             <div class="col py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDate }}</span><span class="ml-4 text-datetime">{{ formattedTime }}</span></div>
         </v-footer>
+        <v-row v-show="hideSound === true">
+      <audio id="playerTV" controls="controls">
+        Your browser does not support the audio format.
+      </audio>
+      <v-col>
+        <audio id="playerPrefix" controls="controls">>
+          <source
+            src="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1">
+          Your browser does not support the audio format.
+        </audio>
+        <audio id="playerQueue" controls="controls">>
+          <source :src="audio">
+          Your browser does not support the audio format.
+        </audio>
+        <audio id="playerCounter" controls="controls">>
+          <source :src="tableTarget">
+          Your browser does not support the audio format.
+        </audio>
+      </v-col>
+      <v-col>
+        {{ history }}
+      </v-col>
+    </v-row>
     </div>
 </template>
 
@@ -103,45 +126,46 @@ export default {
     this.checkWiFiStatus()
     window.addEventListener('online', () => { this.wifiStatus = 'connected' })
     window.addEventListener('offline', () => { this.wifiStatus = 'disconnected' })
+    this.getFirestore()
   },
   data () {
     return {
       dataMockQ: [
         {
-          queue: 'A001',
-          serviceNo: 1
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A002',
-          serviceNo: 2
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A003',
-          serviceNo: 3
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'B001',
-          serviceNo: 4
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A004',
-          serviceNo: 5
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'B002',
-          serviceNo: 11
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A005',
-          serviceNo: 6
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A006',
-          serviceNo: 7
+          queue: '',
+          serviceNo: ''
         },
         {
-          queue: 'A007',
-          serviceNo: 8
+          queue: '',
+          serviceNo: ''
         },
         {
           queue: 'B004',
@@ -235,10 +259,8 @@ export default {
   async mounted () {
     this.checkOrientation()
     this.setupEventListeners()
-    await this.getShop()
-    await this.getBooking()
-    await this.getFirestore()
-    this.startDateTimeInterval()
+
+    this.fetchInitialData()
   },
   destroyed () {
     window.removeEventListener('resize', this.checkOrientation)
@@ -246,6 +268,10 @@ export default {
   beforeDestroy () {
     this.$root.$off('dataReturn')
     clearInterval(this.interval)
+    clearInterval(this.intervalSound)
+    if (this.unsubscribe) {
+      this.unsubscribe()
+    }
   },
   methods: {
     checkOrientation () {
@@ -256,29 +282,102 @@ export default {
       window.addEventListener('orientationchange', this.checkOrientation)
       document.querySelector('body').requestFullscreen()
     },
+    async getDataBranch () {
+      this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
+      if (this.branchItem.length > 0) {
+        this.masBranchID = this.branchItem[0].value
+      }
+    },
+    async getDataFromAPI (url, fieldId, fieldName, param) {
+      let result = []
+      await axios
+        .get(this.DNS_IP + `${url}?shopId=${this.$session.getAll().data.shopId}${param}`)
+        .then(response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              let s = {}
+              s.text = d[fieldName]
+              s.value = d[fieldId]
+              s.allData = d
+              result.push(s)
+              // console.log('this.DataFlowName', this.DataFlowName)
+            }
+          } else {
+            result = []
+          }
+        })
+      return result
+    },
+    async fetchInitialData () {
+      // await Promise.all([this.getShop(), this.getBooking(), this.getFirestore()])
+      await this.getShop()
+      await this.getDataBranch()
+      await this.getBooking()
+      this.startDateTimeInterval()
+    },
     startDateTimeInterval () {
       this.interval = setInterval(() => {
-        // this.currentTime = moment().format('DD MMM YYYY HH:mm a')
-        this.currentDate = moment().format('DD MMM YYYY')
-        this.currentTime = moment().format('HH:mm a')
+        this.currentTime = moment().format('DD/MMM/YYYY HH:mm')
       }, 1000)
+    },
+    replaceFunc (text) {
+      let itemText = text.split('')
+      let textFill = ''
+      for (let i = 1; i < itemText.length; i++) {
+        let d = itemText[i]
+        if (d === '0') {
+          textFill = textFill + ' zero'
+        } else if (d === '1') {
+          textFill = textFill + ' one'
+        } else if (d === '2') {
+          textFill = textFill + ' two'
+        } else if (d === '3') {
+          textFill = textFill + ' three'
+        } else if (d === '4') {
+          textFill = textFill + ' four'
+        } else if (d === '5') {
+          textFill = textFill + ' five'
+        } else if (d === '6') {
+          textFill = textFill + ' six'
+        } else if (d === '7') {
+          textFill = textFill + ' seven'
+        } else if (d === '8') {
+          textFill = textFill + ' eight'
+        } else if (d === '9') {
+          textFill = textFill + ' nine'
+        }
+      }
+      if (itemText[0] === 'เ') {
+        return itemText[0] + itemText[1] + ' ' + textFill
+      } else {
+        return itemText[0] + ' ' + textFill
+      }
     },
     async getFirestore () {
       try {
+        if (this.unsubscribe) {
+          this.unsubscribe()
+        }
         this.firestore = this.$firebase.firestore()
         const FieldPath = this.$firebase.firestore.FieldPath
-        this.firestore.collection('CatEvent')
+        this.unsubscribe = this.firestore.collection('EventProcess')
           .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
           .onSnapshot((snapshot) => {
+            console.log('getFirestore')
             if (snapshot.empty) {
               this.updateProcessUpdate()
             } else {
-              const doc = snapshot.docs.find(doc => doc.id === this.$session.getAll().data.userName)
-              if (doc && doc.data().active === '1') {
-                this.updateProcessUpdate()
-                this.getBooking()
-                this.updateNotifyByShopId()
-              }
+              snapshot.docChanges().forEach(async (change) => {
+                if (change.doc.id === this.$session.getAll().data.userName) {
+                  if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
+                    await this.getBooking()
+                    await this.updateNotifyByShopId()
+                    this.updateProcessUpdate()
+                  }
+                }
+              })
             }
           })
       } catch (error) {
@@ -286,22 +385,31 @@ export default {
       }
     },
     updateProcessUpdate () {
-      let params = {
-        userName: this.$session.getAll().data.userName
+      let body = {
+        userName: this.$session.getAll().data.userName,
+        masBranchID: this.masBranchID
       }
-      axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/CatEvent-ProcessUseNew', params)
+      axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Event-ProcessUseNew', body)
     },
     async changeStatusSound (text) {
       if (text === 'on') {
         this.statusSound = true
-        await this.updateNotifyByShopId()
+        await this.updatestatusNotifyByShopId()
       } else {
         this.statusSound = false
       }
     },
+    async updatestatusNotifyByShopId () {
+      const params = {
+        statusNotify: 'True',
+        shopId: this.$session.getAll().data.shopId,
+        masBranchID: this.masBranchID
+      }
+      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotifyOhrich`, params)
+    },
     async getMessageNoInterval (storeFrontQueue, dueDateDay) {
       try {
-        let branchId = this.$session.getAll().data.masBranchID || 2185
+        let branchId = this.masBranchID || 2185
         let url = `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=${this.$session.getAll().data.shopId}&masBranchID=${branchId}&storeFrontQueue=${storeFrontQueue}&CREATE_DATE=${dueDateDay}`
         await axios
           .get(
@@ -326,7 +434,7 @@ export default {
     async generateSound (item) {
       try {
         // eslint-disable-next-line no-tabs
-        this.tableId = item.servicePoint.replace('    ', '').replace(' ', '').trim()
+        this.tableId = item.servicePoint.replace('	  ', '').replace(' ', '').trim()
         let storeFrontQueue = item.storeFrontQueue
         storeFrontQueue = this.replaceFunc(storeFrontQueue.replace('A', 'เอ'))
         let result
@@ -376,14 +484,17 @@ export default {
         return null
       }
     },
-    playSoundBooking (playList) {
+    playSoundBooking (audioUrl, servicePoint, storeFrontQueue) {
       let playerTV = document.getElementById('playerTV')
-      // let video = document.getElementById('videoAds')
       try {
         if (playerTV.paused) {
           let roundCount = 0
           let maxRounds = 2
-          // video.pause()
+          let playList = [
+            'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1',
+            audioUrl,
+            this.tableAudioList[String(servicePoint).trim()]
+          ]
           let index = 0
           let playNext = () => {
             if (index < playList.length) {
@@ -394,20 +505,33 @@ export default {
               index = 0
               roundCount++
               playNext()
-            } else {
-              // video.play()
             }
           }
           playerTV.onended = playNext
           playNext()
         } else {
-          setTimeout(() => {
-            this.playSoundBooking(playList)
+          this.intervalSound = setTimeout(() => {
+            this.playSoundBooking(audioUrl, servicePoint, storeFrontQueue)
           }, 2000)
         }
       } catch (error) {
-        console.log('playSoundBooking', error)
+        console.log('Error playSound', error)
+        playerTV.pause()
       }
+    },
+    playOnceAndRemove (playList) {
+      let playerTV = document.getElementById('playerTV')
+      console.log('playOnceAndRemove', playList)
+      let index = 0
+      let playNext = () => {
+        if (index < playList.length) {
+          playerTV.src = playList[index++]
+          playerTV.load()
+          playerTV.play()
+        }
+      }
+      playNext()
+      playerTV.removeEventListener('ended', this.playOnceAndRemove)
     },
     async getShop () {
       await axios
@@ -416,52 +540,49 @@ export default {
           let data = response.data
           if (data.length > 0) {
             this.shopColor = data[0].secondaryColor
-            this.videoLinkMonition = data[0].videoLinkMonition ? data[0].videoLinkMonition : 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/BeLinked.mp4?alt=media&token=f88d1f83-3009-4ba4-871b-8e25b60ab01c'
+            this.videoLinkMonition = data[0].videoLinkMonition
           }
         })
     },
     async getBooking () {
       let arrDataService = []
+      let dataMock = []
       try {
-        await axios.get(`${this.DNS_IP}/booking_cat_event/getByEmpNoComfirmjob`)
+        await axios.get(`${this.DNS_IP}/booking_view/getQueueEventTV?masBranchID=${this.masBranchID}&shopId=${this.$session.getAll().data.shopId}`)
           .then(async response => {
             if (response.data) {
-              const res = response.data
-              if (res.status) {
-                arrDataService = res.data.map(element => {
-                  if (element.empNo !== '') {
-                    let servicePoint = this.empList.indexOf(parseInt(element.empNo))
-                    element.servicePoint = servicePoint + 1
-                  }
-                  return element
-                })
+              const data = response.data
+              if (data.status) {
+                arrDataService = data.dataService
+                // storeFrontQueue หมายเลขคิว ,  servicePoint ช่องบริการ
+                // use dataMockQ
+                dataMock = this.dataMockQ
               } else {
                 arrDataService = []
+                dataMock = this.dataMockQ
               }
             }
           })
       } catch (error) {
         console.log('Error')
       }
+      this.dataMockQ = dataMock
       this.dataService = arrDataService
+      // playSound
       if (this.statusSound) {
-        arrDataService.filter(item => item.statusNotify === 'False').forEach(itemIsNotify => {
-          console.log(itemIsNotify)
-          let playSound = ['https://storage.googleapis.com/cat-sound/prefix.wav']
-          for (const character of itemIsNotify.storeFrontQueue) {
-            playSound.push(`https://storage.googleapis.com/cat-sound/${parseInt(character)}.wav`)
-          }
-          let empId = this.empList.indexOf(parseInt(itemIsNotify.empNo))
-          playSound.push(`https://storage.googleapis.com/cat-sound/suffix_${empId + 1}.wav`)
-          this.playingSound.push({ playSound: playSound })
+        arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
+          const audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
+
+          this.playingSound.push({ storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint })
         }
         )
       }
+      console.log('playingSound', this.playingSound)
       if (this.playingSound.length > 0) {
         this.playingSound.reverse()
         for (let index = this.playingSound.length - 1; index >= 0; index--) {
           let sound = this.playingSound[index]
-          this.playSoundBooking(sound.playSound)
+          this.playSoundBooking(sound.audioUrl, sound.servicePoint, sound.storeFrontQueue)
           this.playingSound.pop()
         }
       }
@@ -469,9 +590,10 @@ export default {
     async updateNotifyByShopId () {
       const params = {
         statusNotify: 'True',
-        shopId: this.$session.getAll().data.shopId
+        shopId: this.$session.getAll().data.shopId,
+        masBranchID: this.masBranchID
       }
-      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotify`, params)
+      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotifyOhrich`, params)
     },
     updateMessageSound (bookNo, audioUrl) {
       try {
@@ -486,23 +608,6 @@ export default {
     },
     checkWiFiStatus () {
       this.wifiStatus = navigator.onLine ? 'connected' : 'disconnected'
-    },
-    soundTest () {
-      try {
-        let filterData = this.dataList.filter(item => item.IsNotify === 'False')
-        filterData.forEach(item => {
-          let playSound = ['https://storage.googleapis.com/cat-sound/prefix.wav']
-          for (const character of item.storeFrontQueue) {
-            playSound.push(`https://storage.googleapis.com/cat-sound/${parseInt(character)}.wav`)
-          }
-          let empId = this.empList.indexOf(parseInt(item.empNo))
-          playSound.push(`https://storage.googleapis.com/cat-sound/suffix_${empId + 1}.wav`)
-          console.log(playSound)
-          this.playSoundBooking(playSound)
-        })
-      } catch (error) {
-        console.log('soundTest ->', error)
-      }
     }
   }
 }
