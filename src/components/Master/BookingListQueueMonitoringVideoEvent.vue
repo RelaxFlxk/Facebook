@@ -116,8 +116,8 @@ export default {
     groupedData () {
       const chunkSize = 6
       const groups = []
-      for (let i = 0; i < this.dataMockQ.length; i += chunkSize) {
-        groups.push(this.dataMockQ.slice(i, i + chunkSize))
+      for (let i = 0; i < this.dataQueueList.length; i += chunkSize) {
+        groups.push(this.dataQueueList.slice(i, i + chunkSize))
       }
       return groups
     }
@@ -130,6 +130,7 @@ export default {
   },
   data () {
     return {
+      dataQueueList: [],
       dataMockQ: [
         {
           queue: '',
@@ -556,32 +557,36 @@ export default {
     },
     async getBooking () {
       let arrDataService = []
-      let dataMock = []
+      let dataQueueList = this.dataMockQ
+      console.log('getBooking', dataQueueList)
       try {
         await axios.get(`${this.DNS_IP}/booking_view/getQueueEventTV?masBranchID=${this.masBranchID}&shopId=${this.$session.getAll().data.shopId}`)
           .then(async response => {
             if (response.data) {
               const data = response.data
-              console.log('data sen', data)
               if (data.status) {
                 arrDataService = data.dataService
-                console.log('arrDataService', arrDataService)
-                const dataq = arrDataService.map(itemq => { return itemq.storeFrontQueue || itemq.servicePoint })
-                console.log('dataq', dataq)
-                // storeFrontQueue หมายเลขคิว ,  servicePoint ช่องบริการ
-                // use dataMockQ
-                dataMock = this.dataMockQ
+                if (arrDataService.length > 0) {
+                  arrDataService.forEach((service, index) => {
+                    if (index < this.dataQueueList.length) {
+                      dataQueueList[index].queue = service.storeFrontQueue
+                      dataQueueList[index].serviceNo = service.servicePoint
+                    }
+                  })
+                } else {
+
+                }
               } else {
                 arrDataService = []
-                dataMock = this.dataMockQ
               }
             }
           })
       } catch (error) {
-        console.log('Error')
+        console.log('Error', error)
       }
-      this.dataMockQ = dataMock
+      console.log('complepte ', dataQueueList)
       this.dataService = arrDataService
+      this.dataQueueList = dataQueueList
       // playSound
       if (this.statusSound) {
         arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
