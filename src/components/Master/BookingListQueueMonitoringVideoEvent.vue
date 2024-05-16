@@ -21,7 +21,7 @@
                                         ช่องบริการ
                                     </v-card-title>
                                 </div>
-                                <v-card class="d-flex text-center mb-3" color="#ffffff" style="height: 96px;"
+                                <v-card class="d-flex text-center align-center justify-center mb-3" color="#ffffff" style="height: 96px;"
                                 v-for="(item, index) in group" :key="index">
                                     <div class="col-6 subtext">
                                         {{ item.queue }}
@@ -113,11 +113,22 @@ export default {
           return 'mdi-wifi-strength-alert-outline'
       }
     },
+    sortedDataQueueList () {
+      // แยกข้อมูลที่มีค่าและค่าว่าง
+      const queueData = this.dataQueueList.filter(item => item.queue !== '' && item.serviceNo !== '')
+      const emptyData = this.dataQueueList.filter(item => item.queue === '' || item.serviceNo === '')
+      const sortedNonEmptyData = queueData.slice().sort((a, b) => a.index - b.index).reverse()
+
+      // รวมข้อมูลที่มีค่าที่จัดเรียงแล้วและข้อมูลที่ว่าง
+      return sortedNonEmptyData.concat(emptyData)
+    },
     groupedData () {
       const chunkSize = 6
       const groups = []
-      for (let i = 0; i < this.dataQueueList.length; i += chunkSize) {
-        groups.push(this.dataQueueList.slice(i, i + chunkSize))
+      const sortedData = this.sortedDataQueueList
+
+      for (let i = 0; i < sortedData.length; i += chunkSize) {
+        groups.push(sortedData.slice(i, i + chunkSize))
       }
       return groups
     }
