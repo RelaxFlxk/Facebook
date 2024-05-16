@@ -358,7 +358,6 @@ export default {
             this.updateProcessOhrichUpdate()
           } else {
             snapshot.docChanges().forEach(async (change) => {
-              console.log('getFirestore')
               if (change.doc.data().active === '1') {
                 await this.getBooking()
                 this.updateProcessOhrichUpdate()
@@ -553,6 +552,14 @@ export default {
             .then(async res => {
               if (res.data.status) {
                 await this.CallNoti()
+                let dtt = {
+                  checkGetQueue: 'True'
+                }
+                await axios
+                  .post(this.DNS_IP + '/Booking/pushMsgQueueEvent/' + body.bookNo, dtt)
+                  .then(async responses => {}).catch(error => {
+                    console.log('error function pushMsgQueueEvent : ', error)
+                  })
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
               }

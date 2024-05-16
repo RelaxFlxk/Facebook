@@ -141,6 +141,7 @@ export default {
   },
   data () {
     return {
+      tableTarget: 0,
       dataQueueList: [],
       orientation: '',
       statusSound: true,
