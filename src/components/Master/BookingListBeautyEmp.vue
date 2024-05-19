@@ -3574,9 +3574,9 @@
                         >
                         <v-slide-item v-for="(item, index) in dataPackage.filter(el => { return el.balanceAmount > 0 })" :key="index">
                             <v-card
-                            class="ma-2 p-1"
+                            class="ma-2 p-2"
                             width="340"
-                            height="100"
+                            min-height="120"
                             color="#FFFFFF"
                             elevation="6"
                             :style="item.packageId === packageId && item.token === tokenPackage ? 'border: 1px solid green;' : 'border: 1px solid white;'"
@@ -3600,16 +3600,29 @@
                               </v-col>
                               <v-col cols="8" class="pb-6" >
                                 <v-row class="font16 headline1">
-                                    <v-col class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
+                                    <v-col style="display: flex;" class="pl-0 pt-2 pb-0">{{item.packageName}}</v-col>
                                     <v-btn class="mr-4 mt-3" v-if="item.packageId !== packageId && item.token !== tokenPackage" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item, item.token)">ตกลง</v-btn>
                                     <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId && item.token !== tokenPackage" color="green" outlined rounded x-small @click="UpdatePackage(item.packageId,'ตกลง',item.packageName, item, item.token)">ตกลง</v-btn>
                                     <v-btn class="mr-4 mt-3" v-if="item.packageId === packageId && item.token === tokenPackage" color="red" outlined rounded x-small @click="UpdatePackage(item.packageId,'ยกเลิก',item.packageName, item, item.token)">ยกเลิก</v-btn>
                                 </v-row>
-                                <v-row class="font14 headline1">
-                                    <v-col class="pl-0 pt-0 pb-0">จำนวนการใช้  {{item.balanceAmount}} / {{item.amount}} </v-col>
+                                <v-row class="font14 headline1" >
+                                    <v-col style="display: flex;" class="pl-0 pt-0 pb-0">จำนวนคงเหลือ {{ item.balanceAmount }} ครั้ง</v-col>
+                                </v-row>
+                                <v-row class="font14 headline1" v-if="$session.getAll().data.shopId === 'Ub7cbc419244731cdd682354dd0e57cef' && (item.packageId === packageId && item.token === tokenPackage)">
+                                    <v-col class="pl-0 pt-0 pb-0" style="display: flex;">
+                                      <p class="mb-0" style="color: red;" v-if="(item.balanceAmount - credit_package) >= 0">
+                                          {{ 'ใช้ ' + credit_package + ' เครดิต ( คงเหลือ ' + (item.balanceAmount - credit_package) + ' )'  }}
+                                      </p>
+                                      <p class="mb-0" style="color: red;" v-else>
+                                          {{ 'แพ็คเกจคงเหลือไม่พอ'  }}
+                                      </p>
+                                    </v-col>
+                                </v-row>
+                                <v-row class="font14 headline1" v-if="$session.getAll().data.shopId !== 'Ub7cbc419244731cdd682354dd0e57cef'" >
+                                    <v-col style="display: flex;" class="pl-0 pt-0 pb-0">ทั้งหมด {{ item.amount }} ครั้ง</v-col>
                                 </v-row>
                                 <v-row class="font14 headline1">
-                                    <v-col class="pl-0 pt-0 pb-0">
+                                    <v-col class="pl-0 pt-0 pb-0" style="display: flex;">
                                       <VueCustomTooltip label="สามารถใช้ได้" position="is-top" v-if="dateTimestamp <= item.expirePackage">
                                         <v-icon
                                           large
@@ -3626,7 +3639,7 @@
                                           mdi-clock-alert
                                         </v-icon>
                                       </VueCustomTooltip>
-                                      >> วันหมดอายุ  {{new Date(item.expirePackage * 1000).toLocaleString().substr(0,9)}}
+                                       วันหมดอายุ  {{arrayMove(new Date(item.expirePackage * 1000).toLocaleString().split(",")[0].split("/"),0,1)}}
                                     </v-col>
                                 </v-row>
                               </v-col>
@@ -7522,7 +7535,8 @@ export default {
       statusGoogleCalendarEmp: '',
       copyTextBt: '',
       copyTextStatus: false,
-      sendRemarkRemove: false
+      sendRemarkRemove: false,
+      credit_package: 1
     }
   },
   beforeCreate () {
@@ -8431,6 +8445,11 @@ export default {
         result = response.data
       })
       return result
+    },
+    arrayMove (arr, oldindex, newindex) {
+      arr.splice(newindex, 0, arr.splice(oldindex, 1)[0])
+      // console.log('arr', arr)
+      return arr[1] + '/' + arr[0] + '/' + arr[2]
     },
     exportShowEmpReport () {
       let dataexport = []
@@ -10238,8 +10257,8 @@ export default {
     },
     async getPackage (dt) {
       this.dataPackage = []
-      await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + dt.shopId + '&userId=' + dt.lineUserId +
-      '&flowId=' + dt.flowId).then(response => {
+      await axios.get(this.DNS_IP_Loyalty + '/PackageLog/get?shopId=' + dt.shopId + '&userId=' + dt.userId +
+      '&flowId=' + dt.flowId + '&checkExpired=T&status=use').then(response => {
         console.log('PackageLog', response.data)
         let rs = response.data
         if (rs.status !== false) {
@@ -10696,6 +10715,7 @@ export default {
                   s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
                   s.bookingEmpFlow = d.bookingEmpFlow
                   s.bookingEmpFlowName = d.bookingEmpFlowName
+                  s.credit_package = d.credit_package
                   s.checkDateConfirmJob = d.checkDateConfirmJob
                   s.dueDateDay = d.dueDateDay
                   s.statusVIP = d.statusVIP
@@ -10832,6 +10852,7 @@ export default {
               this.dataReady = true
             // this.$swal('ผิดพลาด', 'ไม่มีข้อมูล', 'error')
             } else {
+              console.log('_!@#_!@#_!@#_!@#_!@_#!@_#', dataItems, this.dataItem)
               this.dataItem = dataItems
               var datause = dataItemTimes.sort((a, b) => {
                 if (a.timeDueHtext < b.timeDueHtext) return -1
@@ -13671,6 +13692,8 @@ export default {
         }
         // console.log('cccc', this.dataItemSelect)
       }
+      console.log('this.dataItemSelect--------------', this.dataItemSelect)
+      console.log('this.dataItemSelect--------------', this.dataItem)
       this.checkTypeSort()
       // }
     },
@@ -14094,6 +14117,7 @@ export default {
               s.shopId = d.shopId
               s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
               s.bookingEmpFlow = d.bookingEmpFlow
+              s.credit_package = d.credit_package
               s.bookingEmpFlowName = d.bookingEmpFlowName
               s.bookingEmpSetTime = d.bookingEmpSetTime || []
               s.checkDateConfirmJob = d.checkDateConfirmJob
@@ -14283,6 +14307,7 @@ export default {
               s.shopId = d.shopId
               s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
               s.bookingEmpFlow = d.bookingEmpFlow
+              s.credit_package = d.credit_package
               s.bookingEmpFlowName = d.bookingEmpFlowName
               s.checkDateConfirmJob = d.checkDateConfirmJob
               s.dueDateDay = d.dueDateDay
@@ -15680,6 +15705,7 @@ export default {
         .get(this.DNS_IP + '/empSelect/getUse?privacyPage=booking&shopId=' + item.shopId)
         .then(async response => {
           let rs = response.data
+          console.log('rs-EMP------------', rs)
           if (rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               var d = rs[i]
@@ -15754,8 +15780,10 @@ export default {
     async confirmChk (item) {
       this.dateTimestamp = moment().unix()
       this.dataConfirm = item
+      console.log('item', item)
       this.remark = item.remark
       this.userId = item.userId
+      this.credit_package = item.credit_package || 1
       this.lineUserId = item.lineUserId
       console.log(this.userId, this.lineUserId)
       await this.getEmpSelect(item)
@@ -15771,68 +15799,73 @@ export default {
       }
       this.dialogConfirm = true
     },
-    onConfirm (item) {
+    async onConfirm (item) {
       if (this.$session.id() !== undefined) {
-        var dt = {
-          bookNo: item.bookNo,
-          contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-          status: 'confirm',
-          statusUse: 'use',
-          // pageStatus: this.getSelectText,
-          // limitBookingCount: dtint,
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.session.data.userName,
-          LAST_USER: this.session.data.userName,
-          packageId: this.packageId,
-          tokenPackage: this.tokenPackage
+        let statusCheckUsePackage = true
+        if (this.packageId !== '') {
+          statusCheckUsePackage = await this.usePackageConfirmBooking(item.bookNo, item.masBranchID)
         }
-        axios
-          .post(this.DNS_IP + '/booking_transaction/add', dt)
-          .then(async response => {
-            if (response.data.status === true) {
-              this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-              if (this.statusGoogleCalendar === 'True') {
-                this.connectGoogleCalendar('Add', dt.bookNo)
-              }
-              await this.updateRemarkAndEmpSelect(item)
-              // this.getDataCalendaBooking()
-              if (this.packageId !== '') {
-                await this.usePackage(item.bookNo, item.masBranchID)
-              }
-              let DTitem = item.userId
-              console.log('DTITEM', DTitem)
-              if (DTitem !== 'user-skip') {
-                if (this.statusSearch === 'no') {
-                  await this.getBookingList()
+        if (statusCheckUsePackage === true) {
+          var dt = {
+            bookNo: item.bookNo,
+            contactDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+            status: 'confirm',
+            statusUse: 'use',
+            // pageStatus: this.getSelectText,
+            // limitBookingCount: dtint,
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.session.data.userName,
+            LAST_USER: this.session.data.userName,
+            packageId: this.packageId,
+            tokenPackage: this.tokenPackage
+          }
+          axios
+            .post(this.DNS_IP + '/booking_transaction/add', dt)
+            .then(async response => {
+              if (response.data.status === true) {
+                this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                if (this.statusGoogleCalendar === 'True') {
+                  this.connectGoogleCalendar('Add', dt.bookNo)
+                }
+                await this.updateRemarkAndEmpSelect(item)
+                // this.getDataCalendaBooking()
+                let DTitem = item.userId
+                console.log('DTITEM', DTitem)
+                if (DTitem !== 'user-skip') {
+                  if (this.statusSearch === 'no') {
+                    await this.getBookingList()
+                  } else {
+                    await this.searchAny()
+                  }
+                  // this.getTimesChange('update')
+                  if (this.getSelectText) {
+                    this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+                  }
+                  this.pushMsgConfirm(item.bookNo)
                 } else {
-                  await this.searchAny()
+                  if (this.statusSearch === 'no') {
+                    await this.getBookingList()
+                  } else {
+                    await this.searchAny()
+                  }
+                  // this.getTimesChange('update')
+                  if (this.getSelectText) {
+                    this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+                  }
                 }
-                // this.getTimesChange('update')
-                if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
-                }
-                this.pushMsgConfirm(item.bookNo)
+                this.dataConfirmReady = true
+                this.dialogConfirm = false
               } else {
-                if (this.statusSearch === 'no') {
-                  await this.getBookingList()
-                } else {
-                  await this.searchAny()
-                }
-                // this.getTimesChange('update')
-                if (this.getSelectText) {
-                  this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
-                }
+                this.dataConfirmReady = true
+                this.$swal('ผิดพลาด', response.data.message, 'error')
               }
-              this.dataConfirmReady = true
-              this.dialogConfirm = false
-            } else {
-              this.dataConfirmReady = true
-              this.$swal('ผิดพลาด', response.data.message, 'error')
-            }
-          })
-          .catch(error => {
-            console.log('error function addData : ', error)
-          })
+            })
+            .catch(error => {
+              console.log('error function addData : ', error)
+            })
+        } else {
+          this.$swal('ผิดพลาด', 'ไม่สามารถใช้งานแพคเกจได้', 'error')
+        }
       } else {
         this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
         clearInterval(this.setTimerCalendar)
@@ -15840,24 +15873,94 @@ export default {
         this.$router.push('/Core/Login')
       }
     },
+    async getamountOf (bookNo) {
+      let booking = await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + bookNo)
+      console.log('booking', booking)
+      return booking.data[0].credit_package || 1
+    },
     async usePackage (bookNo, masBranchID) {
-      var params = {
-        shopId: this.$session.getAll().data.shopId,
-        token: this.StatusPackage.token,
-        branchBeLinked: masBranchID
+      let amountOf = 1
+      if (this.$session.getAll().data.shopId === 'Ub7cbc419244731cdd682354dd0e57cef') {
+        amountOf = await this.getamountOf(bookNo)
       }
-      await axios({
-        method: 'post',
+      // let params = {
+      //   shopId: this.$session.getAll().data.shopId,
+      //   token: this.StatusPackage.token,
+      //   branchBeLinked: masBranchID,
+      //   amountOf: amountOf
+      // }
+      let params = {
+        amountOf: amountOf
+      }
+      // await axios({
+      //   method: 'post',
+      //   headers: {
+      //     shopId: this.$session.getAll().data.shopId
+      //   },
+      //   url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
+      //   // url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + masBranchID,
+      //   data: params
+      // }).then((response) => {
+      //   console.log('response', response)
+      // })
+      await axios.post(this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token, params, {
         headers: {
-          shopId: this.$session.getAll().data.shopId,
-          lineUserId: this.lineUserId,
-          lineId: this.userId
-        },
-        url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
-        // url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + masBranchID,
-        data: params
-      }).then((response) => {})
+          shopId: this.$session.getAll().data.shopId
+        }
+      })
+        .then(response => {
+          console.log(response.data)
+        })
+        .catch(error => {
+          console.error(error)
+        })
       await this.updatePackageInBooking(this.$session.getAll().data.shopId, this.StatusPackage.token, this.packageId, bookNo)
+    },
+    async usePackageConfirmBooking (bookNo, masBranchID) {
+      let status = true
+      try {
+        let amountOf = 1
+        if (this.$session.getAll().data.shopId === 'Ub7cbc419244731cdd682354dd0e57cef') {
+          amountOf = await this.getamountOf(bookNo)
+        }
+        // let params = {
+        //   shopId: this.$session.getAll().data.shopId,
+        //   token: this.StatusPackage.token,
+        //   branchBeLinked: masBranchID,
+        //   amountOf: amountOf
+        // }
+        let params = {
+          amountOf: amountOf
+        }
+        // await axios({
+        //   method: 'post',
+        //   headers: {
+        //     shopId: this.$session.getAll().data.shopId
+        //   },
+        //   url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token,
+        //   // url: this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token + '&branchBeLinked=' + masBranchID,
+        //   data: params
+        // }).then((response) => {
+        //   console.log('response', response)
+        // })
+        await axios.post(this.DNS_IP_Loyalty + '/use_package/edit?shopId=' + this.$session.getAll().data.shopId + '&token=' + this.StatusPackage.token, params, {
+          headers: {
+            shopId: this.$session.getAll().data.shopId
+          }
+        })
+          .then(response => {
+            console.log(response.data)
+            status = response.data.status
+          })
+          .catch(error => {
+            status = false
+            console.error(error)
+          })
+        await this.updatePackageInBooking(this.$session.getAll().data.shopId, this.StatusPackage.token, this.packageId, bookNo)
+      } catch (error) {
+        status = false
+      }
+      return status
     },
     async updatePackageInBooking (shopId, token, packageId, bookNo) {
       console.log(shopId, token, packageId, bookNo)
