@@ -829,6 +829,7 @@ export default {
         { text: 'บริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         { text: 'จำนวนที่นั่ง', value: 'countCus' },
+        { text: 'เวลาที่ลูกค้ากดรับบัตร', value: 'CREATE_DATEtime', align: 'center' },
         { text: 'ปริ้นบัตรคิว', value: 'action1', sortable: false, align: 'center' },
         { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
       ]
@@ -839,7 +840,7 @@ export default {
         { text: 'บริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         // { text: 'H.N.', value: 'hnNo' },
-        { text: 'เวลาที่ลูกค้ากดรับบัตร', value: 'CREATE_DATEtext' },
+        { text: 'เวลาที่ลูกค้ากดรับบัตร', value: 'CREATE_DATEtime', align: 'center' },
         { text: 'ปริ้นบัตรคิว', value: 'action1', sortable: false, align: 'center' },
         { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
       ]
