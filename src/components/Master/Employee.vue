@@ -354,6 +354,17 @@
                           multiple
                         ></v-autocomplete>
                       </v-col>
+                      <v-col cols="12" class="pa-0" v-if="(formAdd.masBranchID !== '' && formAdd.masBranchID !== null) && (formAdd.privacyPage === 'bookingform' || formAdd.privacyPage === 'bookingStoreFront') && shopId === 'Ub7cbc419244731cdd682354dd0e57cef'">
+                        <v-select
+                          v-model="formAdd.credit_package"
+                          :items="credit_package_item"
+                          :rules="nameRules"
+                          required
+                          label="จำนวนแพคเกจ (ครั้ง)"
+                          dense
+                          outlined
+                        ></v-select>
+                      </v-col>
                       <v-col cols="12" class="pa-0">
                         <v-textarea
                           v-model="formAdd.additionalInformation"
@@ -546,6 +557,17 @@
                           multiple
                           attach
                           :rules="nameRules"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" class="pa-0" v-if="(formUpdate.masBranchID !== '' && formUpdate.masBranchID !== null) && (formUpdate.privacyPage === 'bookingform' || formUpdate.privacyPage === 'bookingStoreFront') && shopId === 'Ub7cbc419244731cdd682354dd0e57cef'">
+                        <v-select
+                          v-model="formUpdate.credit_package"
+                          :items="credit_package_item"
+                          :rules="nameRules"
+                          required
+                          label="จำนวนแพคเกจ (ครั้ง)"
+                          dense
+                          outlined
                         ></v-select>
                       </v-col>
                       <v-col cols="12" class="pa-0">
@@ -1286,6 +1308,7 @@ export default {
       ],
       // End Menu Config
       itemsTitle: ['นาย', 'นาง', 'นางสาว', 'คุณ', ' '],
+      credit_package_item: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       dataReady: true,
       dateTime: '', // Generate DateTime
       date: this.momenDate_1(new Date()),
@@ -1323,7 +1346,8 @@ export default {
         flowId: '',
         additionalInformation: '',
         phoneNumber: '',
-        empEmail: ''
+        empEmail: '',
+        credit_package: 1
       },
       formUpdate: {
         empCode: '',
@@ -1338,7 +1362,8 @@ export default {
         flowId: '',
         additionalInformation: '',
         phoneNumber: '',
-        empEmail: ''
+        empEmail: '',
+        credit_package: 1
       },
       formUpdateItem: {
         empCode: '',
@@ -1352,7 +1377,8 @@ export default {
         flowId: '',
         additionalInformation: '',
         phoneNumber: '',
-        empEmail: ''
+        empEmail: '',
+        credit_package: 1
       },
       formUpdateLimitbooking: {
         empId: null,
