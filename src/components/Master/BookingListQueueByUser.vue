@@ -792,7 +792,7 @@ export default {
         await axios
           .get(urlApi)
           .then(async response => {
-            console.log('getData', response.data.length)
+            // console.log('getData', response.data.length)
             let rs = response.data
             if (rs.length > 0) {
               let sortData = rs.sort((a, b) => {
@@ -870,7 +870,7 @@ export default {
           setTimeout(() => this.getBookingDataList(dateStart), 3000)
           console.log('catch getBookingDataList : ', error)
         })
-      console.log('this.BookingDataList1', this.BookingDataList)
+      // console.log('this.BookingDataList1', this.BookingDataList)
     },
     setTime () {
       this.timeavailable = []
@@ -1950,7 +1950,8 @@ export default {
       let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
       console.log('bookSelect', bookSelect)
       if (bookSelect.length > 0) {
-        let bookSelectuse = bookSelect.filter((element, index) => { return index < countNoti })
+        let bookSelectuse = bookSelect.filter((element, index) => { return index === countNoti })
+        console.log('bookSelectuse', bookSelectuse)
         for (let i = 0; i < bookSelectuse.length; i++) {
           let d = bookSelectuse[i]
           let s = {}
