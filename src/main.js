@@ -14,8 +14,7 @@ import axios from 'axios' // api
 import moment from 'moment-timezone' // แปลง date
 // import moment from 'moment' // แปลง date
 // import { PivotViewPlugin } from '@syncfusion/ej2-vue-pivotview'
-import * as Sentry from '@sentry/vue'
-import { Integrations } from '@sentry/tracing'
+
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip'
 import VueClipboard from 'vue-clipboard2'
@@ -55,21 +54,6 @@ Vue.prototype.$profile_dev = {
   'userId': 'Ud2e630e20bb8597b90d4908a46fbc4e9'
   // 'userId': 'Ubb981ed38ad6dd18734560d2203df255'
 }
-
-Sentry.init({
-  Vue,
-  dsn: 'https://517cf6d99a5d4c848776f14482248e6f@o1109732.ingest.sentry.io/6138284',
-  integrations: [
-    new Integrations.BrowserTracing({
-      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-      tracingOrigins: ['localhost', 'betask-linked-admin.firebaseapp.com', 'betask-linked-admin.web.app', /^\//]
-    })
-  ],
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 1.0
-})
 
 // Vue.use(PivotViewPlugin)
 
