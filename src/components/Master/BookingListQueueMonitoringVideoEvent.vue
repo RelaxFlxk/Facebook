@@ -516,9 +516,9 @@ export default {
           let roundCount = 0
           let maxRounds = 2
           let playList = [
-            'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1',
+            'https://storage.googleapis.com/thaiairway-sound/prefix.wav',
             audioUrl,
-            this.tableAudioList[String(servicePoint).trim()]
+            `https://storage.googleapis.com/thaiairway-sound/counter${String(servicePoint).trim()}.wav`
           ]
           let index = 0
           let playNext = () => {
@@ -603,7 +603,7 @@ export default {
       // playSound
       if (this.statusSound) {
         arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
-          const audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
+          const audioUrl = `https://storage.googleapis.com/thaiairway-sound/${itemIsNotify.storeFrontQueue}.wav`
 
           this.playingSound.push({ storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint })
         }
