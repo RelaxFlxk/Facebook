@@ -1154,7 +1154,11 @@ export default {
       this.timeavailable = []
       let checkFlow = this.DataFlowItem.filter(el => { return el.value === this.flowSelect })
       if (checkFlow.length > 0) {
-        this.timeavailable = JSON.parse(checkFlow[0].allData.setTime)
+        if (checkFlow[0].value === 'allFlow') {
+          this.timeavailable = []
+        } else {
+          this.timeavailable = JSON.parse(checkFlow[0].allData.setTime)
+        }
       } else {
         this.timeavailable = []
       }
