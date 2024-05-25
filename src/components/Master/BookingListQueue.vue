@@ -1027,9 +1027,10 @@ export default {
     },
     async searchBooking (checkNoti, item) {
       if (this.validSearch === true) {
+        let itemBookingTem = []
+        let itemBookingCountTem = []
         this.overlaySave = false
         this.itemBookingUse = []
-        this.itemBookingCount = []
         if (this.checkShowCount) {
           await this.getBookingDataList(this.dateStart)
         }
@@ -1060,7 +1061,6 @@ export default {
         await axios
           .get(urlApi)
           .then(async response => {
-            console.log('getData', response.data.length)
             let rs = response.data
             if (rs.length > 0) {
               let sortData = rs.sort((a, b) => {
@@ -1079,23 +1079,24 @@ export default {
                 // s.displayFlowName = d.displayFlowName || ''
                 this.itemBookingUse.push(d)
               }
-              this.itemBooking = this.itemBookingUse
+              itemBookingTem = this.itemBookingUse
               for (let i = 0; i < this.itemBookingUse.length; i++) {
                 let d = this.itemBookingUse[i]
                 if (d.statusBt === 'confirm') {
-                  let checkFlow = this.itemBookingCount.filter(el => { return el.flowId === d.flowId })
-                  let checkIndexFlow = this.itemBookingCount.findIndex(el => { return el.flowId === d.flowId })
+                  let checkFlow = itemBookingCountTem.filter(el => { return el.flowId === d.flowId })
+                  let checkIndexFlow = itemBookingCountTem.findIndex(el => { return el.flowId === d.flowId })
                   if (checkFlow.length > 0) {
-                    this.itemBookingCount[checkIndexFlow].countFlow = this.itemBookingCount[checkIndexFlow].countFlow + 1
+                    itemBookingCountTem[checkIndexFlow].countFlow = itemBookingCountTem[checkIndexFlow].countFlow + 1
                   } else {
-                    this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
+                    // this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
+                    itemBookingCountTem.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
                   }
                 }
               }
               if (this.modelslide === '' || this.modelslide === 'allFlow') {
-                this.itemBooking = this.itemBookingUse
+                itemBookingTem = this.itemBookingUse
               } else {
-                this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === this.modelslide })
+                itemBookingTem = this.itemBookingUse.filter(el => { return el.flowId === this.modelslide })
               }
               if (checkNoti === 'noti') {
                 console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
@@ -1106,10 +1107,12 @@ export default {
                 }
               }
             } else {
-              this.itemBooking = []
+              itemBookingTem = []
             }
             this.overlaySave = true
           })
+        this.itemBooking = itemBookingTem
+        this.itemBookingCount = itemBookingCountTem
       } else {
         this.overlaySave = true
       }
