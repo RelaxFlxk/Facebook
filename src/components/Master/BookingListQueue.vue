@@ -873,7 +873,6 @@ export default {
               }
             }
           }
-          console.log('this.checkShowCount', this.checkShowCount)
         }).catch(async err => {
           // this.$router.push({ name: '404' })
           console.log('getCustomFieldStart', err)
@@ -962,7 +961,6 @@ export default {
         })
     },
     async openHistory (item) {
-      console.log('item', item)
       // console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
       // this.HistoryData = this.BookingDataList[item.bookNo]
       const BookingData = await axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
@@ -973,7 +971,6 @@ export default {
           console.log('error function addData : ', error)
           return null
         })
-      console.log('BookingData', BookingData)
       this.HistoryData = BookingData || []
       this.pictureUrHistory = item.memberPicture
       // axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
@@ -1172,7 +1169,6 @@ export default {
         .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchIDAll=${this.masBranchID}`)
         .then(response => {
           let rs = response.data
-          console.log('rs', rs)
           if (rs.length > 0) {
             if (this.$session.getAll().data.USER_ROLE === 'storeFront') {
               resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
