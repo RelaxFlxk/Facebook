@@ -148,6 +148,45 @@
                     <v-row>
                       <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
                         <v-checkbox
+                          label="เปิดให้จองเฉพาะช่วงเวลา เปิด/ปิด ร้าน"
+                          false-value="False"
+                          :on-icon="'mdi-check-circle'"
+                          :off-icon="'mdi-checkbox-blank-circle-outline'"
+                          color="#1B437C"
+                          true-value="True"
+                          v-model="formUpdate.statusBookingByTime"
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col v-if="formUpdate.statusBookingByTime === 'True'" cols="12" class="pt-0 pb-0 mt-3 mb-2" style="display: flex;justify-content: flex-start;">
+                        <div class="mx-3" style="max-width: 130px;">
+                          <v-text-field label="เวลาเปิด"
+                          :rules="[rules.timeRules]"
+                          required
+                          placeholder="HH:mm"
+                          outlined
+                          v-model="formUpdate.startTime"
+                          v-mask="'##:##'"
+                          dense></v-text-field>
+                        </div>
+                        <div style="max-width: 130px;">
+                          <p class="ma-0 pt-2"> - </p>
+                        </div>
+                        <div class="mx-3" style="max-width: 130px;">
+                          <v-text-field
+                          :rules="[rules.timeRules]"
+                          required
+                          label="เวลาปิด"
+                          placeholder="HH:mm"
+                          outlined
+                          v-model="formUpdate.endTime"
+                          v-mask="'##:##'"
+                          dense></v-text-field>
+                        </div>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="pt-0 pb-0" style="display: flex;justify-content: left;height: 40px;">
+                        <v-checkbox
                           label="จำกัดเวลาตามช่าง"
                           false-value="False"
                           :on-icon="'mdi-check-circle'"
@@ -507,8 +546,10 @@ export default {
         statusCustomerEditNoTime: 'False',
         countCustomerEdit: '',
         countDayCustomerEdit: '',
-        showShopName: ''
-
+        showShopName: '',
+        statusBookingByTime: 'False',
+        startTime: '',
+        endTime: ''
       },
       countCustomerEditItem: [1, 2, 3, 4, 5, 6, 7],
       countDayCustomerEditItem: [
@@ -580,6 +621,10 @@ export default {
         email: value => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           return pattern.test(value) || 'Invalid e-mail.'
+        },
+        timeRules: value => {
+          const pattern = /^([01]\d|2[0-3]):([0-5]\d)$/
+          return pattern.test(value) || 'กรุณากรอกเวลาในรูปแบบ 00:00 ถึง 23:59'
         }
       },
       // End Form Config ADD EDIT
@@ -642,6 +687,18 @@ export default {
     await this.selectCategorySub()
   },
   methods: {
+    validateTime () {
+      const time = this.formUpdate.startTime
+      const [hours, minutes] = time.split(':').map(Number)
+      if (
+        isNaN(hours) || isNaN(minutes) ||
+        hours < 0 || hours > 23 ||
+        minutes < 0 || minutes > 59
+      ) {
+        this.formUpdate.startTime = '' // หรือคุณสามารถตั้งค่าเป็นค่าเริ่มต้นที่ถูกต้อง
+        alert('Please enter a valid time between 00:00 and 23:59')
+      }
+    },
     connectGoogleCalendar (item) {
       console.log('test', item)
       if (item === 'True') {
@@ -777,6 +834,9 @@ export default {
       this.formUpdate.statusCustomerEditNoTime = item.statusCustomerEditNoTime || 'False'
       this.formUpdate.countCustomerEdit = item.countCustomerEdit || 3
       this.formUpdate.countDayCustomerEdit = item.countDayCustomerEdit === 0 ? item.countDayCustomerEdit : (item.countDayCustomerEdit || 7)
+      this.formUpdate.statusBookingByTime = item.statusBookingByTime || 'False'
+      this.formUpdate.startTime = item.startTime || ''
+      this.formUpdate.endTime = item.endTime || ''
       if (this.formUpdate.darkMode === 'True') {
         this.formUpdate.darkMode = true
       } else {
@@ -909,7 +969,10 @@ export default {
               statusCustomerEditNoTime: this.formUpdate.statusCustomerEditNoTime,
               countCustomerEdit: this.formUpdate.countCustomerEdit,
               countDayCustomerEdit: this.formUpdate.countDayCustomerEdit,
-              showShopName: showShopName
+              showShopName: showShopName,
+              statusBookingByTime: this.formUpdate.statusBookingByTime,
+              startTime: this.formUpdate.startTime,
+              endTime: this.formUpdate.endTime
             }
             await axios
               .post(
