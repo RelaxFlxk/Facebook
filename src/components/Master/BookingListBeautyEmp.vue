@@ -3611,7 +3611,7 @@
                                 <v-row class="font14 headline1" v-if="$session.getAll().data.shopId === 'Ub7cbc419244731cdd682354dd0e57cef' && (item.packageId === packageId && item.token === tokenPackage)">
                                     <v-col class="pl-0 pt-0 pb-0" style="display: flex;">
                                       <p class="mb-0" style="color: red;" v-if="(item.balanceAmount - credit_package) >= 0">
-                                          {{ 'ใช้ ' + credit_package + ' เครดิต ( คงเหลือ ' + (item.balanceAmount - credit_package) + ' )'  }}
+                                          {{ 'ใช้ ' + credit_package + ' ตั๋ว ( คงเหลือ ' + (item.balanceAmount - credit_package) + ' )'  }}
                                       </p>
                                       <p class="mb-0" style="color: red;" v-else>
                                           {{ 'แพ็คเกจคงเหลือไม่พอ'  }}

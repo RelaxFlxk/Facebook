@@ -360,7 +360,7 @@
                           :items="credit_package_item"
                           :rules="nameRules"
                           required
-                          label="จำนวนแพคเกจ (ครั้ง)"
+                          label="จำนวนตั๋ว / คาบ"
                           dense
                           outlined
                         ></v-select>
@@ -565,7 +565,7 @@
                           :items="credit_package_item"
                           :rules="nameRules"
                           required
-                          label="จำนวนแพคเกจ (ครั้ง)"
+                          label="จำนวนตั๋ว / คาบ"
                           dense
                           outlined
                         ></v-select>
