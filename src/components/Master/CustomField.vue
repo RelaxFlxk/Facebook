@@ -1111,7 +1111,7 @@ export default {
         conditionField: '',
         conditionValue: '',
         showCard: 'False',
-        requiredField: true,
+        requiredField: 'False',
         sortNoField: '',
         shopId: this.$session.getAll().data.shopId
       },
