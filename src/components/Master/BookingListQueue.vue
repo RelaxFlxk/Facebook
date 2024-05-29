@@ -1095,6 +1095,8 @@ export default {
               } else {
                 itemBookingTem = this.itemBookingUse.filter(el => { return el.flowId === this.modelslide })
               }
+              this.itemBooking = itemBookingTem
+              this.itemBookingCount = itemBookingCountTem
               if (checkNoti === 'noti') {
                 console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
                 if (item.storeFrontNotifyStatus === 'True') {
@@ -1108,8 +1110,6 @@ export default {
             }
             this.overlaySave = true
           })
-        this.itemBooking = itemBookingTem
-        this.itemBookingCount = itemBookingCountTem
       } else {
         this.overlaySave = true
       }
@@ -2282,7 +2282,6 @@ export default {
     },
     async pushMessageRecallQueue (countNoti, checkGetQueue) {
       let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
-      console.log('bookSelect', bookSelect)
       if (bookSelect.length > 0) {
         let bookSelectuse = bookSelect.filter((element, index) => { return index === countNoti })
         for (let i = 0; i < bookSelectuse.length; i++) {
