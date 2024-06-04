@@ -98,7 +98,7 @@ export default {
       return this.$refs.video
     },
     formattedTime () {
-      const timeString = this.currentTime.split(' ')[1] // แยกเวลาออกจากวันที่
+      const timeString = this.currentTime.split(' ')[1]
       return timeString
     },
     formattedDate () {
