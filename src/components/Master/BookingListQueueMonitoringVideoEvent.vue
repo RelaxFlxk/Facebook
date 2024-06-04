@@ -98,7 +98,8 @@ export default {
       return this.$refs.video
     },
     formattedTime () {
-      return this.currentTime
+      const timeString = this.currentTime.split(' ')[1] // แยกเวลาออกจากวันที่
+      return timeString
     },
     formattedDate () {
       return this.currentDate
@@ -579,7 +580,7 @@ export default {
               const data = response.data
               if (data.status) {
                 arrDataService = data.dataService
-                if (arrDataService.length > 0) {
+                if (arrDataService !== null && arrDataService.length > 0) {
                   arrDataService.forEach((service, index) => {
                     if (index < dataQueueList.length) {
                       dataQueueList[index].queue = service.storeFrontQueue
