@@ -15760,10 +15760,8 @@ export default {
       }
     },
     async usePackage (bookNo, masBranchID) {
-      var params = {
-        shopId: this.$session.getAll().data.shopId,
-        token: this.StatusPackage.token,
-        branchBeLinked: masBranchID
+      let params = {
+        amountOf: 1
       }
       await axios({
         method: 'post',
