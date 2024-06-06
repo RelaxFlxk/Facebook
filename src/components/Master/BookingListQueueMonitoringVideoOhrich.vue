@@ -1025,6 +1025,7 @@ export default {
     },
     async fetchInitialData () {
       // await Promise.all([this.getShop(), this.getBooking(), this.getFirestore()])
+      await this.updatestatusNotifyByShopId() // เคลียร์เสียงตอนเปิดทีวีครั้งแรก
       await this.getShop()
       await this.getBooking()
       this.startDateTimeInterval()
