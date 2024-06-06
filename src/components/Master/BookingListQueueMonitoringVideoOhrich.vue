@@ -993,7 +993,8 @@ export default {
       dataService: [],
       dataWaiting: [],
       dataSound: [],
-      playingSound: []
+      playingSound: [],
+      soundPlayed: false
     }
   },
 
@@ -1102,6 +1103,7 @@ export default {
         masBranchID: this.$session.getAll().data.masBranchID
       }
       axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', body)
+      this.soundPlayed = false
     },
     async changeStatusSound (text) {
       if (text === 'on') {
@@ -1283,21 +1285,24 @@ export default {
       this.dataService = arrDataService
       this.dataWaiting = arrDataWaiting
       // playSound
-      if (this.statusSound) {
+      if (this.statusSound && !this.soundPlayed) {
         arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
           const audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
-
-          this.playingSound.push({ storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint })
+          const existQ = this.playingSound.filter(itemNo => itemNo.storeFrontQueue === itemIsNotify.storeFrontQueue)
+          if (existQ.length === 0) {
+            this.playingSound.push({ storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint })
+          }
         }
         )
       }
-      if (this.playingSound.length > 0) {
+      if (this.playingSound.length > 0 && !this.soundPlayed) { // ตรวจสอบว่ามีการเล่นเสียงแล้วหรือยัง
         this.playingSound.reverse()
         for (let index = this.playingSound.length - 1; index >= 0; index--) {
           let sound = this.playingSound[index]
           this.playSoundBooking(sound.audioUrl, sound.servicePoint, sound.storeFrontQueue)
           this.playingSound.pop()
         }
+        this.soundPlayed = true // ตั้งค่าสถานะเป็น true หลังจากเล่นเสียง
       }
     },
     async updateNotifyByShopId () {
