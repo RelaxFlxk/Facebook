@@ -993,7 +993,9 @@ export default {
       dataService: [],
       dataWaiting: [],
       dataSound: [],
-      playingSound: []
+      playingSound: [],
+      languages: ['TH', 'EN', 'CH', 'JP'],
+      words: ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
     }
   },
 
@@ -1025,6 +1027,7 @@ export default {
     },
     async fetchInitialData () {
       // await Promise.all([this.getShop(), this.getBooking(), this.getFirestore()])
+      await this.updatestatusNotifyByShopId() // เคลียร์เสียงตอนเปิดทีวีครั้งแรก
       await this.getShop()
       await this.getBooking()
       this.startDateTimeInterval()
@@ -1196,7 +1199,7 @@ export default {
         return null
       }
     },
-    playSoundBooking (audioUrl, servicePoint, storeFrontQueue) {
+    playSoundBooking (prefix, audioUrl, servicePoint, storeFrontQueue) {
       let playerTV = document.getElementById('playerTV')
       let video = document.getElementById('videoAds')
       try {
@@ -1204,11 +1207,7 @@ export default {
           let roundCount = 0
           let maxRounds = 2
           video.pause()
-          let playList = [
-            'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1',
-            audioUrl,
-            this.tableAudioList[String(servicePoint).trim()]
-          ]
+          const playList = prefix ? [prefix, audioUrl, servicePoint] : [audioUrl, servicePoint]
           let index = 0
           let playNext = () => {
             if (index < playList.length) {
@@ -1227,7 +1226,7 @@ export default {
           playNext()
         } else {
           this.intervalSound = setTimeout(() => {
-            this.playSoundBooking(audioUrl, servicePoint, storeFrontQueue)
+            this.playSoundBooking(prefix, audioUrl, servicePoint, storeFrontQueue)
           }, 2000)
         }
       } catch (error) {
@@ -1283,19 +1282,50 @@ export default {
       this.dataService = arrDataService
       this.dataWaiting = arrDataWaiting
       // playSound
+      let prefix = 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1'
+
       if (this.statusSound) {
         arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
-          const audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
+          let audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
+          let servicePoint = `https://storage.googleapis.com/ohrich-sound/counter${itemIsNotify.servicePoint}.wav`
 
-          this.playingSound.push({ storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint })
-        }
-        )
+          const bookingLanguageIndex = itemIsNotify.bookingLanguage
+          if (bookingLanguageIndex >= 0 && bookingLanguageIndex < this.languages.length) {
+            const language = this.languages[bookingLanguageIndex].toLowerCase()
+            console.log('language', language)
+
+            if (language === 'th') {
+              prefix = `https://storage.googleapis.com/ohrich-sound/${language}/prefix.wav`
+            } else if (language === 'ch') {
+              // waiting path
+              prefix = `https://storage.googleapis.com/ohrich-sound/${language}/prefix.wav`
+            } else if (language === 'jp') {
+              prefix = ''
+            } else {
+              prefix = 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1'
+            }
+
+            const servicePointNumber = String(itemIsNotify.servicePoint).trim()
+            if (language !== 'en') {
+              audioUrl = `https://storage.googleapis.com/ohrich-sound/${language}/${itemIsNotify.storeFrontQueue}.wav`
+              servicePoint = `https://storage.googleapis.com/ohrich-sound/${language}/counter${servicePointNumber}.wav`
+            } else {
+              audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
+              servicePoint = this.tableAudioList[servicePointNumber]
+            }
+          }
+          const existQueue = this.playingSound.filter(itemNo => itemNo.storeFrontQueue === itemIsNotify.storeFrontQueue)
+
+          if (existQueue.length === 0) {
+            this.playingSound.push({ storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: servicePoint })
+          }
+        })
       }
       if (this.playingSound.length > 0) {
         this.playingSound.reverse()
         for (let index = this.playingSound.length - 1; index >= 0; index--) {
           let sound = this.playingSound[index]
-          this.playSoundBooking(sound.audioUrl, sound.servicePoint, sound.storeFrontQueue)
+          this.playSoundBooking(prefix, sound.audioUrl, sound.servicePoint, sound.storeFrontQueue)
           this.playingSound.pop()
         }
       }
