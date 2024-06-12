@@ -684,7 +684,7 @@
                           ></v-checkbox>
                           <v-select
                             v-model="formAdd.masBranchID"
-                            :items="branchItem"
+                            :items="branch"
                             label="สาขา"
                             outlined
                             dense
@@ -817,7 +817,7 @@
                                     outlined
                                   ></v-select>
                                 </v-col>
-                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'Radio'" style="padding:0px;">
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'radio'" style="padding:0px;">
                                   <v-container fluid style="padding:0px;">
                                     <v-radio-group
                                       column
@@ -841,9 +841,7 @@
                                     </v-radio-group>
                                   </v-container>
                                 </v-col>
-                                <p>xxx={{item}}</p>
                               </template>
-                              <p>item.conditionField = {{ item.conditionField }}</p>
                               <template
                                 v-if="
                                   item.conditionField !== '' &&
@@ -1468,6 +1466,13 @@ export default {
       dataTypeJob3: '',
       priceMenuAdd: 0,
       drawerAdd: false,
+      empSelectStepAdd: [],
+      empSelectAdd: '',
+      DataFlowNameDefault: [],
+      menuDate: false,
+      date: '',
+      currentDate: moment().format('YYYY-MM-DD'),
+      pickerDate: null,
       // end panel
       modelslide: '',
       shopPhone: '',
@@ -1612,6 +1617,7 @@ export default {
       ]
     }
     await this.getDataBranch()
+    console.log('this.branchItem ok', this.branchItem)
     await this.getDataFlow()
     await this.searchBooking('unNoti')
     this.$root.$on('closeSetTimeBookingListQueue', () => {
@@ -1623,6 +1629,599 @@ export default {
     this.getShop()
   },
   methods: {
+    async getEmpSelectAdd () {
+      this.empSelectStepAdd = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/getUse?privacyPage=booking&shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.masBranchID = d.masBranchID || ''
+              console.log('this.$session.getAll().data.masBranchID', this.$session.getAll().data.masBranchID)
+              if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
+                // console.log('D', d)
+                let s = {}
+                s.text = d.empFirst_NameTH
+                s.value = d.empId
+                s.masBranchID = d.masBranchID
+                this.empSelectStepAdd.push(s)
+                console.log('this.empSelectStepAdd if getEmpSelectAdd', this.empSelectStepAdd)
+              } else {
+                if (this.$session.getAll().data.masBranchID === d.masBranchID || d.masBranchID === '') {
+                  let s = {}
+                  s.text = d.empFirst_NameTH
+                  s.value = d.empId
+                  s.masBranchID = d.masBranchID
+                  this.empSelectStepAdd.push(s)
+                  console.log('this.empSelectStepAdd else getEmpSelectAdd', this.empSelectStepAdd)
+                }
+              }
+            }
+            if (this.$session.getAll().data.empId !== '' && this.$session.getAll().data.empId !== null) {
+              this.empSelectAdd = this.empSelectStepAdd.filter((item) => item.value === parseInt(this.$session.getAll().data.empId))[0].value
+            }
+            console.log('this.empSelectStepAdd', this.empSelectStepAdd)
+          }
+        })
+    },
+    async addDataInsert () {
+      // this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
+      // this.$swal(this.swalConfig)
+      //   .then(async result => {
+      if (this.$session.id() !== undefined) {
+        this.dataReadyAdd = false
+        var fastTrack = 'False'
+        var extraJob = 'False'
+        switch (this.formAdd.radiosRemark) {
+          case 'ซ่อมปกติ':
+            fastTrack = 'False'
+            extraJob = 'False'
+            break
+          case 'ExtraJob':
+            fastTrack = 'False'
+            extraJob = 'True'
+            break
+          case 'FastTrack':
+            fastTrack = 'True'
+            extraJob = 'False'
+            break
+        }
+        let flowIdData = this.formAdd.flowId
+        let rs = this.fieldNameItem
+        let Add = []
+        let fielditem = this.fieldNameItem
+        if (this.checkDepositAdd === 'False') {
+          this.formAdd.depositStatus = ''
+          this.formAdd.depositImge = ''
+          this.formAdd.depositPrice = ''
+        } else {
+          if (this.dataDepositAdd === 'มี') {
+            if (this.formAdd.depositPrice === null) {
+              this.formAdd.depositPrice = ''
+            }
+            this.formAdd.depositStatus = 'True'
+            if (this.filesDepositAdd) {
+              const _this = this
+              let configDepositUpload = {
+                headers: {
+                  'bookNo': 'BK' + moment().unix()
+                }
+              }
+              let params = new FormData()
+              params.append('file', this.filesDepositAdd)
+              await axios
+                .post(this.DNS_IP + `/file/upload/deposit`, params, configDepositUpload)
+                .then(function (response) {
+                  _this.formAdd.depositImge = response.data
+                  console.log('url Pic', response.data)
+                })
+            } else {
+              this.formAdd.depositImge = this.pictureUrlPreviewDeposit
+            }
+          } else {
+            if (this.formAdd.depositPrice === null) {
+              this.formAdd.depositPrice = ''
+            }
+            this.formAdd.depositStatus = 'True'
+            this.formAdd.depositImge = ''
+          }
+        }
+        console.log('this.fieldNameItem', this.fieldNameItem)
+        let limitBookingCheck = ''
+        if (this.checkLimitBooking.limitCheck === 'true' || null) {
+          limitBookingCheck = 'True'
+        } else {
+          limitBookingCheck = 'False'
+        }
+        let storeFront = this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })
+        let storeFrontCheck = ''
+        if (storeFront.length > 0) {
+          storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
+        } else {
+          storeFrontCheck = 'False'
+        }
+        let timeValue = ''
+        let timeTime = ''
+        if (this.time.value) {
+          timeValue = this.time.value
+          timeTime = this.time.text
+        } else {
+          timeValue = ''
+          timeTime = ''
+        }
+        for (let i = 0; i < rs.length; i++) {
+          let d = rs[i]
+          let update = {}
+          if (d.conditionField === '' || d.conditionField === null) {
+            update.masBranchID = this.formAdd.masBranchID
+            update.bookingFieldId = d.bookingFieldId
+            update.remark = this.remark
+            update.flowId = this.formAdd.flowId
+            update.fieldId = d.fieldId
+            update.fieldValue = d.fieldValue
+            update.shopId = d.shopId
+            update.dueDate = this.date + ' ' + timeValue
+            update.dateSelect = this.date
+            update.timeSelect = timeValue
+            update.timeText = timeTime
+            update.userId = 'user-skip'
+            update.pageName = 'BookingList'
+            update.sourceLink = 'direct'
+            update.fastTrack = fastTrack
+            update.extraJob = extraJob
+            update.depositStatus = this.formAdd.depositStatus
+            update.depositImge = this.formAdd.depositImge
+            update.empSelect = this.empSelectAdd
+            update.adminLogin = this.session.data.userName
+            update.limitBookingCheck = limitBookingCheck
+            update.limitBookingId = this.checkLimitBooking.ID
+            update.limitBookingCount = this.checkLimitBooking.countBooking
+            update.getLimitBooking = this.checkLimitBooking.limitBooking
+            update.depositPrice = this.formAdd.depositPrice
+            update.storeFrontCheck = storeFrontCheck
+            if (this.statusVIP === 'True') {
+              update.statusVIP = 'True'
+            } else {
+              update.statusVIP = 'False'
+            }
+            update.statusBookingForm = 'BookingForm'
+            update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            update.addressLatLong = JSON.stringify(this.center)
+            if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
+              update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+              update.menuPrice = this.priceMenuAdd
+            }
+            Add.push(update)
+          } else {
+            if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
+              if (d.conditionValue === fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
+                update.masBranchID = this.formAdd.masBranchID
+                update.bookingFieldId = d.bookingFieldId
+                update.remark = this.remark
+                update.flowId = this.formAdd.flowId
+                update.fieldId = d.fieldId
+                update.fieldValue = d.fieldValue
+                update.shopId = d.shopId
+                update.dueDate = this.date + ' ' + timeValue
+                update.dateSelect = this.date
+                update.timeSelect = timeValue
+                update.timeText = timeTime
+                update.sourceLink = 'direct'
+                update.userId = 'user-skip'
+                update.pageName = 'BookingList'
+                update.fastTrack = fastTrack
+                update.extraJob = extraJob
+                update.depositStatus = this.formAdd.depositStatus
+                update.depositImge = this.formAdd.depositImge
+                update.empSelect = this.empSelectAdd
+                update.adminLogin = this.session.data.userName
+                update.limitBookingCheck = limitBookingCheck
+                update.limitBookingId = this.checkLimitBooking.ID
+                update.limitBookingCount = this.checkLimitBooking.countBooking
+                update.getLimitBooking = this.checkLimitBooking.limitBooking
+                update.depositPrice = this.formAdd.depositPrice
+                update.storeFrontCheck = storeFrontCheck
+                if (this.statusVIP === 'True') {
+                  update.statusVIP = 'True'
+                } else {
+                  update.statusVIP = 'False'
+                }
+                update.statusBookingForm = 'BookingForm'
+                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+                update.addressLatLong = JSON.stringify(this.center)
+                if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
+                  update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+                  update.menuPrice = this.priceMenuAdd
+                }
+                Add.push(update)
+              }
+            } else if (d.conditionField === 'flow') {
+              if (parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)) {
+                update.masBranchID = this.formAdd.masBranchID
+                update.bookingFieldId = d.bookingFieldId
+                update.remark = this.remark
+                update.flowId = this.formAdd.flowId
+                update.fieldId = d.fieldId
+                update.fieldValue = d.fieldValue
+                update.shopId = d.shopId
+                update.dueDate = this.date + ' ' + timeValue
+                update.dateSelect = this.date
+                update.timeSelect = timeValue
+                update.timeText = timeTime
+                update.sourceLink = 'direct'
+                update.userId = 'user-skip'
+                update.pageName = 'BookingList'
+                update.fastTrack = fastTrack
+                update.extraJob = extraJob
+                update.depositStatus = this.formAdd.depositStatus
+                update.depositImge = this.formAdd.depositImge
+                update.empSelect = this.empSelectAdd
+                update.adminLogin = this.session.data.userName
+                update.limitBookingCheck = limitBookingCheck
+                update.limitBookingId = this.checkLimitBooking.ID
+                update.limitBookingCount = this.checkLimitBooking.countBooking
+                update.getLimitBooking = this.checkLimitBooking.limitBooking
+                update.depositPrice = this.formAdd.depositPrice
+                update.storeFrontCheck = storeFrontCheck
+                if (this.statusVIP === 'True') {
+                  update.statusVIP = 'True'
+                } else {
+                  update.statusVIP = 'False'
+                }
+                update.statusBookingForm = 'BookingForm'
+                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+                update.addressLatLong = JSON.stringify(this.center)
+                if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
+                  update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+                  update.menuPrice = this.priceMenuAdd
+                }
+                Add.push(update)
+              }
+            }
+          }
+        }
+        console.log('Add', Add)
+        axios
+          .post(this.DNS_IP + '/Booking/add', Add)
+          .then(async response => {
+          // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            if (response.data.message === 'LimitBooking_Full') {
+              this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่และเวลาใหม่อีกครั้ง', 'error')
+              this.date = ''
+              this.time = ''
+            } else {
+              let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
+              let depositCheckStatus = ''
+              if (checkDeposit.length > 0) {
+                depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+              } else {
+                depositCheckStatus = 'False'
+              }
+              if (depositCheckStatus === 'True') {
+                if (this.dataDepositAdd === 'มี') {
+                  await this.confirmChkAdd(response.data)
+                } else {
+                  this.clearDataAdd()
+                  this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+                }
+                this.dialogShowDeposit = true
+                this.bookNo = response.data.bookNo
+                this.depositPrice = this.formAdd.depositPrice
+                this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + this.$session.getAll().data.shopId + '&redirectBy=BookingAdmin&flowId=' + flowIdData + '&bookNo=' + response.data.bookNo
+              } else {
+                await this.confirmChkAdd(response.data)
+              }
+            }
+          // console.log('addDataGlobal DNS_IP + /job/add', response)
+          })
+          .catch(error => {
+            console.log('error function addData : ', error)
+            setTimeout(() => this.addDataInsert(), 3000)
+          })
+        // })
+        // .catch(error => {
+        //   console.log('Cencel : ', error)
+        //   this.closeSetTimeGetCalenda()
+        // })
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
+    },
+    async setLimitBooking (dateitem) {
+      this.time = ''
+      this.timeavailable = []
+      this.limitBookingCheck = 'False'
+      let setTime = []
+      // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTimebyday === 'True') {
+        let timeJson = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime).filter((items) => items.value === new Date(dateitem).getDay())
+        setTime = timeJson[0].setTime || []
+        console.log('IF')
+      } else {
+        console.log('ELSE')
+        setTime = JSON.parse(this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTime) || []
+      }
+      if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) }).length > 0) {
+        this.limitBookingCheck = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.limitBookingCheck || 'False'
+      } else {
+        this.limitBookingCheck = 'False'
+      }
+      if (this.limitBookingCheck === 'True') {
+        let TimeData = []
+        let currentDate = setTime
+        TimeData = currentDate
+        if (this.statusVIP === 'False') {
+          this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+          console.log('TimeData', TimeData)
+          if (this.timeavailable.length > 0) {
+            let LimitBooking = await this.getLimitBooking()
+            console.log('LimitBooking', LimitBooking)
+            if (LimitBooking.status !== false) {
+              if (LimitBooking.length > 0) {
+                LimitBooking.forEach((i, n) => {
+                  this.timeavailable.forEach((v, k) => {
+                    if (i.bookingTime === v.value) {
+                      if (i.countBooking >= parseInt(v.limitBooking)) {
+                        this.timeavailable.splice(k, 1)
+                      }
+                    }
+                  })
+                })
+                if (this.timeavailable.length === 0) {
+                  this.$swal(
+                    'คิวเต็มแล้ว',
+                    'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+                    'error'
+                  )
+                  this.date = ''
+                }
+              }
+              console.log('this.timeavailable IF', this.timeavailable)
+            } else {
+              this.timeavailable = TimeData.filter((item) => parseInt(item.limitBooking) > 0)
+              console.log('this.timeavailable ELSE', this.timeavailable)
+            }
+          } else {
+            this.$swal(
+              'คิวเต็มแล้ว',
+              'กรุณาเลือกวันที่ใหม่อีกครั้ง',
+              'error'
+            )
+            this.date = ''
+          }
+        } else {
+          this.timeavailable = TimeData
+        }
+      } else {
+        console.log('this.timeavailable ELSEEEEE', this.timeavailable)
+        // LimitBookingBy Flow
+        // this.timeavailable = JSON.parse(this.flowItemLimit.filter(item => { return item.flowId === this.formAdd.flowId })[0].setTime) || []
+
+        // LimitBookingBy masBranch
+        if (this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) }).length > 0) {
+          this.timeavailable = setTime
+        } else {
+          this.timeavailable = []
+        }
+      }
+    },
+    async getMonth (month) {
+      console.log('month', month)
+      // console.log('!!!!!!!!!', this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTimebyday)
+      // const result = await axios.get(this.DNS_IP + '/LimitBookingDate/get_LimitDate?shopId=' + this.$session.getAll().data.shopId + '&masBranchID=' + this.formAdd.masBranchID + '&bookingDate=' + month)
+      const result = await axios.get(this.DNS_IP + '/LimitBookingDate/get_LimitDate?shopId=' + this.$session.getAll().data.shopId + '&flowId=' + this.formAdd.flowId + '&bookingDate=' + month)
+      if (result.data.length > 0) {
+        let setTimebyday = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })[0].allData.setTimebyday
+        console.log('getMonth IF', result.data)
+        this.dateDaylimit = []
+        // let dt = result.data
+        const objectDT = result.data.reduce((acc, curr) => {
+          const bookingDate = curr.bookingDate
+          if (!acc[bookingDate]) {
+            acc[bookingDate] = []
+          }
+          acc[bookingDate].push(curr)
+          return acc
+        }, {})
+
+        console.log(objectDT)
+        for (const dt in objectDT) {
+          let statusOffDate1 = false
+          // console.log(dt, objectDT[dt])
+          if (objectDT[dt][0].limitBookingCheck === 'True') {
+            // console.log('limitBookingCheck === True')
+            objectDT[dt].forEach((v, k) => {
+              // let statusOffDate2 = false
+              // let statusOffDate3 = false
+              if (JSON.parse(v.setTime)) {
+                if (setTimebyday === 'True') {
+                  // console.log('sdfsdfsdfds', JSON.parse(v.setTime).filter((items) => items.value === new Date(v.bookingDate).getDay())[0].setTime)
+                  JSON.parse(v.setTime).filter((items) => items.value === new Date(v.bookingDate).getDay())[0].setTime.forEach((v2, k2) => {
+                    // console.log(v.bookingDate, '----', 'v', v.bookingTime, ' ', v.countBooking, '    ', 'v2', v2.value, ' ', v2.limitBooking)
+                    if (parseInt(v2.limitBooking) > 0 && v.bookingTime === v2.value) {
+                      console.log(v.bookingDate, '----', 'v', v.bookingTime, ' ', v.countBooking, '    ', 'v2', v2.value, ' ', v2.limitBooking)
+                      if (v.bookingTime === v2.value) {
+                        if (v.countBooking < parseInt(v2.limitBooking)) {
+                          statusOffDate1 = true
+                          // console.log(v.bookingDate, '----', 'v', v.bookingTime, ' ', v.countBooking, '    ', 'v2', v2.value, ' ', v2.limitBooking)
+                        }
+                      }
+                    } else if (parseInt(v2.limitBooking) > 0) {
+                      if (objectDT[dt].filter((aa) => aa.bookingTime === v2.value).length === 0) {
+                        console.log(v.bookingDate, '+++++', v2.value)
+                        statusOffDate1 = true
+                      }
+                    }
+                  })
+                } else {
+                  JSON.parse(v.setTime).forEach((v2, k2) => {
+                    if (parseInt(v2.limitBooking) > 0 && v.bookingTime === v2.value) {
+                      console.log(v.bookingDate, '----', 'v', v.bookingTime, ' ', v.countBooking, '    ', 'v2', v2.value, ' ', v2.limitBooking)
+                      if (v.bookingTime === v2.value) {
+                        if (v.countBooking < parseInt(v2.limitBooking)) {
+                          statusOffDate1 = true
+                          // console.log(v.bookingDate, '----', 'v', v.bookingTime, ' ', v.countBooking, '    ', 'v2', v2.value, ' ', v2.limitBooking)
+                        }
+                      }
+                    } else if (parseInt(v2.limitBooking) > 0) {
+                      if (objectDT[dt].filter((aa) => aa.bookingTime === v2.value).length === 0) {
+                        console.log(v.bookingDate, '+++++', v2.value)
+                        statusOffDate1 = true
+                      }
+                    }
+                  })
+                }
+              }
+            })
+            console.log('---------!!!!1--------', dt, '----', statusOffDate1)
+            if (statusOffDate1 === false) {
+              console.log('---------OFF--------', objectDT[dt])
+              this.dateDaylimit.push(
+                moment(objectDT[dt][0].bookingDate).format('YYYY-MM-DD')
+              )
+            }
+          } else {
+            // console.log('limitBookingCheck === False')
+            this.dateDaylimit = []
+          }
+          // if (statusOffDate1 === false) {
+          //   this.dateDaylimit.push(
+          //     moment(objectDT[dt][0].bookingDate).format('YYYY-MM-DD')
+          //   )
+          // }
+          console.log('this.dateDaylimit', this.dateDaylimit)
+          // this.dateDaylimit = result.data.map((item) => { return this.momenDate_1(item.bookingDate) })
+        }
+      } else {
+        console.log('getMonth ELSE')
+        this.dateDaylimit = []
+      }
+    },
+    allowedDates (val) {
+      if (this.dateDaylimit) {
+        if (this.dataFlowSelectAdd.filter(el => el.value === this.formAdd.flowId).length > 0) {
+          if (this.dataFlowSelectAdd.filter(el => el.value === this.formAdd.flowId)[0].allData.typeDayCustom === 'on') {
+            return val === this.dateDayCustom.filter(el => el === val)[0]
+          } else {
+            if (
+              this.dateDayoff.filter(el => {
+                return el === new Date(val).getDay()
+              }).length === 0 &&
+            this.dateDayCustom.filter(el => {
+              return el === val
+            }).length === 0 &&
+            this.dateDaylimit.filter(el => {
+              return el === val
+            }).length === 0
+            ) {
+              return val
+            }
+          }
+        } else {
+          return val
+        }
+      } else {
+        return val
+      }
+    },
+    SetallowedDates () {
+      let dataFlow = this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId })
+      if (dataFlow.length > 0) {
+        dataFlow.forEach((v, k) => {
+          console.log('v', v)
+          if (v.allData.flowId === this.formAdd.flowId) {
+            // console.log('Value', v.dateDayoffValue)
+            v.allData.dateDayCustom = v.allData.dateDayCustom || ''
+            v.allData.dateDayoffValue = v.allData.dateDayoffValue || ''
+            if (v.allData.dateDayoffValue !== '') {
+              // console.log('if')
+              this.dateDayoff = JSON.parse(v.allData.dateDayoffValue)
+            } else {
+              // console.log('else')
+              this.dateDayoff = []
+            }
+            if (v.dateDayCustom !== '') {
+              this.dateDayCustom = JSON.parse(v.allData.dateDayCustom)
+            } else {
+              this.dateDayCustom = []
+            }
+          }
+        })
+      } else {
+        this.dateDayoff = []
+        this.dateDayCustom = []
+      }
+    },
+    async getjobChangeOnsite (item) {
+      this.dataEmpOnsite = item
+      await this.getEmpSelectAddJob()
+      this.jobitem = []
+      console.log(item)
+      console.log(this.empSelectStepAdd)
+      if (item.jobNo !== '') {
+        await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
+          let rs = response.data
+          console.log('getJobNo', rs)
+          if (rs.status === false) {
+          } else {
+            this.jobitem = rs
+            this.sortNo = rs[0].sortNo
+            this.empSelectJob = parseInt(rs[0].empStepId)
+            this.flowId = rs[0].flowId
+            console.log('this.flowId', this.flowId)
+            if (this.sortNo === 1) {
+              this.checkEmpJob()
+            }
+          }
+        })
+      }
+    },
+    async getChangeOnsite (item) {
+      await this.getEmpSelectAddJob()
+      this.jobitem = []
+      console.log(item)
+      console.log(this.empSelectStepAdd)
+      if (item.jobNo !== '') {
+        await axios.get(this.DNS_IP + '/job/getJobNo?jobNo=' + item.jobNo).then((response) => {
+          let rs = response.data
+          console.log('getJobNo', rs)
+          if (rs.status === false) {
+          } else {
+            this.jobitem = rs
+            this.sortNo = rs[0].sortNo
+            this.empSelectJob = parseInt(rs[0].empStepId)
+            this.flowId = rs[0].flowId
+            console.log('this.flowId', this.flowId)
+            if (this.sortNo === 1) {
+              this.checkEmpJob()
+            }
+          }
+        })
+      }
+    },
+    async getEmpSelectAddJob () {
+      this.empSelectStepAdd = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/getUse?USER_ROLE=onsite&shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              console.log('DDDDDSFDSDFSDF', d)
+              var s = {}
+              s.text = d.empFull_NameTH
+              s.value = d.empId
+              this.empSelectStepAdd.push(s)
+            }
+          }
+        })
+    },
     async clearDataAdd () {
       this.showMenu = 'False'
       this.dataMenuAdd = []
@@ -1666,6 +2265,7 @@ export default {
     setFlowByBranchAdd () {
       this.formAdd.flowId = ''
       let DD = this.DataFlowNameDefault
+      console.log('DD_', DD)
       let dataFilter = []
       DD.forEach((item) => {
         if (item.text !== 'ทั้งหมด') {
@@ -2585,14 +3185,33 @@ export default {
           }
         })
       this.DataFlowItem = resultOption
+      this.DataFlowNameDefault = resultOption
       if (resultOption.length > 0) {
         this.flowSelect = this.DataFlowItem[0].value
       }
     },
     async getDataBranch () {
       this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
+      let branchData = this.branchItem
       if (this.branchItem.length > 0) {
         this.masBranchID = this.branchItem[0].value
+        if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+          this.branch = branchData
+        } else {
+          let checkData = branchData.filter(el => { return el.value === this.session.data.masBranchID })
+          if (checkData.length > 0) {
+            this.branch = checkData
+          } else {
+            await this.getDataBranch()
+            if (checkData.length > 0) {
+              this.branch = checkData
+            } else {
+              this.branch = []
+              this.$swal('ผิดพลาด', 'กรุณาตรวจสอบสาขาของท่าน เนื่องจากระบบตรวจหาสาขาไม่พบ', 'error')
+            }
+          }
+        }
+        // console.log('this.masBranchID sen', this.masBranchID)
       }
     },
     async getDataFromAPI (url, fieldId, fieldName, param) {
