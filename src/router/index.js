@@ -556,6 +556,11 @@ export default new Router({
     path: '/PricingList',
     name: 'PricingList',
     component: ShopPayment.PricingList
+  },
+  {
+    path: '/Master/BookingListQueuePanel',
+    name: 'BookingListQueuePanel',
+    component: Master.BookingListQueuePanel
   }
   ]
 })

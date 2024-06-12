@@ -56,6 +56,7 @@ import BookingListQueueMonitoringVideoEventCat from './BookingListQueueMonitorin
 import BookingListQueueMonitoringVideoEvent from './BookingListQueueMonitoringVideoEvent.vue'
 import BookingListQueueByUserEvent from './BookingListQueueByUserEvent.vue'
 // import BookingListBeautyEmpTestRedis from './BookingListBeautyEmpTestRedis.vue'
+import BookingListQueuePanel from './BookingListQueuePanel'
 
 export default {
   BookingByUserEmp,
@@ -115,5 +116,6 @@ export default {
   BookingListQueueByUserEventCat,
   BookingListQueueMonitoringVideoEventCat,
   BookingListQueueMonitoringVideoEvent,
-  BookingListQueueByUserEvent
+  BookingListQueueByUserEvent,
+  BookingListQueuePanel
 }

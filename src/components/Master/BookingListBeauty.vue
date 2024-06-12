@@ -657,6 +657,7 @@
               </v-text-field>
           </div>
         </div>
+        <!-- panel -->
         <v-divider v-if="resCol !== 'xs'"></v-divider>
         <div class="pl-5 pb-5 pr-5 pt-0 mb-4" v-if="resCol !== 'xs'">
           <v-row style="display: flex;justify-content: space-between;margin-bottom:15px;margin-top:2px;">
@@ -808,6 +809,7 @@
             </v-col>
           </v-row>
           </div>
+          <!-- panel -->
         <v-row>
           <!-- EXPORT -->
           <v-dialog v-model="dialogExport" persistent max-width="70%">
@@ -11776,7 +11778,7 @@ export default {
       // this.$refs.CalendarBooking.getDataBranch()
       // this.$refs.CalendarBooking.getBookingList()
       } else {
-        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั้ง', 'error')
         clearInterval(this.setTimerCalendar)
         this.setTimerCalendar = null
         this.$router.push('/Core/Login')
