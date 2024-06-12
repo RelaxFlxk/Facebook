@@ -101,7 +101,8 @@
                                       <v-icon color="#1B437C" class="mr-2">{{ items.icon }}</v-icon><div>{{items.title}}{{ items.subtitle }}</div>
                                     </div>
                                 </div> -->
-                                  <div v-if="index !== 2 && index !== 1">
+                                  <!-- <div v-if="index !== 2 && index !== 1"> -->
+                                  <div>
                                     <!-- <v-icon dark color="#1B437C">
                                       {{ items.icon }}
                                     </v-icon> -->
@@ -110,17 +111,17 @@
                                         items.icon
                                       }}</v-icon>
                                       <div class="mr-1">{{ items.title }}</div>
-                                      <div
+                                      <!-- <div
                                         style="color: #1b437c; font-weight: bold"
                                       >
                                         {{ items.subtitle }}
-                                      </div>
+                                      </div> -->
                                     </div>
                                   </div>
-                                  <div v-if="index !== 2 && index !== 0">
-                                    <!-- <v-icon dark color="#1B437C">
+                                  <!-- <div v-if="index !== 2 && index !== 0">
+                                    <v-icon dark color="#1B437C">
                                       {{ items.icon }}
-                                    </v-icon> -->
+                                    </v-icon>
                                     <div style="display: flex">
                                       <v-icon color="#1B437C" class="mr-2">{{
                                         items.icon
@@ -129,7 +130,7 @@
                                         {{ items.title }} {{ items.subtitle }}
                                       </div>
                                     </div>
-                                  </div>
+                                  </div> -->
                                 </v-card-text>
                               </div>
                             </v-col>
