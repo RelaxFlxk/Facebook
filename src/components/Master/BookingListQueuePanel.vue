@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <div :class="dialogwidth === '50%' ? 'pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4' : 'px-lg-4'" :style="dialogwidth === '50%' ? '' : 'overflow-x: hidden;height:100vh;background-color: #1B437C;padding-bottom: 80px;'">
         <v-row>
@@ -111,26 +110,6 @@
                 </v-date-picker>
               </v-menu>
             </v-col>
-            <!-- <v-col col="auto">
-              <v-select
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                v-model="time"
-                hide-details
-                background-color="white"
-                :items="timeavailable"
-                label="เวลา"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-              >
-                <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-map-marker-circle
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col> -->
             <v-col cols="4" class="pt-0">
               <v-text-field
                 v-model="search"
@@ -182,26 +161,6 @@
         </v-form>
         <v-form ref="form_search" v-model="validSearch" lazy-validation v-else>
           <v-row>
-            <!-- <v-col cols="12" class="pl-10 pr-10">
-              <v-select
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                v-model="flowSelect"
-                hide-details
-                background-color="white"
-                :items="DataFlowItem"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-                @change="searchBooking()"
-              >
-                <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-note-text-outline
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col> -->
             <v-col cols="12" class="pl-10 pr-10">
               <v-menu
                 ref="menu"
@@ -242,18 +201,27 @@
             </v-col>
           </v-row>
         </v-form>
+        <!-- sen -->
+        <div class="pl-5 pb-5 pr-5 pt-0 mb-4">
+          <v-row style="display: flex;justify-content: space-between;margin-bottom:15px;margin-top:2px;">
+            <v-col cols="auto" style="text-align: end;" class="px-0 pb-0">
+              <v-btn
+                  class="bottomAdd"
+                  style="margin-right: 0px;border-radius: 15px;color: white;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                  width="250px"
+                  x-large
+                  @click="addDataSet()"
+                >
+                  เพิ่มรายการนัดหมาย
+                  <v-icon color="white" class="ml-4" >mdi-plus-circle</v-icon>
+            </v-btn>
+            </v-col>
+          </v-row>
+          </div>
+<!-- sen -->
         <v-row v-if="dialogwidth === '50%'">
           <v-col cols="12">
             <v-card>
-            <!-- <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="ค้นหา"
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title> -->
             <v-data-table
               :headers="headers"
               :items="itemBooking"
@@ -451,7 +419,6 @@
           <v-col cols="12"  v-for="(item, id) in itemBooking.filter(el => el.statusBt !== 'closeJob' && el.statusBt !== 'cancel')" :key="id">
             <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
               <div mb-n5>
-                <!-- <h6 style="color:#092C4C" class="text-left font-weight-bold ml-10">{{ item.flowName }}</h6> -->
                 <v-row>
                   <v-col cols="12" class="pb-0 pt-0">
                     <v-btn
@@ -483,7 +450,6 @@
                     </div>
                   </v-col>
                 </v-row>
-                <!-- <h5 v-if="item.servicePoint" class="text-start  ml-10 mt-2"><strong>{{ languageSelect === 0 ? item.servicePoint : JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint}).length > 0 ? JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint})[0].textEn:item.servicePoint}}</strong></h5> -->
                 <div class="text-center">
                   <v-btn
                   color="#F8CD70"
@@ -513,23 +479,6 @@
                   <strong class="text-white">ปิดงาน</strong>
                 </v-btn>
                 </div>
-                <!-- <v-row> -->
-                  <!-- <v-col col="12" class="text-center">
-                    <div class=" mt-2" style="display: flex;">
-                      <v-icon  color="#F38080" class="iconify" data-icon="ic:twotone-access-time"></v-icon>
-                      <p class="font-weight-medium text-center ma-0 ml-2" v-if="dateStart" style="font-size:16px;color:#979797;">
-                        {{momentThaiText(dateStart)}}</p>
-                    </div>
-                  </v-col> -->
-                  <!-- <v-col cols="6" class="pl-0 pr-0">
-                    <div class="text-start mt-2" style="display: flex;word-break: break-word;">
-                      <v-icon color="#979797" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
-                      <p class="font-weight-medium mb-1" style="font-size:16px;color:#979797;" v-if="masBranchID !== ''">
-                      สาขา : {{branchItem.filter(el => { return masBranchID === el.value })[0].text}}
-                    </p>
-                    </div>
-                  </v-col> -->
-                <!-- </v-row> -->
               </div>
             </v-card>
           </v-col>
@@ -552,7 +501,6 @@
                   >
                     ปิด
                   </v-btn>
-                  <!-- </div> -->
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -643,23 +591,6 @@
                   </v-row>
                    <v-row v-if="overlaySave">
                     <v-col cols="12">
-                      <!-- <v-select
-                        v-model="servicePoint"
-                        item-text="textTh"
-                        item-value="textTh"
-                        background-color="white"
-                        style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                        hide-details
-                        :items="servicePointItem"
-                        label="จุดบริการ"
-                        outlined
-                        dense
-                        ><template #prepend-inner>
-                          <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                            mdi-access-point
-                          </v-icon>
-                        </template>
-                      </v-select> -->
                       <v-radio-group v-model="servicePoint" row>
                         <v-row>
                           <v-col class="px-0" cols="4" v-for="(n, id) in servicePointItem" :key="id">
@@ -701,6 +632,774 @@
               </v-card-text>
             </v-card>
           </v-dialog>
+          <!-- ADD -->
+          <v-dialog v-model="dialogAdd"
+          max-width="100%"
+          persistent>
+            <v-card class="text-center">
+              <v-form ref="form_add" v-model="validAdd" lazy-validation>
+                <v-card-text>
+                    <v-row justify="center">
+                      <v-col
+                        v-if="ColsDialogAdd === 'True'"
+                        :cols="ColsDialogAdd === 'True' ? 8 : 8"
+                      >
+                        <v-col class="text-center">
+                          <CalendarBooking ref="CalendarBooking"></CalendarBooking>
+                        </v-col>
+                      </v-col>
+
+                      <v-col :cols="ColsDialogAdd === 'True' ? 4 : 10">
+                      <!-- <v-col cols="12" sm="6" md="6" lg="6" class="v-margit_text_add mt-0 pa-0"> -->
+                        <v-row>
+                          <v-col cols="8" class="text-left pt-10">
+                            <h3><strong>เพิ่มรายการนัดหมาย</strong></h3>
+                          </v-col>
+                          <v-col cols="4" class="pt-10">
+                            <div style="text-align: end;">
+                              <v-btn
+                                class="mx-2"
+                                fab
+                                small
+                                dark
+                                color="white"
+                                :style="styleCloseBt"
+                                @click="(dialogAdd = false), clearDataAdd()"
+                                >
+                                X
+                              </v-btn>
+                            </div>
+                          </v-col>
+                        </v-row>
+                        <v-col cols="12">
+                          <v-checkbox
+                            v-if="$session.getAll().data.shopId !== 'U52928fc4d2ed0bb777f7c1d1c95d6173'"
+                            v-model="statusVIP"
+                            label="เปิดจองคิวซ้ำได้"
+                            false-value="False"
+                            true-value="True"
+                            :on-icon="'mdi-check-circle'"
+                            :off-icon="'mdi-checkbox-blank-circle-outline'"
+                            @click="date = ''"
+                          ></v-checkbox>
+                          <v-select
+                            v-model="formAdd.masBranchID"
+                            :items="branchItem"
+                            label="สาขา"
+                            outlined
+                            dense
+                            required
+                            :rules="[rules.required]"
+                            @change="priceMenuAdd = 0,drawerAdd = false,showMenu = 'False',getDataCalendaBookingAdd(),setFlowByBranchAdd()"
+                          ></v-select>
+                          <v-select
+                            v-if="formAdd.masBranchID !== null && formAdd.masBranchID !== ''"
+                            v-model="formAdd.flowId"
+                            :items="dataFlowSelectAdd"
+                            label="ประเภทบริการ"
+                            outlined
+                            dense
+                            required
+                            @change="priceMenuAdd = 0,drawerAdd = false, checkTime(),getDataCalendaBookingAdd(),SetallowedDates(),setFlowAdd(), date = ''"
+                            :rules="[rules.required]"
+                          ></v-select>
+                          <template v-if="fieldNameItem">
+                            <div
+                              v-for="(item, index) in fieldNameItem"
+                              :key="index"
+                            >
+                              <template
+                                v-if="
+                                  item.conditionField === '' ||
+                                    item.conditionField === null
+                                "
+                              >
+                                <v-col class="InputData pa-0" v-if="item.fieldType == 'text'">
+                                  <v-text-field
+                                    v-if="item.fieldName === 'เบอร์โทร'"
+                                    v-mask="'###-###-####'"
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" class="InputData pa-0" v-if="item.fieldType == 'number'">
+                                  <v-text-field
+                                    v-if="item.fieldName === 'เบอร์โทร'"
+                                    v-mask="'###-###-####'"
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                  <v-text-field
+                                    v-else
+                                    v-model="item.fieldValue"
+                                    :label="item.fieldName"
+                                    outlined
+                                    dense
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
+                                  <v-menu
+                                    v-model="menuAdd1"
+                                    :close-on-content-click="false"
+                                    :return-value.sync="date"
+                                    :rules="[rules.required]"
+                                    transition="scale-transition"
+                                    offset-y
+                                    required
+                                    min-width="auto"
+                                    ref="menuAdd1"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="item.fieldValue"
+                                        readonly
+                                        :label="item.fieldName"
+                                        outlined
+                                        dense
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        required
+                                        prepend-inner-icon="mdi-calendar"
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      >
+                                      </v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="item.fieldValue"
+                                      no-title
+                                      scrollable
+                                      @input="(menuAdd1 = false), $refs.menuAdd1.save(item.fieldValue)"
+                                    >
+                                    </v-date-picker>
+                                  </v-menu>
+                                </v-col>
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'Autocompletes'">
+                                  <v-autocomplete
+                                    v-model="item.fieldValue"
+                                    :items="JSON.parse(item.optionField)"
+                                    outlined
+                                    :label="item.fieldName"
+                                    required
+                                    dense
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                  ></v-autocomplete>
+                                </v-col>
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'Selects'">
+                                  <v-select
+                                  class="mb-6"
+                                    v-model="item.fieldValue"
+                                    :items="JSON.parse(item.optionField)"
+                                    menu-props="auto"
+                                    :label="item.fieldName"
+                                    clearable
+                                    required
+                                    :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    dense
+                                    outlined
+                                  ></v-select>
+                                </v-col>
+                                <v-col cols="12" class="InputData" v-if="item.fieldType == 'Radio'" style="padding:0px;">
+                                  <v-container fluid style="padding:0px;">
+                                    <v-radio-group
+                                      column
+                                      dense
+                                      v-model="item.fieldValue"
+                                      style="margin:0px;"
+                                    >
+                                      <template v-slot:label> </template>
+                                      <div
+                                        v-for="radios in JSON.parse(
+                                          item.optionField
+                                        )"
+                                        :key="radios.toISOString"
+                                      >
+                                        <v-radio
+                                          :label="radios.text"
+                                          dense
+                                          :value="radios.value"
+                                        ></v-radio>
+                                      </div>
+                                    </v-radio-group>
+                                  </v-container>
+                                </v-col>
+                                <p>xxx={{item}}</p>
+                              </template>
+                              <p>item.conditionField = {{ item.conditionField }}</p>
+                              <template
+                                v-if="
+                                  item.conditionField !== '' &&
+                                    fieldNameItem.filter(row => {
+                                      return (
+                                        row.fieldId ===
+                                        parseInt(item.conditionField)
+                                      );
+                                    }).length > 0
+                                "
+                              >
+                                <template
+                                  v-if="
+                                    item.conditionValue ===
+                                      fieldNameItem.filter(row => {
+                                        return (
+                                          row.fieldId ===
+                                          parseInt(item.conditionField)
+                                        );
+                                      })[0].fieldValue
+                                  "
+                                >
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
+                                    <v-text-field
+                                      v-if="item.fieldName === 'เบอร์โทร'"
+                                      v-mask="'###-###-####'"
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      required
+                                      dense
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                    <v-text-field
+                                      v-else
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      required
+                                      dense
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                  </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
+                                    <v-text-field
+                                      v-if="item.fieldName === 'เบอร์โทร'"
+                                      v-mask="'###-###-####'"
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      required
+                                      dense
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                    <v-text-field
+                                      v-else
+                                      v-model="item.fieldValue"
+                                      :label="item.fieldName"
+                                      outlined
+                                      required
+                                      dense
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-text-field>
+                                  </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
+                                  <v-menu
+                                    v-model="menuAdd2"
+                                    :close-on-content-click="false"
+                                    :return-value.sync="date"
+                                    :rules="[rules.required]"
+                                    transition="scale-transition"
+                                    offset-y
+                                    required
+                                    min-width="auto"
+                                    ref="menuAdd2"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="item.fieldValue"
+                                        readonly
+                                        :label="item.fieldName"
+                                        outlined
+                                        dense
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        required
+                                        prepend-inner-icon="mdi-calendar"
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      >
+                                      </v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="item.fieldValue"
+                                      no-title
+                                      scrollable
+                                      @input="(menuAdd2 = false), $refs.menuAdd2.save(item.fieldValue)"
+                                    >
+                                    </v-date-picker>
+                                  </v-menu>
+                                </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'Autocompletes'">
+                                    <v-autocomplete
+                                      v-model="item.fieldValue"
+                                      :items="JSON.parse(item.optionField)"
+                                      outlined
+                                      :label="item.fieldName"
+                                      required
+                                      dense
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                    ></v-autocomplete>
+                                  </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'Selects'">
+                                    <v-select
+                                    class="mb-6"
+                                      v-model="item.fieldValue"
+                                      :items="JSON.parse(item.optionField)"
+                                      menu-props="auto"
+                                      :label="item.fieldName"
+                                      required
+                                      dense
+                                      clearable
+                                      :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      outlined
+                                    ></v-select>
+                                  </v-col>
+                                  <v-col cols="12" class="InputData" v-if="item.fieldType == 'Radio'" style="padding:0px;">
+                                    <v-container fluid style="padding:0px;">
+                                      <v-radio-group
+                                        row
+                                        dense
+                                        v-model="item.fieldValue"
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        style="margin:0px;"
+                                      >
+                                        <template v-slot:label> </template>
+                                        <div
+                                          v-for="radios in JSON.parse(
+                                            item.optionField
+                                          )"
+                                          :key="radios.toISOString"
+                                        >
+                                          <v-radio
+                                            :label="radios.text"
+                                            :value="radios.value"
+                                            dense
+                                          ></v-radio>
+                                        </div>
+                                      </v-radio-group>
+                                    </v-container>
+                                  </v-col>
+                                </template>
+                              </template>
+                                <template  v-if="item.conditionField === 'flow' ">
+                                  <template v-if="parseInt(item.conditionValue) === parseInt(formAdd.flowId) ">
+                                    <v-col cols="12" class="InputData" v-if="item.fieldType == 'text'">
+                                      <v-text-field
+                                        v-if="item.fieldName === 'เบอร์โทร'"
+                                        v-mask="'###-###-####'"
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        dense
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                      <v-text-field
+                                        v-else
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        dense
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" class="InputData" v-if="item.fieldType == 'number'">
+                                      <v-text-field
+                                        v-if="item.fieldName === 'เบอร์โทร'"
+                                        v-mask="'###-###-####'"
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        dense
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                      <v-text-field
+                                        v-else
+                                        v-model="item.fieldValue"
+                                        :label="item.fieldName"
+                                        dense
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                        outlined
+                                      ></v-text-field>
+                                    </v-col>
+                                     <v-col cols="12" class="InputData" v-if="item.fieldType == 'dateTime'">
+                                      <v-menu
+                                        v-model="menuAdd3"
+                                        :close-on-content-click="false"
+                                        :return-value.sync="date"
+                                        :rules="[rules.required]"
+                                        transition="scale-transition"
+                                        offset-y
+                                        required
+                                        min-width="auto"
+                                        ref="menuAdd3"
+                                      >
+                                        <template v-slot:activator="{ on, attrs }">
+                                          <v-text-field
+                                            v-model="item.fieldValue"
+                                            readonly
+                                            :label="item.fieldName"
+                                            outlined
+                                            dense
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            required
+                                            prepend-inner-icon="mdi-calendar"
+                                            :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                          >
+                                          </v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                          v-model="item.fieldValue"
+                                          no-title
+                                          scrollable
+                                          @input="(menuAdd3 = false), $refs.menuAdd3.save(item.fieldValue)"
+                                        >
+                                        </v-date-picker>
+                                      </v-menu>
+                                    </v-col>
+                                    <v-col
+                                      cols="12"
+                                      class="InputData"
+                                      v-if="item.fieldType == 'Autocompletes'"
+                                    >
+                                      <v-autocomplete
+                                        v-model="item.fieldValue"
+                                        :items="JSON.parse(item.optionField)"
+                                        dense
+                                        filled
+                                        :label="item.fieldName"
+                                        :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                      ></v-autocomplete>
+                                    </v-col>
+                                      <v-col cols="12" class="InputData" v-if="item.fieldType == 'Selects'">
+                                        <v-select
+                                        class="mb-6"
+                                          v-model="item.fieldValue"
+                                          :items="JSON.parse(item.optionField)"
+                                          menu-props="auto"
+                                          :label="item.fieldName"
+                                          clearable
+                                          dense
+                                          :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                          hide-details
+                                          outlined
+                                        ></v-select>
+                                      </v-col>
+                                      <v-col cols="12" class="InputData" v-if="item.fieldType === 'Radio'" style="padding:0px;">
+                                        <v-container fluid style="padding:0px;">
+                                          <v-radio-group
+                                            row
+                                            v-model="item.fieldValue"
+                                            style="margin:0px;"
+                                            :rules="item.requiredField === 'True' ? [rules.required] : [true]"
+                                          >
+                                            <template v-slot:label> </template>
+                                            <div
+                                              v-for="radios in JSON.parse(
+                                                item.optionField
+                                              )"
+                                              :key="radios.toISOString"
+                                              class="text-center"
+                                            >
+                                              <v-radio
+                                                :label="radios.text"
+                                                dense
+                                                :value="radios.value"
+                                              ></v-radio>
+                                            </div>
+                                          </v-radio-group>
+                                        </v-container>
+                                      </v-col>
+                                  </template>
+                                </template>
+                            </div>
+                          </template>
+                          <v-row>
+                            <v-col class="pb-0 pt-0" v-if="formAdd.flowId">
+                              <v-menu
+                                ref="menu"
+                                v-model="menuDate"
+                                :close-on-content-click="false"
+                                :return-value.sync="date"
+                                :rules="[rules.required]"
+                                transition="scale-transition"
+                                offset-y
+                                required
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="date"
+                                    readonly
+                                    label="วันที่นัดหมาย"
+                                    outlined
+                                    dense
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    required
+                                    @click="pickerDate ? getMonth(pickerDate) : null"
+                                    :rules="[rules.required]"
+                                  >
+                                    <template #prepend>
+                                      <v-icon right>
+                                        mdi-calendar
+                                      </v-icon>
+                                    </template>
+                                  </v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="date"
+                                  no-title
+                                  scrollable
+                                  :allowed-dates="allowedDates"
+                                  :picker-date.sync="pickerDate"
+                                  @change="setLimitBooking(date)"
+                                  @input="(menuDate = false), $refs.menu.save(date)"
+                                  :min="currentDate"
+                                >
+                                </v-date-picker>
+                              </v-menu>
+                            </v-col>
+                            <v-col class="pb-0 pt-0" v-if="timeavailable.length > 0 && date !== ''">
+                              <v-select
+                              v-model="time"
+                              :items="timeavailable"
+                              label="เวลา"
+                              item-text="text"
+                              item-value="text"
+                              persistent-hint
+                              return-object
+                              outlined
+                              dense
+                              required
+                              :rules ="[rules.required]"
+                            ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="showMenu === 'True'">
+                          <sideMenu :drawerParent="drawerAdd" :toggleParent="toggleAdd" :languageSelectParent="languageSelect" :dataMenuParent="dataMenuAdd" :priceMenuParent="priceMenuAdd" @updatePriceMenuParent="updatePriceMenuAdd"></sideMenu>
+                          <v-col cols="12" class="pt-0 pb-4">
+                            <v-btn
+                              block
+                              dark
+                              @click="toggleAdd"
+                            >เมนู</v-btn>
+                          </v-col>
+                          <v-col cols="12" class="pt-0 pb-6">
+                            <v-expansion-panels multiple v-model="expansionMenuAdd">
+                              <v-expansion-panel>
+                                <v-expansion-panel-header>รายการและราคา</v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                  <div style="align-items: center;width:100%;">
+                                    <v-row>
+                                      <v-col cols="12" v-for="(item,id) in dataMenuAdd.filter(el => { return parseInt(el.qty) > 0 })" :key="id" style="display: flex;">
+                                        <v-card class="cardMenu">
+                                            <v-img
+                                              class="pictureMenu"
+                                              :src="item.picture"
+                                            ></v-img>
+                                            <v-row>
+                                              <v-col cols="8" class="pt-0 pb-0 textTitelMenu">{{item.name}}</v-col>
+                                              <v-col cols="8" style="display: flex;justify-content: flex-start;" class="pt-0 pb-0 textTitelMenuSub">{{item.qty}} x {{formatNumber(item.price)}}</v-col>
+                                              <v-col cols="6" class="pt-0 pb-0 textTitelMenuRemark">{{item.remark}}</v-col>
+                                            </v-row>
+                                        </v-card>
+                                      </v-col>
+                                      <v-col cols="12">
+                                        <v-row>
+                                          <v-col cols="6"><p class="ma-0 textTitelPriceMenu">รวมราคา</p></v-col>
+                                          <v-col cols="6" style="display: flex;justify-content: flex-end;" class="textTitelPriceMenu">{{formatNumber(priceMenuAdd)}}</v-col>
+                                        </v-row>
+                                      </v-col>
+                                    </v-row>
+                                  </div>
+                                </v-expansion-panel-content>
+                              </v-expansion-panel>
+                            </v-expansion-panels>
+                          </v-col>
+                        </v-row>
+                          <v-row v-if="$session.getAll().data.shopId !== 'U9f316c85400fd716ea8c80d7cd5b61f8'">
+                            <v-col class="pt-0 pb-0">
+                              <v-radio-group v-model="formAdd.radiosRemark" row required :rules ="[rules.required]">
+                                <v-radio value="ซ่อมปกติ">
+                                  <template v-slot:label>
+                                    <div class="mt-3"><strong class="primary--text">{{dataTypeJob1}}</strong></div>
+                                  </template>
+                                </v-radio>
+                                <v-radio value="ExtraJob">
+                                  <template v-slot:label>
+                                    <div class="mt-3"><strong class="error--text">{{dataTypeJob2}}</strong></div>
+                                  </template>
+                                </v-radio>
+                                <v-radio value="FastTrack">
+                                  <template v-slot:label>
+                                    <div class="mt-3"><strong class="orange--text">{{dataTypeJob3}}</strong></div>
+                                  </template>
+                                </v-radio>
+                              </v-radio-group>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="checkDepositAdd === 'True'">
+                            <v-col cols="12" class="pt-0">
+                              <v-checkbox
+                                :label="`มีหลักฐานมัดจำหรือไม่ : ${dataDepositAdd.toString()}`"
+                                false-value="ไม่มี"
+                                true-value="มี"
+                                v-model="dataDepositAdd"
+                                hide-details
+                                @change="dataDepositAdd === 'มี' ? panelDeposit = [0] : panelDeposit = []"
+                              ></v-checkbox>
+                            </v-col>
+                            <v-col cols="12" class="pt-0" v-if="dataDepositAdd === 'มี'">
+                              <v-expansion-panels
+                                v-model="panelDeposit"
+                                multiple
+                              >
+                                <v-expansion-panel>
+                                  <v-expansion-panel-header>อัพเดทหลักฐานเงินมัดจำ</v-expansion-panel-header>
+                                  <v-expansion-panel-content>
+                                    <v-row justify="center">
+                                      <v-col cols="12" class="text-center">
+                                        <v-img
+                                          aspect-ratio="3"
+                                          contain
+                                          :src="formAdd.pictureUrlPreviewDeposit"
+                                        ></v-img>
+                                        <br />
+                                        <v-file-input
+                                          counter
+                                          show-size
+                                          accept="image/png, image/jpeg, image/bmp"
+                                          prepend-icon="mdi-camera"
+                                          label="รูปหลักฐานการมัดจำ"
+                                          @change="selectImgAdd"
+                                          v-model="filesDepositAdd"
+                                        ></v-file-input>
+                                      </v-col>
+                                    </v-row>
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
+                              </v-expansion-panels>
+                            </v-col>
+                            <v-col cols="12" class="pt-0 pb-0">
+                              <VuetifyMoney
+                                v-model="formAdd.depositPrice"
+                                placeholder="จำนวนเงินมัดจำ"
+                                dense
+                                label="จำนวนเงินมัดจำ"
+                                outlined
+                                v-bind:options="options2"
+                              />
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col class="pt-0 pb-0">
+                              <v-select
+                                v-if="formAdd.masBranchID !== null && formAdd.masBranchID !== ''"
+                                v-model="empSelectAdd"
+                                :items="empSelectStepAdd.filter((i) => i.masBranchID === formAdd.masBranchID || i.masBranchID === '')"
+                                label="พนักงานที่รับนัดหมาย"
+                                menu-props="auto"
+                                outlined
+                                required
+                                :rules="[rules.required]"
+                                dense
+                              ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col class="pt-0">
+                            <v-textarea
+                              v-model="remark"
+                              outlined
+                              label="หมายเหตุเพิ่มเติม"
+                              auto-grow
+                            ></v-textarea>
+                            </v-col>
+                          </v-row>
+                          <v-row v-if="statusShowMap === 'True'">
+                            <v-col class="pb-0 pt-0" cols="12">
+                                <v-text-field
+                                v-model="address"
+                                label="ชื่อของที่อยู่"
+                                outlined
+                                required
+                                dense
+                                :rules="[rules.required]"
+                                ></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-card>
+                                <v-card-text>
+                                  <v-row>
+                                    <v-col class="pb-0" cols="12">
+                                      <h6>ค้นหาที่อยู่ลูกค้า :</h6>
+                                    </v-col>
+                                    <v-col class="mr-16" cols="12">
+                                      <GmapAutocomplete id="autocompleteMap" @place_changed="updatePlace" />
+                                    </v-col>
+                                  </v-row>
+                                </v-card-text>
+                                <hr>
+                                <!-- <gmap-autocomplete @place_changed="updatePlace"/> -->
+                                <v-card-text>
+                                <GmapMap
+                                  v-if="center !== null"
+                                  :center="center"
+                                  @click='updateCoordinates'
+                                  :zoom="15"
+                                  style="width: 100%; height: 200px"
+                                  :options="{ disableDefaultUI: true, fullscreenControl: true, zoomControl: true }"
+                                >
+                                  <GmapMarker :position="center" :draggable="true" @drag="updateCoordinates" />
+                                </GmapMap>
+                                </v-card-text>
+                              </v-card>
+                              <br>
+                            </v-col>
+                          </v-row>
+                          <div class="text-center">
+                            <v-btn
+                              elevation="2"
+                              large
+                              color="#173053"
+                              :loading="loadingAdd"
+                              :disabled="loadingAdd"
+                              class="white--text"
+                              @click="addData()"
+                            >
+                              <template v-slot:loader>
+                                <span class="custom-loader">
+                                  <v-icon light>mdi-cached</v-icon>
+                                </span>
+                              </template>
+                              <v-icon color="white" dark left>mdi-checkbox-marked-circle</v-icon>
+                              เพิ่ม
+                            </v-btn>
+                          </div>
+                        </v-col>
+                      </v-col>
+                    </v-row>
+                </v-card-text>
+              </v-form>
+            </v-card>
+          </v-dialog>
+          <!-- end add -->
           <v-footer v-if="dialogwidth !== '50%'" fixed padless color="#1B437C" class="text-center" style="justify-content: center;padding-top: 10px;">
           <p class="text-white" width="100%">POWERED BY  BETASK CONSULTING</p>
         </v-footer>
@@ -718,15 +1417,58 @@ import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
 import moment from 'moment-timezone'
 import printJS from 'print-js'
 import XLSX from 'xlsx' // import xlsx
+import CalendarBooking from './CalendarBookingList.vue'
 
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney,
-    waitingAlert
+    waitingAlert,
+    CalendarBooking
   },
   data () {
     return {
+      // panel
+      menuStart1: false,
+      dateStart1: new Date().toISOString().substr(0, 7),
+      masBranchID1: '',
+      dataReady: false,
+      branch: [],
+      statusBranchReadonly: false,
+      flowSelect1: '',
+      DataFlowName: [],
+      searchAll2: '',
+      formAdd: {
+        bookingId: null,
+        fieldId: '',
+        fieldValue: '',
+        flowId: null,
+        masBranchID: null,
+        dueDate: '',
+        shopId: this.$session.getAll().data.shopId,
+        bookingFieldId: '',
+        radiosRemark: '',
+        depositStatus: '',
+        depositImge: '',
+        pictureUrlPreviewDeposit: '',
+        depositPrice: 0
+      },
+      validAdd: true,
+      statusVIP: 'False',
+      fieldNameItem: [],
+      dataFlowSelectAdd: [],
+      showMenu: 'False',
+      checkDepositAdd: '',
+      remark: '',
+      statusShowMap: '',
+      loadingAdd: false,
+      validAdd1: true,
+      dataTypeJob1: '',
+      dataTypeJob2: '',
+      dataTypeJob3: '',
+      priceMenuAdd: 0,
+      drawerAdd: false,
+      // end panel
       modelslide: '',
       shopPhone: '',
       languageSelect: 0,
@@ -816,6 +1558,33 @@ export default {
         case 'lg': return '50%'
         case 'xl': return '50%'
       }
+    },
+    resCol () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs':
+          return 'xs'
+        case 'sm':
+          return 'sm'
+        case 'md':
+          return 'md'
+        case 'lg':
+          return 'lg'
+        case 'xl':
+          return 'xl'
+      }
+      console.log(
+        'this.$vuetify.breakpoint.name',
+        this.$vuetify.breakpoint.name
+      )
+    },
+    ColsDialogAdd () {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return 'False'
+        case 'sm': return 'False'
+        case 'md': return 'False'
+        case 'lg': return 'True'
+        case 'xl': return 'True'
+      }
     }
   },
   async mounted () {
@@ -825,7 +1594,6 @@ export default {
     if (this.checkShowCount) {
       this.headers = [
         { text: 'คิว', value: 'storeFrontQueue' },
-        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
         { text: 'บริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         { text: 'จำนวนที่นั่ง', value: 'countCus' },
@@ -836,10 +1604,8 @@ export default {
     } else {
       this.headers = [
         { text: 'คิว', value: 'storeFrontQueue' },
-        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
         { text: 'บริการ', value: 'flowName' },
         { text: 'ชื่อลูกค้า', value: 'cusName' },
-        // { text: 'H.N.', value: 'hnNo' },
         { text: 'เวลาที่ลูกค้ากดรับบัตร', value: 'CREATE_DATEtime', align: 'center' },
         { text: 'ปริ้นบัตรคิว', value: 'action1', sortable: false, align: 'center' },
         { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
@@ -849,7 +1615,6 @@ export default {
     await this.getDataFlow()
     await this.searchBooking('unNoti')
     this.$root.$on('closeSetTimeBookingListQueue', () => {
-      // your code goes here
       this.closeSetTimeBookingListQueue()
     })
     this.dateStart = moment().format('YYYY-MM-DD')
@@ -858,6 +1623,652 @@ export default {
     this.getShop()
   },
   methods: {
+    async clearDataAdd () {
+      this.showMenu = 'False'
+      this.dataMenuAdd = []
+      this.dataReady = true
+      this.date = ''
+      this.time = ''
+      this.empSelectAdd = ''
+      this.remark = ''
+      this.formAdd.radiosRemark = ''
+      this.formAdd.depositStatus = ''
+      this.formAdd.depositImge = ''
+      this.formAdd.pictureUrlPreviewDeposit = ''
+      this.filesDepositAdd = null
+      this.dataDepositAdd = 'ไม่มี'
+      this.DataflowId = ''
+      this.formAdd.bookingId = null
+      this.formAdd.fieldId = ''
+      this.formAdd.fieldValue = ''
+      this.formAdd.flowId = null
+      this.formAdd.masBranchID = null
+      this.formAdd.dueDate = ''
+      this.formAdd.shopId = this.$session.getAll().data.shopId
+      this.dialogAdd = false
+      this.dialogAddCon = false
+      this.loadingAdd = false
+      this.address = ''
+      this.center = null
+      this.dataReadyAdd = true
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+      if (this.statusSearch === 'no') {
+        this.getBookingList()
+      } else {
+        this.searchAny()
+      }
+      if (this.getSelectText) {
+        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+      }
+      this.getDataCalendaBooking()
+    },
+    setFlowByBranchAdd () {
+      this.formAdd.flowId = ''
+      let DD = this.DataFlowNameDefault
+      let dataFilter = []
+      DD.forEach((item) => {
+        if (item.text !== 'ทั้งหมด') {
+          let checkBranchByFlow = item.allData.masBranchID || 'All'
+          if ((checkBranchByFlow === this.formAdd.masBranchID.toString()) || checkBranchByFlow === 'All') {
+            console.log('eeeeeee', item.allData.flowName)
+            dataFilter.push(item)
+          }
+        }
+      })
+      this.dataFlowSelectAdd = dataFilter
+    },
+    setFlowAdd () {
+      if (this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId }).length > 0) {
+        this.checkDepositAdd = this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkDeposit || 'False'
+        this.statusShowMap = this.dataFlowSelectAdd.filter(el => { return el.value === this.formAdd.flowId })[0].allData.checkOnsite || 'False'
+      } else {
+        this.checkDepositAdd = 'False'
+        this.statusShowMap = 'False'
+      }
+    },
+    async getDataCalendaBooking () {
+      console.log('this.$session.id()', this.$session.id())
+      if (this.$session.id() !== undefined) {
+        console.log('getDataCalendaBooking')
+        try {
+          await this.$refs.CalendarBooking.getDataReturn(this.selectOnsite, this.dateStart, this.masBranchID, this.flowSelect)
+        } catch (e) { console.log(e) }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั้ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
+    },
+    async getDataCalendaBookingAdd () {
+      console.log('this.$session.id()', this.$session.id())
+      if (this.$session.id() !== undefined) {
+        console.log('getDataCalendaBooking')
+        let masBranchID = this.formAdd.masBranchID || this.masBranchID
+        let flowSelect = this.formAdd.flowId || this.flowSelect
+        console.log('masBranchID', masBranchID)
+        console.log('flowSelect', flowSelect)
+        try {
+          await this.$refs.CalendarBooking.getDataReturn(this.selectOnsite, this.dateStart, masBranchID, flowSelect)
+        } catch (e) { console.log(e) }
+      } else {
+        this.$swal('ผิดพลาด', 'กรุณาลองอีกครั้ง', 'error')
+        clearInterval(this.setTimerCalendar)
+        this.setTimerCalendar = null
+        this.$router.push('/Core/Login')
+      }
+    },
+    async getCustomField (item) {
+      this.fieldNameItem = []
+      await axios
+        .get(this.DNS_IP + '/customField/fieldId?fieldId=' + item)
+        .then(async response => {
+          let rs = response.data
+          // let aa = []
+          if (rs.length > 0) {
+            let sortrs = rs.sort((a, b) => a.sortNoField - b.sortNoField)
+            for (let i = 0; i < sortrs.length; i++) {
+              let d = sortrs[i]
+              let s = {}
+              s.fieldId = d.fieldId
+              s.fieldName = d.fieldName
+              s.fieldType = d.fieldType
+              s.optionField = d.optionField
+              s.conditionField = d.conditionField
+              s.conditionValue = d.conditionValue
+              s.shopId = d.shopId
+              s.fieldValue = ''
+              s.requiredField = d.requiredField
+              this.fieldNameItem.push(s)
+            }
+            var data1 = this.fieldNameItem.filter(el => parseInt(el.conditionField || 0) > 0)
+            // var data2 = []
+            for (var i = 0; i < data1.length; i++) {
+              var d = data1[i]
+              var indexC = this.fieldNameItem.findIndex(function (o) {
+                return o.fieldId === d.fieldId
+              })
+              var indexF = this.fieldNameItem.findIndex(function (o) {
+                return o.fieldId === parseInt(d.conditionField)
+              })
+              this.fieldNameItem.splice((indexF + 1), 0, this.fieldNameItem.splice(indexC, 1)[0])
+            }
+          } else {
+            this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+              this.dialogAdd = false
+              this.clearDataAdd()
+            }).catch((error) => {
+              console.log('error function addData : ', error)
+              this.dialogAdd = false
+              this.clearDataAdd()
+            })
+          }
+        })
+        .catch(error => {
+          this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+            this.dialogAdd = false
+            this.clearDataAdd()
+          }).catch((error) => {
+            console.log('error function addData : ', error)
+            this.dialogAdd = false
+            this.clearDataAdd()
+          })
+          console.log('error function addData : ', error)
+        })
+    },
+    async addDataSet () {
+      console.log('yo')
+      this.statusdepositPrice = false
+      this.datailLinkDeposit = ''
+      this.remark = ''
+      let _this = this
+      this.setTimerCalendar = setInterval(function () { _this.getDataCalendaBookingAdd() }, 20000)
+      this.dialogAdd = true
+      setTimeout(() => this.getDataCalendaBookingAdd(), 1000)
+      if (this.branch.length === 0) {
+        this.getDataBranch()
+      }
+      this.getBookingField()
+      this.checkTime()
+      this.setFlowAdd()
+      this.$refs.CalendarBooking.setdataReturnReady()
+    },
+    async getBookingField () {
+      let itemIncustomField = []
+      await axios
+        .get(
+          this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+        )
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            this.formAdd.bookingId = rs[0].bookingId
+            let bookingData = []
+            bookingData = JSON.parse(rs[0].flowfieldName)
+            for (let i = 0; i < bookingData.length; i++) {
+              let d = bookingData[i]
+              itemIncustomField.push(d.fieldId)
+            }
+            await this.getCustomField(itemIncustomField)
+          } else {
+            this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+              this.dialogAdd = false
+              this.clearDataAdd()
+            }).catch((error) => {
+              console.log('error function addData : ', error)
+              this.dialogAdd = false
+              this.clearDataAdd()
+            })
+          }
+        })
+        .catch(error => {
+          this.$swal('พบความผิดพลาดระหว่างดำเนินการ', 'กรุณากดปุ่มเพื่อดึงข้อมูลใหม่', 'info').then(result => {
+            this.dialogAdd = false
+            this.clearDataAdd()
+          }).catch((error) => {
+            console.log('error function addData : ', error)
+            this.dialogAdd = false
+            this.clearDataAdd()
+          })
+          console.log('error function addData : ', error)
+        })
+    },
+    checkTime () {
+      this.timeavailable = []
+      let dtTime = this.dataFlowSelectAdd.filter(item => { return item.value === this.formAdd.flowId })
+      if (dtTime.length > 0) {
+        if (dtTime[0].menuShowStatus === 'True') {
+          this.showMenu = 'True'
+          this.dataMenuAdd = JSON.parse(dtTime[0].allData.menuItem) || []
+        } else {
+          this.showMenu = 'False'
+          this.dataMenuAdd = []
+        }
+        if (dtTime.map(item => item.allData.setTime) === null) {
+          this.timeavailable = []
+        } else {
+          this.timeavailable = JSON.parse(dtTime.map(item => item.allData.setTime))
+        }
+      }
+    },
+    async getBookingList () {
+      await this.getTagData()
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+
+      if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
+        this.statusBranchReadonly = false
+        if (this.masBranchID) {
+          this.masBranchID = this.masBranchID
+        } else {
+          if (this.branch.length > 0) {
+            this.masBranchID = this.branch[0].value
+          } else {
+            await this.getDataBranch()
+            if (this.branch.length > 0) {
+              this.masBranchID = this.branch[0].value
+            } else {
+              this.masBranchID = ''
+              this.$swal('ผิดพลาด', 'กรุณาตรวจสอบสาขาของท่าน เนื่องจากระบบตรวจหาสาขาไม่พบ', 'error')
+            }
+          }
+        }
+      } else {
+        this.statusBranchReadonly = true
+        if (this.branch.filter(el => { return el.value === this.session.data.masBranchID }).length > 0) {
+          this.masBranchID = this.session.data.masBranchID
+        } else {
+          await this.getDataBranch()
+          if (this.branch.filter(el => { return el.value === this.session.data.masBranchID }).length > 0) {
+            this.masBranchID = this.session.data.masBranchID
+          } else {
+            this.masBranchID = ''
+            this.$swal('ผิดพลาด', 'กรุณาตรวจสอบสาขาของท่าน เนื่องจากระบบตรวจหาสาขาไม่พบ', 'error')
+          }
+        }
+      }
+      console.log('masBranchID', this.masBranchID)
+      if (this.flowSelect !== '') {
+        this.flowSelect = this.flowSelect
+      } else {
+        this.DataFlowName = this.DataFlowNameDefault.filter(el => { return parseInt(el.masBranchID) === this.masBranchID || el.value === 'AllFlow' || el.value === 'All' })
+        if (this.DataFlowName.length > 0) {
+          console.log('masBranchID', this.DataFlowName)
+          this.flowSelect = this.DataFlowName[0].value
+        } else {
+          this.flowSelect = ''
+          await this.getDataFlow()
+          console.log('masBranchID', this.DataFlowName)
+          this.flowSelect = this.DataFlowName[0].value
+        }
+      }
+      console.log('this.flowSelect', this.flowSelect)
+      this.selectedStatus = true
+      this.dataItem = []
+      this.countWaiting = 0
+      this.countConfirm = 0
+      this.countCancel = 0
+      this.countJob = 0
+      this.countAll = 0
+      var dataItemTimes = []
+      var dataItems = []
+      let urlApi = ''
+      if (this.flowSelect === 'AllFlow') {
+        urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            '&dueDate=' +
+            this.dateStart + this.selectOnsite
+      } else {
+        urlApi = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            '&dueDate=' +
+            this.dateStart + '&flowId=' + this.flowSelect + this.selectOnsite
+      }
+      await axios
+        .get(urlApi)
+        .then(async response => {
+          console.log('getData', response.data.length)
+          if (response.data.length > 0) {
+            for (let i = 0; i < response.data.length; i++) {
+              let d = response.data[i]
+              let s = {}
+              s.bookNo = d.bookNo
+              s.flowId = d.flowId
+              let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
+              if (checkDeposit.length > 0) {
+                s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+              } else {
+                s.depositCheckStatus = 'False'
+              }
+              s.flowName = d.flowName
+              s.dueDate = d.dueDate || ''
+              if (d.timeText === null || d.timeText === '') {
+                d.timeText = d.timeDue
+              }
+              if (s.dueDate === '') {
+                s.dueDateText = 'ไม่มีเวลานัดหมาย'
+              } else {
+                s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
+              }
+              s.cusName = d.bookingDataCustomerName || ''
+              s.cusReg = d.bookingDataCustomerRegisNumber || ''
+              s.tel = d.bookingDataCustomerTel || ''
+              s.displayFlowName = d.displayFlowName || ''
+              s.shopId = d.shopId
+              s.dueDateDay = d.dueDateDay
+              s.statusVIP = d.statusVIP
+              s.checkDateConfirmJob = d.checkDateConfirmJob
+              s.packageName = d.packageName
+              s.packageDetails = d.packageDetails
+              s.packageImage = d.packageImage
+              s.packagePrice = d.packagePrice
+              s.packageBalanceAmount = d.packageBalanceAmount
+              s.packageAmount = d.packageAmount
+              s.packagePoint = d.packagePoint
+              s.packageExpire = d.packageExpire
+              s.depositTextTH = d.depositTextTH
+              s.CREATE_DATE_Status = d.CREATE_DATE_Status
+              s.CREATE_DATE = d.CREATE_DATE
+              s.menuShowStatus = d.menuShowStatus
+              s.dueDateTextDay = d.dueDateTextDay
+              s.remark = d.remark || ''
+              s.masBranchID = d.masBranchID
+              s.limitBookingCheck = d.limitBookingCheck
+              s.memberId = d.memberId || ''
+              s.countHourLimit = d.countHourLimit
+              s.empSelect = d.empSelect
+              s.empFull_NameTH = d.empFull_NameTH || ''
+              s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
+              s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
+              s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
+              s.userId = d.userId
+              s.chkConfirm = false
+              s.chkCancel = false
+              s.address = d.address
+              s.addressLatLong = d.addressLatLong
+              s.jobNo = d.jobNo
+              s.timeText = d.timeText
+              s.remarkRemove = d.remarkRemove || ''
+              s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
+              s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
+              s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+              s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+              s.depositStatus = d.depositStatus || 'False'
+              s.depositImge = d.depositImge || ''
+              s.depositReturnImge = d.depositReturnImge || ''
+              s.depositPrice = d.depositPrice || ''
+              s.remarkDepositLinked = d.remarkDepositLinked || ''
+              s.lineUserId = d.lineUserId
+              s.memberPicture = d.memberPicture
+              s.memberName = d.memberName
+              s.timeDueHtext = d.timeDueH + ':00'
+              s.timeDuetext = d.timeDue
+              s.countChangeTime = d.countChangeTime || 0
+              s.remarkReturn = d.remarkReturn || ''
+              s.dateReturn = d.dateReturn || ''
+              s.packageId = d.packageId || ''
+              s.tokenPackage = d.tokenPackage || ''
+              s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
+              s.menuItem = d.menuItem || []
+              s.menuPrice = d.menuPrice || ''
+              s.memberDataTagName = []
+              try {
+                s.memberDataTag = JSON.parse(d.memberDataTag) || []
+                if (s.memberDataTag.length > 0) {
+                  s.tagDataShow = []
+                  let memberDataTag = s.memberDataTag
+                  for (let i = 0; i < memberDataTag.length; i++) {
+                    let d = memberDataTag[i]
+                    let x = {}
+                    let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                    if (checkTagItem.length > 0) {
+                      x.text = checkTagItem[0].text
+                      x.value = checkTagItem[0].value
+                      s.tagDataShow.push(x)
+                      s.memberDataTagName.push(x.text)
+                    }
+                  }
+                }
+                s.memberDataTagName = s.memberDataTagName.join(', ')
+              } catch (error) {
+                s.tagDataShow = []
+                console.log(error)
+              }
+              this.countAll = this.countAll + 1
+              if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                s.chkConfirm = true
+                s.chkCancel = false
+              }
+              if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                s.chkConfirm = false
+                s.chkCancel = true
+              }
+              s.statusBt = d.statusBt || 'wait'
+              switch (d.statusBt) {
+                case 'confirm':
+                  s.statusBtText = 'ยืนยันแล้ว'
+                  this.countConfirm = this.countConfirm + 1
+                  break
+                case 'cancel':
+                  s.statusBtText = 'ยกเลิก'
+                  this.countCancel = this.countCancel + 1
+                  break
+                case 'confirmJob':
+                  s.statusBtText = 'รับรถแล้ว'
+                  this.countJob = this.countJob + 1
+                  break
+              }
+              var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+              if (chkTime.length === 0) {
+                dataItemTimes.push(s)
+              }
+              if (s.statusBt !== 'wait') {
+                dataItems.push(s)
+              }
+            }
+            console.log('dataItemsnn', dataItems)
+          }
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(error => {
+          console.log(error)
+          this.dataReady = true
+        })
+      let urlApiwait = ''
+      if (this.flowSelect === 'AllFlow') {
+        urlApiwait = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            '&statusBt=null' + this.selectOnsite
+      } else {
+        urlApiwait = this.DNS_IP +
+            '/booking_view/get?shopId=' +
+            this.session.data.shopId +
+            '&masBranchID=' +
+            this.masBranchID +
+            '&statusBt=null&flowId=' + this.flowSelect + this.selectOnsite
+      }
+      await axios
+        .get(urlApiwait)
+        .then(async responses => {
+          if (responses.data.length > 0) {
+            for (let i = 0; i < responses.data.length; i++) {
+              let d = responses.data[i]
+              let s = {}
+              s.bookNo = d.bookNo
+              s.flowId = d.flowId
+              let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(d.flowId) })
+              if (checkDeposit.length > 0) {
+                s.depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+              } else {
+                s.depositCheckStatus = 'False'
+              }
+              s.flowName = d.flowName
+              s.dueDate = d.dueDate || ''
+              if (d.timeText === null || d.timeText === '') {
+                d.timeText = d.timeDue
+              }
+              if (s.dueDate === '') {
+                s.dueDateText = 'ไม่มีเวลานัดหมาย'
+              } else {
+                s.dueDateText = d.dueDateTextDay + ' ' + d.timeText
+              }
+              s.statusUpload1 = d.statusUpload1 || 'False'
+              s.statusUpload2 = d.statusUpload2 || 'False'
+              s.fileUpload1 = d.fileUpload1 || '[]'
+              s.fileUpload2 = d.fileUpload2 || '[]'
+              s.shopId = d.shopId
+              s.dueDateDay = d.dueDateDay
+              s.statusVIP = d.statusVIP
+              s.checkDateConfirmJob = d.checkDateConfirmJob
+              s.packageName = d.packageName
+              s.packageDetails = d.packageDetails
+              s.packageImage = d.packageImage
+              s.packagePrice = d.packagePrice
+              s.packageBalanceAmount = d.packageBalanceAmount
+              s.packageAmount = d.packageAmount
+              s.packagePoint = d.packagePoint
+              s.packageExpire = d.packageExpire
+              s.depositTextTH = d.depositTextTH
+              s.CREATE_DATE_Status = d.CREATE_DATE_Status
+              s.CREATE_DATE = d.CREATE_DATE
+              s.menuShowStatus = d.menuShowStatus
+              s.dueDateTextDay = d.dueDateTextDay
+              s.remark = d.remark || ''
+              s.masBranchID = d.masBranchID
+              s.limitBookingCheck = d.limitBookingCheck
+              s.memberId = d.memberId || ''
+              s.countHourLimit = d.countHourLimit
+              s.empSelect = d.empSelect
+              s.empFull_NameTH = d.empFull_NameTH || ''
+              s.empFull_NameTH = s.empFull_NameTH.replace('นางสาว', '')
+              s.empFull_NameTH = s.empFull_NameTH.replace('นาย', '')
+              s.empFull_NameTH = s.empFull_NameTH.replace('นาง', '')
+              s.userId = d.userId
+              s.chkConfirm = false
+              s.chkCancel = false
+              s.address = d.address
+              s.addressLatLong = d.addressLatLong
+              s.jobNo = d.jobNo
+              s.timeText = d.timeText
+              s.remarkRemove = d.remarkRemove || ''
+              s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
+              s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
+              s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
+              s.fastTrack = (d.fastTrack === 'true' || d.fastTrack === 'True')
+              s.depositStatus = d.depositStatus || 'False'
+              s.depositImge = d.depositImge || ''
+              s.depositReturnImge = d.depositReturnImge || ''
+              s.depositPrice = d.depositPrice || ''
+              s.remarkDepositLinked = d.remarkDepositLinked || ''
+              s.lineUserId = d.lineUserId
+              s.memberPicture = d.memberPicture
+              s.memberName = d.memberName
+              s.timeDueHtext = d.timeDueH + ':00'
+              s.timeDuetext = d.timeDue
+              s.countChangeTime = d.countChangeTime || 0
+              s.remarkReturn = d.remarkReturn || ''
+              s.dateReturn = d.dateReturn || ''
+              s.packageId = d.packageId || ''
+              s.tokenPackage = d.tokenPackage || ''
+              s.RECORD_STATUS_Job = d.RECORD_STATUS_Job || ''
+              s.menuItem = d.menuItem || []
+              s.menuPrice = d.menuPrice || ''
+              this.countAll = this.countAll + 1
+              if (d.statusUseBt === 'use' && d.statusBt === 'confirm') {
+                s.chkConfirm = true
+                s.chkCancel = false
+              }
+              if (d.statusUseBt === 'use' && d.statusBt === 'cancel') {
+                s.chkConfirm = false
+                s.chkCancel = true
+              }
+              s.statusBt = d.statusBt || 'wait'
+              switch (s.statusBt) {
+                case 'wait':
+                  s.statusBtText = 'รายการนัดหมายใหม่'
+                  this.countWaiting = this.countWaiting + 1
+                  break
+              }
+              var chkTime = this.dataItemTime.filter(el => { return el.timeDueHtext === s.timeDueHtext })
+              if (chkTime.length === 0) {
+                dataItemTimes.push(s)
+              }
+              s.cusName = d.bookingDataCustomerName || ''
+              s.cusReg = d.bookingDataCustomerRegisNumber || ''
+              s.tel = d.bookingDataCustomerTel || ''
+              s.displayFlowName = d.displayFlowName || ''
+              s.memberDataTagName = []
+              s.memberDataTag = JSON.parse(d.memberDataTag) || []
+              if (s.memberDataTag.length > 0) {
+                s.tagDataShow = []
+                let memberDataTag = s.memberDataTag
+                for (let i = 0; i < memberDataTag.length; i++) {
+                  let d = memberDataTag[i]
+                  let x = {}
+                  let checkTagItem = this.tagItem.filter(el => { return el.value === d })
+                  if (checkTagItem.length > 0) {
+                    x.text = checkTagItem[0].text
+                    x.value = checkTagItem[0].value
+                    s.tagDataShow.push(x)
+                    s.memberDataTagName.push(x.text)
+                  }
+                }
+              }
+              s.memberDataTagName = s.memberDataTagName.join(', ')
+              dataItems.push(s)
+            }
+          }
+        })
+      if (dataItems.length === 0 || dataItems.status === false) {
+        this.dataItem = []
+        this.dataItemTime = []
+        if (this.getSelectText) {
+          this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
+        } else {
+          this.getSelect('wait', this.countWaiting, this.filterCloseJobValue)
+        }
+        this.dataReady = true
+      } else {
+        this.dataItem = dataItems
+        var datause = dataItemTimes.sort((a, b) => {
+          if (a.timeDueHtext < b.timeDueHtext) return -1
+          return a.timeDueHtext > b.timeDueHtext ? 1 : 0
+        })
+        for (var k = 0; k < datause.length; k++) {
+          var t = datause[k]
+          var h = {}
+          h.timeDueHtext = t.timeDueHtext
+          let chkTimes = this.dataItemTime.filter(el => { return el.timeDueHtext === t.timeDueHtext })
+          if (chkTimes.length === 0) {
+            this.dataItemTime.push(h)
+          }
+        }
+        console.log('dataItemTime', this.dataItemTime)
+        if (this.$route.query.bookNoNoti) {
+          let checkBook = dataItems.filter(el => { return el.bookNo === this.$route.query.bookNoNoti })
+          if (checkBook.length > 0) {
+            this.getSelectText = checkBook[0].statusBt
+            this.searchAll2 = checkBook[0].cusName
+          }
+        }
+        if (this.getSelectText) {
+          this.getSelect(this.getSelectText, 0, this.filterCloseJobValue)
+        } else {
+          this.getSelect('wait', this.countWaiting, this.filterCloseJobValue)
+        }
+        this.dataReady = true
+      }
+    },
     async getCustomFieldStart () {
       this.checkShowCount = false
       await axios
@@ -874,7 +2285,6 @@ export default {
             }
           }
         }).catch(async err => {
-          // this.$router.push({ name: '404' })
           console.log('getCustomFieldStart', err)
         })
     },
@@ -892,7 +2302,6 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-        // await this.clearConfirmJob(item.dueDate)
           var dtt = {
             bookNo: item.bookNo,
             contactDate: this.format_date(new Date()),
@@ -911,7 +2320,6 @@ export default {
               this.clearTimeLoop()
             })
         }).catch(async err => {
-          // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
           await this.searchBooking('unNoti')
           this.clearTimeLoop()
@@ -961,8 +2369,6 @@ export default {
         })
     },
     async openHistory (item) {
-      // console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
-      // this.HistoryData = this.BookingDataList[item.bookNo]
       const BookingData = await axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
         .then(async (response) => {
           return response.data
@@ -973,17 +2379,7 @@ export default {
         })
       this.HistoryData = BookingData || []
       this.pictureUrHistory = item.memberPicture
-      // axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
-      //   .then(async (response) => {
-      //     let rs = response.data
-      //     if (rs.status !== false) {
-      //       this.HistoryData = response.data
       this.dialogHistory = true
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log('error function addData : ', error)
-      //   })
     },
     async getShop () {
       let shopImg = ''
@@ -1038,12 +2434,8 @@ export default {
             this.shopId +
             '&masBranchID=' +
             this.masBranchID +
-            // '&flowId=' +
-            // this.flowSelect +
             '&dueDate=' +
             this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob and closeJob and cancel'
-        // '&dueDate=' +
-        // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
         } else {
           urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -1071,9 +2463,7 @@ export default {
                   d.countCus = (d.countCus.length > 0) ? d.countCus[0].fieldValue : ''
                 }
                 d.cusName = d.bookingDataCustomerName || ''
-                // s.cusReg = d.bookingDataCustomerRegisNumber || ''
                 d.cusPhone = d.bookingDataCustomerTel || ''
-                // s.displayFlowName = d.displayFlowName || ''
                 this.itemBookingUse.push(d)
               }
               itemBookingTem = this.itemBookingUse
@@ -1085,7 +2475,6 @@ export default {
                   if (checkFlow.length > 0) {
                     itemBookingCountTem[checkIndexFlow].countFlow = itemBookingCountTem[checkIndexFlow].countFlow + 1
                   } else {
-                    // this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
                     itemBookingCountTem.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
                   }
                 }
@@ -1131,7 +2520,6 @@ export default {
       } else {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       }
-      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       await axios
         .get(url)
         .then(async response => {
@@ -1144,7 +2532,6 @@ export default {
             })
           }
         }).catch(error => {
-          // this.dataEditReady = true
           setTimeout(() => this.getBookingDataList(dateStart), 3000)
           console.log('catch getBookingDataList : ', error)
         })
@@ -1191,7 +2578,6 @@ export default {
                 s.value = d.flowId
                 s.allData = d
                 resultOption.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
               }
             }
           } else {
@@ -1204,12 +2590,6 @@ export default {
       }
     },
     async getDataBranch () {
-      // if (localStorage.getItem('BRANCH') === null) {
-      //   let temp = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
-      //   console.log(typeof temp)
-      //   localStorage.setItem('BRANCH', JSON.stringify(temp))
-      // }
-      // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
       this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
       if (this.branchItem.length > 0) {
         this.masBranchID = this.branchItem[0].value
@@ -1229,7 +2609,6 @@ export default {
               s.value = d[fieldId]
               s.allData = d
               result.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             result = []
@@ -1326,7 +2705,6 @@ export default {
             cancelButtonText: 'ไม่'
           }).then(async response => {
             this.overlaySave = false
-            // await this.clearConfirmJob(item.dueDate)
             let USER_ROLE = this.session.data.USER_ROLE || ''
             let empId = this.session.data.empId || ''
             if (USER_ROLE === 'storeFront' && empId !== '') {
@@ -1420,7 +2798,6 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-        // await this.clearConfirmJob(item.dueDate)
           var dtt = {
             bookNo: item.bookNo,
             contactDate: this.format_date(new Date()),
@@ -1436,24 +2813,8 @@ export default {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
               await this.searchBooking('unNoti')
               this.clearTimeLoop()
-            // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-            // if (bookSelect.length > 0) {
-            //   for (let i = 0; i < bookSelect.length; i++) {
-            //     let d = bookSelect[i]
-            //     let s = {}
-            //     s.lineUserId = d.lineUserId || ''
-            //     if (s.lineUserId !== '') {
-            //       await axios
-            //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-            //         .then(async responses => {}).catch(error => {
-            //           console.log('error function pushMsgQueue : ', error)
-            //         })
-            //     }
-            //   }
-            // }
             })
         }).catch(async err => {
-          // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
           await this.searchBooking('unNoti')
           this.clearTimeLoop()
@@ -1467,7 +2828,6 @@ export default {
     async setservicePointCount (item) {
       this.servicePointItem = []
       await axios
-        // .get(this.DNS_IP + '/BookingData/get?shopId=' + this.shopId + '&bookNo=' + this.bookNo)
         .get(this.DNS_IP + '/booking_view/get?shopId=' + item.shopId + '&flowId=' + item.flowId +
         '&dueDateDay=' + this.dateStart + '&storeFrontQueue=is not null&statusBt=confirmJob&servicePointStatus=True')
         .then(async response => {
@@ -1501,7 +2861,6 @@ export default {
           }
         })
         .catch(err => {
-          // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
           this.servicePointItem = JSON.parse(item.servicePointCount) || []
         })
@@ -1561,7 +2920,6 @@ export default {
               confirmButtonText: 'ใช่',
               cancelButtonText: 'ไม่'
             }).then(async response => {
-              // await this.clearConfirmJob(item.dueDate)
               let USER_ROLE = this.session.data.USER_ROLE || ''
               let empId = this.session.data.empId || ''
               if (USER_ROLE === 'storeFront' && empId !== '') {
@@ -1609,14 +2967,6 @@ export default {
         .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
         .then(async responses => {})
     },
-    // async updateEmp (bookNo) {
-    //   var dtt = {
-    //     storeFrontQueueEmpId: parseInt(this.session.data.empId)
-    //   }
-    //   await axios
-    //     .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
-    //     .then(async responses => {})
-    // },
     async updateEmp (bookNo, status) {
       let result = ''
       var dtt = {
@@ -1672,11 +3022,6 @@ export default {
           this.$swal('เรียบร้อย', 'กรุณารอเรียกคิว', 'success')
         })
     },
-    // async getBase64ImageFromURL (img) {
-    //   let image = await axios.get(img, {withCredentials: true, responseType: 'arraybuffer'})
-    //   let raw = Buffer.from(image.data).toString('base64')
-    //   this.shopImg = 'data:' + image.headers['content-type'] + ';base64,' + raw
-    // },
     setPrint (item, language) {
       let docDefinition = {}
       if (this.shopImg === '') {
@@ -1689,29 +3034,6 @@ export default {
                 style: 'header',
                 alignment: 'center'
               },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'รับคิวเวลา'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
               {
                 alignment: 'center',
                 text: item.flowName,
@@ -1723,24 +3045,6 @@ export default {
                   {alignment: 'center', text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
                   {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
                 ]
-              // alignment: 'center',
-              // style: 'tableExample',
-              // table: {
-              //   heights: [50],
-              //   widths: ['*'],
-              //   body: [
-              //     [
-              //       {
-              //         text: [
-              //           {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-              //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //         ],
-              //         border: [false, false, false, false]
-              //         // fillColor: '#092C4C'
-              //       }
-              //     ]
-              //   ]
-              // }
               },
               {
                 text: 'QR Code สำหรับรับการแจ้งเตือน',
@@ -1751,20 +3055,13 @@ export default {
               {
                 text: '   ',
                 fontSize: 15,
-                // style: 'subheader',
                 widths: ['*']
               },
               {
                 text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
                 fontSize: 15,
                 alignment: 'center'
               },
-              // {
-              //   text: '   ',
-              //   fontSize: 25,
-              //   widths: ['*']
-              // },
               {
                 columns: [
                   {
@@ -1816,34 +3113,6 @@ export default {
                 style: 'header',
                 alignment: 'center'
               },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'Time'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
               {
                 alignment: 'center',
                 text: item.flowNameEn,
@@ -1856,30 +3125,6 @@ export default {
               {
                 alignment: 'center', text: item.storeFrontQueue, fontSize: 110, color: 'black'
               },
-              // {
-              //   text: [
-              //     {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
-              //     {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   ]
-              //   // alignment: 'center',
-              //   // style: 'tableExample',
-              //   // table: {
-              //   //   heights: [50],
-              //   //   widths: ['*'],
-              //   //   body: [
-              //   //     [
-              //   //       {
-              //   //         text: [
-              //   //           {text: 'Number\n', fontSize: 20, color: 'black'},
-              //   //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   //         ],
-              //   //         border: [false, false, false, false]
-              //   //         // fillColor: '#092C4C'
-              //   //       }
-              //   //     ]
-              //   //   ]
-              //   // }
-              // },
               {
                 text: 'QR Code for receiving notifications',
                 fontSize: 15,
@@ -1889,12 +3134,10 @@ export default {
               {
                 text: '   ',
                 fontSize: 15,
-                // style: 'subheader',
                 widths: ['*']
               },
               {
                 text: "The company reserves the right to skip the queue. In case the customer doesn't come",
-                // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
                 fontSize: 15,
                 alignment: 'center'
               },
@@ -1956,29 +3199,6 @@ export default {
                 width: 150,
                 alignment: 'center'
               },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'รับคิวเวลา'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
               {
                 alignment: 'center',
                 text: item.flowName,
@@ -1990,24 +3210,6 @@ export default {
                   {alignment: 'center', text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
                   {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
                 ]
-              // alignment: 'center',
-              // style: 'tableExample',
-              // table: {
-              //   heights: [50],
-              //   widths: ['*'],
-              //   body: [
-              //     [
-              //       {
-              //         text: [
-              //           {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-              //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //         ],
-              //         border: [false, false, false, false]
-              //         // fillColor: '#092C4C'
-              //       }
-              //     ]
-              //   ]
-              // }
               },
               {
                 text: 'QR Code สำหรับรับการแจ้งเตือน',
@@ -2018,20 +3220,13 @@ export default {
               {
                 text: '   ',
                 fontSize: 15,
-                // style: 'subheader',
                 widths: ['*']
               },
               {
                 text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
                 fontSize: 15,
                 alignment: 'center'
               },
-              // {
-              //   text: '   ',
-              //   fontSize: 25,
-              //   widths: ['*']
-              // },
               {
                 columns: [
                   {
@@ -2050,18 +3245,6 @@ export default {
             ],
             images: {
               mySuperImage: this.shopImg
-
-            // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
-            // snow: this.shopImg
-
-            // is supported loading images via url with custom headers (minimal version: 0.2.5)
-            // strawberries: {
-            //   url: 'https://picsum.photos/id/1080/367/267',
-            //   headers: {
-            //     myheader: '123',
-            //     myotherheader: 'abc',
-            //   }
-            // }
             },
             styles: {
               header: {
@@ -2103,34 +3286,6 @@ export default {
                 width: 150,
                 alignment: 'center'
               },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'Time'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
               {
                 alignment: 'center',
                 text: item.flowNameEn,
@@ -2143,30 +3298,6 @@ export default {
               {
                 alignment: 'center', text: item.storeFrontQueue, fontSize: 110, color: 'black'
               },
-              // {
-              //   text: [
-              //     {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
-              //     {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   ]
-              //   // alignment: 'center',
-              //   // style: 'tableExample',
-              //   // table: {
-              //   //   heights: [50],
-              //   //   widths: ['*'],
-              //   //   body: [
-              //   //     [
-              //   //       {
-              //   //         text: [
-              //   //           {text: 'Number\n', fontSize: 20, color: 'black'},
-              //   //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   //         ],
-              //   //         border: [false, false, false, false]
-              //   //         // fillColor: '#092C4C'
-              //   //       }
-              //   //     ]
-              //   //   ]
-              //   // }
-              // },
               {
                 text: 'QR Code for receiving notifications',
                 fontSize: 15,
@@ -2176,12 +3307,10 @@ export default {
               {
                 text: '   ',
                 fontSize: 15,
-                // style: 'subheader',
                 widths: ['*']
               },
               {
                 text: "The company reserves the right to skip the queue. In case the customer doesn't come",
-                // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
                 fontSize: 15,
                 alignment: 'center'
               },
@@ -2203,18 +3332,6 @@ export default {
             ],
             images: {
               mySuperImage: this.shopImg
-
-            // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
-            // snow: this.shopImg
-
-            // is supported loading images via url with custom headers (minimal version: 0.2.5)
-            // strawberries: {
-            //   url: 'https://picsum.photos/id/1080/367/267',
-            //   headers: {
-            //     myheader: '123',
-            //     myotherheader: 'abc',
-            //   }
-            // }
             },
             styles: {
               header: {
@@ -2261,24 +3378,12 @@ export default {
           bolditalics: 'Kanit-MediumItalic.ttf'
         }
       }
-      // pdfMake.createPdf(docDefinition).open({}, window)
-      // pdfMake.createPdf(docDefinition).print({}, window)
-
-      // pdfMake.createPdf(docDefinition).print()
-      // this.$scope.generatePdf = function () {
-      // create the window before the callback
-      // win.close()
-      // }
 
       pdfMake.createPdf(docDefinition).getDataUrl(function (outDoc) {
-        // document.getElementById('pdfV').src = outDoc
         let dataReplate = outDoc.replace('data:application/pdf;base64,', '')
         printJS({printable: dataReplate, type: 'pdf', base64: true})
       })
       this.overlay = true
-      // var pdfFrame = window.frames['pdfV']
-      // pdfFrame.print()
-      // this.dialogPrint = true
     },
     async pushMessageRecallQueue (countNoti, checkGetQueue) {
       let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
@@ -2384,5 +3489,12 @@ export default {
   color: #173053;
   font-size: 30px !important;
   font-weight: bold;
+}
+.bottomAdd {
+  background: linear-gradient(3.82deg, #1093FF 0.25%, #66BAFF 99.75%);
+}
+.InputData{
+  margin: 0px !important;
+  padding: 0px !important;
 }
 </style>
