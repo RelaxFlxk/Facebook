@@ -4927,22 +4927,21 @@ export default {
             this.formAdd.amountDeposit = this.formAdd.amountDeposit || 0
             this.formAdd.depositPercent = this.formAdd.depositPercent || 0
             this.formAdd.OnsiteEndTime = this.formAdd.OnsiteEndTime || 0
-            this.formAdd.depositTextEN = this.formAdd.depositTextEN.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formAdd.depositTextTH = this.formAdd.depositTextTH.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formAdd.flowName = this.formAdd.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formAdd.flowNameEn = this.formAdd.flowNameEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+            this.formAdd.depositTextEN = this.formAdd.depositTextEN
+            this.formAdd.depositTextTH = this.formAdd.depositTextTH
+            this.formAdd.flowName = this.formAdd.flowName
+            this.formAdd.flowNameEn = this.formAdd.flowNameEn
             if (this.formAdd.remarkConfirm !== '') {
-              this.formAdd.remarkConfirm = this.formAdd.remarkConfirm.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formAdd.remarkConfirm = this.formAdd.remarkConfirm
             }
             if (this.formAdd.remarkConfirmEn !== '') {
-              this.formAdd.remarkConfirmEn = this.formAdd.remarkConfirmEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formAdd.remarkConfirmEn = this.formAdd.remarkConfirmEn
             }
-
             if (this.formAdd.empTitleTh !== '') {
-              this.formAdd.empTitleTh = this.formAdd.empTitleTh.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formAdd.empTitleTh = this.formAdd.empTitleTh
             }
             if (this.formAdd.empTitleEng !== '') {
-              this.formAdd.empTitleEng = this.formAdd.empTitleEng.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formAdd.empTitleEng = this.formAdd.empTitleEng
             }
             this.formAdd.categorySub = JSON.stringify(this.formAdd.categorySub)
             this.formAdd.servicePointCount = []
@@ -5103,22 +5102,22 @@ export default {
             this.formUpdate.depositPercent = this.formUpdate.depositPercent || 0
             this.formUpdate.OnsiteEndTime = this.formUpdate.OnsiteEndTime || 0
             this.formUpdate.flowfieldName = JSON.stringify(fieldId)
-            this.formUpdate.depositTextEN = this.formUpdate.depositTextEN.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formUpdate.depositTextTH = this.formUpdate.depositTextTH.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formUpdate.flowName = this.formUpdate.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formUpdate.flowNameEn = this.formUpdate.flowNameEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+            this.formUpdate.depositTextEN = this.formUpdate.depositTextEN
+            this.formUpdate.depositTextTH = this.formUpdate.depositTextTH
+            this.formUpdate.flowName = this.formUpdate.flowName
+            this.formUpdate.flowNameEn = this.formUpdate.flowNameEn
             if (this.formUpdate.remarkConfirm !== '') {
-              this.formUpdate.remarkConfirm = this.formUpdate.remarkConfirm.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formUpdate.remarkConfirm = this.formUpdate.remarkConfirm
             }
             if (this.formUpdate.remarkConfirmEn !== '') {
-              this.formUpdate.remarkConfirmEn = this.formUpdate.remarkConfirmEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formUpdate.remarkConfirmEn = this.formUpdate.remarkConfirmEn
             }
 
             if (this.formUpdate.empTitleTh !== '') {
-              this.formUpdate.empTitleTh = this.formUpdate.empTitleTh.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formUpdate.empTitleTh = this.formUpdate.empTitleTh
             }
             if (this.formUpdate.empTitleEng !== '') {
-              this.formUpdate.empTitleEng = this.formUpdate.empTitleEng.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formUpdate.empTitleEng = this.formUpdate.empTitleEng
             }
             if (this.formUpdate.checkDeposit === 'False') {
               this.formUpdate.menuShowStatus = 'False'
