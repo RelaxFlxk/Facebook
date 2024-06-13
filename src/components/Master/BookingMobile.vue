@@ -767,6 +767,12 @@
               </v-col>
           </v-row>
                 <v-row>
+                  <v-textarea
+                    v-model="dataConfirm.remark"
+                    outlined
+                    label="หมายเหตุเพิ่มเติม"
+                    auto-grow
+                  ></v-textarea>
                   <v-select
                     v-model="empSelect"
                     :items="empSelectStep"
@@ -2365,6 +2371,7 @@ export default {
                 s.dueDateDay = d.dueDateDay
                 s.userId = d.userId
                 s.timeText = d.timeText
+                s.remark = d.remark || null
                 s.chkConfirm = false
                 s.chkCancel = false
                 s.jobNo = d.jobNo
@@ -2815,6 +2822,7 @@ export default {
       //       this.dataReady = true
       //     })
       // }
+      console.log('item', item)
       let dtint = '0'
       console.log('dataFlow', this.dataFlow.filter(el => { return el.value === item.flowId }))
       if (this.dataFlow.filter(el => { return el.value === item.flowId }).length > 0) {
@@ -2878,7 +2886,6 @@ export default {
           console.log('error function addData : ', error)
           this.dataReady = true
         })
-      // }
     },
     async setDataRemove (item) {
       this.bookNoRemove = item
@@ -2979,6 +2986,7 @@ export default {
       var dt = {}
       if (this.radiosRemark === 'ซ่อมปกติ') {
         dt = {
+          remark: item.remark,
           fastTrack: 'False',
           extraJob: 'False',
           LAST_USER: this.$session.getAll().data.userName,
@@ -2986,6 +2994,7 @@ export default {
         }
       } else if (this.radiosRemark === 'ExtraJob') {
         dt = {
+          remark: item.remark,
           fastTrack: 'False',
           extraJob: 'True',
           LAST_USER: this.$session.getAll().data.userName,
@@ -2993,6 +3002,7 @@ export default {
         }
       } else if (this.radiosRemark === 'FastTrack') {
         dt = {
+          remark: item.remark,
           fastTrack: 'True',
           extraJob: 'False',
           LAST_USER: this.$session.getAll().data.userName,

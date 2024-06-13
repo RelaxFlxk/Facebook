@@ -6403,6 +6403,7 @@
                             <td class="text-xs-right"></td>
                             <td class="text-xs-right"></td>
                             <td class="text-xs-right"></td>
+                            <td class="text-xs-right"></td>
                           </tr>
                           <tr v-for="(item) in items" :key="item.bookNo" v-show="!item.hide">
                             <td  v-for="(header, index) in headersShowEmpReport"
@@ -7077,7 +7078,8 @@ export default {
         { text: 'ชื่อลูกค้า', value: 'cusName', sortable: false, groupable: false },
         { text: 'วันที่/เวลา', value: 'dueDateFix', sortable: false, groupable: false },
         { text: 'บริการ', value: 'flowName', sortable: false, groupable: false },
-        { text: 'เบอร์โทร', value: 'tel', sortable: false, groupable: false }
+        { text: 'เบอร์โทร', value: 'tel', sortable: false, groupable: false },
+        { text: 'หมายเหตุ', value: 'remark', sortable: false, groupable: false }
       ],
       dialogShowEmpReport: false,
       menuShowEmpReport: false,
@@ -8469,7 +8471,8 @@ export default {
           'ชื่อลูกค้า': a.cusName,
           'เบอร์โทร': a.tel,
           'วันที่': a.dueDateFix,
-          'ชื่อพนักงาน': a.bookingEmpFlowName
+          'ชื่อพนักงาน': a.bookingEmpFlowName,
+          'หมายเหตุ': a.remark || ''
         }
         dataexport.push(data1)
       }
@@ -8530,7 +8533,7 @@ export default {
         await axios
           .get(urlApi)
           .then(async response => {
-            console.log('getData', response.data.length)
+            console.log('getData', response.data)
             console.log('this.dataEmpShowEmpReport', this.dataEmpShowEmpReport)
             response.data.forEach((item) => {
               console.log('BookflowName', item.bookingEmpFlowName || 'None')
