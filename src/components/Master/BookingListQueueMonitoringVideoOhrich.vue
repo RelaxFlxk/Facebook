@@ -1025,6 +1025,7 @@ export default {
     },
     async fetchInitialData () {
       // await Promise.all([this.getShop(), this.getBooking(), this.getFirestore()])
+      await this.updatestatusNotifyByShopId() // เคลียร์เสียงตอนเปิดทีวีครั้งแรก
       await this.getShop()
       await this.getBooking()
       this.startDateTimeInterval()
@@ -1286,10 +1287,11 @@ export default {
       if (this.statusSound) {
         arrDataService.filter(item => item.IsNotify === 'False').forEach(itemIsNotify => {
           const audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
-
-          this.playingSound.push({ storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint })
-        }
-        )
+          const existQueue = this.playingSound.filter(itemNo => itemNo.storeFrontQueue === itemIsNotify.storeFrontQueue)
+          if (existQueue.length === 0) {
+            this.playingSound.push({ storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: itemIsNotify.servicePoint })
+          }
+        })
       }
       if (this.playingSound.length > 0) {
         this.playingSound.reverse()
