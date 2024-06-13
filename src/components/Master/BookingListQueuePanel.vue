@@ -1473,6 +1473,7 @@ export default {
       date: '',
       currentDate: moment().format('YYYY-MM-DD'),
       pickerDate: null,
+      dataEmpOnsite: [],
       // end panel
       modelslide: '',
       shopPhone: '',
@@ -1629,43 +1630,6 @@ export default {
     this.getShop()
   },
   methods: {
-    async getEmpSelectAdd () {
-      this.empSelectStepAdd = []
-      await axios
-        .get(this.DNS_IP + '/empSelect/getUse?privacyPage=booking&shopId=' + this.$session.getAll().data.shopId)
-        .then(async response => {
-          let rs = response.data
-          if (rs.length > 0) {
-            for (var i = 0; i < rs.length; i++) {
-              var d = rs[i]
-              d.masBranchID = d.masBranchID || ''
-              console.log('this.$session.getAll().data.masBranchID', this.$session.getAll().data.masBranchID)
-              if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
-                // console.log('D', d)
-                let s = {}
-                s.text = d.empFirst_NameTH
-                s.value = d.empId
-                s.masBranchID = d.masBranchID
-                this.empSelectStepAdd.push(s)
-                console.log('this.empSelectStepAdd if getEmpSelectAdd', this.empSelectStepAdd)
-              } else {
-                if (this.$session.getAll().data.masBranchID === d.masBranchID || d.masBranchID === '') {
-                  let s = {}
-                  s.text = d.empFirst_NameTH
-                  s.value = d.empId
-                  s.masBranchID = d.masBranchID
-                  this.empSelectStepAdd.push(s)
-                  console.log('this.empSelectStepAdd else getEmpSelectAdd', this.empSelectStepAdd)
-                }
-              }
-            }
-            if (this.$session.getAll().data.empId !== '' && this.$session.getAll().data.empId !== null) {
-              this.empSelectAdd = this.empSelectStepAdd.filter((item) => item.value === parseInt(this.$session.getAll().data.empId))[0].value
-            }
-            console.log('this.empSelectStepAdd', this.empSelectStepAdd)
-          }
-        })
-    },
     async addDataInsert () {
       // this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
       // this.$swal(this.swalConfig)
@@ -1932,6 +1896,140 @@ export default {
         this.$router.push('/Core/Login')
       }
     },
+    async clearDataAdd () {
+      this.showMenu = 'False'
+      this.dataMenuAdd = []
+      this.dataReady = true
+      this.date = ''
+      this.time = ''
+      this.empSelectAdd = ''
+      this.remark = ''
+      this.formAdd.radiosRemark = ''
+      this.formAdd.depositStatus = ''
+      this.formAdd.depositImge = ''
+      this.formAdd.pictureUrlPreviewDeposit = ''
+      this.filesDepositAdd = null
+      this.dataDepositAdd = 'ไม่มี'
+      this.DataflowId = ''
+      this.formAdd.bookingId = null
+      this.formAdd.fieldId = ''
+      this.formAdd.fieldValue = ''
+      this.formAdd.flowId = null
+      this.formAdd.masBranchID = null
+      this.formAdd.dueDate = ''
+      this.formAdd.shopId = this.$session.getAll().data.shopId
+      this.dialogAdd = false
+      this.dialogAddCon = false
+      this.loadingAdd = false
+      this.address = ''
+      this.center = null
+      this.dataReadyAdd = true
+      clearInterval(this.setTimerCalendar)
+      this.setTimerCalendar = null
+      if (this.statusSearch === 'no') {
+        this.getBookingList()
+      } else {
+        this.searchAny()
+      }
+      if (this.getSelectText) {
+        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+      }
+      this.getDataCalendaBooking()
+    },
+    async checkShowDataOnsiteSet (text) {
+      if (text === 'ไม่แสดง') {
+        // this.showOnsite = 'แสดง'
+        // this.selectOnsite = '&checkOnsite=is null'
+        await this.updateShowOnsite('ไม่แสดง')
+        this.checkShowDataOnsite()
+      } else {
+        // this.showOnsite = 'ไม่แสดง'
+        // this.selectOnsite = '&checkOnsite=True'
+        await this.updateShowOnsite('แสดง')
+        this.checkShowDataOnsite()
+      }
+    },
+    async checkShowDataOnsite () {
+      this.dataReady = false
+      let text = await this.getShowOnsite()
+      if (text === 'ไม่แสดง') {
+        this.showOnsite = 'แสดง'
+        this.selectOnsite = '&checkOnsite=is null'
+        // this.updateShowOnsite('ไม่แสดง')
+      } else {
+        this.showOnsite = 'ไม่แสดง'
+        this.selectOnsite = '&checkOnsite=True'
+        // this.updateShowOnsite('แสดง')
+      }
+      if (this.$route.query.bookNo) {
+        // this.beforeCreateScan()
+        await this.getDataBranch()
+        await this.getEmpSelectAdd()
+        await this.getBookingFieldText()
+        this.getCustomFieldStart()
+        await this.getDataFlow()
+        await this.scanQrcode()
+        // this.getBookingList()
+      } else {
+        await this.getDataBranch()
+        await this.getEmpSelectAdd()
+        await this.getBookingFieldText()
+        this.getCustomFieldStart()
+        await this.getDataFlow()
+        this.getBookingList()
+      }
+    },
+    async getEmpSelectAdd () {
+      this.empSelectStepAdd = []
+      await axios
+        .get(this.DNS_IP + '/empSelect/getUse?privacyPage=booking&shopId=' + this.$session.getAll().data.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              d.masBranchID = d.masBranchID || ''
+              console.log('this.$session.getAll().data.masBranchID', this.$session.getAll().data.masBranchID)
+              if (this.$session.getAll().data.masBranchID === '' || this.$session.getAll().data.masBranchID === null) {
+                // console.log('D', d)
+                let s = {}
+                s.text = d.empFirst_NameTH
+                s.value = d.empId
+                s.masBranchID = d.masBranchID
+                this.empSelectStepAdd.push(s)
+                console.log('this.empSelectStepAdd if getEmpSelectAdd', this.empSelectStepAdd)
+              } else {
+                if (this.$session.getAll().data.masBranchID === d.masBranchID || d.masBranchID === '') {
+                  let s = {}
+                  s.text = d.empFirst_NameTH
+                  s.value = d.empId
+                  s.masBranchID = d.masBranchID
+                  this.empSelectStepAdd.push(s)
+                  console.log('this.empSelectStepAdd else getEmpSelectAdd', this.empSelectStepAdd)
+                }
+              }
+            }
+            if (this.$session.getAll().data.empId !== '' && this.$session.getAll().data.empId !== null) {
+              this.empSelectAdd = this.empSelectStepAdd.filter((item) => item.value === parseInt(this.$session.getAll().data.empId))[0].value
+            }
+            console.log('this.empSelectStepAdd', this.empSelectStepAdd)
+          }
+        })
+    },
+    async getDataDefault () {
+      this.loadingRefresh = true
+      this.$route.query.bookNoNoti = 'None'
+      this.searchAll2 = ''
+      await this.getDataBranch()
+      await this.getEmpSelectAdd()
+      this.getCustomFieldStart()
+      await this.getDataFlow()
+      await this.getBookingList()
+      // await this.getTimesChange('update')
+      this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
+      // this.getDataCalendaBooking()
+      this.loadingRefresh = false
+    },
     async setLimitBooking (dateitem) {
       this.time = ''
       this.timeavailable = []
@@ -2157,6 +2255,336 @@ export default {
         this.dateDayCustom = []
       }
     },
+    async checkEmpJob () {
+      this.today = this.dateStart + '-15'
+      const dateSplit = this.today.split('-')
+      const year = String(dateSplit[0])
+      const month = String(dateSplit[1])
+      var flowId = this.dataEmpOnsite.flowId
+      // if (this.flowId !== '') {
+      //   flowId = this.flowId
+      // } else {
+      //   flowId = this.dataEmpOnsite.flowId
+      // }
+      this.eventInfo = []
+      await axios
+        .get(
+          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId + '&dueDate=' + year + '-' + month + '&checkOnsite=True'
+        )
+        .then(async responses => {
+          console.log('this.responses', responses.data)
+          if (responses.data.status === false) {
+            this.eventInfo = []
+            this.checkEventInfo = []
+          } else {
+            for (var x = 0; x < responses.data.length; x++) {
+              var d = responses.data[x]
+              // var s = {}
+              let dueDate = d.start
+              // s.start = d.start
+              // s.name = d.name.toString()
+              // s.color = 'blue'
+              // this.events.push(s)
+              if (typeof this.eventInfo[dueDate] === 'undefined') {
+                this.eventInfo[dueDate] = {'sortNo1': 0, 'sortNo2': 0, 'sortNo3': 0}
+              }
+              if (d.sortNo === 1) {
+                this.eventInfo[dueDate].sortNo1++
+              } else if (d.sortNo === 2) {
+                this.eventInfo[dueDate].sortNo2++
+              } else if (d.sortNo === 3) {
+                this.eventInfo[dueDate].sortNo3++
+              }
+            }
+            this.checkEventInfo = responses.data
+            console.log('this.eventInfo', this.eventInfo)
+            console.log('this.checkEventInfo', this.checkEventInfo)
+          }
+        })
+      // this.$refs.calendaronsite.checkChange()
+      //   }
+      // })
+    },
+    async checkEmpJobCalenda () {
+      console.log('this.today', this.today)
+      // this.dataEmpOnsite = []
+      // this.today = moment(moment(new Date()), 'YYYY-MM-DD').format('YYYY-MM-DD')
+      const dateSplit = this.today.split('-')
+      const year = String(dateSplit[0])
+      const month = String(dateSplit[1])
+      var flowId = this.dataEmpOnsite.flowId
+      // if (this.flowId !== '') {
+      //   flowId = this.flowId
+      // } else {
+      //   flowId = this.dataEmpOnsite.flowId
+      // }
+      this.eventInfo = []
+      await axios
+        .get(
+          this.DNS_IP + '/booking_view/getCountNotimeJob?shopId=' + this.session.data.shopId + '&empStep=' + this.empSelectJob + '&flowId=' + flowId + '&dueDate=' + year + '-' + month + '&checkOnsite=True'
+        )
+        .then(async responses => {
+          if (responses.data.status === false) {
+            this.eventInfo = []
+            this.checkEventInfo = []
+          } else {
+            for (var x = 0; x < responses.data.length; x++) {
+              var d = responses.data[x]
+              // var s = {}
+              let dueDate = d.start
+              // s.start = d.start
+              // s.name = d.name.toString()
+              // s.color = 'blue'
+              // this.events.push(s)
+              if (typeof this.eventInfo[dueDate] === 'undefined') {
+                this.eventInfo[dueDate] = {'sortNo1': 0, 'sortNo2': 0, 'sortNo3': 0}
+              }
+              if (d.sortNo === 1) {
+                this.eventInfo[dueDate].sortNo1++
+              } else if (d.sortNo === 2) {
+                this.eventInfo[dueDate].sortNo2++
+              } else if (d.sortNo === 3) {
+                this.eventInfo[dueDate].sortNo3++
+              }
+            }
+            this.checkEventInfo = responses.data
+            console.log('this.eventInfo', this.eventInfo)
+            console.log('this.checkEventInfo', this.checkEventInfo)
+          }
+        })
+      // this.$refs.calendaronsite.checkChange()
+    },
+    async getBookingDataJob (dt, text) {
+      console.log('item!!!!!!', dt)
+      this.masBranchIDAddJob = dt.masBranchID
+      this.dataEmpOnsite = dt
+      this.dueDateText = dt.dueDateText
+      let dateCurrent = moment().format('YYYY-MM-DD')
+      let dueDate = dt.dueDateDay
+      console.log(dateCurrent, dueDate)
+      if (dt.checkDateConfirmJob === 'True') {
+        this.statusConfirmJob = true
+      } else {
+        if (dateCurrent >= dueDate) {
+          this.statusConfirmJob = true
+        } else {
+          this.statusConfirmJob = false
+        }
+      }
+      // console.log('this.statusConfirmJob', this.statusConfirmJob)
+      let checkStep = await axios.get(this.DNS_IP + '/flowStep/get?flowId=' + dt.flowId)
+      console.log('checkStep', checkStep)
+      if (checkStep.data.status === false) {
+        this.endDate = moment().format('YYYY-MM-DD')
+        this.endTime = moment().format('HH:mm')
+        this.statusShowDateConfiremjob = false
+      } else {
+        this.statusShowDateConfiremjob = true
+      }
+      this.dueDate = dt.dueDateTextDay
+      if (this.statusConfirmJob && this.showOnsite === 'แสดง') {
+        this.jobCheckPackage = false
+        console.log('dt', dt)
+        this.dateTimestamp = moment().unix()
+        this.remark = dt.remark
+        this.userId = dt.userId
+        this.lineUserId = dt.lineUserId
+        console.log(this.userId, this.lineUserId)
+        if (dt.packageId !== '') {
+          this.dataPackageDefault = true
+        } else {
+          this.dataPackageDefault = false
+        }
+        await this.getPackage(dt)
+        if (this.dataPackage.length > 0) {
+          console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
+          if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
+            let dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
+            this.dataPackageDefault = true
+            // this.packageId = dataPack[0].value
+            this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0], dt.tokenPackage)
+          } else {
+            this.UpdatePackage('', 'ยกเลิก', '', '', '')
+            this.dataPackageDefault = false
+          }
+        }
+        this.checkTimeFlow(dt)
+        this.BookingDataItem = []
+        let itemIncustomField = []
+
+        await axios
+          .get(
+            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          )
+          .then(async response1 => {
+            let rs2 = response1.data
+            console.log('BookingField', rs2)
+            if (rs2.length > 0) {
+              let bookingData = []
+              bookingData = JSON.parse(rs2[0].flowfieldName)
+              for (let i = 0; i < bookingData.length; i++) {
+                let d = bookingData[i]
+                itemIncustomField.push(d.fieldId)
+              }
+              await axios
+                .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
+                .then(async responses => {
+                  let rs1 = responses.data
+                  await axios
+                    .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
+                    .then(async response => {
+                      let rs = response.data
+                      if (rs.length > 0) {
+                        console.log('BookingDataSelect', rs)
+                        console.log('customField', rs1)
+                        let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
+                        for (let i = 0; i < sortrs.length; i++) {
+                          let d = sortrs[i]
+                          // var s = {}
+                          var dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                          if (dataBD.length > 0) {
+                            if (dt.flowId === dataBD[0].flowId) {
+                              d.bookNo = dataBD[0].bookNo
+                              d.bookingFieldId = rs2[0].bookingFieldId
+                              d.bookingDataId = dataBD[0].bookingDataId
+                              d.flowId = dataBD[0].flowId
+                              d.masBranchID = dataBD[0].masBranchID
+                              // d.dueDate = dt.dueDate
+                              // d.conditionField = d.conditionField
+                              // d.fieldId = d.fieldId
+                              // d.fieldType = d.fieldType
+                              d.fieldValue = dataBD[0].fieldValue
+                              d.packageId = dataBD[0].packageId
+                              // d.fieldName = d.fieldName
+                              // d.conditionField = d.conditionField
+                              // d.conditionValue = d.conditionValue
+                              // d.requiredField = d.requiredField
+                              // d.optionField = d.optionField
+                              // d.userId = d.userId
+                              if (rs[0].userId === 'user-skip') {
+                                d.userId = ''
+                              } else {
+                                d.userId = rs[0].userId
+                              }
+                              d.shopId = this.session.data.shopId
+                              d.userName = this.$session.getAll().data.userName
+                              this.BookingDataItem.push(d)
+                            }
+                          }
+                        }
+                        if (text === 'qrcode') {
+                          this.dataQrcode = dt
+                        }
+                        // await this.getBookingField()
+                        await this.getflowfield(dt)
+                      }
+                    })
+                })
+            }
+          })
+      }
+      if (this.showOnsite === 'ไม่แสดง') {
+        this.jobCheckPackage = false
+        console.log('dt', dt)
+        this.dateTimestamp = moment().unix()
+        this.remark = dt.remark
+        this.userId = dt.userId
+        this.lineUserId = dt.lineUserId
+        console.log(this.userId, this.lineUserId)
+        if (dt.packageId !== '') {
+          this.dataPackageDefault = true
+        } else {
+          this.dataPackageDefault = false
+        }
+        await this.getPackage(dt)
+        if (this.dataPackage.length > 0) {
+          console.log('dataPackage', this.dataPackage.filter(el => { return el.packageId === dt.packageId }))
+          if (this.dataPackage.filter(el => { return el.packageId === dt.packageId }).length > 0) {
+            let dataPack = this.dataPackage.filter(el => { return el.packageId === dt.packageId })
+            this.dataPackageDefault = true
+            // this.packageId = dataPack[0].value
+            this.UpdatePackage(dataPack[0].value, 'ตกลง', dataPack[0].text, dataPack[0], dt.tokenPackage)
+          } else {
+            this.UpdatePackage('', 'ยกเลิก', '', '', '')
+            this.dataPackageDefault = false
+          }
+        }
+        this.checkTimeFlow(dt)
+        this.BookingDataItem = []
+        let itemIncustomField = []
+
+        await axios
+          .get(
+            this.DNS_IP + '/BookingField/get?shopId=' + this.session.data.shopId
+          )
+          .then(async response1 => {
+            let rs2 = response1.data
+            console.log('BookingField', rs2)
+            if (rs2.length > 0) {
+              let bookingData = []
+              bookingData = JSON.parse(rs2[0].flowfieldName)
+              for (let i = 0; i < bookingData.length; i++) {
+                let d = bookingData[i]
+                itemIncustomField.push(d.fieldId)
+              }
+              await axios
+                .get(this.DNS_IP + '/customField/fieldId?fieldId=' + itemIncustomField)
+                .then(async responses => {
+                  let rs1 = responses.data
+                  await axios
+                    .get(this.DNS_IP + '/BookingDataSelect/get?bookNo=' + dt.bookNo)
+                    .then(async response => {
+                      let rs = response.data
+                      if (rs.length > 0) {
+                        console.log('BookingDataSelect', rs)
+                        console.log('customField', rs1)
+                        let sortrs = rs1.sort((a, b) => a.sortNoField - b.sortNoField)
+                        for (let i = 0; i < sortrs.length; i++) {
+                          let d = sortrs[i]
+                          // var s = {}
+                          let dataBD = rs.filter(el => { return parseInt(el.fieldId) === parseInt(d.fieldId) })
+                          if (dataBD.length > 0) {
+                            if (dt.flowId === dataBD[0].flowId) {
+                              d.bookNo = dataBD[0].bookNo
+                              d.bookingFieldId = rs2[0].bookingFieldId
+                              d.bookingDataId = dataBD[0].bookingDataId
+                              d.flowId = dataBD[0].flowId
+                              d.masBranchID = dataBD[0].masBranchID
+                              // d.dueDate = dt.dueDate
+                              // d.conditionField = d.conditionField
+                              // d.fieldId = d.fieldId
+                              // d.fieldType = d.fieldType
+                              d.fieldValue = dataBD[0].fieldValue
+                              d.packageId = dataBD[0].packageId
+                              // d.fieldName = d.fieldName
+                              // d.conditionField = d.conditionField
+                              // d.conditionValue = d.conditionValue
+                              // d.requiredField = d.requiredField
+                              // d.optionField = d.optionField
+                              // d.userId = d.userId
+                              if (rs[0].userId === 'user-skip') {
+                                d.userId = ''
+                              } else {
+                                d.userId = rs[0].userId
+                              }
+                              d.shopId = this.session.data.shopId
+                              d.userName = this.$session.getAll().data.userName
+                              this.BookingDataItem.push(d)
+                            }
+                          }
+                        }
+                        if (text === 'qrcode') {
+                          this.dataQrcode = dt
+                        }
+                        // await this.getBookingField()
+                        await this.getflowfield(dt)
+                      }
+                    })
+                })
+            }
+          })
+      }
+    },
     async getjobChangeOnsite (item) {
       this.dataEmpOnsite = item
       await this.getEmpSelectAddJob()
@@ -2221,46 +2649,6 @@ export default {
             }
           }
         })
-    },
-    async clearDataAdd () {
-      this.showMenu = 'False'
-      this.dataMenuAdd = []
-      this.dataReady = true
-      this.date = ''
-      this.time = ''
-      this.empSelectAdd = ''
-      this.remark = ''
-      this.formAdd.radiosRemark = ''
-      this.formAdd.depositStatus = ''
-      this.formAdd.depositImge = ''
-      this.formAdd.pictureUrlPreviewDeposit = ''
-      this.filesDepositAdd = null
-      this.dataDepositAdd = 'ไม่มี'
-      this.DataflowId = ''
-      this.formAdd.bookingId = null
-      this.formAdd.fieldId = ''
-      this.formAdd.fieldValue = ''
-      this.formAdd.flowId = null
-      this.formAdd.masBranchID = null
-      this.formAdd.dueDate = ''
-      this.formAdd.shopId = this.$session.getAll().data.shopId
-      this.dialogAdd = false
-      this.dialogAddCon = false
-      this.loadingAdd = false
-      this.address = ''
-      this.center = null
-      this.dataReadyAdd = true
-      clearInterval(this.setTimerCalendar)
-      this.setTimerCalendar = null
-      if (this.statusSearch === 'no') {
-        this.getBookingList()
-      } else {
-        this.searchAny()
-      }
-      if (this.getSelectText) {
-        this.getSelect(this.getSelectText, this.getSelectCount, this.filterCloseJobValue)
-      }
-      this.getDataCalendaBooking()
     },
     setFlowByBranchAdd () {
       this.formAdd.flowId = ''
