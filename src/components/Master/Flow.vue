@@ -817,6 +817,29 @@
                                 label="ข้อความ"
                               ></v-textarea>
                             </v-col >
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'">
+                              <v-checkbox
+                              label="เปิดจำกัดคิวหน้าร้าน"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formAdd.statusLimitBookingByDate"
+                              @change="formAdd.countLimitBookingByDate = 0"
+                            ></v-checkbox>
+                            </v-col>
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True' && formAdd.statusLimitBookingByDate  === 'True'"  >
+                              <v-text-field
+                                v-model="formAdd.countLimitBookingByDate"
+                                label="จำนวนคิว"
+                                outlined
+                                required
+                                dense
+                                v-mask="'####'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
                             <!-- <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'"></v-col> -->
                             <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'">
                               <v-checkbox
@@ -1349,6 +1372,29 @@
                                 label="ข้อความ"
                               ></v-textarea>
                             </v-col >
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'">
+                              <v-checkbox
+                              label="เปิดจำกัดคิวหน้าร้าน"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formUpdate.statusLimitBookingByDate"
+                              @change="formUpdate.countLimitBookingByDate = 0"
+                            ></v-checkbox>
+                            </v-col>
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True' && formUpdate.statusLimitBookingByDate  === 'True'"  >
+                              <v-text-field
+                                v-model="formUpdate.countLimitBookingByDate"
+                                label="จำนวนคิว"
+                                outlined
+                                required
+                                dense
+                                v-mask="'####'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
                             <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'"></v-col>
                             <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'">
                               <v-checkbox
@@ -3050,7 +3096,9 @@ export default {
         storeFrontNotifySet: '0',
         newCustomerStatus: 'False',
         checkDateConfirmJob: 'False',
-        OnsiteEndTime: null
+        OnsiteEndTime: null,
+        statusLimitBookingByDate: 'False',
+        countLimitBookingByDate: 0
       },
       formAddStep: {
         stepId: '',
@@ -3135,7 +3183,9 @@ export default {
         storeFrontNotifySet: '0',
         newCustomerStatus: 'False',
         checkDateConfirmJob: 'False',
-        OnsiteEndTime: null
+        OnsiteEndTime: null,
+        statusLimitBookingByDate: 'False',
+        countLimitBookingByDate: 0
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -4819,6 +4869,8 @@ export default {
       this.desserts = []
       this.dataReady = false
       this.PK = item.flowCode
+      this.formUpdate.statusLimitBookingByDate = item.statusLimitBookingByDate || 'False'
+      this.formUpdate.countLimitBookingByDate = item.countLimitBookingByDate || 0
       this.formUpdate.servicePointTh = item.servicePointTh || ''
       this.formUpdate.servicePointEn = item.servicePointEn || ''
       this.formUpdate.storeFrontText = item.storeFrontText || ''
