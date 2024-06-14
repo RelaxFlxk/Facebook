@@ -473,6 +473,7 @@
                     <p @click.stop="openHistory(item)" style="color:#092C4C;font-size: 48px;" class="text-left font-weight-black mt-n1 mb-n5 pa-7 pt-0" v-else>{{ item.storeFrontQueue }}</p>
                     <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium mt-n10 ml-7">{{item.cusName}}</p>
                     <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium ml-7" v-if="checkShowCount">จำนวน : {{item.countCus}}</p>
+                    <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium ml-7" v-if="checkShowTel">เบอร์โทร : {{item.cusPhone}}</p>
                     <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium mt-n3 ml-7">{{ languageSelect === 0 ? item.servicePoint : JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint}).length > 0 ? JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint})[0].textEn:item.servicePoint}}</p>
                   </v-col>
                   <v-col cols="4" class="pt-0">
@@ -727,6 +728,7 @@ export default {
   },
   data () {
     return {
+      checkShowTel: false,
       modelslide: '',
       shopPhone: '',
       languageSelect: 0,
@@ -822,7 +824,7 @@ export default {
     this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
     this.dateStart = this.momenDate_1(new Date())
     await this.getCustomFieldStart()
-    if (this.checkShowCount) {
+    if (this.checkShowCount && !this.checkShowTel) {
       this.headers = [
         { text: 'คิว', value: 'storeFrontQueue' },
         // { text: 'วันที่นัดหมาย', value: 'dueDate' },
@@ -830,6 +832,29 @@ export default {
         { text: 'ชื่อลูกค้า', value: 'cusName' },
         { text: 'จำนวนที่นั่ง', value: 'countCus' },
         { text: 'เวลาที่ลูกค้ากดรับบัตร', value: 'CREATE_DATEtime', align: 'center' },
+        { text: 'ปริ้นบัตรคิว', value: 'action1', sortable: false, align: 'center' },
+        { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
+      ]
+    } else if (this.checkShowCount && this.checkShowTel) {
+      this.headers = [
+        { text: 'คิว', value: 'storeFrontQueue' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'บริการ', value: 'flowName' },
+        { text: 'ชื่อลูกค้า', value: 'cusName' },
+        { text: 'เบอร์โทร', value: 'cusPhone' },
+        { text: 'จำนวนที่นั่ง', value: 'countCus' },
+        { text: 'เวลา', value: 'CREATE_DATEtime', align: 'center' },
+        { text: 'ปริ้นบัตรคิว', value: 'action1', sortable: false, align: 'center' },
+        { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
+      ]
+    } else if (!this.checkShowCount && this.checkShowTel) {
+      this.headers = [
+        { text: 'คิว', value: 'storeFrontQueue' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'บริการ', value: 'flowName' },
+        { text: 'ชื่อลูกค้า', value: 'cusName' },
+        { text: 'เบอร์โทร', value: 'cusPhone' },
+        { text: 'เวลา', value: 'CREATE_DATEtime', align: 'center' },
         { text: 'ปริ้นบัตรคิว', value: 'action1', sortable: false, align: 'center' },
         { text: 'การจัดการคิว', value: 'action', sortable: false, align: 'center', width: '400px' }
       ]
@@ -860,6 +885,7 @@ export default {
   methods: {
     async getCustomFieldStart () {
       this.checkShowCount = false
+      this.checkShowTel = false
       await axios
         .get(this.DNS_IP + '/customField/get?shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
@@ -869,6 +895,13 @@ export default {
               let d = rs[i]
               if (d.fieldName === 'จำนวนคน' || d.fieldName === 'จำนวนที่นั่ง' || d.fieldName === 'จำนวนลูกค้า' || d.fieldName === 'จำนวนกี่ท่าน') {
                 this.checkShowCount = true
+                break
+              }
+            }
+            for (let i = 0; i < rs.length; i++) {
+              let d = rs[i]
+              if (d.fieldName === 'เบอร์โทร') {
+                this.checkShowTel = true
                 break
               }
             }
