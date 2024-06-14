@@ -817,6 +817,29 @@
                                 label="ข้อความ"
                               ></v-textarea>
                             </v-col >
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'">
+                              <v-checkbox
+                              label="เปิดจำกัดคิวหน้าร้าน"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formAdd.statusLimitBookingByDate"
+                              @change="formAdd.countLimitBookingByDate = 0"
+                            ></v-checkbox>
+                            </v-col>
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True' && formAdd.statusLimitBookingByDate  === 'True'"  >
+                              <v-text-field
+                                v-model="formAdd.countLimitBookingByDate"
+                                label="จำนวนคิว"
+                                outlined
+                                required
+                                dense
+                                v-mask="'####'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
                             <!-- <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'"></v-col> -->
                             <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formAdd.storeFrontCheck === 'True'">
                               <v-checkbox
@@ -1349,6 +1372,29 @@
                                 label="ข้อความ"
                               ></v-textarea>
                             </v-col >
+                            <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'">
+                              <v-checkbox
+                              label="เปิดจำกัดคิวหน้าร้าน"
+                              false-value="False"
+                              :on-icon="'mdi-check-circle'"
+                              :off-icon="'mdi-checkbox-blank-circle-outline'"
+                              color="#1B437C"
+                              true-value="True"
+                              v-model="formUpdate.statusLimitBookingByDate"
+                              @change="formUpdate.countLimitBookingByDate = 0"
+                            ></v-checkbox>
+                            </v-col>
+                            <v-col clos="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True' && formUpdate.statusLimitBookingByDate  === 'True'"  >
+                              <v-text-field
+                                v-model="formUpdate.countLimitBookingByDate"
+                                label="จำนวนคิว"
+                                outlined
+                                required
+                                dense
+                                v-mask="'####'"
+                                :rules="[rules.required]"
+                              ></v-text-field>
+                            </v-col>
                             <v-col cols="4" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'"></v-col>
                             <v-col cols="6" class="pt-0 pb-0" style="display: flex;justify-content: flex-start;" v-if="formUpdate.storeFrontCheck === 'True'">
                               <v-checkbox
@@ -3050,7 +3096,9 @@ export default {
         storeFrontNotifySet: '0',
         newCustomerStatus: 'False',
         checkDateConfirmJob: 'False',
-        OnsiteEndTime: null
+        OnsiteEndTime: null,
+        statusLimitBookingByDate: 'False',
+        countLimitBookingByDate: 0
       },
       formAddStep: {
         stepId: '',
@@ -3135,7 +3183,9 @@ export default {
         storeFrontNotifySet: '0',
         newCustomerStatus: 'False',
         checkDateConfirmJob: 'False',
-        OnsiteEndTime: null
+        OnsiteEndTime: null,
+        statusLimitBookingByDate: 'False',
+        countLimitBookingByDate: 0
       },
       formUpdateItemFlow: {
         fieldId: '',
@@ -4819,6 +4869,8 @@ export default {
       this.desserts = []
       this.dataReady = false
       this.PK = item.flowCode
+      this.formUpdate.statusLimitBookingByDate = item.statusLimitBookingByDate || 'False'
+      this.formUpdate.countLimitBookingByDate = item.countLimitBookingByDate || 0
       this.formUpdate.servicePointTh = item.servicePointTh || ''
       this.formUpdate.servicePointEn = item.servicePointEn || ''
       this.formUpdate.storeFrontText = item.storeFrontText || ''
@@ -4927,22 +4979,21 @@ export default {
             this.formAdd.amountDeposit = this.formAdd.amountDeposit || 0
             this.formAdd.depositPercent = this.formAdd.depositPercent || 0
             this.formAdd.OnsiteEndTime = this.formAdd.OnsiteEndTime || 0
-            this.formAdd.depositTextEN = this.formAdd.depositTextEN.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formAdd.depositTextTH = this.formAdd.depositTextTH.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formAdd.flowName = this.formAdd.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formAdd.flowNameEn = this.formAdd.flowNameEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+            this.formAdd.depositTextEN = this.formAdd.depositTextEN
+            this.formAdd.depositTextTH = this.formAdd.depositTextTH
+            this.formAdd.flowName = this.formAdd.flowName
+            this.formAdd.flowNameEn = this.formAdd.flowNameEn
             if (this.formAdd.remarkConfirm !== '') {
-              this.formAdd.remarkConfirm = this.formAdd.remarkConfirm.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formAdd.remarkConfirm = this.formAdd.remarkConfirm
             }
             if (this.formAdd.remarkConfirmEn !== '') {
-              this.formAdd.remarkConfirmEn = this.formAdd.remarkConfirmEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formAdd.remarkConfirmEn = this.formAdd.remarkConfirmEn
             }
-
             if (this.formAdd.empTitleTh !== '') {
-              this.formAdd.empTitleTh = this.formAdd.empTitleTh.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formAdd.empTitleTh = this.formAdd.empTitleTh
             }
             if (this.formAdd.empTitleEng !== '') {
-              this.formAdd.empTitleEng = this.formAdd.empTitleEng.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formAdd.empTitleEng = this.formAdd.empTitleEng
             }
             this.formAdd.categorySub = JSON.stringify(this.formAdd.categorySub)
             this.formAdd.servicePointCount = []
@@ -5103,22 +5154,22 @@ export default {
             this.formUpdate.depositPercent = this.formUpdate.depositPercent || 0
             this.formUpdate.OnsiteEndTime = this.formUpdate.OnsiteEndTime || 0
             this.formUpdate.flowfieldName = JSON.stringify(fieldId)
-            this.formUpdate.depositTextEN = this.formUpdate.depositTextEN.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formUpdate.depositTextTH = this.formUpdate.depositTextTH.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formUpdate.flowName = this.formUpdate.flowName.replace(/%/g, '%%').replace(/'/g, "\\'")
-            this.formUpdate.flowNameEn = this.formUpdate.flowNameEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+            this.formUpdate.depositTextEN = this.formUpdate.depositTextEN
+            this.formUpdate.depositTextTH = this.formUpdate.depositTextTH
+            this.formUpdate.flowName = this.formUpdate.flowName
+            this.formUpdate.flowNameEn = this.formUpdate.flowNameEn
             if (this.formUpdate.remarkConfirm !== '') {
-              this.formUpdate.remarkConfirm = this.formUpdate.remarkConfirm.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formUpdate.remarkConfirm = this.formUpdate.remarkConfirm
             }
             if (this.formUpdate.remarkConfirmEn !== '') {
-              this.formUpdate.remarkConfirmEn = this.formUpdate.remarkConfirmEn.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formUpdate.remarkConfirmEn = this.formUpdate.remarkConfirmEn
             }
 
             if (this.formUpdate.empTitleTh !== '') {
-              this.formUpdate.empTitleTh = this.formUpdate.empTitleTh.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formUpdate.empTitleTh = this.formUpdate.empTitleTh
             }
             if (this.formUpdate.empTitleEng !== '') {
-              this.formUpdate.empTitleEng = this.formUpdate.empTitleEng.replace(/%/g, '%%').replace(/'/g, "\\'")
+              this.formUpdate.empTitleEng = this.formUpdate.empTitleEng
             }
             if (this.formUpdate.checkDeposit === 'False') {
               this.formUpdate.menuShowStatus = 'False'

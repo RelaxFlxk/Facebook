@@ -1000,6 +1000,12 @@
             </v-row>
           <v-row>
             <v-col cols="12" class="pt-0 pb-0">
+              <v-textarea
+                    v-model="dataConfirm.remark"
+                    outlined
+                    label="หมายเหตุเพิ่มเติม"
+                    auto-grow
+                  ></v-textarea>
             <v-select
               v-model="empSelect"
               :items="empSelectStep"
@@ -3066,6 +3072,7 @@ export default {
                 s.lineUserId = d.lineUserId
                 s.empSelect = d.empSelect
                 s.packageId = d.packageId
+                s.remark = d.remark || null
                 s.remarkConfirm1 = (d.remarkConfirm1 === 'true' || d.remarkConfirm1 === 'True')
                 s.remarkConfirm2 = (d.remarkConfirm2 === 'true' || d.remarkConfirm2 === 'True')
                 s.extraJob = (d.extraJob === 'true' || d.extraJob === 'True')
@@ -3575,6 +3582,7 @@ export default {
       var dt = {}
       if (this.radiosRemark === 'ซ่อมปกติ') {
         dt = {
+          remark: item.remark,
           fastTrack: 'False',
           extraJob: 'False',
           LAST_USER: this.$session.getAll().data.userName,
@@ -3582,6 +3590,7 @@ export default {
         }
       } else if (this.radiosRemark === 'ExtraJob') {
         dt = {
+          remark: item.remark,
           fastTrack: 'False',
           extraJob: 'True',
           LAST_USER: this.$session.getAll().data.userName,
@@ -3589,6 +3598,7 @@ export default {
         }
       } else if (this.radiosRemark === 'FastTrack') {
         dt = {
+          remark: item.remark,
           fastTrack: 'True',
           extraJob: 'False',
           LAST_USER: this.$session.getAll().data.userName,
