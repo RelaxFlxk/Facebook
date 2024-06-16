@@ -5,7 +5,7 @@
       <BookingUseOhrich :bookingUse="dataService" :isPortrait="isPortrait" />
       <div v-if="!isPortrait" class="col-7 d-flex flex-column">
         <div class="mt-5">
-          <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12"
+          <video v-if="videoLinkMonition.includes('firebasestorage')" ref="videoAds" id="videoAds" class="col-12"
             width="100%" autoplay muted autopictureinpicture controls loop="true"
             poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
             <source :src="videoLinkMonition" type="video/webm">
@@ -29,7 +29,7 @@
       <CardWaitingOhrich :groupQueueItem="dataWaiting.slice(12)" time="20 - 30" :isPortrait="isPortrait" />
     </div>
     <div v-if="isPortrait" class="d-flex  flex-row justify-content-between">
-      <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%"
+      <video v-if="videoLinkMonition.includes('firebasestorage')" ref="videoAds" id="videoAds" class="col-12" width="100%"
         autoplay muted autopictureinpicture controls loop="true"
         poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
         <source :src="videoLinkMonition" type="video/webm">
@@ -59,7 +59,7 @@
         </div>
     </v-footer>
     <v-row v-show="hideSound === true">
-      <audio id="playerTV" controls="controls">
+      <audio id="playerTV" controls="controls" ref="playerTV">
         Your browser does not support the audio format.
       </audio>
       <v-col>
@@ -994,7 +994,7 @@ export default {
       dataWaiting: [],
       dataSound: [],
       playingSound: [],
-      languages: ['TH', 'EN', 'CH', 'JP'],
+      languages: ['th', 'en', 'ch', 'jp'],
       words: ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
     }
   },
@@ -1027,7 +1027,7 @@ export default {
     },
     async fetchInitialData () {
       // await Promise.all([this.getShop(), this.getBooking(), this.getFirestore()])
-      await this.updatestatusNotifyByShopId() // เคลียร์เสียงตอนเปิดทีวีครั้งแรก
+      // await this.updatestatusNotifyByShopId() // เคลียร์เสียงตอนเปิดทีวีครั้งแรก
       await this.getShop()
       await this.getBooking()
       this.startDateTimeInterval()
@@ -1079,17 +1079,17 @@ export default {
         const FieldPath = this.$firebase.firestore.FieldPath
         this.unsubscribe = this.firestore.collection('ProcessOhrichUpdate')
           .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
-          .onSnapshot((snapshot) => {
-            console.log('getFirestore')
+          .onSnapshot(async (snapshot) => {
             if (snapshot.empty) {
-              this.updateProcessOhrichUpdate()
+              await this.updateProcessOhrichUpdate()
             } else {
+              console.log('getFirestore -> 1086')
               snapshot.docChanges().forEach(async (change) => {
                 if (change.doc.data().masBranchID === this.$session.getAll().data.masBranchID && change.doc.id === this.$session.getAll().data.userName) {
                   if (change.doc.data().active === '1' && (this.$session.getAll().data.USER_ROLE === 'user' || this.$session.getAll().data.USER_ROLE === 'admin')) {
                     await this.getBooking()
                     await this.updateNotifyByShopId()
-                    this.updateProcessOhrichUpdate()
+                    await this.updateProcessOhrichUpdate()
                   }
                 }
               })
@@ -1099,12 +1099,16 @@ export default {
         console.log('Error getFirestore', error)
       }
     },
-    updateProcessOhrichUpdate () {
-      let body = {
-        userName: this.$session.getAll().data.userName,
-        masBranchID: this.$session.getAll().data.masBranchID
+    async updateProcessOhrichUpdate () {
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          masBranchID: this.$session.getAll().data.masBranchID
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', body)
+      } catch (error) {
+        console.log('updateProcessOhrichUpdate error ->', error)
       }
-      axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', body)
     },
     async changeStatusSound (text) {
       if (text === 'on') {
@@ -1199,35 +1203,62 @@ export default {
         return null
       }
     },
-    playSoundBooking (prefix, audioUrl, servicePoint, storeFrontQueue) {
-      let playerTV = document.getElementById('playerTV')
-      let video = document.getElementById('videoAds')
+    playSoundBooking (prefixAudio, audioUrl, servicePoint) {
+      let playerTV = this.$refs.playerTV
+      let video = this.$refs.videoAds
+      let playList = []
       try {
-        if (playerTV.paused) {
-          let roundCount = 0
-          let maxRounds = 2
-          video.pause()
-          const playList = prefix ? [prefix, audioUrl, servicePoint] : [audioUrl, servicePoint]
-          let index = 0
-          let playNext = () => {
-            if (index < playList.length) {
-              playerTV.src = playList[index++]
-              playerTV.load()
-              playerTV.play()
-            } else if (roundCount < maxRounds - 1) {
-              index = 0
-              roundCount++
-              playNext()
+        if (playerTV !== undefined) {
+          if (playerTV.paused) {
+            let roundCount = 0
+            let maxRounds = 2
+            video.pause()
+            if (prefixAudio !== '') {
+              playList = [prefixAudio, audioUrl, servicePoint]
             } else {
-              video.play()
+              playList = [audioUrl, servicePoint]
             }
+
+            console.log('playList ->', playList)
+            let index = 0
+            let playNext = () => {
+              console.log('index ->', index, playList.length)
+              if (index < playList.length) {
+                playerTV.src = playList[index++]
+                console.log('index', index, playerTV.src)
+                playerTV.load()
+                console.log('playerTV', 'load')
+                playerTV.play()
+                const promise = playerTV.play()
+                if (promise !== undefined) {
+                  promise
+                    .then(() => {
+                      console.log(`Playing: ${playerTV.src}`)
+                    })
+                    .catch(error => {
+                      console.log('error ->', playerTV.src)
+                      console.error(`Error playing ${playerTV.src}:`, error)
+                    })
+                }
+              } else if (roundCount < maxRounds - 1) {
+                index = 0
+                roundCount++
+                playNext()
+              } else {
+                video.play().catch(error => {
+                  console.error('Error playing video:', error)
+                })
+              }
+            }
+            playerTV.onended = playNext
+            playNext()
+          } else {
+            this.intervalSound = setTimeout(() => {
+              this.playSoundBooking(prefixAudio, audioUrl, servicePoint)
+            }, 2000)
           }
-          playerTV.onended = playNext
-          playNext()
         } else {
-          this.intervalSound = setTimeout(() => {
-            this.playSoundBooking(prefix, audioUrl, servicePoint, storeFrontQueue)
-          }, 2000)
+          console.log('Error playSound : playerTV in null')
         }
       } catch (error) {
         console.log('Error playSound', error)
@@ -1289,64 +1320,58 @@ export default {
           let audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
           let servicePoint = `https://storage.googleapis.com/ohrich-sound/counter${itemIsNotify.servicePoint}.wav`
 
-          const bookingLanguageIndex = itemIsNotify.bookingLanguage
-          if (bookingLanguageIndex >= 0 && bookingLanguageIndex < this.languages.length) {
-            const language = this.languages[bookingLanguageIndex].toLowerCase()
-            console.log('language', language)
+          // const bookingLanguageIndex = itemIsNotify.bookingLanguage
+          // if (bookingLanguageIndex >= 0 && bookingLanguageIndex < this.languages.length) {
+          const language = this.languages[itemIsNotify.bookingLanguage]
+          console.log('language', language)
 
-            if (language === 'th') {
-              prefix = `https://storage.googleapis.com/ohrich-sound/${language}/prefix.wav`
-            } else if (language === 'ch') {
-              // waiting path
-              prefix = `https://storage.googleapis.com/ohrich-sound/${language}/prefix.wav`
-            } else if (language === 'jp') {
-              prefix = ''
-            } else {
-              prefix = 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1'
-            }
-
-            const servicePointNumber = String(itemIsNotify.servicePoint).trim()
-            if (language !== 'en') {
-              audioUrl = `https://storage.googleapis.com/ohrich-sound/${language}/${itemIsNotify.storeFrontQueue}.wav`
-              servicePoint = `https://storage.googleapis.com/ohrich-sound/${language}/counter${servicePointNumber}.wav`
-            } else {
-              audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
-              servicePoint = this.tableAudioList[servicePointNumber]
-            }
+          if (language === 'th') {
+            prefix = `https://storage.googleapis.com/ohrich-sound/${language}/prefix.wav`
+          } else if (language === 'jp') {
+            prefix = ''
+          } else {
+            prefix = 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1'
           }
+
+          const servicePointNumber = String(itemIsNotify.servicePoint).trim()
+          console.log('servicePointNumber', servicePointNumber)
+          if (language !== 'en' && language !== 'ch') {
+            audioUrl = `https://storage.googleapis.com/ohrich-sound/${language}/${itemIsNotify.storeFrontQueue}.wav`
+            servicePoint = `https://storage.googleapis.com/ohrich-sound/${language}/counter${servicePointNumber}.wav`
+          } else {
+            audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
+            servicePoint = this.tableAudioList[servicePointNumber]
+          }
+          // }
           const existQueue = this.playingSound.filter(itemNo => itemNo.storeFrontQueue === itemIsNotify.storeFrontQueue)
 
           if (existQueue.length === 0) {
-            this.playingSound.push({ storeFrontQueue: itemIsNotify.storeFrontQueue, audioUrl: audioUrl, servicePoint: servicePoint })
+            this.playingSound.push({ prefix: prefix, audioUrl: audioUrl, servicePoint: servicePoint })
           }
         })
       }
       if (this.playingSound.length > 0) {
+        console.log('if 1324')
         this.playingSound.reverse()
         for (let index = this.playingSound.length - 1; index >= 0; index--) {
-          let sound = this.playingSound[index]
-          this.playSoundBooking(prefix, sound.audioUrl, sound.servicePoint, sound.storeFrontQueue)
+          console.log('prefixAudio', this.playingSound[index].prefix)
+          console.log('audioUrl', this.playingSound[index].audioUrl)
+          console.log('servicePoint', this.playingSound[index].servicePoint)
+          this.playSoundBooking(this.playingSound[index].prefix, this.playingSound[index].audioUrl, this.playingSound[index].servicePoint)
           this.playingSound.pop()
         }
       }
     },
     async updateNotifyByShopId () {
-      const params = {
-        statusNotify: 'True',
-        shopId: this.$session.getAll().data.shopId,
-        masBranchID: this.$session.getAll().data.masBranchID
-      }
-      await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotifyOhrich`, params)
-    },
-    updateMessageSound (bookNo, audioUrl) {
       try {
         const params = {
           statusNotify: 'True',
-          audioFile: audioUrl
+          shopId: this.$session.getAll().data.shopId,
+          masBranchID: this.$session.getAll().data.masBranchID
         }
-        axios.post(`${this.DNS_IP}/callQueues/edit/${bookNo}`, params)
+        await axios.post(`${this.DNS_IP}/callQueues/updateStatusNotifyOhrich`, params)
       } catch (error) {
-        console.log('Error updateMessageSound', error)
+        console.log('updateNotifyByShopId -> ', error)
       }
     },
     checkWiFiStatus () {

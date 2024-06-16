@@ -108,6 +108,7 @@ export default {
   },
   data () {
     return {
+      unsubscribe: null,
       servicePointItem: [],
       servicePoint: '',
       closeItem: '',
@@ -154,20 +155,22 @@ export default {
   },
   created () {
     this.updateDateStart()
+    this.getFirestore()
   },
   async mounted () {
     await this.beforeCreate()
     await this.getBooking()
+  },
+  beforeDestroy () {
+    if (this.unsubscribe) {
+      this.unsubscribe()
+    }
   },
   methods: {
     updateDateStart () {
       const update = () => {
         this.dateStart = this.momenDate_1(new Date())
         this.currentDate = moment().format('DD/MMM/YYYY')
-        const now = new Date()
-        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
-        const msUntilTomorrow = tomorrow - now
-        setTimeout(update, msUntilTomorrow)
       }
 
       update()
@@ -336,7 +339,7 @@ export default {
         'typeStoreFrontText': JSON.stringify(this.flowSelectCheck)
       }
       // if (this.callQueue.status !== 'confirmJob') {
-      this.getBooking()
+      // this.getBooking()
       // } else {
       //  this.getBookingOnlyWait()
       //  }
@@ -349,37 +352,51 @@ export default {
         .catch((error) => { console.log(error) })
     },
     async getFirestore () {
-      this.firestore = this.$firebase.firestore()
-      const FieldPath = this.$firebase.firestore.FieldPath
-      this.firestore.collection('ProcessOhrichUpdate')
-        .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
-        .onSnapshot((snapshot) => {
-          if (snapshot.empty) {
-            this.updateProcessOhrichUpdate()
-          } else {
-            snapshot.docChanges().forEach(async (change) => {
-              console.log('getFirestore')
-              if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
-                await this.getBooking()
-                this.updateProcessOhrichUpdate()
-              }
-            })
-          }
-        })
-    },
-    updateProcessOhrichUpdate () {
-      let params = {
-        userName: this.$session.getAll().data.userName,
-        masBranchID: this.$session.getAll().data.masBranchID
+      try {
+        if (this.unsubscribe) {
+          this.unsubscribe()
+        }
+        this.firestore = this.$firebase.firestore()
+        const FieldPath = this.$firebase.firestore.FieldPath
+        this.unsubscribe = this.firestore.collection('ProcessOhrichUpdate')
+          .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
+          .onSnapshot(async (snapshot) => {
+            if (snapshot.empty) {
+              await this.updateProcessOhrichUpdate()
+            } else {
+              snapshot.docChanges().forEach(async (change) => {
+                if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
+                  await this.getBooking()
+                  await this.updateProcessOhrichUpdate()
+                }
+              })
+            }
+          })
+      } catch (error) {
+        console.log('getFirestore error', error)
       }
-      axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
+    },
+    async updateProcessOhrichUpdate  () {
+      try {
+        let params = {
+          userName: this.$session.getAll().data.userName,
+          masBranchID: this.$session.getAll().data.masBranchID
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichUseNew', params)
+      } catch (error) {
+        console.log('updateProcessOhrichUpdate error-> ', error)
+      }
     },
     async resetFirebaseUse () {
-      let params = {
-        userName: this.$session.getAll().data.userName,
-        masBranchID: this.$session.getAll().data.masBranchID
+      try {
+        let params = {
+          userName: this.$session.getAll().data.userName,
+          masBranchID: this.$session.getAll().data.masBranchID
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichNew', params)
+      } catch (error) {
+        console.log('resetFirebaseUse error->', error)
       }
-      await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichNew', params)
     },
     async removeQueue () {
       if (this.callQueue.status === 'confirmJob' || this.callQueue.status === 'confirm') {
@@ -394,17 +411,18 @@ export default {
           remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
         }
         await axios
-          .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
+          .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body).then(async response => {
+            this.callQueue = {
+              bookNo: null,
+              storeFrontQueue: 'XXXX',
+              status: 'removeQueue',
+              audioFileId: null
+            }
+            await this.resetFirebaseUse()
+          })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
       }
-      this.callQueue = {
-        bookNo: null,
-        storeFrontQueue: 'XXXX',
-        status: 'removeQueue',
-        audioFileId: null
-      }
-      this.resetFirebaseUse()
     },
     async checkSession () {
       if (!this.$session.exists()) {
@@ -414,7 +432,7 @@ export default {
           localStorage.setItem('sessionData', JSON.stringify(this.$session.getAll().data))
           await this.getDataBranch()
           await this.getDataFlow()
-          await this.getFirestore()
+          // await this.getFirestore()
         } else {
           this.$router.push('/Core/Login')
         }
@@ -427,7 +445,7 @@ export default {
           this.$session.set('data', JSON.parse(localStorage.getItem('sessionData')))
           await this.getDataBranch()
           await this.getDataFlow()
-          await this.getFirestore()
+          // await this.getFirestore()
         } else {
           this.$router.push('/Core/Login')
         }
@@ -494,13 +512,9 @@ export default {
     async closeJobSubmitReturn () {
       try {
         if (this.callQueue.status === 'confirmJob') {
-          this.reCallNoti(this.callQueue.audioFileId)
-          await axios
-            .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/${this.callQueue.bookNo}`, { checkGetQueue: 'True' })
-            .then(async responses => {}).catch(error => {
-              console.log('error function pushMsgQueueReturnOhrich : ', error)
-            })
-          await this.resetFirebaseUse()
+          if (this.callQueue.audioFileId) {
+            this.reCallNoti(this.callQueue.audioFileId)
+          }
         }
       } catch (error) {
         console.log('Error closeJobSubmitReturn', error)
@@ -519,18 +533,23 @@ export default {
         }
         await axios
           .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
-          .then(async responses => {}).catch(error => {
+          .then(async responses => {
+            if (responses.data.status) {
+              this.storeFrontQueue = 'XXXX'
+              this.callQueue.status = 'closeJob'
+              await this.resetFirebaseUse()
+            }
+            console.log('backHomeSubmit responses ->', responses)
+          }).catch(error => {
             console.log('catch getBookingDataList : ', error)
           })
-        this.storeFrontQueue = 'XXXX'
-        this.callQueue.status = 'closeJob'
-        await this.resetFirebaseUse()
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
       }
     },
     async closeJobSubmit () {
       try {
+        console.log('closeJobSubmit status', this.callQueue.status)
         if (this.callQueue.status === 'confirm') {
           let body = {
             bookNo: this.callQueue.bookNo,
@@ -545,7 +564,7 @@ export default {
             packageId: '',
             tokenPackage: '',
             storeFrontQueueEmpId: parseInt(this.$session.getAll().data.empId),
-            servicePoint: this.$session.getAll().data.counter
+            servicePoint: this.$session.getAll().data.counter.trim()
           }
           this.callQueue.status = 'confirmJob'
           await axios
@@ -556,7 +575,6 @@ export default {
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
               }
-              await this.resetFirebaseUse()
             })
         }
       } catch (error) {
@@ -576,8 +594,7 @@ export default {
       await axios
         .post(this.DNS_IP + '/booking_transaction/addOhrich', dtt)
         .then(async responses => {
-          let checkresponses = responses.data
-          if (checkresponses.status === true) {
+          if (responses.data.status === true) {
             await this.CallNoti(item)
             let lineUserId = item.lineUserId || ''
             if (lineUserId !== '') {
@@ -586,80 +603,55 @@ export default {
               }
               await axios
                 .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
-                .then(async responses => {}).catch(error => {
+                .then(async responses => {
+                  if (responses.data.status) {
+                    await this.resetFirebaseUse()
+                  }
+                }).catch(error => {
                   console.log('error function pushMsgQueueOhrich : ', error)
                 })
             }
-            // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-            await this.resetFirebaseUse()
-          }
-          await this.getBooking()
-        })
-    },
-    async updateServicePoint (bookNo) {
-      try {
-        var body = {
-          servicePoint: this.servicePoint
-        }
-        await axios
-          .post(this.DNS_IP + '/Booking/edit/' + bookNo, body)
-          .then(async responses => {})
-      } catch (error) {
-        console.log('error updateServicePoint', error)
-      }
-    },
-    async checkBookingStatus (bookNo) {
-      let result = ''
-      await axios
-        .get(this.DNS_IP + '/booking_view/get?shopId=' +
-            this.$session.getAll().data.shopId +
-            '&bookNo=' + bookNo)
-        .then(response => {
-          let rs = response.data
-          if (rs.length > 0) {
-            result = rs[0].statusBt || ''
-          } else {
-            result = ''
           }
         })
-      return result
-    },
-    async updateEmp (bookNo, status) {
-      let result = ''
-      var body = {
-        storeFrontQueueEmpId: parseInt(this.$session.getAll().data.empId),
-        LAST_USER: this.$session.getAll().data.userName
-      }
-      await axios
-        .post(`${this.DNS_IP}/Booking/editQueueEmp/${bookNo}?status=${status}`, body)
-        .then(async response => {
-          let rs = response.data
-          result = rs.status
-        })
-      return result
     },
     async CallNoti () {
       let body = {
         bookNo: this.callQueue.bookNo,
-        servicePoint: this.$session.getAll().data.counter,
+        servicePoint: this.$session.getAll().data.counter.trim(),
         shopId: this.$session.getAll().data.shopId,
-        storeFrontQueue: this.callQueue.storeFrontQueue,
+        storeFrontQueue: this.callQueue.storeFrontQueue.trim(),
         CREATE_USER: this.$session.getAll().data.userName,
         LAST_USER: this.$session.getAll().data.userName
       }
       await axios
         .post(`${this.DNS_IP}/callQueues/add`, body)
-        .then(async responses => {})
+        .then(async responses => {
+          if (responses.data.status) {
+            await this.resetFirebaseUse()
+          }
+        })
     },
     async reCallNoti (audioFileId) {
       try {
         let body = {
           statusNotify: 'False',
-          servicePoint: this.$session.getAll().data.counter,
+          servicePoint: this.$session.getAll().data.counter.trim(),
           LAST_USER: this.$session.getAll().data.userName
         }
         await axios
-          .post(this.DNS_IP + '/callQueues/edit/' + audioFileId, body)
+          .post(this.DNS_IP + '/callQueues/edit/' + audioFileId, body).then(async res => {
+            if (res.data.status) {
+              await axios
+                .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/${this.callQueue.bookNo}`, { checkGetQueue: 'True' })
+                .then(async responses => {
+                  if (responses.data.status) {
+                    await this.resetFirebaseUse()
+                  }
+                }).catch(error => {
+                  console.log('error function pushMsgQueueReturnOhrich : ', error)
+                })
+            }
+          })
       } catch (error) {
         console.log('reCallNoti', error)
       }
