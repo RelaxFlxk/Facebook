@@ -398,7 +398,11 @@ export default {
         console.log('Error')
       }
       console.log('dataService -> ', this.dataService)
-      this.dataService = arrDataService
+      this.dataService = arrDataService.length > 0 ? arrDataService.sort((a, b) => {
+        const dateA = new Date(a.LAST_DATE).getTime()
+        const dateB = new Date(b.LAST_DATE).getTime()
+        return dateB - dateA
+      }) : []
       this.dataWaiting = arrDataWaiting
       // playSound
       let prefix = 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1'
