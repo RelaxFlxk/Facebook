@@ -134,7 +134,8 @@ export default {
       currentDate: moment().format('DD/MMM/YYYY'),
       callQueue: {},
       waitingQueue: [],
-      storeFront: []
+      storeFront: [],
+      isLoading: false
     }
   },
   computed: {
@@ -357,26 +358,22 @@ export default {
           this.unsubscribe()
         }
         this.firestore = this.$firebase.firestore()
-        const FieldPath = this.$firebase.firestore.FieldPath
-        this.unsubscribe = this.firestore.collection('ProcessOhrichUpdate')
-          .where(FieldPath.documentId(), '==', this.$session.getAll().data.userName)
+        this.unsubscribe = this.firestore.collection('ProcessOhrichUpdate').doc(this.$session.getAll().data.userName)
           .onSnapshot(async (snapshot) => {
-            if (snapshot.empty) {
-              await this.updateProcessOhrichUpdate()
+            if (!snapshot.exists) {
+              await this.updateProcessOhrichNew()
             } else {
-              snapshot.docChanges().forEach(async (change) => {
-                if (change.doc.data().active === '1' && change.doc.data().masBranchID === this.$session.getAll().data.masBranchID) {
-                  await this.getBooking()
-                  await this.updateProcessOhrichUpdate()
-                }
-              })
+              if (snapshot.data().active === '1') {
+                await this.getBooking()
+                await this.updateProcessOhrichUpdate()
+              }
             }
           })
       } catch (error) {
         console.log('getFirestore error', error)
       }
     },
-    async updateProcessOhrichUpdate  () {
+    async updateProcessOhrichNew  () {
       try {
         let params = {
           userName: this.$session.getAll().data.userName,
@@ -387,42 +384,56 @@ export default {
         console.log('updateProcessOhrichUpdate error-> ', error)
       }
     },
+    async updateProcessOhrichUpdate  () {
+      try {
+        let params = {
+          userName: this.$session.getAll().data.userName,
+          masBranchID: this.$session.getAll().data.masBranchID
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichReNewTest', params)
+      } catch (error) {
+        console.log('updateProcessOhrichUpdate error-> ', error)
+      }
+    },
     async resetFirebaseUse () {
       try {
         let params = {
           userName: this.$session.getAll().data.userName,
           masBranchID: this.$session.getAll().data.masBranchID
         }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichNew', params)
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/Pepsico-ProcessOhrichNewTest', params)
       } catch (error) {
         console.log('resetFirebaseUse error->', error)
       }
     },
     async removeQueue () {
-      if (this.callQueue.status === 'confirmJob' || this.callQueue.status === 'confirm') {
-        let body = {
-          bookNo: this.callQueue.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'cancel',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName,
-          LAST_USER: this.$session.getAll().data.userName,
-          remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
-        }
-        await axios
-          .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body).then(async response => {
+      try {
+        if (this.callQueue.status === 'confirmJob' || this.callQueue.status === 'confirm') {
+          let body = {
+            bookNo: this.callQueue.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'cancel',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName,
+            remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
+          }
+          let res = await axios
+            .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
+          if (res.data.status) {
+            await this.resetFirebaseUse()
             this.callQueue = {
               bookNo: null,
               storeFrontQueue: 'XXXX',
               status: 'removeQueue',
               audioFileId: null
             }
-            await this.resetFirebaseUse()
-          })
-      } else {
-        this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
-      }
+          }
+        } else {
+          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+        }
+      } catch (error) { console.log('removeQueue error->', error) }
     },
     async checkSession () {
       if (!this.$session.exists()) {
@@ -521,31 +532,32 @@ export default {
       }
     },
     async backHomeSubmit () {
-      if (this.callQueue.status === 'confirmJob') {
-        let body = {
-          bookNo: this.callQueue.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'closeJob',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName,
-          LAST_USER: this.$session.getAll().data.userName
+      this.isLoading = true
+      try {
+        if (this.callQueue.status === 'confirmJob') {
+          let body = {
+            bookNo: this.callQueue.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'closeJob',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          const responses = await axios
+            .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
+          if (responses.data.status) {
+            await this.resetFirebaseUse()
+            this.storeFrontQueue = 'XXXX'
+            this.callQueue.status = 'closeJob'
+          }
+        } else {
+          this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         }
-        await axios
-          .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
-          .then(async responses => {
-            if (responses.data.status) {
-              this.storeFrontQueue = 'XXXX'
-              this.callQueue.status = 'closeJob'
-              await this.resetFirebaseUse()
-            }
-            console.log('backHomeSubmit responses ->', responses)
-          }).catch(error => {
-            console.log('catch getBookingDataList : ', error)
-          })
-      } else {
-        this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
+      } catch (error) {
+        console.log('backHomeSubmit error ->', error)
       }
+      this.isLoading = false
     },
     async closeJobSubmit () {
       try {
@@ -567,52 +579,17 @@ export default {
             servicePoint: this.$session.getAll().data.counter.trim()
           }
           this.callQueue.status = 'confirmJob'
-          await axios
+          const res = await axios
             .post(`${this.DNS_IP}/booking_transaction/addOhrich`, body)
-            .then(async res => {
-              if (res.data.status) {
-                await this.CallNoti()
-              } else {
-                this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
-              }
-            })
+          if (res.data.status) {
+            await this.CallNoti()
+          } else {
+            this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
+          }
         }
       } catch (error) {
         console.log('error closeJobSubmit', error)
       }
-    },
-    async closeJob (item) {
-      var dtt = {
-        bookNo: item.bookNo,
-        contactDate: this.format_date(new Date()),
-        status: 'confirmJob',
-        statusUse: 'use',
-        shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: this.$session.getAll().data.userName,
-        LAST_USER: this.$session.getAll().data.userName
-      }
-      await axios
-        .post(this.DNS_IP + '/booking_transaction/addOhrich', dtt)
-        .then(async responses => {
-          if (responses.data.status === true) {
-            await this.CallNoti(item)
-            let lineUserId = item.lineUserId || ''
-            if (lineUserId !== '') {
-              let dtt = {
-                checkGetQueue: 'True'
-              }
-              await axios
-                .post(this.DNS_IP + '/Booking/pushMsgQueueOhrich/' + item.bookNo, dtt)
-                .then(async responses => {
-                  if (responses.data.status) {
-                    await this.resetFirebaseUse()
-                  }
-                }).catch(error => {
-                  console.log('error function pushMsgQueueOhrich : ', error)
-                })
-            }
-          }
-        })
     },
     async CallNoti () {
       let body = {
@@ -623,13 +600,10 @@ export default {
         CREATE_USER: this.$session.getAll().data.userName,
         LAST_USER: this.$session.getAll().data.userName
       }
-      await axios
-        .post(`${this.DNS_IP}/callQueues/add`, body)
-        .then(async responses => {
-          if (responses.data.status) {
-            await this.resetFirebaseUse()
-          }
-        })
+      const responses = await axios.post(`${this.DNS_IP}/callQueues/add`, body)
+      if (responses.data.status) {
+        await this.resetFirebaseUse()
+      }
     },
     async reCallNoti (audioFileId) {
       try {
@@ -638,20 +612,13 @@ export default {
           servicePoint: this.$session.getAll().data.counter.trim(),
           LAST_USER: this.$session.getAll().data.userName
         }
-        await axios
-          .post(this.DNS_IP + '/callQueues/edit/' + audioFileId, body).then(async res => {
-            if (res.data.status) {
-              await axios
-                .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/${this.callQueue.bookNo}`, { checkGetQueue: 'True' })
-                .then(async responses => {
-                  if (responses.data.status) {
-                    await this.resetFirebaseUse()
-                  }
-                }).catch(error => {
-                  console.log('error function pushMsgQueueReturnOhrich : ', error)
-                })
-            }
-          })
+        const res = await axios
+          .post(this.DNS_IP + '/callQueues/edit/' + audioFileId, body)
+        if (res.data.status) {
+          await this.resetFirebaseUse()
+          await axios
+            .post(`${this.DNS_IP}/Booking/pushMsgQueueReturnOhrich/${this.callQueue.bookNo}`, { checkGetQueue: 'True' })
+        }
       } catch (error) {
         console.log('reCallNoti', error)
       }
