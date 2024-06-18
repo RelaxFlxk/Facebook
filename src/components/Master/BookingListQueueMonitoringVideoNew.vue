@@ -218,7 +218,7 @@ export default {
       if (text === 'on') {
         this.statusSound = true
         await this.updatestatusNotifyByShopId()
-        this.getMessage()
+        await this.getMessage()
       } else {
         this.statusSound = false
         clearInterval(this.statusSoundCheck)
@@ -238,7 +238,8 @@ export default {
           .get(
             `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
           ).then(async (response) => {
-            if (response.data.length > 0 && typeof response.data.status === 'undefined') {
+            // เช็ค this.statusSound ต้องเป็น true ถึงจะให้เล่นเสียง
+            if (response.data && response.data.length > 0 && typeof response.data.status === 'undefined' && this.statusSound) {
               clearInterval(this.objInterval)
               let result = await this.generateSound(response.data[0])
               await this.updateMessage(response.data[0].id, result)
@@ -256,7 +257,7 @@ export default {
         setTimeout(this.getMessage, 10000)
       }
     },
-    updateMessage (id, result) {
+    async updateMessage (id, result) {
       const params = {
         statusNotify: 'True',
         audioFile: result.audio_url
@@ -284,7 +285,7 @@ export default {
               `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull`
             ).then(async (response) => {
               console.log('nont oldSound callQueues', response.data)
-              if (response.data.length > 0 && typeof response.data.status === 'undefined') {
+              if (response.data && response.data.length > 0 && typeof response.data.status === 'undefined' && this.statusSound) {
                 item.audioFile = response.data[0].audioFile
               }
             })
