@@ -1140,7 +1140,7 @@ export default {
                 { title: 'ปฏิทินนัดหมาย', icon: 'mdi-calendar-search', to: '/Master/CalendarBooking', type: 'booking' },
                 { title: 'จัดการเวลานัดหมาย', icon: 'mdi-table-edit', to: '/Master/BookingWalkin', type: 'booking' },
                 { title: 'จัดการคิวหน้าร้าน', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueue', type: 'booking' },
-                { title: 'จัดการคิวหน้าร้านทั้งหมด', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueuePanel', type: 'booking' },
+                // { title: 'จัดการคิวหน้าร้านทั้งหมด', icon: 'mdi-notebook-edit', to: '/Master/BookingListQueuePanel', type: 'booking' },
                 { title: 'แสดงผลคิวหน้าร้าน', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoring', type: 'booking' },
                 { title: 'แสดงผลคิวหน้าร้าน วิดีโอ', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoringVideoNew', type: 'booking' }
               ]
