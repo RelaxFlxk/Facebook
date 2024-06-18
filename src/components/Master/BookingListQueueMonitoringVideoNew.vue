@@ -239,7 +239,9 @@ export default {
             `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
           ).then(async (response) => {
             // เช็ค this.statusSound ต้องเป็น true ถึงจะให้เล่นเสียง
-            if (response.data && response.data.length > 0 && typeof response.data.status === 'undefined' && this.statusSound) {
+            // ถ้า response.data เป็น object = ไม่มีข้อมูล | ถ้า response.data เป็น array = มีข้อมูล, response.data.status = undefined เพราะเป็นการเช็ค object แต่เอามาเช็ค array จึงทำให้ undefined
+            if ((Array.isArray(response.data) && response.data.length > 0 && this.statusSound) ||
+                (typeof response.data === 'object' && typeof response.data.status !== 'boolean' && this.statusSound)) {
               clearInterval(this.objInterval)
               let result = await this.generateSound(response.data[0])
               await this.updateMessage(response.data[0].id, result)
@@ -285,7 +287,8 @@ export default {
               `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull`
             ).then(async (response) => {
               console.log('nont oldSound callQueues', response.data)
-              if (response.data && response.data.length > 0 && typeof response.data.status === 'undefined' && this.statusSound) {
+              if ((Array.isArray(response.data) && response.data.length > 0 && this.statusSound) ||
+                  (typeof response.data === 'object' && typeof response.data.status !== 'boolean' && this.statusSound)) {
                 item.audioFile = response.data[0].audioFile
               }
             })
