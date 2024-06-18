@@ -98,6 +98,9 @@ export default {
     BookingUseOhrich
   },
   computed: {
+    // videoElement () {
+    //   return this.$refs.video
+    // },
     formattedDateTime () {
       return this.currentTime
     },
@@ -313,6 +316,17 @@ export default {
                 playerTV.src = playList[index++]
                 playerTV.load()
                 playerTV.play()
+                // const promise = playerTV.play()
+                // if (promise !== undefined) {
+                //   promise
+                //     .then(() => {
+                //       console.log(`Playing: ${playerTV.src}`)
+                //     })
+                //     .catch(error => {
+                //       console.log('error ->', playerTV.src)
+                //       console.error(`Error playing ${playerTV.src}:`, error)
+                //     })
+                // }
               } else if (roundCount < maxRounds - 1) {
                 index = 0
                 roundCount++
@@ -405,18 +419,20 @@ export default {
           let audioUrl = `https://storage.googleapis.com/ohrich-sound/${itemIsNotify.storeFrontQueue}.wav`
           let servicePoint = `https://storage.googleapis.com/ohrich-sound/counter${itemIsNotify.servicePoint}.wav`
 
+          // const bookingLanguageIndex = itemIsNotify.bookingLanguage
+          // if (bookingLanguageIndex >= 0 && bookingLanguageIndex < this.languages.length) {
           const language = this.languages[itemIsNotify.bookingLanguage]
 
           if (language === 'th') {
             prefix = `https://storage.googleapis.com/ohrich-sound/${language}/prefix.wav`
-          } else if (language === 'jp' || language === 'ch') {
+          } else if (language === 'jp') {
             prefix = ''
           } else {
             prefix = 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/ohrich2%2FQNumber.wav?alt=media&token=451f683b-28da-44d0-8673-f5d25a84a9e1'
           }
 
           const servicePointNumber = String(itemIsNotify.servicePoint).trim()
-          if (language !== 'en') {
+          if (language !== 'en' && language !== 'ch') {
             audioUrl = `https://storage.googleapis.com/ohrich-sound/${language}/${itemIsNotify.storeFrontQueue}.wav`
             servicePoint = `https://storage.googleapis.com/ohrich-sound/${language}/counter${servicePointNumber}.wav`
           } else {
