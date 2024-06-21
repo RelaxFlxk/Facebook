@@ -209,6 +209,7 @@ export default {
     this.$root.$off('dataReturn')
     clearInterval(this.interval)
     clearInterval(this.intervalSearch)
+    this.statusSound = false
   },
   methods: {
     checkOrientation () {
