@@ -16372,7 +16372,7 @@ export default {
         dateSelect: dueDateNew,
         timeSelect: dueDateTimeNew,
         shopId: item.shopId,
-        userId: this.userId,
+        userId: this.$session.getAll().data.userName || 'Admin',
         limitBookingCount: limitBookingCount
       }
       await axios.post(this.DNS_IP + '/Booking/updateLimitBookingEdit', dt).then(async response => {

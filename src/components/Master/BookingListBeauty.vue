@@ -15859,7 +15859,7 @@ export default {
         dateSelect: dueDateOld,
         timeSelect: dueDateTimeOld,
         shopId: item.shopId,
-        userId: item.userId
+        userId: this.$session.getAll().data.userName || 'admin'
       }
       await axios.post(this.DNS_IP + '/Booking/updateLimitBookingCancel', dt).then(async response => {
         result = response.data
@@ -16193,7 +16193,7 @@ export default {
         dateSelect: dueDateNew,
         timeSelect: dueDateTimeNew,
         shopId: item.shopId,
-        userId: item.userId,
+        userId: this.$session.getAll().data.userName || 'admin',
         bookNo: item.bookNo,
         limitBookingCount: limitBookingCount
       }
@@ -16217,7 +16217,7 @@ export default {
         dateSelect: dueDateNew,
         timeSelect: dueDateTimeNew,
         shopId: item.shopId,
-        userId: this.userId,
+        userId: this.$session.getAll().data.userName || 'Admin',
         limitBookingCount: limitBookingCount,
         bookNo: this.dataEdit.bookNo
       }
