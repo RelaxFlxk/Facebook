@@ -43,7 +43,7 @@
                 dense
                 required
                 :rules ="[rules.required]"
-                @change="searchBooking(),clearTimeLoop()"
+                @change="searchBooking(),clearTimeLoop(),getDataFlow()"
                 ><template #prepend-inner>
                   <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
                     mdi-map-marker-outline
@@ -1244,8 +1244,14 @@ export default {
       // }
       // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
       this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
-      if (this.branchItem.length > 0) {
+      if (this.branchItem && this.branchItem.length > 0) {
         this.masBranchID = this.branchItem[0].value
+        const branchSession = this.session.data.masBranchID
+        let USER_ROLE = this.session.data.USER_ROLE || ''
+        if (USER_ROLE === 'user') {
+          const matchBranch = this.branchItem.filter(branch => branch.allData.masBranchID === branchSession)
+          this.branchItem = matchBranch.length > 0 ? matchBranch : this.branchItem
+        }
       }
     },
     async getDataFromAPI (url, fieldId, fieldName, param) {
