@@ -42,6 +42,7 @@
                 outlined
                 dense
                 required
+                :disabled="statusBranchReadonly"
                 :rules ="[rules.required]"
                 @change="searchBooking(),clearTimeLoop(),getDataFlow()"
                 ><template #prepend-inner>
@@ -728,6 +729,8 @@ export default {
   },
   data () {
     return {
+      userBranch: [],
+      statusBranchReadonly: false,
       checkShowTel: false,
       modelslide: '',
       shopPhone: '',
@@ -1215,6 +1218,17 @@ export default {
                   resultOption.push(s)
                 }
               }
+            } else if (this.$session.getAll().data.USER_ROLE === 'user' && this.userBranch && this.userBranch.length > 0) {
+              resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
+              this.statusBranchReadonly = true
+              for (let i = 0; i < rs.length; i++) {
+                let d = rs[i]
+                let s = {}
+                s.text = d.flowName
+                s.value = d.flowId
+                s.allData = d
+                resultOption.push(s)
+              }
             } else {
               resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
               for (let i = 0; i < rs.length; i++) {
@@ -1249,6 +1263,7 @@ export default {
         let USER_ROLE = this.session.data.USER_ROLE || ''
         if (USER_ROLE === 'user') {
           const matchBranch = this.branchItem.filter(branch => branch.allData.masBranchID === branchSession)
+          this.userBranch = matchBranch
           this.branchItem = matchBranch.length > 0 ? matchBranch : this.branchItem
         }
         this.masBranchID = this.branchItem[0].value

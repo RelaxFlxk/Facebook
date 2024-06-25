@@ -701,16 +701,7 @@ export default {
       // console.log('item', item)
       // console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
       if (item) {
-        // get api BookingDataList ออกมาแล้วข้อมูล (ชื่อ,เบอร์โทร) ซ้ำกัน แต่ query sql ข้อมูลออกปกติ เลยใช้ indexOf เพื่อเอาค่าที่ไม่ซ้ำกันมาใช้
-        let historyDataAll = this.BookingDataList[item.bookNo]
-        let existHistory = []
-        this.HistoryData = historyDataAll.reduce((acc, entry) => {
-          if (existHistory.indexOf(entry.fieldId) === -1) {
-            existHistory.push(entry.fieldId)
-            acc.push(entry)
-          }
-          return acc
-        }, [])
+        this.HistoryData = this.BookingDataList[item.bookNo]
         this.pictureUrHistory = item.memberPicture
         let phoneNum = this.HistoryData.filter(item3 => { return item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร' })
         if (phoneNum.length > 0) {
