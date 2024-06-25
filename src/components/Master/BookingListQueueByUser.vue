@@ -242,7 +242,7 @@
                 </div>
                 <template v-if="HistoryData.length > 0">
                 <div class="mt-5" v-for="(item3 , index3) in HistoryData" :key="index3">
-                  <h5 class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName !== 'เบอร์โทร'"><strong>{{item3.fieldValue}}</strong></h5>
+                  <h5 class="text-start ml-10" v-if="item3.fieldValue !== '' && item3.fieldName !== 'เบอร์โทร'"><strong>{{item3.fieldValue}}</strong></h5>
                   <!-- <h5 @click="dial(item3.fieldValue.replace(/-/g, ''))" class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร'"><v-icon color="#24C74D" class="iconify" data-icon="el:phone-alt">mdi-phone</v-icon><strong class="ml-4">{{'' + item3.fieldValue}}</strong></h5> -->
                 </div>
                 </template>
@@ -701,7 +701,16 @@ export default {
       // console.log('item', item)
       // console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
       if (item) {
-        this.HistoryData = this.BookingDataList[item.bookNo]
+        // get api BookingDataList ออกมาแล้วข้อมูล (ชื่อ,เบอร์โทร) ซ้ำกัน แต่ query sql ข้อมูลออกปกติ เลยใช้ indexOf เพื่อเอาค่าที่ไม่ซ้ำกันมาใช้
+        let historyDataAll = this.BookingDataList[item.bookNo]
+        let existHistory = []
+        this.HistoryData = historyDataAll.reduce((acc, entry) => {
+          if (existHistory.indexOf(entry.fieldId) === -1) {
+            existHistory.push(entry.fieldId)
+            acc.push(entry)
+          }
+          return acc
+        }, [])
         this.pictureUrHistory = item.memberPicture
         let phoneNum = this.HistoryData.filter(item3 => { return item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร' })
         if (phoneNum.length > 0) {
@@ -917,7 +926,13 @@ export default {
       // }
       // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
       this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
-      if (this.branchItem.length > 0) {
+      if (this.branchItem && this.branchItem.length > 0) {
+        const branchSession = this.$session.getAll().data.masBranchID
+        let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+        if (USER_ROLE === 'storeFront') {
+          const matchBranch = this.branchItem.filter(branch => branch.allData.masBranchID === branchSession)
+          this.branchItem = matchBranch.length > 0 ? matchBranch : this.branchItem
+        }
         this.masBranchID = this.branchItem[0].value
       }
     },

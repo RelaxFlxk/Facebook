@@ -1245,13 +1245,13 @@ export default {
       // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
       this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
       if (this.branchItem && this.branchItem.length > 0) {
-        this.masBranchID = this.branchItem[0].value
         const branchSession = this.session.data.masBranchID
         let USER_ROLE = this.session.data.USER_ROLE || ''
         if (USER_ROLE === 'user') {
           const matchBranch = this.branchItem.filter(branch => branch.allData.masBranchID === branchSession)
           this.branchItem = matchBranch.length > 0 ? matchBranch : this.branchItem
         }
+        this.masBranchID = this.branchItem[0].value
       }
     },
     async getDataFromAPI (url, fieldId, fieldName, param) {
