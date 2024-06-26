@@ -15,13 +15,13 @@
           </v-col> -->
         <!-- </v-row> -->
         <template>
-          <v-card flat v-if="!overlay">
+          <!-- <v-card flat v-if="!overlay">
           <v-card-text>
             <div class="text-center">
               <waitingAlert></waitingAlert>
             </div>
           </v-card-text>
-        </v-card>
+        </v-card> -->
         <v-form ref="form_search" v-model="validSearch" lazy-validation>
           <v-row class="no-gutters">
             <!-- <v-col col="auto" class="px-3 mt-5 text-right">
@@ -150,7 +150,7 @@
           </v-row> -->
         </v-form>
         <v-row>
-          <v-col cols="12" v-if="overlay">
+          <v-col cols="12">
             <br>
             <v-card class="mx-6 pa-3 ma-2" style="background: #FFFFFF;box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);border-radius: 24px;">
               <v-card-text>
@@ -217,38 +217,45 @@
                   </v-col>
                 </v-row>
               </v-card-text>
-              <div mb-n5 v-if="itemBooking.length > 0">
+              <div mb-n5>
                 <!-- <h6 style="color:#092C4C" class="text-left font-weight-bold ml-10">{{ itemBooking[0].flowName }}</h6> -->
                 <div class="text-right">
                   <v-btn
-                    v-if="itemBooking[0].statusBt === 'confirmJob'"
+                    v-if="callQueue.status === 'confirmJob'"
                     color="#ECEFF1"
                     class="ma-2 white--text"
                     fab
                     elevation="1"
                     x-small
-                    @click="removeQueue(itemBooking[0])"
+                    @click="removeQueue(callQueue)"
                   >
                     <v-icon color="red">
                       mdi-delete-circle
                     </v-icon>
                   </v-btn>
                 </div>
-                <p style="color:#092C4C;font-size: 80px;" class="text-center font-weight-black mt-n5 mb-n5">{{itemBooking[0].storeFrontQueue}}</p>
+                <p style="color:#092C4C;font-size: 80px;" class="text-center font-weight-black mt-n5 mb-n5">{{ callQueue.storeFrontQueue}}</p>
                 <div class="mt-5" align="center">
-                  <v-img
-                    @click="closeJobSubmit(itemBooking[0])"
-                    :src="itemBooking[0].statusBt === 'confirm' ? 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FselectActiveQ1.png?alt=media&token=938edfa3-26a9-4c27-94a6-208cc2e81a0f': 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FselectInactiveQ1.png?alt=media&token=e7c25716-7e4d-4499-af94-8ef382a51185'" max-width="179px" max-height="179px"></v-img>
+                  <v-btn
+                    @click="closeJobSubmit(callQueue)"
+                    :disabled="callQueue !== null && (callQueue.status === 'confirm' || callQueue.status === 'againqQueue') ? false : true"
+                    dark
+                    :class="`rounded-btn justify-content-center align-items-center ${callQueue !== null && (callQueue.status === 'confirm' || callQueue.status === 'againqQueue')  ? 'rounded-btn-confirm':'rounded-btn-closejob'}`">
+                    <div class="d-flex flex-column">
+                    <div><v-icon size="45">mdi-bell-ring</v-icon></div>
+                    <div><span :class="`text-event ${callQueue !== null && callQueue.status === 'confirm' ? 'text-white' :'text-bell-disabled'}`">เรียกคิว</span></div>
+                    </div>
+                  </v-btn>
                 </div>
-                <template v-if="HistoryData.length > 0">
+                <template v-if="HistoryData && HistoryData.length > 0">
                 <div class="mt-5" v-for="(item3 , index3) in HistoryData" :key="index3">
                   <h5 class="text-start ml-10" v-if="item3.fieldValue !== '' && item3.fieldName !== 'เบอร์โทร'"><strong>{{item3.fieldValue}}</strong></h5>
                   <!-- <h5 @click="dial(item3.fieldValue.replace(/-/g, ''))" class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร'"><v-icon color="#24C74D" class="iconify" data-icon="el:phone-alt">mdi-phone</v-icon><strong class="ml-4">{{'' + item3.fieldValue}}</strong></h5> -->
                 </div>
                 </template>
-                <h5 v-if="itemBooking[0].servicePoint" class="text-start  ml-10 mt-2"><strong>{{ languageSelect === 0 ? itemBooking[0].servicePoint : JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint}).length > 0 ? JSON.parse(itemBooking[0].servicePointCount).filter(el => { return el.textTh === itemBooking[0].servicePoint})[0].textEn:itemBooking[0].servicePoint}}</strong></h5>
+                <h5 v-if="callQueue.servicePoint" class="text-start ml-10 mt-2"><strong>{{ languageSelect === 0 ? callQueue.servicePoint : JSON.parse(callQueue.servicePointCount).filter(el => { return el.textTh === callQueue.servicePoint}).length > 0 ? JSON.parse(callQueue.servicePointCount).filter(el => { return el.textTh === callQueue.servicePoint})[0].textEn:callQueue.servicePoint}}</strong></h5>
                 <div class="text-start ml-9 mt-2" style="display: flex;word-break: break-word;">
-                  <v-icon  color="#979797" class="iconify" data-icon="ic:twotone-access-time"></v-icon>
+                  <v-icon color="#979797" class="iconify" data-icon="ic:twotone-access-time"></v-icon>
                   <p class="font-weight-medium text-center ma-0 ml-2" v-if="dateStart" style="font-size:16px;color:#979797;">
                     {{momentThaiText(dateStart)}}</p>
                 </div>
@@ -273,8 +280,8 @@
                   color="#1B437C"
                   rounded
                   min-width="88px"
-                  :disabled="itemBooking[0].statusBt === 'confirmJob' ? false:true"
-                  @click="closeJobSubmitReturn(itemBooking[0])"
+                  :disabled="callQueue.status === 'confirmJob' ? false:true"
+                  @click="closeJobSubmitReturn(callQueue)"
                 >
                   <strong class="text-white">เรียกคิวซ้ำ</strong>
                 </v-btn>
@@ -282,8 +289,8 @@
                   color="#F38383"
                   rounded
                   min-width="88px"
-                  :disabled="itemBooking[0].statusBt === 'confirmJob' ? false:true"
-                  @click="backHomeSubmit(itemBooking[0])"
+                  :disabled="callQueue.status === 'confirmJob' ? false:true"
+                  @click="backHomeSubmit(callQueue)"
                 >
                   <strong class="text-white">ปิดงาน</strong>
                 </v-btn>
@@ -396,7 +403,7 @@
                       </div>
                     </v-col>
                   </v-row>
-                   <v-row v-if="overlay">
+                   <v-row>
                     <v-col cols="12">
                       <!-- <v-select
                         v-model="servicePoint"
@@ -456,7 +463,7 @@
                       </v-btn>
                     </v-col>
                   </v-row>
-                  <v-row v-else>
+                  <v-row>
                     <v-col clos="12" class="text-center">
                       <waitingAlert></waitingAlert>
                     </v-col>
@@ -492,6 +499,9 @@ export default {
   },
   data () {
     return {
+      callQueue: {},
+      waitingQueue: [],
+      unsubscribe: null,
       languageSelect: 0,
       servicePointItem: [],
       servicePoint: '',
@@ -499,11 +509,11 @@ export default {
       dialogServicePointStatus: false,
       validSearch: true,
       statusReturn: false,
-      itemBooking: [],
+      // itemBooking: [],
       BookingDataList: [],
       menuStart: false,
       dialogPrint: false,
-      overlay: true,
+      // overlay: true,
       time: '',
       timeavailable: [],
       branchItem: [],
@@ -584,14 +594,15 @@ export default {
   },
   methods: {
     closeSetTimeBookingListQueue () {
-      clearInterval(this.setTimerCalendar)
+      // clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
     },
     clearTimeLoop () {
-      clearInterval(this.setTimerCalendar)
+      // clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
       let _this = this
-      this.setTimerCalendar = setInterval(function () { _this.searchBooking('unNoti') }, 15000)
+      // this.setTimerCalendar = setInterval(function () { _this.searchBooking('unNoti') }, 15000)
+      this.setTimerCalendar = _this.searchBooking('unNoti')
     },
     async removeQueue (item) {
       console.log('removeQueue', item)
@@ -624,6 +635,7 @@ export default {
               this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
               await this.searchBooking('unNoti')
               this.clearTimeLoop()
+              this.HistoryData = []
             })
         }).catch(async err => {
           // this.$router.push({ name: '404' })
@@ -757,17 +769,118 @@ export default {
     },
     checkSearch () {
       this.validate('SEARCH')
-      setTimeout(() => this.searchBooking('unNoti'), 500)
+      // setTimeout(() => this.searchBooking('unNoti'), 500)
+      this.searchBooking('unNoti')
+    },
+    // async searchBooking (checkNoti, item) {
+    //   if (this.validSearch === true) {
+    //     this.overlay = false
+    //     this.itemBooking = []
+    //     let itemBooking = []
+    //     await this.getBookingDataList(this.dateStart)
+    //     let urlApi = {}
+    //     if (this.flowSelect === 'allFlow') {
+    //       urlApi = this.DNS_IP +
+    //         '/booking_view/get?shopId=' +
+    //         this.$session.getAll().data.shopId +
+    //         '&masBranchID=' +
+    //         this.masBranchID +
+    //         // '&flowId=' +
+    //         // this.flowSelect +
+    //         '&dueDate=' +
+    //         this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+    //     // '&dueDate=' +
+    //     // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
+    //     } else {
+    //       urlApi = this.DNS_IP +
+    //         '/booking_view/get?shopId=' +
+    //         this.$session.getAll().data.shopId +
+    //         '&masBranchID=' +
+    //         this.masBranchID +
+    //         '&flowId=' +
+    //         this.flowSelect +
+    //         '&dueDate=' +
+    //         this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+    //     }
+    //     await axios
+    //       .get(urlApi)
+    //       .then(async response => {
+    //         // console.log('getData', response.data.length)
+    //         let rs = response.data
+    //         if (rs.length > 0) {
+    //           let sortData = rs.sort((a, b) => {
+    //             if (a.storeFrontQueue < b.storeFrontQueue) return -1
+    //             return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
+    //           })
+    //           for (let i = 0; i < sortData.length; i++) {
+    //             let d = sortData[i]
+    //             if (this.BookingDataList[d.bookNo] !== undefined) {
+    //               d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+    //               d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
+    //               d.hnNo = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'H.N.')
+    //               d.hnNo = (d.hnNo.length > 0) ? d.hnNo[0].fieldValue : ''
+    //               itemBooking.push(d)
+    //             }
+    //           }
+    //           let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+    //           let empId = this.$session.getAll().data.empId || ''
+    //           if (USER_ROLE === 'storeFront' && empId !== '') {
+    //             let dataCon = itemBooking.filter(el => { return el.statusBt === 'confirmJob' && el.storeFrontQueueEmpId === parseInt(empId) })
+    //             let dataWain = itemBooking.filter(el => { return el.statusBt === 'confirm' })
+    //             this.itemBooking = [ ...dataCon, ...dataWain ]
+    //           } else {
+    //             this.itemBooking = itemBooking
+    //           }
+    //           this.overlay = true
+    //           this.openHistory(this.itemBooking[0])
+    //           console.log('checkNoti', checkNoti)
+    //           if (checkNoti === 'noti') {
+    //             console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
+    //             if (item.storeFrontNotifyStatus === 'True') {
+    //               if (parseInt(item.storeFrontNotifySet) > 0) {
+    //                 this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
+    //               }
+    //             }
+    //           }
+    //         } else {
+    //           this.overlay = true
+    //         }
+    //       })
+    //   } else {
+    //     this.overlay = true
+    //   }
+    // },
+    async MyBooking () {
+      let filterConfirmJob = []
+      try {
+        let empId = parseInt(this.$session.getAll().data.empId) || null
+        await axios
+          .get(`${this.DNS_IP}/booking_view/getQueueOhrich?masBranchID=${this.masBranchID}&flowId=${this.$session.getAll().data.flowId}&storeFrontQueueEmpId=${empId}`)
+          .then(async response => {
+            if (response && response.data) {
+              let data = response.data
+              if (data && data.length > 0) {
+                filterConfirmJob = data.filter(item => item.status === 'confirmJob' && parseInt(item.storeFrontQueueEmpId) === empId)
+              }
+            }
+          })
+      } catch (error) {
+        console.log('Error getBooking', error)
+      }
+      return filterConfirmJob
     },
     async searchBooking (checkNoti, item) {
-      if (this.validSearch === true) {
-        this.overlay = false
-        this.itemBooking = []
-        let itemBooking = []
-        await this.getBookingDataList(this.dateStart)
-        let urlApi = {}
-        if (this.flowSelect === 'allFlow') {
-          urlApi = this.DNS_IP +
+      try {
+        if (this.validSearch === true) {
+          // this.overlay = false
+          // this.itemBooking = []
+          // let itemBooking = []
+          let waitingQueue = []
+          await this.getBookingDataList(this.dateStart)
+          let urlApi = {}
+          console.log('this.flowSelect', this.flowSelect)
+          if (this.flowSelect === 'allFlow') {
+            urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
             '&masBranchID=' +
@@ -776,10 +889,10 @@ export default {
             // this.flowSelect +
             '&dueDate=' +
             this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
-        // '&dueDate=' +
-        // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
-        } else {
-          urlApi = this.DNS_IP +
+            // '&dueDate=' +
+            // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
+          } else {
+            urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
             '&masBranchID=' +
@@ -788,52 +901,138 @@ export default {
             this.flowSelect +
             '&dueDate=' +
             this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
-        }
-        await axios
-          .get(urlApi)
-          .then(async response => {
-            // console.log('getData', response.data.length)
-            let rs = response.data
-            if (rs.length > 0) {
-              let sortData = rs.sort((a, b) => {
-                if (a.storeFrontQueue < b.storeFrontQueue) return -1
-                return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
-              })
-              for (let i = 0; i < sortData.length; i++) {
-                let d = sortData[i]
-                if (this.BookingDataList[d.bookNo] !== undefined) {
-                  d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-                  d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
-                  d.hnNo = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'H.N.')
-                  d.hnNo = (d.hnNo.length > 0) ? d.hnNo[0].fieldValue : ''
-                  itemBooking.push(d)
-                }
-              }
-              let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
-              let empId = this.$session.getAll().data.empId || ''
-              if (USER_ROLE === 'storeFront' && empId !== '') {
-                let dataCon = itemBooking.filter(el => { return el.statusBt === 'confirmJob' && el.storeFrontQueueEmpId === parseInt(empId) })
-                let dataWain = itemBooking.filter(el => { return el.statusBt === 'confirm' })
-                this.itemBooking = [ ...dataCon, ...dataWain ]
-              } else {
-                this.itemBooking = itemBooking
-              }
-              this.overlay = true
-              this.openHistory(this.itemBooking[0])
-              if (checkNoti === 'noti') {
-                console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
-                if (item.storeFrontNotifyStatus === 'True') {
-                  if (parseInt(item.storeFrontNotifySet) > 0) {
-                    this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
+          }
+          console.log('urlApi', urlApi)
+          if (this.flowSelect) {
+            let empIdQueue = parseInt(this.$session.getAll().data.empId) || null
+            console.log('empId', empIdQueue)
+            await axios
+              .get(urlApi)
+              .then(async response => {
+                // console.log('getData', response.data.length)
+                let rs = response.data
+                console.log('rs ok', rs)
+                if (rs.status === false) {
+                  this.callQueue = {
+                    bookNo: '',
+                    storeFrontQueue: 'XXXX',
+                    status: 'no have type',
+                    audioFileId: null,
+                    storeFrontQueueEmpId: null
                   }
+                  waitingQueue = []
+                  this.HistoryData = []
+                  return
                 }
-              }
-            } else {
-              this.overlay = true
+                if (rs && rs.length > 0) {
+                  console.log('momo', empIdQueue)
+                  const filterConfirmJob = rs.filter(item => item.statusBt === 'confirmJob' && parseInt(item.storeFrontQueueEmpId) === empIdQueue)
+                  console.log('filterConfirmJob', filterConfirmJob, 'rs => ', rs)
+                  // const filterConfirmJob = await this.MyBooking()
+                  if (filterConfirmJob && filterConfirmJob.length > 0) {
+                    this.callQueue = {
+                      bookNo: filterConfirmJob[0].bookNo,
+                      storeFrontQueue: filterConfirmJob[0].storeFrontQueue,
+                      status: 'confirmJob',
+                      audioFileId: filterConfirmJob[0].audioFileId,
+                      storeFrontQueueEmpId: parseInt(filterConfirmJob[0].storeFrontQueueEmpId),
+                      storeFrontNotifyStatus: filterConfirmJob[0].storeFrontNotifyStatus,
+                      storeFrontNotifySet: filterConfirmJob[0].storeFrontNotifySet,
+                      lineUserId: filterConfirmJob[0].lineUserId,
+                      servicePoint: filterConfirmJob[0].servicePoint,
+                      servicePointCount: filterConfirmJob[0].servicePointCount
+                    }
+                    console.log('this.callQueue confirmJob', this.callQueue)
+                  } else {
+                    let filterDataConfirm = rs.filter(a => a.statusBt === 'confirm')
+                    console.log('filterDataConfirm', filterDataConfirm, 'rs => ', rs)
+                    if (filterDataConfirm.length > 0) {
+                      this.callQueue = {
+                        bookNo: filterDataConfirm[0].bookNo,
+                        storeFrontQueue: filterDataConfirm[0].storeFrontQueue,
+                        status: filterDataConfirm[0].statusBt,
+                        audioFileId: filterDataConfirm[0].audioFileId,
+                        storeFrontQueueEmpId: parseInt(filterDataConfirm[0].storeFrontQueueEmpId),
+                        storeFrontNotifyStatus: filterDataConfirm[0].storeFrontNotifyStatus,
+                        storeFrontNotifySet: filterDataConfirm[0].storeFrontNotifySet,
+                        lineUserId: filterDataConfirm[0].lineUserId,
+                        servicePoint: filterDataConfirm[0].servicePoint,
+                        servicePointCount: filterDataConfirm[0].servicePointCount
+                      }
+                      console.log('this.callQueue confirm', this.callQueue)
+                    } else {
+                      this.callQueue = {
+                        bookNo: '',
+                        storeFrontQueue: 'XXXX',
+                        status: 'no have type',
+                        audioFileId: null,
+                        storeFrontQueueEmpId: null
+                      }
+                      this.HistoryData = []
+                      console.log('this.callQueue else', this.callQueue)
+                    }
+                  }
+                  response.data.filter(item => item.statusBt === 'confirm').forEach(queue => {
+                    waitingQueue.push(queue.storeFrontQueue)
+                    console.log('waitingQueue end', waitingQueue)
+                  })
+
+                  // original
+                  // let sortData = rs.sort((a, b) => {
+                  //   if (a.storeFrontQueue < b.storeFrontQueue) return -1
+                  //   return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
+                  // })
+                  // for (let i = 0; i < sortData.length; i++) {
+                  //   let d = sortData[i]
+                  //   if (this.BookingDataList[d.bookNo] !== undefined) {
+                  //     d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
+                  //     d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
+                  //     d.hnNo = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'H.N.')
+                  //     d.hnNo = (d.hnNo.length > 0) ? d.hnNo[0].fieldValue : ''
+                  //     itemBooking.push(d)
+                  //   }
+                  // }
+                  // let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
+                  // let empId = this.$session.getAll().data.empId || ''
+                  // if (USER_ROLE === 'storeFront' && empId !== '') {
+                  //   console.log('cvcv')
+                  //   let dataCon = itemBooking.filter(el => { return el.statusBt === 'confirmJob' && el.storeFrontQueueEmpId === parseInt(empId) })
+                  //   let dataWain = itemBooking.filter(el => { return el.statusBt === 'confirm' })
+                  //   this.itemBooking = [ ...dataCon, ...dataWain ]
+                  // } else {
+                  //   this.itemBooking = itemBooking
+                  // }
+                  // this.overlay = true
+                  // this.openHistory(this.itemBooking[0])
+                  this.openHistory(this.callQueue)
+                  console.log('checkNoti', checkNoti)
+                  if (checkNoti === 'noti') {
+                    console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
+                    if (item.storeFrontNotifyStatus === 'True') {
+                      if (parseInt(item.storeFrontNotifySet) > 0) {
+                        this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
+                      }
+                    }
+                  }
+                } else {
+                  // this.overlay = true
+                }
+              })
+          } else {
+            this.callQueue = {
+              bookNo: '',
+              storeFrontQueue: 'XXXX',
+              status: 'no have type',
+              storeFrontQueueEmpId: null
             }
-          })
-      } else {
-        this.overlay = true
+          }
+          this.waitingQueue = waitingQueue
+          console.log('this.waitingQueue', this.waitingQueue)
+        } else {
+          // this.overlay = true
+        }
+      } catch (error) {
+        console.log('Error searchBooking', error)
       }
     },
     getDataFromFieldName (data, key) {
@@ -850,24 +1049,34 @@ export default {
       let url = ''
       if (this.flowSelect === 'allFlow') {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
+        console.log('url if', url)
       } else {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
+        console.log('url else', url)
       }
       // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       await axios
         .get(url)
         .then(async response => {
+          console.log('response', response)
           if (response.data.status !== false) {
             response.data.forEach((row) => {
+              console.log('row', row)
               if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
                 this.BookingDataList[row.bookNo] = []
               }
-              this.BookingDataList[row.bookNo].push(row)
+              // ข้อมูลวนตามจำนวน row จึงต้องเช็คให้ push เฉพาะตัวที่ไม่ซ้ำ
+              const exists = this.BookingDataList[row.bookNo].some(item => item.bookingDataId === row.bookingDataId)
+              if (!exists) {
+                this.BookingDataList[row.bookNo].push(row)
+                console.log('this.BookingDataList row', this.BookingDataList)
+              }
             })
           }
         }).catch(error => {
           // this.dataEditReady = true
-          setTimeout(() => this.getBookingDataList(dateStart), 3000)
+          // setTimeout(() => this.getBookingDataList(dateStart), 3000)
+          this.getBookingDataList(dateStart)
           console.log('catch getBookingDataList : ', error)
         })
       // console.log('this.BookingDataList1', this.BookingDataList)
@@ -962,7 +1171,7 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-          this.overlay = false
+          // this.overlay = false
           await this.updateServicePoint(item.bookNo)
           await this.reCallNoti(item)
           let lineUserId = item.lineUserId || ''
@@ -1030,7 +1239,7 @@ export default {
             confirmButtonText: 'ใช่',
             cancelButtonText: 'ไม่'
           }).then(async response => {
-            this.overlay = false
+            // this.overlay = false
             // await this.clearConfirmJob(item.dueDate)
             let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
             let empId = this.$session.getAll().data.empId || ''
@@ -1066,7 +1275,7 @@ export default {
     },
     async closeJobSubmitReturn (item) {
       this.closeSetTimeBookingListQueue()
-      console.log('closeJobSubmit', item)
+      console.log('closeJobSubmitReturn', item)
       if (item.servicePointStatus === 'True') {
         this.closeItem = item
         this.dialogServicePointStatus = true
@@ -1135,6 +1344,7 @@ export default {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
               await this.searchBooking('unNoti')
               this.clearTimeLoop()
+              this.HistoryData = []
             })
         })
       } else {
@@ -1187,7 +1397,7 @@ export default {
     },
     async closeJobSubmit (item) {
       this.closeSetTimeBookingListQueue()
-      if (item.statusBt === 'confirm') {
+      if (item.status === 'confirm') {
         console.log('closeJobSubmit', item)
         let statusBooking = await this.checkBookingStatus(item.bookNo)
         if (statusBooking === 'confirm') {
@@ -1947,13 +2157,15 @@ export default {
         let dataReplate = outDoc.replace('data:application/pdf;base64,', '')
         printJS({printable: dataReplate, type: 'pdf', base64: true})
       })
-      this.overlay = true
+      // this.overlay = true
       // var pdfFrame = window.frames['pdfV']
       // pdfFrame.print()
       // this.dialogPrint = true
     },
     async pushMessageRecallQueue (countNoti, checkGetQueue) {
-      let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
+      console.log('line dd')
+      // let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
+      let bookSelect = this.callQueue.filter((element, index) => { return element.statusBt === 'confirm' })
       console.log('bookSelect', bookSelect)
       if (bookSelect.length > 0) {
         let bookSelectuse = bookSelect.filter((element, index) => { return index === countNoti })
@@ -1992,5 +2204,30 @@ export default {
   color: #173053;
   font-size: 30px !important;
   font-weight: bold;
+}
+.rounded-btn {
+  color: white;
+  padding: 10px 20px; /* Adjust padding as needed */
+  border: none;
+  cursor: pointer;
+  /* font-size: 40px; */
+  border-radius: 50em;
+  width: 140px !important;
+  height: 140px !important;
+  box-sizing: border-box;
+  border: 10px solid transparent;
+}
+.rounded-btn-confirm {
+  background: linear-gradient(#25D366,  #23B091) padding-box, linear-gradient(to right,#25D366,  #23B091) border-box;
+}
+.rounded-btn-closejob {
+  background: linear-gradient(#DADADA,  #A1A1A1) padding-box, linear-gradient(to right,#DADADA,  #A1A1A1) border-box;
+}
+.text-event{
+  font-size: 20px;
+  font-weight: bold;
+}
+.text-bell-disabled{
+  color: hsla(0,0%,100%,.3)!important;
 }
 </style>
