@@ -729,6 +729,7 @@ export default {
   },
   data () {
     return {
+      unsubscribe: null,
       userBranch: [],
       statusBranchReadonly: false,
       checkShowTel: false,
@@ -821,6 +822,14 @@ export default {
         case 'lg': return '50%'
         case 'xl': return '50%'
       }
+    }
+  },
+  created () {
+    this.getFirestore()
+  },
+  beforeDestroy () {
+    if (this.unsubscribe) {
+      this.unsubscribe()
     }
   },
   async mounted () {
@@ -943,6 +952,7 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
+              await this.updateProcessShopNew()
               await this.searchBooking('unNoti')
               this.clearTimeLoop()
             })
@@ -966,7 +976,7 @@ export default {
       clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
       let _this = this
-      this.setTimerCalendar = setInterval(function () { _this.searchBooking('unNoti') }, 15000)
+      this.setTimerCalendar = _this.searchBooking('unNoti')
     },
     searchFlow (item) {
       this.search = item.text
@@ -1056,7 +1066,7 @@ export default {
     },
     checkSearch () {
       this.validate('SEARCH')
-      setTimeout(() => this.searchBooking('unNoti'), 500)
+      this.searchBooking('unNoti')
     },
     async searchBooking (checkNoti, item) {
       if (this.validSearch === true) {
@@ -1181,7 +1191,7 @@ export default {
           }
         }).catch(error => {
           // this.dataEditReady = true
-          setTimeout(() => this.getBookingDataList(dateStart), 3000)
+          this.getBookingDataList(dateStart)
           console.log('catch getBookingDataList : ', error)
         })
       console.log('this.BookingDataList1', this.BookingDataList)
@@ -1450,6 +1460,7 @@ export default {
                 })
             }
             this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+            await this.updateProcessShopNew()
             await this.searchBooking('unNoti')
             this.clearTimeLoop()
           })
@@ -1488,6 +1499,7 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
+              await this.updateProcessShopNew()
               await this.searchBooking('unNoti')
               this.clearTimeLoop()
             // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
@@ -1636,6 +1648,7 @@ export default {
                 }
               } else {
                 await this.closeJob(item)
+                await this.updateProcessShopNew()
               }
             })
           }
@@ -2416,6 +2429,58 @@ export default {
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
       XLSX.writeFile(wb, 'BookingListQueue_' + formattedDate + '.xlsx')
+    },
+    async getFirestore () {
+      try {
+        console.log('getFirestore -> ', this.unsubscribe)
+        if (this.unsubscribe) {
+          this.unsubscribe()
+        }
+        this.firestore = this.$firebase.firestore()
+        this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
+          .onSnapshot(async (snapshot) => {
+            if (!snapshot.exists) {
+              await this.updateProcessShopNew()
+            } else {
+              console.log('getFirestore -> data', snapshot.data())
+              if (snapshot.data().active === '1') {
+                console.log('active [start] is updateProcessOhrichUpdate')
+                await this.updateProcessShopUpdate()
+                console.log('active [end] is updateProcessOhrichUpdate')
+                console.log('snapshot data -> active is 1')
+                console.log('active [start] is get booking')
+                await this.searchBooking()
+                console.log('active [end] is get booking')
+              } else {
+                console.log('snapshot data -> active is 0')
+              }
+            }
+          })
+      } catch (error) {
+        console.log('Error getFirestore', error)
+      }
+    },
+    async updateProcessShopNew  () { // active = 1
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('http://127.0.0.1:5003/be-linked-a7cdc/asia-southeast1/QueueOnline-ProcessNew', body)
+      } catch (error) {
+        console.log('updateProcessShopNew error-> ', error)
+      }
+    },
+    async updateProcessShopUpdate  () { // active = 0
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('http://127.0.0.1:5003/be-linked-a7cdc/asia-southeast1/QueueOnline-ProcessUseNew', body)
+      } catch (error) {
+        console.log('updateProcessShopUpdate error-> ', error)
+      }
     }
   }
 }

@@ -815,7 +815,7 @@ export default {
           }
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          this.updateProcessShopNew()
+          await this.updateProcessShopNew()
           await this.searchBooking('unNoti')
           this.clearTimeLoop()
         })
@@ -968,6 +968,7 @@ export default {
             .post(this.DNS_IP + '/booking_transaction/add', dtt)
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
+              await this.updateProcessShopNew()
               await this.searchBooking('unNoti')
               this.clearTimeLoop()
               this.HistoryData = []
@@ -1053,7 +1054,7 @@ export default {
                   let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
                   if (statusUpdateEmp === true) {
                     this.closeJob(item)
-                    this.updateProcessShopNew()
+                    await this.updateProcessShopNew()
                   } else {
                     this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                     await this.searchBooking('unNoti')
