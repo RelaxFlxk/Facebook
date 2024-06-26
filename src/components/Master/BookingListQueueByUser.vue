@@ -441,6 +441,7 @@ export default {
               await this.searchBooking('unNoti')
               this.clearTimeLoop()
               this.HistoryData = []
+              this.shopPhone = ''
             })
         }).catch(async err => {
           console.log(err.code, err.message)
@@ -621,6 +622,7 @@ export default {
                   }
                   waitingQueue = []
                   this.HistoryData = []
+                  this.shopPhone = ''
                   return
                 }
                 if (rs && rs.length > 0) {
@@ -662,6 +664,7 @@ export default {
                         storeFrontQueueEmpId: null
                       }
                       this.HistoryData = []
+                      this.shopPhone = ''
                     }
                   }
                   response.data.filter(item => item.statusBt === 'confirm').forEach(queue => {
@@ -972,6 +975,7 @@ export default {
               await this.searchBooking('unNoti')
               this.clearTimeLoop()
               this.HistoryData = []
+              this.shopPhone = ''
             })
         })
       } else {
