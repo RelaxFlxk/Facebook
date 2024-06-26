@@ -102,9 +102,11 @@ export default {
     this.checkWiFiStatus()
     window.addEventListener('online', () => { this.wifiStatus = 'connected' })
     window.addEventListener('offline', () => { this.wifiStatus = 'disconnected' })
+    this.getFirestore()
   },
   data () {
     return {
+      unsubscribe: null,
       orientation: '',
       statusSound: false,
       dateStartShow: '',
@@ -195,15 +197,14 @@ export default {
     await this.getDataBranch()
     this.setTime()
     document.querySelector('body').requestFullscreen()
-    this.intervalSearch = setInterval(() => {
-      this.searchBooking()
-    }, 10000)
-    this.interval = setInterval(() => {
-      this.currentTime = moment().format('DD/MMM/YYYY HH:mm')
-    }, 1000)
+    this.intervalSearch = this.searchBooking()
+    this.interval = this.currentTime = moment().format('DD/MMM/YYYY HH:mm')
   },
   destroyed () {
     window.removeEventListener('resize', this.checkOrientation)
+    if (this.unsubscribe) {
+      this.unsubscribe()
+    }
   },
   beforeDestroy () {
     this.$root.$off('dataReturn')
@@ -248,16 +249,16 @@ export default {
               await this.updateMessage(response.data[0].id, result)
               clearInterval(this.statusSoundCheck)
               this.statusSoundCheck = null
-              this.statusSoundCheck = setTimeout(this.getMessage, 12000)
+              this.statusSoundCheck = this.getMessage()
             } else {
               clearInterval(this.statusSoundCheck)
               this.statusSoundCheck = null
-              this.statusSoundCheck = setTimeout(this.getMessage, 2500)
+              this.statusSoundCheck = this.getMessage()
             }
           })
       } catch (e) {
         console.log(e)
-        setTimeout(this.getMessage, 10000)
+        this.getMessage()
       }
     },
     async updateMessage (id, result) {
@@ -410,7 +411,7 @@ export default {
     },
     checkSearch () {
       this.validate('SEARCH')
-      setTimeout(() => this.searchBooking(), 500)
+      this.searchBooking()
     },
     async searchBooking () {
       this.queueSummary = []
@@ -505,7 +506,7 @@ export default {
           }
         }).catch(error => {
           // this.dataEditReady = true
-          setTimeout(() => this.getBookingDataList(dateStart), 3000)
+          this.getBookingDataList(dateStart)
           console.log('catch getBookingDataList : ', error)
         })
       console.log('this.BookingDataList1', this.BookingDataList)
@@ -627,6 +628,65 @@ export default {
     },
     checkWiFiStatus () {
       this.wifiStatus = navigator.onLine ? 'connected' : 'disconnected'
+    },
+    async getFirestore () {
+      try {
+        console.log('getFirestore -> ', this.unsubscribe)
+        if (this.unsubscribe) {
+          this.unsubscribe()
+          console.log('this.unsubscribe v', this.unsubscribe)
+        }
+        this.firestore = this.$firebase.firestore()
+        console.log('dd', this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName))
+        this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
+          .onSnapshot(async (snapshot) => {
+            console.log('snapshot', snapshot)
+            if (!snapshot.exists) {
+              console.log('if')
+              await this.updateProcessShopNew()
+            } else {
+              console.log('else')
+              console.log('getFirestore -> data', snapshot.data())
+              if (snapshot.data().active === '1') {
+                console.log('active [start] is updateProcessOhrichUpdate')
+                await this.updateProcessShopUpdate()
+                console.log('active [end] is updateProcessOhrichUpdate')
+                console.log('snapshot data -> active is 1')
+                console.log('active [start] is get booking')
+                await this.searchBooking()
+                console.log('active [end] is get booking')
+              } else {
+                console.log('snapshot data -> active is 0')
+              }
+            }
+          })
+        console.log('this.unsubscribe', this.unsubscribe)
+      } catch (error) {
+        console.log('Error getFirestore', error)
+      }
+    },
+    async updateProcessShopNew  () { // active = 1
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        console.log('body', body)
+        await axios.post('http://127.0.0.1:5003/be-linked-a7cdc/asia-southeast1/QueueOnline-ProcessNew', body)
+      } catch (error) {
+        console.log('updateProcessShopNew error-> ', error)
+      }
+    },
+    async updateProcessShopUpdate  () { // active = 0
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('http://127.0.0.1:5003/be-linked-a7cdc/asia-southeast1/QueueOnline-ProcessUseNew', body)
+      } catch (error) {
+        console.log('updateProcessShopUpdate error-> ', error)
+      }
     }
   }
 }

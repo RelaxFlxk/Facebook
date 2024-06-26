@@ -1,153 +1,11 @@
 <template>
   <div>
-    <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
       <div class="px-lg-4" style="overflow-x: hidden;height:100vh;background-color: #1B437C;">
-        <!-- <v-row> -->
-          <!-- <v-col cols="6" class="text-left">
-            <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
-          </v-col> -->
-          <!-- <v-col cols="6" class="v-margit_button text-right">
-            <v-btn color="primary" depressed @click="dialogAdd = true">
-              <v-icon left>mdi-text-box-plus</v-icon>
-              เพิ่มข้อมูล
-            </v-btn>
-          </v-col> -->
-        <!-- </v-row> -->
         <template>
-          <!-- <v-card flat v-if="!overlay">
-          <v-card-text>
-            <div class="text-center">
-              <waitingAlert></waitingAlert>
-            </div>
-          </v-card-text>
-        </v-card> -->
         <v-form ref="form_search" v-model="validSearch" lazy-validation>
           <v-row class="no-gutters">
-            <!-- <v-col col="auto" class="px-3 mt-5 text-right">
-              <v-select
-                v-model="masBranchID"
-                background-color="white"
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                hide-details
-                :items="branchItem"
-                label="สาขา"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-                @change="searchBooking()"
-                ><template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-map-marker-outline
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col>
-            <v-col col="auto" class="px-3 mt-5 text-right">
-              <v-select
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                v-model="flowSelect"
-                hide-details
-                background-color="white"
-                :items="DataFlowItem"
-                label="ประเภทบริการ"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-                @change="searchBooking()"
-              >
-                <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-note-text-outline
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col>
-            <v-col cols="12" class="px-3 mt-5 text-right">
-              <v-menu
-                ref="menu"
-                v-model="menuStart"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    hide-details
-                    background-color="white"
-                    v-model="dateStart"
-                    style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                    label="วัน/เดือน/ปี"
-                    readonly
-                    outlined
-                    dense
-                    required
-                    :rules ="[rules.required]"
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                  <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-calendar
-                  </v-icon>
-                </template></v-text-field>
-                </template>
-                <v-date-picker
-                  @input="menuStart = false, checkSearch()"
-                  v-model="dateStart"
-                  no-title
-                  scrollable
-                >
-                </v-date-picker>
-              </v-menu>
-            </v-col> -->
-            <!-- <v-col col="auto">
-              <v-select
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                v-model="time"
-                hide-details
-                background-color="white"
-                :items="timeavailable"
-                label="เวลา"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-              >
-                <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-map-marker-circle
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col> -->
-            <!-- <v-col cols="auto" class="pt-0">
-              <v-btn
-                color="warning"
-                fab
-                style="border-radius: 20px !important;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
-                @click="checkSearch()"
-              >
-                <v-icon color="white">mdi-clipboard-text-search</v-icon>
-              </v-btn>
-            </v-col> -->
           </v-row>
-          <!-- <v-row justify="center">
-            <v-col cols="3" class="pt-0">
-              <v-btn
-                color="warning"
-                block
-                style="border-radius: 20px !important;margin-right: 0px;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
-                @click="checkSearch()"
-              >
-                <v-icon color="white" left>mdi-clipboard-text-search</v-icon>
-                ค้นหา
-              </v-btn>
-            </v-col>
-          </v-row> -->
         </v-form>
         <v-row>
           <v-col cols="12">
@@ -218,7 +76,6 @@
                 </v-row>
               </v-card-text>
               <div mb-n5>
-                <!-- <h6 style="color:#092C4C" class="text-left font-weight-bold ml-10">{{ itemBooking[0].flowName }}</h6> -->
                 <div class="text-right">
                   <v-btn
                     v-if="callQueue.status === 'confirmJob'"
@@ -250,7 +107,6 @@
                 <template v-if="HistoryData && HistoryData.length > 0">
                 <div class="mt-5" v-for="(item3 , index3) in HistoryData" :key="index3">
                   <h5 class="text-start ml-10" v-if="item3.fieldValue !== '' && item3.fieldName !== 'เบอร์โทร'"><strong>{{item3.fieldValue}}</strong></h5>
-                  <!-- <h5 @click="dial(item3.fieldValue.replace(/-/g, ''))" class="text-start  ml-10" v-if="item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร'"><v-icon color="#24C74D" class="iconify" data-icon="el:phone-alt">mdi-phone</v-icon><strong class="ml-4">{{'' + item3.fieldValue}}</strong></h5> -->
                 </div>
                 </template>
                 <h5 v-if="callQueue.servicePoint" class="text-start ml-10 mt-2"><strong>{{ languageSelect === 0 ? callQueue.servicePoint : JSON.parse(callQueue.servicePointCount).filter(el => { return el.textTh === callQueue.servicePoint}).length > 0 ? JSON.parse(callQueue.servicePointCount).filter(el => { return el.textTh === callQueue.servicePoint})[0].textEn:callQueue.servicePoint}}</strong></h5>
@@ -314,7 +170,6 @@
                   >
                     ปิด
                   </v-btn>
-                  <!-- </div> -->
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -405,30 +260,6 @@
                   </v-row>
                    <v-row>
                     <v-col cols="12">
-                      <!-- <v-select
-                        v-model="servicePoint"
-                        item-text="textTh"
-                        item-value="textTh"
-                        background-color="white"
-                        style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                        hide-details
-                        :items="servicePointItem"
-                        label="จุดบริการ"
-                        outlined
-                        dense
-                        ><template #prepend-inner>
-                          <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                            mdi-access-point
-                          </v-icon>
-                        </template>
-                      </v-select> -->
-                      <!-- <v-radio-group v-model="servicePoint" row>
-                        <v-radio
-                          v-for="(n, id) in servicePointItem" :key="id"
-                          :label="`${n.textTh}`"
-                          :value="n.textTh"
-                        ></v-radio>
-                      </v-radio-group> -->
                       <v-radio-group v-model="servicePoint" row>
                         <v-row>
                           <v-col class="px-0" cols="4" v-for="(n, id) in servicePointItem" :key="id">
@@ -448,7 +279,6 @@
                         dark
                         @click="closeJobServicePointReturn(closeItem)"
                       >
-                        <!-- <v-icon left>mdi-bullhorn</v-icon> -->
                         ตกลง
                       </v-btn>
                       <v-btn
@@ -458,7 +288,6 @@
                         dark
                         @click="closeJobServicePoint(closeItem)"
                       >
-                        <!-- <v-icon left>mdi-bullhorn</v-icon> -->
                         ตกลง
                       </v-btn>
                     </v-col>
@@ -486,10 +315,7 @@ import waitingAlert from '../waitingAlert.vue'
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue' // เมนู
 import VuetifyMoney from '../VuetifyMoney.vue'
-import pdfMake from 'pdfmake'
-import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
 import moment from 'moment-timezone'
-import printJS from 'print-js'
 
 export default {
   components: {
@@ -509,11 +335,9 @@ export default {
       dialogServicePointStatus: false,
       validSearch: true,
       statusReturn: false,
-      // itemBooking: [],
       BookingDataList: [],
       menuStart: false,
       dialogPrint: false,
-      // overlay: true,
       time: '',
       timeavailable: [],
       branchItem: [],
@@ -521,33 +345,10 @@ export default {
       DataFlowItem: [],
       flowSelect: '',
       dateStart: '',
-      breadcrumbs: [
-        {
-          text: 'Home',
-          disabled: false,
-          href: '/Core/Home'
-        },
-        {
-          text: 'จัดการ Queue',
-          disabled: false,
-          href: '/Master/BookingListQueue'
-        }
-      ],
       dialog: false,
-      dialogAdd: false,
-      // session: this.$session.getAll(),
-      // shopId: this.$session.getAll().data.shopId,
       search: '',
       shopName: '',
       shopImg: '',
-      headers: [
-        { text: 'คิว', value: 'storeFrontQueue' },
-        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
-        { text: 'บริการ', value: 'flowName' },
-        { text: 'ชื่อลูกค้า', value: 'cusName' },
-        // { text: 'H.N.', value: 'hnNo' },
-        { text: 'จัดการข้อมูล', value: 'action', sortable: false, align: 'center' }
-      ],
       rules: {
         numberRules: value =>
           (!isNaN(parseFloat(value)) && value >= 0 && value <= 9999999999) ||
@@ -586,6 +387,14 @@ export default {
       }
     }
   },
+  created () {
+    this.getFirestore()
+  },
+  beforeDestroy () {
+    if (this.unsubscribe) {
+      this.unsubscribe()
+    }
+  },
   async mounted () {
     this.dateStart = this.momenDate_1(new Date())
     console.log('localStorage', JSON.parse(localStorage.getItem('sessionData')))
@@ -594,14 +403,11 @@ export default {
   },
   methods: {
     closeSetTimeBookingListQueue () {
-      // clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
     },
     clearTimeLoop () {
-      // clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
       let _this = this
-      // this.setTimerCalendar = setInterval(function () { _this.searchBooking('unNoti') }, 15000)
       this.setTimerCalendar = _this.searchBooking('unNoti')
     },
     async removeQueue (item) {
@@ -618,7 +424,6 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-        // await this.clearConfirmJob(item.dueDate)
           var dtt = {
             bookNo: item.bookNo,
             contactDate: this.format_date(new Date()),
@@ -638,7 +443,6 @@ export default {
               this.HistoryData = []
             })
         }).catch(async err => {
-          // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
           await this.searchBooking('unNoti')
           this.clearTimeLoop()
@@ -656,7 +460,6 @@ export default {
       this.getShop()
       this.checkSearch()
       this.$root.$on('closeSetTimeBookingListQueue', () => {
-      // your code goes here
         this.closeSetTimeBookingListQueue()
       })
       this.dataLineConfig = await this.getDataLineConfig(this.$session.getAll().data.shopId)
@@ -710,8 +513,6 @@ export default {
         })
     },
     async openHistory (item) {
-      // console.log('item', item)
-      // console.log('this.BookingDataList[item.bookNo]', this.BookingDataList[item.bookNo])
       if (item) {
         this.HistoryData = this.BookingDataList[item.bookNo]
         this.pictureUrHistory = item.memberPicture
@@ -721,17 +522,6 @@ export default {
         } else {
           this.shopPhone = ''
         }
-      // axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
-      //   .then(async (response) => {
-      //     let rs = response.data
-      //     if (rs.status !== false) {
-      //       this.HistoryData = response.data
-      // this.dialogHistory = true
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log('error function addData : ', error)
-      //   })
       }
     },
     async getShop () {
@@ -769,87 +559,8 @@ export default {
     },
     checkSearch () {
       this.validate('SEARCH')
-      // setTimeout(() => this.searchBooking('unNoti'), 500)
       this.searchBooking('unNoti')
     },
-    // async searchBooking (checkNoti, item) {
-    //   if (this.validSearch === true) {
-    //     this.overlay = false
-    //     this.itemBooking = []
-    //     let itemBooking = []
-    //     await this.getBookingDataList(this.dateStart)
-    //     let urlApi = {}
-    //     if (this.flowSelect === 'allFlow') {
-    //       urlApi = this.DNS_IP +
-    //         '/booking_view/get?shopId=' +
-    //         this.$session.getAll().data.shopId +
-    //         '&masBranchID=' +
-    //         this.masBranchID +
-    //         // '&flowId=' +
-    //         // this.flowSelect +
-    //         '&dueDate=' +
-    //         this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
-    //     // '&dueDate=' +
-    //     // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
-    //     } else {
-    //       urlApi = this.DNS_IP +
-    //         '/booking_view/get?shopId=' +
-    //         this.$session.getAll().data.shopId +
-    //         '&masBranchID=' +
-    //         this.masBranchID +
-    //         '&flowId=' +
-    //         this.flowSelect +
-    //         '&dueDate=' +
-    //         this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
-    //     }
-    //     await axios
-    //       .get(urlApi)
-    //       .then(async response => {
-    //         // console.log('getData', response.data.length)
-    //         let rs = response.data
-    //         if (rs.length > 0) {
-    //           let sortData = rs.sort((a, b) => {
-    //             if (a.storeFrontQueue < b.storeFrontQueue) return -1
-    //             return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
-    //           })
-    //           for (let i = 0; i < sortData.length; i++) {
-    //             let d = sortData[i]
-    //             if (this.BookingDataList[d.bookNo] !== undefined) {
-    //               d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-    //               d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
-    //               d.hnNo = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'H.N.')
-    //               d.hnNo = (d.hnNo.length > 0) ? d.hnNo[0].fieldValue : ''
-    //               itemBooking.push(d)
-    //             }
-    //           }
-    //           let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
-    //           let empId = this.$session.getAll().data.empId || ''
-    //           if (USER_ROLE === 'storeFront' && empId !== '') {
-    //             let dataCon = itemBooking.filter(el => { return el.statusBt === 'confirmJob' && el.storeFrontQueueEmpId === parseInt(empId) })
-    //             let dataWain = itemBooking.filter(el => { return el.statusBt === 'confirm' })
-    //             this.itemBooking = [ ...dataCon, ...dataWain ]
-    //           } else {
-    //             this.itemBooking = itemBooking
-    //           }
-    //           this.overlay = true
-    //           this.openHistory(this.itemBooking[0])
-    //           console.log('checkNoti', checkNoti)
-    //           if (checkNoti === 'noti') {
-    //             console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
-    //             if (item.storeFrontNotifyStatus === 'True') {
-    //               if (parseInt(item.storeFrontNotifySet) > 0) {
-    //                 this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
-    //               }
-    //             }
-    //           }
-    //         } else {
-    //           this.overlay = true
-    //         }
-    //       })
-    //   } else {
-    //     this.overlay = true
-    //   }
-    // },
     async MyBooking () {
       let filterConfirmJob = []
       try {
@@ -872,25 +583,17 @@ export default {
     async searchBooking (checkNoti, item) {
       try {
         if (this.validSearch === true) {
-          // this.overlay = false
-          // this.itemBooking = []
-          // let itemBooking = []
           let waitingQueue = []
           await this.getBookingDataList(this.dateStart)
           let urlApi = {}
-          console.log('this.flowSelect', this.flowSelect)
           if (this.flowSelect === 'allFlow') {
             urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.$session.getAll().data.shopId +
             '&masBranchID=' +
             this.masBranchID +
-            // '&flowId=' +
-            // this.flowSelect +
             '&dueDate=' +
             this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
-            // '&dueDate=' +
-            // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm'
           } else {
             urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
@@ -902,16 +605,12 @@ export default {
             '&dueDate=' +
             this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
           }
-          console.log('urlApi', urlApi)
           if (this.flowSelect) {
             let empIdQueue = parseInt(this.$session.getAll().data.empId) || null
-            console.log('empId', empIdQueue)
             await axios
               .get(urlApi)
               .then(async response => {
-                // console.log('getData', response.data.length)
                 let rs = response.data
-                console.log('rs ok', rs)
                 if (rs.status === false) {
                   this.callQueue = {
                     bookNo: '',
@@ -925,10 +624,7 @@ export default {
                   return
                 }
                 if (rs && rs.length > 0) {
-                  console.log('momo', empIdQueue)
                   const filterConfirmJob = rs.filter(item => item.statusBt === 'confirmJob' && parseInt(item.storeFrontQueueEmpId) === empIdQueue)
-                  console.log('filterConfirmJob', filterConfirmJob, 'rs => ', rs)
-                  // const filterConfirmJob = await this.MyBooking()
                   if (filterConfirmJob && filterConfirmJob.length > 0) {
                     this.callQueue = {
                       bookNo: filterConfirmJob[0].bookNo,
@@ -942,10 +638,8 @@ export default {
                       servicePoint: filterConfirmJob[0].servicePoint,
                       servicePointCount: filterConfirmJob[0].servicePointCount
                     }
-                    console.log('this.callQueue confirmJob', this.callQueue)
                   } else {
                     let filterDataConfirm = rs.filter(a => a.statusBt === 'confirm')
-                    console.log('filterDataConfirm', filterDataConfirm, 'rs => ', rs)
                     if (filterDataConfirm.length > 0) {
                       this.callQueue = {
                         bookNo: filterDataConfirm[0].bookNo,
@@ -959,7 +653,6 @@ export default {
                         servicePoint: filterDataConfirm[0].servicePoint,
                         servicePointCount: filterDataConfirm[0].servicePointCount
                       }
-                      console.log('this.callQueue confirm', this.callQueue)
                     } else {
                       this.callQueue = {
                         bookNo: '',
@@ -969,53 +662,19 @@ export default {
                         storeFrontQueueEmpId: null
                       }
                       this.HistoryData = []
-                      console.log('this.callQueue else', this.callQueue)
                     }
                   }
                   response.data.filter(item => item.statusBt === 'confirm').forEach(queue => {
                     waitingQueue.push(queue.storeFrontQueue)
-                    console.log('waitingQueue end', waitingQueue)
                   })
-
-                  // original
-                  // let sortData = rs.sort((a, b) => {
-                  //   if (a.storeFrontQueue < b.storeFrontQueue) return -1
-                  //   return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
-                  // })
-                  // for (let i = 0; i < sortData.length; i++) {
-                  //   let d = sortData[i]
-                  //   if (this.BookingDataList[d.bookNo] !== undefined) {
-                  //     d.cusName = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'ชื่อ')
-                  //     d.cusName = (d.cusName.length > 0) ? d.cusName[0].fieldValue : ''
-                  //     d.hnNo = this.getDataFromFieldName(this.BookingDataList[d.bookNo], 'H.N.')
-                  //     d.hnNo = (d.hnNo.length > 0) ? d.hnNo[0].fieldValue : ''
-                  //     itemBooking.push(d)
-                  //   }
-                  // }
-                  // let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
-                  // let empId = this.$session.getAll().data.empId || ''
-                  // if (USER_ROLE === 'storeFront' && empId !== '') {
-                  //   console.log('cvcv')
-                  //   let dataCon = itemBooking.filter(el => { return el.statusBt === 'confirmJob' && el.storeFrontQueueEmpId === parseInt(empId) })
-                  //   let dataWain = itemBooking.filter(el => { return el.statusBt === 'confirm' })
-                  //   this.itemBooking = [ ...dataCon, ...dataWain ]
-                  // } else {
-                  //   this.itemBooking = itemBooking
-                  // }
-                  // this.overlay = true
-                  // this.openHistory(this.itemBooking[0])
                   this.openHistory(this.callQueue)
-                  console.log('checkNoti', checkNoti)
                   if (checkNoti === 'noti') {
-                    console.log('item', item, checkNoti, item.storeFrontNotifySet, item.storeFrontNotifyStatus)
                     if (item.storeFrontNotifyStatus === 'True') {
                       if (parseInt(item.storeFrontNotifySet) > 0) {
                         this.pushMessageRecallQueue(parseInt(item.storeFrontNotifySet), 'False')
                       }
                     }
                   }
-                } else {
-                  // this.overlay = true
                 }
               })
           } else {
@@ -1027,21 +686,9 @@ export default {
             }
           }
           this.waitingQueue = waitingQueue
-          console.log('this.waitingQueue', this.waitingQueue)
-        } else {
-          // this.overlay = true
         }
       } catch (error) {
         console.log('Error searchBooking', error)
-      }
-    },
-    getDataFromFieldName (data, key) {
-      if (data !== undefined) {
-        return data.filter(function (el) {
-          return el.fieldName === key
-        })
-      } else {
-        return []
       }
     },
     async getBookingDataList (dateStart) {
@@ -1049,19 +696,14 @@ export default {
       let url = ''
       if (this.flowSelect === 'allFlow') {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}`
-        console.log('url if', url)
       } else {
         url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
-        console.log('url else', url)
       }
-      // let url = `${this.DNS_IP}/BookingData/getView?shopId=${this.$session.getAll().data.shopId}&masBranchID=${this.masBranchID}&dueDate=${dateStart}&flowId=${this.flowSelect}`
       await axios
         .get(url)
         .then(async response => {
-          console.log('response', response)
           if (response.data.status !== false) {
             response.data.forEach((row) => {
-              console.log('row', row)
               if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
                 this.BookingDataList[row.bookNo] = []
               }
@@ -1069,17 +711,13 @@ export default {
               const exists = this.BookingDataList[row.bookNo].some(item => item.bookingDataId === row.bookingDataId)
               if (!exists) {
                 this.BookingDataList[row.bookNo].push(row)
-                console.log('this.BookingDataList row', this.BookingDataList)
               }
             })
           }
         }).catch(error => {
-          // this.dataEditReady = true
-          // setTimeout(() => this.getBookingDataList(dateStart), 3000)
           this.getBookingDataList(dateStart)
           console.log('catch getBookingDataList : ', error)
         })
-      // console.log('this.BookingDataList1', this.BookingDataList)
     },
     setTime () {
       this.timeavailable = []
@@ -1097,7 +735,6 @@ export default {
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
-            // resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
@@ -1107,7 +744,6 @@ export default {
                 s.allData = d
                 resultOption.push(s)
               }
-              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             resultOption = []
@@ -1119,12 +755,6 @@ export default {
       }
     },
     async getDataBranch () {
-      // if (localStorage.getItem('BRANCH') === null) {
-      //   let temp = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
-      //   console.log(typeof temp)
-      //   localStorage.setItem('BRANCH', JSON.stringify(temp))
-      // }
-      // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
       this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '')
       if (this.branchItem && this.branchItem.length > 0) {
         const branchSession = this.$session.getAll().data.masBranchID
@@ -1150,7 +780,6 @@ export default {
               s.value = d[fieldId]
               s.allData = d
               result.push(s)
-              // console.log('this.DataFlowName', this.DataFlowName)
             }
           } else {
             result = []
@@ -1171,7 +800,6 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-          // this.overlay = false
           await this.updateServicePoint(item.bookNo)
           await this.reCallNoti(item)
           let lineUserId = item.lineUserId || ''
@@ -1187,6 +815,7 @@ export default {
           }
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
+          this.updateProcessShopNew()
           await this.searchBooking('unNoti')
           this.clearTimeLoop()
         })
@@ -1239,8 +868,6 @@ export default {
             confirmButtonText: 'ใช่',
             cancelButtonText: 'ไม่'
           }).then(async response => {
-            // this.overlay = false
-            // await this.clearConfirmJob(item.dueDate)
             let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
             let empId = this.$session.getAll().data.empId || ''
             if (USER_ROLE === 'storeFront' && empId !== '') {
@@ -1328,7 +955,6 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-        // await this.clearConfirmJob(item.dueDate)
           var dtt = {
             bookNo: item.bookNo,
             contactDate: this.format_date(new Date()),
@@ -1356,7 +982,6 @@ export default {
     async setservicePointCount (item) {
       this.servicePointItem = []
       await axios
-        // .get(this.DNS_IP + '/BookingData/get?shopId=' + this.$session.getAll().data.shopId + '&bookNo=' + this.bookNo)
         .get(this.DNS_IP + '/booking_view/get?shopId=' + item.shopId + '&flowId=' + item.flowId +
         '&dueDateDay=' + this.dateStart + '&storeFrontQueue=is not null&statusBt=confirmJob&servicePointStatus=True')
         .then(async response => {
@@ -1390,7 +1015,6 @@ export default {
           }
         })
         .catch(err => {
-          // this.$router.push({ name: '404' })
           console.log(err.code, err.message)
           this.servicePointItem = JSON.parse(item.servicePointCount) || []
         })
@@ -1421,7 +1045,6 @@ export default {
               confirmButtonText: 'ใช่',
               cancelButtonText: 'ไม่'
             }).then(async response => {
-              // await this.clearConfirmJob(item.dueDate)
               let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
               let empId = this.$session.getAll().data.empId || ''
               if (USER_ROLE === 'storeFront' && empId !== '') {
@@ -1430,6 +1053,7 @@ export default {
                   let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
                   if (statusUpdateEmp === true) {
                     this.closeJob(item)
+                    this.updateProcessShopNew()
                   } else {
                     this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                     await this.searchBooking('unNoti')
@@ -1481,15 +1105,6 @@ export default {
           await this.searchBooking('noti', item)
           this.clearTimeLoop()
         })
-    },
-    async clearConfirmJob (dueDateUse) {
-      var dtt = {
-        dueDate: dueDateUse,
-        shopId: this.$session.getAll().data.shopId
-      }
-      await axios
-        .post(this.DNS_IP + '/booking_transaction/changeQueue', dtt)
-        .then(async responses => {})
     },
     async updateServicePoint (bookNo) {
       var dtt = {
@@ -1554,617 +1169,7 @@ export default {
           this.$swal('เรียบร้อย', 'กรุณารอเรียกคิว', 'success')
         })
     },
-    // async getBase64ImageFromURL (img) {
-    //   let image = await axios.get(img, {withCredentials: true, responseType: 'arraybuffer'})
-    //   let raw = Buffer.from(image.data).toString('base64')
-    //   this.shopImg = 'data:' + image.headers['content-type'] + ';base64,' + raw
-    // },
-    setPrint (item, language) {
-      let docDefinition = {}
-      if (this.shopImg === '') {
-        if (language === 'th') {
-          docDefinition = {
-            pageSize: 'A4',
-            content: [
-              {
-                text: this.shopName,
-                style: 'header',
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'รับคิวเวลา'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
-              {
-                alignment: 'center',
-                text: item.flowName,
-                fontSize: 30,
-                widths: ['*']
-              },
-              {
-                text: [
-                  {alignment: 'center', text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-                  {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-                ]
-              // alignment: 'center',
-              // style: 'tableExample',
-              // table: {
-              //   heights: [50],
-              //   widths: ['*'],
-              //   body: [
-              //     [
-              //       {
-              //         text: [
-              //           {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-              //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //         ],
-              //         border: [false, false, false, false]
-              //         // fillColor: '#092C4C'
-              //       }
-              //     ]
-              //   ]
-              // }
-              },
-              {
-                text: 'QR Code สำหรับรับการแจ้งเตือน',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
-              {
-                text: '   ',
-                fontSize: 15,
-                // style: 'subheader',
-                widths: ['*']
-              },
-              {
-                text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   fontSize: 25,
-              //   widths: ['*']
-              // },
-              {
-                columns: [
-                  {
-                    fontSize: 15,
-                    alignment: 'center',
-                    text: 'วันที่ ' + item.dueDateText.split(' ')[0]
-                  }
-                ]
-              },
-              {
-                text: '................................................',
-                style: 'subheader',
-                widths: ['*'],
-                alignment: 'center'
-              }
-            ],
-            styles: {
-              header: {
-                fontSize: 30,
-                bold: true
-              },
-              subheader: {
-                fontSize: 29,
-                bold: true
-              },
-              quote: {
-                italics: true
-              },
-              small: {
-                fontSize: 8
-              },
-              defaultStyle: {
-                columnGap: 20
-              },
-              tableExample: {
-                margin: [0, 5, 0, 15]
-              }
-            },
-            defaultStyle: { // 4. default style 'KANIT' font to test
-              font: 'Kanit'
-            }
-          }
-        } else {
-          docDefinition = {
-            pageSize: 'A4',
-            content: [
-              {
-                text: this.shopName,
-                style: 'header',
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'Time'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              {
-                alignment: 'center',
-                text: item.flowNameEn,
-                fontSize: 30,
-                widths: ['*']
-              },
-              {
-                alignment: 'center', text: 'Number', fontSize: 20, color: 'black'
-              },
-              {
-                alignment: 'center', text: item.storeFrontQueue, fontSize: 110, color: 'black'
-              },
-              // {
-              //   text: [
-              //     {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
-              //     {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   ]
-              //   // alignment: 'center',
-              //   // style: 'tableExample',
-              //   // table: {
-              //   //   heights: [50],
-              //   //   widths: ['*'],
-              //   //   body: [
-              //   //     [
-              //   //       {
-              //   //         text: [
-              //   //           {text: 'Number\n', fontSize: 20, color: 'black'},
-              //   //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   //         ],
-              //   //         border: [false, false, false, false]
-              //   //         // fillColor: '#092C4C'
-              //   //       }
-              //   //     ]
-              //   //   ]
-              //   // }
-              // },
-              {
-                text: 'QR Code for receiving notifications',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
-              {
-                text: '   ',
-                fontSize: 15,
-                // style: 'subheader',
-                widths: ['*']
-              },
-              {
-                text: "The company reserves the right to skip the queue. In case the customer doesn't come",
-                // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
-                fontSize: 15,
-                alignment: 'center'
-              },
-              {
-                columns: [
-                  {
-                    fontSize: 15,
-                    alignment: 'center',
-                    text: 'Date ' + item.dueDateText.split(' ')[0]
-                  }
-                ]
-              },
-              {
-                text: '................................................',
-                style: 'subheader',
-                widths: ['*'],
-                alignment: 'center'
-              }
-            ],
-            styles: {
-              header: {
-                fontSize: 30,
-                bold: true
-              },
-              subheader: {
-                fontSize: 29,
-                bold: true
-              },
-              quote: {
-                italics: true
-              },
-              small: {
-                fontSize: 8
-              },
-              defaultStyle: {
-                columnGap: 20
-              },
-              tableExample: {
-                margin: [0, 5, 0, 15]
-              }
-            },
-            defaultStyle: { // 4. default style 'KANIT' font to test
-              font: 'Kanit'
-            }
-          }
-        }
-      } else {
-        if (language === 'th') {
-          docDefinition = {
-            pageSize: 'A4',
-            content: [
-              {
-                text: this.shopName,
-                style: 'header',
-                alignment: 'center'
-              },
-              {
-                image: 'mySuperImage',
-                width: 150,
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'รับคิวเวลา'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
-              {
-                alignment: 'center',
-                text: item.flowName,
-                fontSize: 30,
-                widths: ['*']
-              },
-              {
-                text: [
-                  {alignment: 'center', text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-                  {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-                ]
-              // alignment: 'center',
-              // style: 'tableExample',
-              // table: {
-              //   heights: [50],
-              //   widths: ['*'],
-              //   body: [
-              //     [
-              //       {
-              //         text: [
-              //           {text: 'หมายเลขคิวของคุณ\n', fontSize: 20, color: 'black'},
-              //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //         ],
-              //         border: [false, false, false, false]
-              //         // fillColor: '#092C4C'
-              //       }
-              //     ]
-              //   ]
-              // }
-              },
-              {
-                text: 'QR Code สำหรับรับการแจ้งเตือน',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
-              {
-                text: '   ',
-                fontSize: 15,
-                // style: 'subheader',
-                widths: ['*']
-              },
-              {
-                text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   fontSize: 25,
-              //   widths: ['*']
-              // },
-              {
-                columns: [
-                  {
-                    fontSize: 15,
-                    alignment: 'center',
-                    text: 'วันที่ ' + item.dueDateText.split(' ')[0]
-                  }
-                ]
-              },
-              {
-                text: '................................................',
-                style: 'subheader',
-                widths: ['*'],
-                alignment: 'center'
-              }
-            ],
-            images: {
-              mySuperImage: this.shopImg
-
-            // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
-            // snow: this.shopImg
-
-            // is supported loading images via url with custom headers (minimal version: 0.2.5)
-            // strawberries: {
-            //   url: 'https://picsum.photos/id/1080/367/267',
-            //   headers: {
-            //     myheader: '123',
-            //     myotherheader: 'abc',
-            //   }
-            // }
-            },
-            styles: {
-              header: {
-                fontSize: 30,
-                bold: true
-              },
-              subheader: {
-                fontSize: 29,
-                bold: true
-              },
-              quote: {
-                italics: true
-              },
-              small: {
-                fontSize: 8
-              },
-              defaultStyle: {
-                columnGap: 20
-              },
-              tableExample: {
-                margin: [0, 5, 0, 15]
-              }
-            },
-            defaultStyle: { // 4. default style 'KANIT' font to test
-              font: 'Kanit'
-            }
-          }
-        } else {
-          docDefinition = {
-            pageSize: 'A4',
-            content: [
-              {
-                text: this.shopName,
-                style: 'header',
-                alignment: 'center'
-              },
-              {
-                image: 'mySuperImage',
-                width: 150,
-                alignment: 'center'
-              },
-              // {
-              //   text: '   ',
-              //   style: 'header',
-              //   widths: ['*']
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              // {
-              //   columns: [
-              //     {
-              //       style: 'subheader',
-              //       text: 'Time'
-              //     },
-              //     {
-              //       style: 'subheader',
-              //       text: item.timeText,
-              //       alignment: 'right'
-              //     }
-              //   ]
-              // },
-              // {
-              //   text: '   ',
-              //   style: 'subheader',
-              //   widths: ['*']
-              // },
-              {
-                alignment: 'center',
-                text: item.flowNameEn,
-                fontSize: 30,
-                widths: ['*']
-              },
-              {
-                alignment: 'center', text: 'Number', fontSize: 20, color: 'black'
-              },
-              {
-                alignment: 'center', text: item.storeFrontQueue, fontSize: 110, color: 'black'
-              },
-              // {
-              //   text: [
-              //     {alignment: 'center', text: 'Number\n', fontSize: 20, color: 'black'},
-              //     {alignment: 'center', text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   ]
-              //   // alignment: 'center',
-              //   // style: 'tableExample',
-              //   // table: {
-              //   //   heights: [50],
-              //   //   widths: ['*'],
-              //   //   body: [
-              //   //     [
-              //   //       {
-              //   //         text: [
-              //   //           {text: 'Number\n', fontSize: 20, color: 'black'},
-              //   //           {text: item.storeFrontQueue, fontSize: 120, color: 'black'}
-              //   //         ],
-              //   //         border: [false, false, false, false]
-              //   //         // fillColor: '#092C4C'
-              //   //       }
-              //   //     ]
-              //   //   ]
-              //   // }
-              // },
-              {
-                text: 'QR Code for receiving notifications',
-                fontSize: 15,
-                alignment: 'center'
-              },
-              { qr: 'https://liff.line.me/' + this.dataLineConfig.liffMainID + '/ConfirmUser?bookNo=' + item.bookNo + '&shopId=' + item.shopId, fit: '200', alignment: 'center' },
-              {
-                text: '   ',
-                fontSize: 15,
-                // style: 'subheader',
-                widths: ['*']
-              },
-              {
-                text: "The company reserves the right to skip the queue. In case the customer doesn't come",
-                // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
-                fontSize: 15,
-                alignment: 'center'
-              },
-              {
-                columns: [
-                  {
-                    fontSize: 15,
-                    alignment: 'center',
-                    text: 'Date ' + item.dueDateText.split(' ')[0]
-                  }
-                ]
-              },
-              {
-                text: '................................................',
-                style: 'subheader',
-                widths: ['*'],
-                alignment: 'center'
-              }
-            ],
-            images: {
-              mySuperImage: this.shopImg
-
-            // in browser is supported loading images via url (https or http protocol) (minimal version: 0.1.67)
-            // snow: this.shopImg
-
-            // is supported loading images via url with custom headers (minimal version: 0.2.5)
-            // strawberries: {
-            //   url: 'https://picsum.photos/id/1080/367/267',
-            //   headers: {
-            //     myheader: '123',
-            //     myotherheader: 'abc',
-            //   }
-            // }
-            },
-            styles: {
-              header: {
-                fontSize: 30,
-                bold: true
-              },
-              subheader: {
-                fontSize: 29,
-                bold: true
-              },
-              quote: {
-                italics: true
-              },
-              small: {
-                fontSize: 8
-              },
-              defaultStyle: {
-                columnGap: 20
-              },
-              tableExample: {
-                margin: [0, 5, 0, 15]
-              }
-            },
-            defaultStyle: { // 4. default style 'KANIT' font to test
-              font: 'Kanit'
-            }
-          }
-        }
-      }
-      pdfMake.vfs = pdfFonts.pdfMake.vfs // 2. set vfs pdf font
-      pdfMake.fonts = {
-        // download default Roboto font from cdnjs.com
-        Roboto: {
-          normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
-          bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
-          italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
-          bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
-        },
-        // Kanit Font
-        Kanit: { // 3. set Kanit font
-          normal: 'Kanit-Regular.ttf',
-          bold: 'Kanit-Medium.ttf',
-          italics: 'Kanit-Italic.ttf',
-          bolditalics: 'Kanit-MediumItalic.ttf'
-        }
-      }
-      // pdfMake.createPdf(docDefinition).open({}, window)
-      // pdfMake.createPdf(docDefinition).print({}, window)
-
-      // pdfMake.createPdf(docDefinition).print()
-      // this.$scope.generatePdf = function () {
-      // create the window before the callback
-      // win.close()
-      // }
-
-      pdfMake.createPdf(docDefinition).getDataUrl(function (outDoc) {
-        // document.getElementById('pdfV').src = outDoc
-        let dataReplate = outDoc.replace('data:application/pdf;base64,', '')
-        printJS({printable: dataReplate, type: 'pdf', base64: true})
-      })
-      // this.overlay = true
-      // var pdfFrame = window.frames['pdfV']
-      // pdfFrame.print()
-      // this.dialogPrint = true
-    },
     async pushMessageRecallQueue (countNoti, checkGetQueue) {
-      console.log('line dd')
-      // let bookSelect = this.itemBooking.filter((element, index) => { return element.statusBt === 'confirm' })
       let bookSelect = this.callQueue.filter((element, index) => { return element.statusBt === 'confirm' })
       console.log('bookSelect', bookSelect)
       if (bookSelect.length > 0) {
@@ -2185,6 +1190,58 @@ export default {
               })
           }
         }
+      }
+    },
+    async getFirestore () {
+      try {
+        console.log('getFirestore -> ', this.unsubscribe)
+        if (this.unsubscribe) {
+          this.unsubscribe()
+        }
+        this.firestore = this.$firebase.firestore()
+        this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
+          .onSnapshot(async (snapshot) => {
+            if (!snapshot.exists) {
+              await this.updateProcessShopNew()
+            } else {
+              console.log('getFirestore -> data', snapshot.data())
+              if (snapshot.data().active === '1') {
+                console.log('active [start] is updateProcessOhrichUpdate')
+                await this.updateProcessShopUpdate()
+                console.log('active [end] is updateProcessOhrichUpdate')
+                console.log('snapshot data -> active is 1')
+                console.log('active [start] is get booking')
+                await this.searchBooking()
+                console.log('active [end] is get booking')
+              } else {
+                console.log('snapshot data -> active is 0')
+              }
+            }
+          })
+      } catch (error) {
+        console.log('Error getFirestore', error)
+      }
+    },
+    async updateProcessShopNew  () { // active = 1
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('http://127.0.0.1:5003/be-linked-a7cdc/asia-southeast1/QueueOnline-ProcessNew', body)
+      } catch (error) {
+        console.log('updateProcessShopNew error-> ', error)
+      }
+    },
+    async updateProcessShopUpdate  () { // active = 0
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('http://127.0.0.1:5003/be-linked-a7cdc/asia-southeast1/QueueOnline-ProcessUseNew', body)
+      } catch (error) {
+        console.log('updateProcessShopUpdate error-> ', error)
       }
     }
   }
@@ -2207,10 +1264,9 @@ export default {
 }
 .rounded-btn {
   color: white;
-  padding: 10px 20px; /* Adjust padding as needed */
+  padding: 10px 20px;
   border: none;
   cursor: pointer;
-  /* font-size: 40px; */
   border-radius: 50em;
   width: 140px !important;
   height: 140px !important;
