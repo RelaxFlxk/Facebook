@@ -53,6 +53,95 @@
             </v-card>
           </v-dialog>
           <!-- end edit -->
+          <v-row>
+              <v-col cols="4">
+                <v-select
+                  :items="branch"
+                  v-model="masBranchID"
+                  dense
+                  outlined
+                  hide-details
+                  filled
+                  label="สาขา"
+                  prepend-inner-icon="mdi-map-marker"
+                  class="ma-2"
+                  @change="selectBranch()"
+                ></v-select>
+              </v-col>
+              <v-col cols="2">
+                <v-menu
+                  v-model="menufilter"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="startDate"
+                      label="START DATE"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="startDate"
+                    :max="endDate"
+                    outlined
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="2">
+                <v-menu
+                  v-model="menufilter2"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="endDate"
+                      label="END DATE"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="endDate"
+                    :min="startDate"
+                    outlined
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="2" align="left">
+                <v-btn
+                color="primary"
+                class="ma-2"
+                @click="getMemberByBooking()"
+                >
+                  ค้นหา
+                </v-btn>
+              </v-col>
+              <v-col cols="2" align="right">
+                <v-btn
+                color="primary"
+                class="ma-2"
+                outlined
+                :loading="loading"
+                @click="ExportJob()"
+                >
+                  <v-icon>mdi-calendar-multiselect</v-icon>
+                  Export
+                </v-btn>
+              </v-col>
+          </v-row>
           <!-- data table -->
           <v-col cols="12">
             <v-card elevation="7" v-if="dataReady">
@@ -68,12 +157,18 @@
               </v-card-title>
               <v-card-text>
                 <v-data-table
+                  :headers="columns2"
+                  :items="dataMemberBooking"
+                  :search="searchAll2"
+                  :items-per-page="10"
+                >
+                <!-- <v-data-table
                   :headers="columns"
                   :items="dataItem"
                   :search="searchAll2"
                   :items-per-page="10"
-                >
-                  <template v-slot:[`item.tagData`]="{ item }">
+                > -->
+                  <!-- <template v-slot:[`item.tagData`]="{ item }">
                     <v-col cols="12" class="pt-0"  v-if="item.tagData.length > 0">
                         <v-chip-group
                           active-class="primary--text"
@@ -104,6 +199,11 @@
                   </template>
                   <template v-slot:[`item.LAST_DATE`]="{ item }">
                     {{ format_dateFUllTime(item.LAST_DATE) }}
+                  </template> -->
+                  <template v-slot:[`item.memberPicture`]="{ item }">
+                    <v-avatar color="primary" size="40">
+                      <img :src="item.memberPicture" alt="img"
+                    /></v-avatar>
                   </template>
                   <template v-slot:[`item.action`]="{ item }">
                     <v-btn
@@ -179,7 +279,7 @@
                           </div>
                           <br>
                           <v-card-text class="text-start"><h6 class="font-weight-bold">ชื่อลูกค้า : {{dataProfile.displayName}}</h6></v-card-text>
-                          <v-card-text class="text-start"><h6 class="font-weight-bold">วันที่สร้าง : {{createProfile}}</h6></v-card-text>
+                          <!-- <v-card-text class="text-start"><h6 class="font-weight-bold">วันที่สร้าง : {{createProfile}}</h6></v-card-text> -->
                           <div class="text-center">
                             <v-btn
                               color="#1B437C"
@@ -317,6 +417,7 @@ export default {
       phonenumItem: [],
       HistoryData: [],
       phonenum: [],
+      shopId: this.$session.getAll().data.shopId,
       dialogDataProfile: false,
       profileStatus: false,
       dataProfile: [],
@@ -382,43 +483,33 @@ export default {
       // End Form Config ADD EDIT
       // Data Table Config
       columns: [],
+      columns2: [
+        { text: 'รูปโปรไฟล์', value: 'memberPicture' },
+        { text: 'ชื่อบัญชีไลน์', value: 'memberName', align: 'left' },
+        { text: 'ชื่อลูกค้า', value: 'bookingDataCustomerName', align: 'center' },
+        { text: 'Email', value: 'bookingDataCustomerEmail', align: 'center' },
+        { text: 'เบอร์โทรศัพท์', value: 'bookingDataCustomerTel', align: 'center' },
+        { text: 'จัดการ', value: 'action', sortable: false, align: 'center' }
+      ],
       dataItem: [],
       // End Data Table Config
-
-      // Config Import
-      columnsImport: [
-        { text: 'masBranchID', value: 'masBranchID' },
-        { text: 'masBranchCode', value: 'masBranchCode' },
-        { text: 'masBranchName', value: 'masBranchName' },
-        { text: 'masCompanyCode', value: 'masCompanyCode' },
-        { text: 'masCompanyName', value: 'masCompanyName' }
-      ],
       dataItemImportChecKHide: true,
       dataItemImport: [],
-      // End Config Import
-      // Export Config
-      exportType: 'xls',
-      exportFileName: 'Master-Branch.xls',
-      exportWorksheet: 'WorkSheet',
-      export_fields: {
-        masBranchID: 'masBranchID',
-        masBranchCode: 'masBranchCode',
-        masBranchName: 'masBranchName',
-        masCompanyCode: 'masCompanyCode',
-        masCompanyName: 'masCompanyName'
-      },
-      json_meta: [
-        [
-          {
-            key: 'charset',
-            value: 'utf-8'
-          }
-        ]
-      ],
       // End Export Config
       Company: [],
       tagItem: [],
-      dataLineConfig: {}
+      dataLineConfig: {},
+      DataBranchAll: [],
+      branch: [],
+      masBranchID: '',
+      menufilter: false,
+      menufilter2: false,
+      startDate: '',
+      endDate: '',
+      loading: false,
+      dataMemberBooking: [],
+      dataMemberBookingExport: []
+
     }
   },
   beforeCreate () {
@@ -449,10 +540,143 @@ export default {
     }
     this.dataReady = false
     // Get Data
-    await this.getTagData()
-    this.getDataList()
+    this.getStartAndEndDateOfCurrentMonth()
+    // await this.getTagData()
+    // this.getDataList()
+    await this.getDataBranch()
+    await this.getMemberByBooking()
   },
   methods: {
+    async selectBranch () {
+      if (this.startDate !== '' && this.endDate !== '') {
+        await this.getMemberByBooking()
+      }
+    },
+    async getMemberByBooking () {
+      this.dataReady = false
+      this.dataMemberBooking = []
+      this.dataMemberBookingExport = []
+      await axios.get(this.DNS_IP + '/member/getByBooking?shopId=' + this.shopId + '&startDate=' + this.startDate + '&endDate=' + this.endDate + '&masBranchID=' + this.masBranchID)
+        .then(async (response) => {
+          console.log('response.data', response.data)
+          let rs = response.data
+          if (rs.length > 0) {
+            this.dataMemberBooking = await this.filterMaxDueDate(rs)
+            this.dataMemberBookingExport = rs
+            console.log('this.dataMemberBooking', this.dataMemberBooking)
+          }
+        })
+        .catch((error) => {
+          console.log('error function addData : ', error)
+          this.dataMemberBooking = []
+          this.dataMemberBookingExport = []
+        })
+      this.dataReady = true
+    },
+    filterMaxDueDate (data) {
+      return Object.values(data.reduce((acc, current) => {
+        const { lineUserId, maxDueDate } = current
+        if (!acc[lineUserId] || new Date(maxDueDate) > new Date(acc[lineUserId].maxDueDate)) {
+          acc[lineUserId] = current
+        }
+        return acc
+      }, {}))
+    },
+    async ExportJob () {
+      this.loading = true
+      let dataExport = []
+      for (let i = 0; i < this.dataMemberBookingExport.length; i++) {
+        const element = this.dataMemberBookingExport[i]
+        let obj = {
+          ชื่อบัญชีไลน์: element.memberName,
+          ชื่อลูกค้า: element.bookingDataCustomerName || '',
+          Email: element.bookingDataCustomerEmail || '',
+          เบอร์โทรศัพท์: element.bookingDataCustomerTel || '',
+          บริการ: element.flowName || '',
+          สาขา: element.masBranchName || '',
+          วันที่นัดหมาย: element.maxDueDate || ''
+        }
+        dataExport.push(obj)
+      }
+      await this.Send_XLSX(dataExport)
+      this.loading = false
+    },
+    Send_XLSX (data) {
+      var info = XLSX.utils.json_to_sheet(data)
+      var wb = XLSX.utils.book_new() // make Workbook of Excel
+      XLSX.utils.book_append_sheet(wb, info, 'worksheet1') // sheetAName is name of Worksheet
+      XLSX.writeFile(wb, 'file.xls') // name of the file is 'book.xlsx'
+    },
+    async getDataBranch () {
+      this.DataBranchAll = []
+      this.branch = []
+      // console.log('DataBranchAll', this.DataBranchAll)
+      await axios
+        .get(this.DNS_IP + '/master_branch/get?shopId=' + this.shopId)
+        .then(async response => {
+          let rs = response.data
+          if (rs.length > 0) {
+            for (var i = 0; i < rs.length; i++) {
+              var d = rs[i]
+              if (
+                this.session.data.masBranchID === '' ||
+                this.session.data.masBranchID === null
+              ) {
+                // console.log(
+                //   'TEST1',
+                //   d.masBranchID,
+                //   this.session.data.masBranchID
+                // )
+                let s = {}
+                s.text = d.masBranchName
+                s.value = d.masBranchID
+                this.DataBranchAll.push(d)
+                this.branch.push(s)
+              } else {
+                // console.log(
+                //   'TEST',
+                //   d.masBranchID,
+                //   this.session.data.masBranchID
+                // )
+                if (d.masBranchID === this.session.data.masBranchID) {
+                  let s = {}
+                  s.text = d.masBranchName
+                  s.value = d.masBranchID
+                  this.DataBranchAll.push(d)
+                  this.branch.push(s)
+                }
+              }
+            }
+          } else {
+            this.DataBranchName = []
+            this.branch = []
+          }
+          if (this.branch.length > 0) {
+            this.masBranchID = this.branch[0].value
+            // await this.getRating()
+          }
+        })
+      console.log('masBranchID', this.masBranchID)
+    },
+    getStartAndEndDateOfCurrentMonth () {
+      const currentDate = new Date()
+
+      // Get the first day of the current month
+      const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+
+      // Get the last day of the current month
+      const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
+
+      // Format the dates as 'YYYY-MM-DD'
+      const formatDate = (date) => {
+        const year = date.getFullYear()
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const day = date.getDate().toString().padStart(2, '0')
+        return `${year}-${month}-${day}`
+      }
+      this.startDate = formatDate(startDate)
+      this.endDate = formatDate(endDate)
+    },
     async banChange (item) {
       let banStatusCheck = ''
       if (item.banStatus === 'False') {
@@ -475,7 +699,8 @@ export default {
           }
           const result = await this.callBeTaskAPIActivity('post', '/member/edit/' + item.memberId, params)
           console.log('result', result.status)
-          this.getDataList()
+          // this.getDataList()
+          this.getMemberByBooking()
         })
     },
     async SelectDataHistory () {
@@ -549,7 +774,7 @@ export default {
       this.profileStatus = false
       this.dataProfile = []
       let lineUserId = item.lineUserId || ''
-      this.createProfile = item.CREATE_DATE || ''
+      // this.createProfile = item.CREATE_DATE || ''
       if (lineUserId === '') {
         this.profileStatus = false
         this.linkUpdateUserId = 'https://betask-linked.web.app/UpdateLineUserID?shopId=' + item.shopId + '&memberId=' + item.memberId
@@ -679,7 +904,7 @@ export default {
               } else {
                 s.masBranchID = []
               }
-              console.log('branch', s.masBranchID)
+              // console.log('branch', s.masBranchID)
               dataItems.push(s)
             }
             if (this.session.data.masBranchID === '' || this.session.data.masBranchID === null) {
