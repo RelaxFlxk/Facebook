@@ -420,8 +420,8 @@ export default {
         let urlApi = this.DNS_IP +
             '/booking_view/get?shopId=' +
             this.shopId +
-            '&masBranchID=' +
-            this.masBranchID +
+            // '&masBranchID=' +
+            // this.masBranchID + // ปิด masBranchID เพื่อแสดงคิวทั้งหมด
             // '&flowId=' +
             // this.flowSelect +
             '&dueDate=' +
@@ -441,7 +441,11 @@ export default {
               for (let i = 0; i < sortData.length; i++) {
                 let d = sortData[i]
                 d.servicePoint = d.servicePoint || ''
-                this.itemBooking.push(d)
+                // ป้องกันการ push ข้อมูลเบิ้ล โดยเช็คเอาเฉพาะ bookNo ที่ไม่ซ้ำกันใส่ใน array itemBooking
+                const isDuplicate = this.itemBooking.some(item => item.bookNo === d.bookNo)
+                if (!isDuplicate) {
+                  this.itemBooking.push(d)
+                }
               }
               let dataCon = this.itemBooking.filter(el => { return el.statusBt === 'confirmJob' })
               let dataWain = this.itemBooking.filter(el => { return el.statusBt === 'confirm' })
