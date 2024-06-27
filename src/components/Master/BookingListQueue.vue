@@ -29,7 +29,7 @@
           </v-card-text>
         </v-card>
         <template v-else>
-        <v-form ref="form_search" v-model="validSearch" lazy-validation v-if="dialogwidth === '50%'">
+          <v-form ref="form_search" v-model="validSearch1" lazy-validation v-if="dialogwidth === '50%'">
           <v-row>
             <v-col cols="2">
               <v-select
@@ -181,7 +181,7 @@
             </v-col>
           </v-row>
         </v-form>
-        <v-form ref="form_search" v-model="validSearch" lazy-validation v-else>
+        <v-form ref="form_search" v-model="validSearch2" lazy-validation v-else>
           <v-row>
             <!-- <v-col cols="12" class="pl-10 pr-10">
               <v-select
@@ -740,7 +740,8 @@ export default {
       servicePoint: '',
       closeItem: '',
       dialogServicePointStatus: false,
-      validSearch: true,
+      validSearch1: true,
+      validSearch2: true,
       statusReturn: false,
       itemBooking: [],
       itemBookingUse: [],
@@ -1069,7 +1070,7 @@ export default {
       this.searchBooking('unNoti')
     },
     async searchBooking (checkNoti, item) {
-      if (this.validSearch === true) {
+      if (this.validSearch1 || this.validSearch2) {
         let itemBookingTem = []
         let itemBookingCountTem = []
         this.overlaySave = false
@@ -1105,7 +1106,7 @@ export default {
           .get(urlApi)
           .then(async response => {
             let rs = response.data
-            if (rs.length > 0) {
+            if (rs && rs.length > 0) {
               let sortData = rs.sort((a, b) => {
                 if (a.storeFrontQueue < b.storeFrontQueue) return -1
                 return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
@@ -1120,7 +1121,11 @@ export default {
                 // s.cusReg = d.bookingDataCustomerRegisNumber || ''
                 d.cusPhone = d.bookingDataCustomerTel || ''
                 // s.displayFlowName = d.displayFlowName || ''
-                this.itemBookingUse.push(d)
+                // ป้องกันการ push ข้อมูลเบิ้ล โดยเช็คเอาเฉพาะ bookNo ที่ไม่ซ้ำกันใส่ใน array itemBookingUse
+                const isDuplicate = this.itemBookingUse.some(item => item.bookNo === d.bookNo)
+                if (!isDuplicate) {
+                  this.itemBookingUse.push(d)
+                }
               }
               itemBookingTem = this.itemBookingUse
               for (let i = 0; i < this.itemBookingUse.length; i++) {
@@ -1153,6 +1158,7 @@ export default {
               }
             } else {
               itemBookingTem = []
+              this.itemBooking = []
             }
             this.overlaySave = true
           })
