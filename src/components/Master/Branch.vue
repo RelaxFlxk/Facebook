@@ -101,6 +101,70 @@
                           outlined
                           v-bind:options="options2" />
                     </v-col>
+                    <v-col cols="12" class="px-0">
+                      <v-row align="center">
+                      <v-checkbox
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        class="ml-6"
+                        v-model="checkLocationStatus"
+                        label="เปิดระบบจองในพื้นที่ที่กำหนด"
+                        true-value="True"
+                        false-value="False"
+                        @change="checkLocationStatus === 'True' ? geolocate() : ''"
+                      ></v-checkbox>
+                      <!-- <v-checkbox
+                        false-value="False"
+                        true-value="True"
+                        v-model="checkLocationStatus"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                        @change="checkLocationStatus === 'True' ? geolocate() : ''"
+                      ></v-checkbox>
+                      <v-text-field :value="checkLocationStatus === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="เปิดระบบจองในพื้นที่ที่กำหนด"></v-text-field> -->
+                    </v-row>
+                    <template v-if="checkLocationStatus === 'True'">
+                      <v-col cols="12" class="pb-0 pt-0">
+                        <v-select
+                          v-model="distanceSet"
+                          :items="itemDistance"
+                          label="จับระยะภายใน"
+                          outlined
+                          attach
+                          dense
+                          :menu-props="{ bottom: true, offsetY: true }"
+                        ></v-select>
+                      </v-col>
+                      <v-col class="pb-0 pt-0" cols="12">
+                        <gmap-autocomplete
+                          class="introInput"
+                          placeholder="ค้นหาสถานที่"
+                          @place_changed="updatePlace" style="width: 100%; height: 45px; border: 1px solid;padding-left: 8px; border-radius: 4px;">
+                        </gmap-autocomplete>
+                      </v-col>
+                      <v-col class="pb-0" cols="12">
+                        <v-card class="p-3">
+                          <GmapMap
+                            v-if="center !== null"
+                            :center="center"
+                            :zoom="15"
+                            style="width: 100%; height: 200px"
+                            :options="{
+                              disableDefaultUI: true,
+                              fullscreenControl: true,
+                              zoomControl: true
+                            }"
+                          >
+                            <GmapMarker
+                              :position="center"
+                              :draggable="true"
+                              @drag="updateCoordinates"
+                            />
+                          </GmapMap>
+                        </v-card>
+                      </v-col>
+                    </template>
+                    </v-col>
                     <v-col>
                       <v-btn
                         elevation="2"
@@ -363,6 +427,70 @@
                           required
                           outlined
                           v-bind:options="options2" />
+                    </v-col>
+                    <v-col cols="12" class="px-0">
+                      <v-row align="center">
+                      <v-checkbox
+                        :on-icon="'mdi-check-circle'"
+                        :off-icon="'mdi-checkbox-blank-circle-outline'"
+                        class="ml-6"
+                        v-model="checkLocationStatus"
+                        label="เปิดระบบจองในพื้นที่ที่กำหนด"
+                        true-value="True"
+                        false-value="False"
+                        @change="checkLocationStatus === 'True' ? geolocate() : ''"
+                      ></v-checkbox>
+                      <!-- <v-checkbox
+                        false-value="False"
+                        true-value="True"
+                        v-model="checkLocationStatus"
+                        hide-details
+                        class="shrink ml-6 mr-0 mt-0 mb-6"
+                        @change="checkLocationStatus === 'True' ? geolocate() : ''"
+                      ></v-checkbox>
+                      <v-text-field :value="checkLocationStatus === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="เปิดระบบจองในพื้นที่ที่กำหนด"></v-text-field> -->
+                    </v-row>
+                    <template v-if="checkLocationStatus === 'True'">
+                      <v-col cols="12" class="pb-0 pt-0">
+                        <v-select
+                          v-model="distanceSet"
+                          :items="itemDistance"
+                          label="จับระยะภายใน"
+                          outlined
+                          attach
+                          dense
+                          :menu-props="{ bottom: true, offsetY: true }"
+                        ></v-select>
+                      </v-col>
+                      <v-col class="pb-0 pt-0" cols="12">
+                        <gmap-autocomplete
+                          class="introInput"
+                          placeholder="ค้นหาสถานที่"
+                          @place_changed="updatePlace" style="width: 100%; height: 45px; border: 1px solid;padding-left: 8px; border-radius: 4px;">
+                        </gmap-autocomplete>
+                      </v-col>
+                      <v-col class="pb-0" cols="12">
+                        <v-card class="p-3">
+                          <GmapMap
+                            v-if="center !== null"
+                            :center="center"
+                            :zoom="15"
+                            style="width: 100%; height: 200px"
+                            :options="{
+                              disableDefaultUI: true,
+                              fullscreenControl: true,
+                              zoomControl: true
+                            }"
+                          >
+                            <GmapMarker
+                              :position="center"
+                              :draggable="true"
+                              @drag="updateCoordinates"
+                            />
+                          </GmapMap>
+                        </v-card>
+                      </v-col>
+                    </template>
                     </v-col>
                     <v-col>
                       <v-btn
@@ -682,6 +810,23 @@ export default {
   },
   data () {
     return {
+      itemDistance: [
+        {text: '500 เมตร', value: '0.5'},
+        {text: '1 กิโลเมตร', value: '1'},
+        {text: '1 กิโลเมตรครึ่ง', value: '1.5'},
+        {text: '2 กิโลเมตร', value: '2'},
+        {text: '2 กิโลเมตรครึ่ง', value: '2.5'},
+        {text: '3 กิโลเมตร', value: '3'},
+        {text: '3 กิโลเมตรครึ่ง', value: '3.5'},
+        {text: '4 กิโลเมตร', value: '4'},
+        {text: '4 กิโลเมตรครึ่ง', value: '4.5'},
+        {text: '5 กิโลเมตร', value: '5'}
+      ],
+      checkLocationStatus: 'False',
+      distanceSet: '',
+      shopLat: '',
+      shopLong: '',
+      center: null,
       picker: null,
       date2: null,
       activePicker: 'MONTH',
@@ -856,6 +1001,48 @@ export default {
     this.getBookingField()
   },
   methods: {
+    async geolocate () {
+      await navigator.geolocation.getCurrentPosition(
+        async position => {
+          const center = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+          if (center) {
+            this.center = center
+            this.shopLat = center.lat
+            this.shopLong = center.lng
+          }
+        },
+        error => {
+          this.center = null
+          this.shopLat = ''
+          this.shopLong = ''
+          // this.center.lat = null
+          // this.center.lng = null
+          console.log('error map :', error.message)
+        }
+      )
+    },
+    updatePlace (place) {
+      // console.log(place)
+      this.shopLat = place.geometry.location.lat()
+      this.shopLong = place.geometry.location.lng()
+      this.center = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()
+      }
+    },
+    updateCoordinates (location) {
+      console.log('location.latLng.lat()', location.latLng.lat())
+      console.log('location.latLng.lng()', location.latLng.lng())
+      this.shopLat = location.latLng.lat()
+      this.shopLong = location.latLng.lng()
+      this.center = {
+        lat: location.latLng.lat(),
+        lng: location.latLng.lng()
+      }
+    },
     chekshowTime (open, item) {
       if (open) {
         if (this.BookingFieldshowtime === 'แสดง') {
@@ -1043,7 +1230,7 @@ export default {
       this.dataReady = false
       Object.assign(this.formUpdate, item)
       this.PK = item.masBranchID
-      console.log('testttttttttttttt', item)
+      console.log('testttttttttttttt2234234234', item)
       // this.getDataByIdGlobal(this.DNS_IP, this.path, 'masBranchID', item.masBranchID)
       if (item.dateDayoffText === null || item.dateDayoffText === '') {
         this.formUpdate.dateDayoffText = []
@@ -1063,6 +1250,16 @@ export default {
       this.formUpdate.contactTel = item.contactTel || ''
       this.formUpdate.typeDayCustom = item.typeDayCustom
       this.formUpdate.limitBookingCheck = item.limitBookingCheck || 'False'
+      this.shopLat = item.shopLat || ''
+      this.shopLong = item.shopLong || ''
+      this.distanceSet = item.distanceSet || ''
+      this.checkLocationStatus = item.checkLocationStatus || 'False'
+      if (this.checkLocationStatus === 'True') {
+        this.center = {
+          lat: parseFloat(this.shopLat),
+          lng: parseFloat(this.shopLong)
+        }
+      }
       console.log('this.formUpdate.setTime', item.setTime)
       if (item.setTime === null || item.setTime === '') {
         this.dataItemAddTime = []
@@ -1128,21 +1325,50 @@ export default {
       delete this.formAdd['limitBooking']
       this.dataReady = false
       console.log('this.formAdd', this.formAdd)
-      if (this.formAdd.masBranchName === '') {
-        this.$swal('ผิดพลาด', 'กรอกชื่อ สาขา', 'error')
-      } else if (this.formAdd.masBranchCode === '') {
-        this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
-      } else if (this.formAdd.limitBookingCheck === 'True') {
-        if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
-          this.dataReady = false
-          this.submitAdd()
+      if (this.checkLocationStatus === 'True') {
+        if (this.shopLat !== '' && this.shopLong !== '' && this.distanceSet !== '') {
+          this.formAdd.shopLat = this.shopLat
+          this.formAdd.shopLong = this.shopLong
+          this.formAdd.distanceSet = this.distanceSet
+          this.formAdd.checkLocationStatus = this.checkLocationStatus
+          console.log('this.formAdd', this.formAdd)
+          if (this.formAdd.masBranchName === '') {
+            this.$swal('ผิดพลาด', 'กรอกชื่อ สาขา', 'error')
+          } else if (this.formAdd.masBranchCode === '') {
+            this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
+          } else if (this.formAdd.limitBookingCheck === 'True') {
+            if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
+              this.dataReady = false
+              this.submitAdd()
+            } else {
+              this.dataReady = true
+              this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
+            }
+          } else {
+            this.dataReady = false
+            this.submitAdd()
+          }
         } else {
-          this.dataReady = true
-          this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
+          this.dataReady = false
+          this.$swal('ผิดพลาด', 'กรุณาใส่ข้อมูล ระบบจองในพื้นืี่ ในครบ', 'info')
         }
       } else {
-        this.dataReady = false
-        this.submitAdd()
+        if (this.formAdd.masBranchName === '') {
+          this.$swal('ผิดพลาด', 'กรอกชื่อ สาขา', 'error')
+        } else if (this.formAdd.masBranchCode === '') {
+          this.$swal('ผิดพลาด', 'กรุณาเลือก สาขา', 'error')
+        } else if (this.formAdd.limitBookingCheck === 'True') {
+          if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
+            this.dataReady = false
+            this.submitAdd()
+          } else {
+            this.dataReady = true
+            this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
+          }
+        } else {
+          this.dataReady = false
+          this.submitAdd()
+        }
       }
     },
     async submitAdd () {
@@ -1223,34 +1449,60 @@ export default {
         this.formUpdateItem.countFastTrack = 0
       }
       this.formUpdateItem.limitBookingCheck = this.formUpdate.limitBookingCheck
+      this.formUpdateItem.checkLocationStatus = this.checkLocationStatus || 'False'
       // End Config User ทำรายการล่าสุด
       console.log('this.formUpdateItem', this.formUpdateItem)
 
       // Debug
       console.log('EDIT PK : ', this.PK)
-      console.log('formUpdateItem', JSON.stringify(this.formUpdateItem))
+      console.log('formUpdateItem', this.formUpdateItem)
       // End Debug
       // สำหรับ แก้ไขข้อมูล
       // ต้องระบุ  Last User ว่าใครเป็นคนแก้ไขล่าสุด
       //
-
-      if (this.formUpdateItem.limitBookingCheck === 'True') {
-        if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
-          this.dataReady = false
-          this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+      if (this.checkLocationStatus === 'True') {
+        if (this.shopLat !== '' && this.shopLong !== '' && this.distanceSet !== '') {
+          this.formUpdateItem.shopLat = this.shopLat
+          this.formUpdateItem.shopLong = this.shopLong
+          this.formUpdateItem.distanceSet = this.distanceSet
+          this.formUpdateItem.checkLocationStatus = this.checkLocationStatus
+          console.log('this.formUpdateItem', this.formUpdateItem)
+          if (this.formUpdateItem.limitBookingCheck === 'True') {
+            if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
+              this.dataReady = false
+              this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+            } else {
+              this.dataReady = true
+              this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
+            }
+          } else {
+            this.dataReady = false
+            this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+          }
         } else {
-          this.dataReady = true
-          this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
+          this.dataReady = false
+          this.$swal('ผิดพลาด', 'กรุณาใส่ข้อมูล ระบบจองในพื้นืี่ ในครบ', 'info')
         }
       } else {
-        this.dataReady = false
-        this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+        if (this.formUpdateItem.limitBookingCheck === 'True') {
+          if (this.dataItemAddTime.filter(el => { return el.limitBooking === '' }).length === 0) {
+            this.dataReady = false
+            this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+          } else {
+            this.dataReady = true
+            this.$swal('ผิดพลาด', 'กรุณาเลือก ใส่จำนวน Limit Booking ให้ครบ เนื่องจากท่านได้เลือกที่จะ ตั้ง Limit การจอง', 'error')
+          }
+        } else {
+          this.dataReady = false
+          this.submitEdit(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
+        }
       }
       // } else {
       //   this.$swal('ผิดพลาด', 'กรุณาตั้งเวลาที่จะให้ในสาขานี้', 'error')
       // }
     },
     async submitEdit (DNS_IP, PATH, ID, DT) {
+      console.log('DT', DT)
       // this.editDataGlobal(this.DNS_IP, this.path, this.PK, this.formUpdateItem)
       this.dataReady = false
 

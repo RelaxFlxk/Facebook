@@ -831,7 +831,7 @@
                       ></v-checkbox>
                       <v-text-field :value="liffSendMessageAfterBookingStatus === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="ส่งข้อความเข้า LINE OA เมื่อลูกค้านัดหมาย"></v-text-field>
                     </v-row>
-                    <v-row align="center">
+                    <!-- <v-row align="center">
                       <v-checkbox
                         false-value="False"
                         true-value="True"
@@ -841,8 +841,8 @@
                         @change="checkLocationStatus === 'True' ? geolocate() : ''"
                       ></v-checkbox>
                       <v-text-field :value="checkLocationStatus === 'True' ? 'ใช้งาน' : 'ไม่ใช้งาน'" readonly label="เปิดระบบจองในพื้นที่ที่กำหนด"></v-text-field>
-                    </v-row>
-                    <template v-if="checkLocationStatus === 'True'">
+                    </v-row> -->
+                    <!-- <template v-if="checkLocationStatus === 'True'">
                       <v-col cols="12" class="pb-0 pt-0">
                         <v-select
                           v-model="distanceSet"
@@ -882,7 +882,7 @@
                           </GmapMap>
                         </v-card>
                       </v-col>
-                    </template>
+                    </template> -->
                     <br>
                     <v-data-table
                       v-model="itemdetell"
