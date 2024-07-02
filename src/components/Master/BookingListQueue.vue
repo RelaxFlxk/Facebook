@@ -360,7 +360,6 @@
                     small
                     rounded
                     block
-                    :disabled="item.statusBt === 'confirmJob' ? false:true"
                     @click="removeQueue(item)"
                     :class="item.statusBt === 'confirmJob' ? 'text-white':''"
                   >
@@ -476,7 +475,7 @@
                 <v-row>
                   <v-col cols="12" class="pb-0 pt-0">
                     <v-btn
-                      v-if="item.statusBt === 'confirmJob'"
+                      v-if="item.statusBt === 'confirmJob' || item.statusBt === 'confirm'"
                       color="#ECEFF1"
                       class="ma-2 white--text"
                       fab
@@ -948,7 +947,7 @@ export default {
       console.log('removeQueue', item)
       this.closeSetTimeBookingListQueue()
       let statusBooking = await this.checkBookingStatus(item.bookNo)
-      if (statusBooking === 'confirmJob') {
+      if (statusBooking === 'confirmJob' || statusBooking === 'confirm') {
         this.$swal({
           title: 'ต้องการยกเลิกคิวนี้ ใช่หรือไม่?',
           type: 'question',
