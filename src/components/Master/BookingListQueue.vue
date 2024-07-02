@@ -241,6 +241,26 @@
                 </v-date-picker>
               </v-menu>
             </v-col>
+            <v-col cols="12" class="pl-10 pr-10">
+              <v-select
+                v-model="masBranchID"
+                background-color="white"
+                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                hide-details
+                :items="branchItem"
+                outlined
+                dense
+                required
+                :disabled="statusBranchReadonly"
+                :rules ="[rules.required]"
+                @change="searchBooking(),clearTimeLoop(),getDataFlow()"
+                ><template #prepend-inner>
+                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
+                    mdi-map-marker-outline
+                  </v-icon>
+                </template>
+              </v-select>
+            </v-col>
           </v-row>
         </v-form>
         <v-row v-if="dialogwidth === '50%'">
@@ -970,11 +990,9 @@ export default {
       }
     },
     closeSetTimeBookingListQueue () {
-      clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
     },
     clearTimeLoop () {
-      clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
       let _this = this
       this.setTimerCalendar = _this.searchBooking('unNoti')
