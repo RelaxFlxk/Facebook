@@ -300,7 +300,7 @@ export default {
             text: ' ' + storeFrontQueue,
             text_delay: ' ' + storeFrontQueue,
             speaker: this.speakerId,
-            volume: 30,
+            volume: 50,
             speed: 0.75,
             type_media: 'wav'
           }
