@@ -300,7 +300,7 @@ export default {
             text: ' ' + storeFrontQueue,
             text_delay: ' ' + storeFrontQueue,
             speaker: this.speakerId,
-            volume: 1,
+            volume: 30,
             speed: 0.75,
             type_media: 'wav'
           }
@@ -554,8 +554,19 @@ export default {
       // }
       // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
       this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '', 'masBranchNameEn')
-      if (this.branchItem.length > 0) {
-        this.masBranchID = this.branchItem[0].value
+      if (this.branchItem && this.branchItem.length > 0) {
+        const branchSession = this.session.data.masBranchID
+        let USER_ROLE = this.session.data.USER_ROLE || ''
+        if (USER_ROLE === 'user' && branchSession) {
+          const matchBranch = this.branchItem.filter(branch => branch.allData.masBranchID === branchSession)
+          this.userBranch = matchBranch
+          this.branchItem = matchBranch.length > 0 ? matchBranch : this.branchItem
+          this.masBranchID = this.branchItem[0].value
+        } else {
+          // (Role: admin และ user ที่ไม่ผูก branch ) จะ fix masBranchID เพื่อโชว์คิวหน้า tv เฉพาะสำนักงานใหญ่
+          const headOffice = this.branchItem.find(branch => branch.text === 'สำนักงานใหญ่')
+          this.masBranchID = headOffice ? headOffice.allData.masBranchID : null
+        }
       }
     },
     async getDataFromAPI (url, fieldId, fieldName, param, fieldNameEn) {
