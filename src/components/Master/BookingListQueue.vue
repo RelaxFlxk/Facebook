@@ -182,6 +182,9 @@
                   Export
                 </v-btn>
               </v-col>
+              <v-col cols="12">
+                <ModelBookingList></ModelBookingList>
+              </v-col>
             </v-row>
             <v-row
               v-if="
@@ -235,7 +238,6 @@
               </v-col>
             </v-row>
           </v-form>
-          <!-- buttones -->
           <v-form
             ref="form_search"
             v-model="validSearch"
@@ -307,11 +309,6 @@
               </v-col>
             </v-row>
           </v-form>
-          <v-row>
-            <v-col cols="12" class="text-rigth">
-              <ModelBookingListBeauty></ModelBookingListBeauty>
-            </v-col>
-          </v-row>
           <v-row v-if="dialogwidth === '50%'">
             <v-col cols="12">
               <v-card>
@@ -967,14 +964,14 @@ import pdfFonts from '../../assets/custom-fonts.js' // 1. import custom fonts
 import moment from 'moment-timezone'
 import printJS from 'print-js'
 import XLSX from 'xlsx' // import xlsx
-import ModelBookingListBeauty from '../DialogModels/ModelBookingList.vue'
+import ModelBookingList from '../DialogModels/ModelBookingList.vue'
 
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
     VuetifyMoney,
     waitingAlert,
-    ModelBookingListBeauty
+    ModelBookingList
   },
   data () {
     return {
@@ -1087,6 +1084,122 @@ export default {
           return '50%'
       }
     }
+  },
+  async mounted () {
+    this.dataLineConfig = await this.getDataLineConfig(
+      this.$session.getAll().data.shopId
+    )
+    this.dateStart = this.momenDate_1(new Date())
+    await this.getCustomFieldStart()
+    if (this.checkShowCount && !this.checkShowTel) {
+      this.headers = [
+        { text: 'คิว', value: 'storeFrontQueue' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'บริการ', value: 'flowName' },
+        { text: 'ชื่อลูกค้า', value: 'cusName' },
+        { text: 'จำนวนที่นั่ง', value: 'countCus' },
+        {
+          text: 'เวลาที่ลูกค้ากดรับบัตร',
+          value: 'CREATE_DATEtime',
+          align: 'center'
+        },
+        {
+          text: 'ปริ้นบัตรคิว',
+          value: 'action1',
+          sortable: false,
+          align: 'center'
+        },
+        {
+          text: 'การจัดการคิว',
+          value: 'action',
+          sortable: false,
+          align: 'center',
+          width: '400px'
+        }
+      ]
+    } else if (this.checkShowCount && this.checkShowTel) {
+      this.headers = [
+        { text: 'คิว', value: 'storeFrontQueue' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'บริการ', value: 'flowName' },
+        { text: 'ชื่อลูกค้า', value: 'cusName' },
+        { text: 'เบอร์โทร', value: 'cusPhone' },
+        { text: 'จำนวนที่นั่ง', value: 'countCus' },
+        { text: 'เวลา', value: 'CREATE_DATEtime', align: 'center' },
+        {
+          text: 'ปริ้นบัตรคิว',
+          value: 'action1',
+          sortable: false,
+          align: 'center'
+        },
+        {
+          text: 'การจัดการคิว',
+          value: 'action',
+          sortable: false,
+          align: 'center',
+          width: '400px'
+        }
+      ]
+    } else if (!this.checkShowCount && this.checkShowTel) {
+      this.headers = [
+        { text: 'คิว', value: 'storeFrontQueue' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'บริการ', value: 'flowName' },
+        { text: 'ชื่อลูกค้า', value: 'cusName' },
+        { text: 'เบอร์โทร', value: 'cusPhone' },
+        { text: 'เวลา', value: 'CREATE_DATEtime', align: 'center' },
+        {
+          text: 'ปริ้นบัตรคิว',
+          value: 'action1',
+          sortable: false,
+          align: 'center'
+        },
+        {
+          text: 'การจัดการคิว',
+          value: 'action',
+          sortable: false,
+          align: 'center',
+          width: '400px'
+        }
+      ]
+    } else {
+      this.headers = [
+        { text: 'คิว', value: 'storeFrontQueue' },
+        // { text: 'วันที่นัดหมาย', value: 'dueDate' },
+        { text: 'บริการ', value: 'flowName' },
+        { text: 'ชื่อลูกค้า', value: 'cusName' },
+        // { text: 'H.N.', value: 'hnNo' },
+        {
+          text: 'เวลาที่ลูกค้ากดรับบัตร',
+          value: 'CREATE_DATEtime',
+          align: 'center'
+        },
+        {
+          text: 'ปริ้นบัตรคิว',
+          value: 'action1',
+          sortable: false,
+          align: 'center'
+        },
+        {
+          text: 'การจัดการคิว',
+          value: 'action',
+          sortable: false,
+          align: 'center',
+          width: '400px'
+        }
+      ]
+    }
+    await this.getDataBranch()
+    await this.getDataFlow()
+    await this.searchBooking('unNoti')
+    this.$root.$on('closeSetTimeBookingListQueue', () => {
+      // your code goes here
+      this.closeSetTimeBookingListQueue()
+    })
+    this.dateStart = moment().format('YYYY-MM-DD')
+    this.clearTimeLoop()
+    this.setTime()
+    this.getShop()
   },
   methods: {
     async getCustomFieldStart () {
