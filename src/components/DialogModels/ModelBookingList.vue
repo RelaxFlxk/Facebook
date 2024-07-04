@@ -1,14 +1,14 @@
 <template>
-  <span id="ModelBookingList" >
-      <v-btn
-        class="bottomAdd"
-        style="margin-right: 0px;border-radius: 15px;color: white;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
-        @click="addDataSet()"
-        x-large
-      >
-        เพิ่มรายการนัดหมาย
-        <v-icon color="white" class="ml-4">mdi-plus-circle</v-icon>
-      </v-btn>
+  <span id="ModelBookingList">
+    <v-btn
+      class="bottomAdd"
+      style="margin-right: 0px;border-radius: 15px;color: white;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+      @click="addDataSet()"
+      x-large
+    >
+      เพิ่มรายการนัดหมาย
+      <v-icon color="white" class="ml-4">mdi-plus-circle</v-icon>
+    </v-btn>
 
     <v-dialog v-model="dialogAdd" class="pa-2" max-width="600" persistent>
       <v-card class="text-center">
@@ -76,13 +76,7 @@
                     outlined
                     dense
                     required
-                    @change="
-                      (priceMenuAdd = 0),
-                        (drawerAdd = false),
-                        checkTime(),
-                        SetallowedDates(),
-                        setFlowAdd()
-                    "
+                    @change="fnChangeDate(), setLimitBooking(date)"
                     :rules="[rules.required]"
                   ></v-select>
                   <template v-if="fieldNameItem">
@@ -1075,7 +1069,7 @@
         </div>
       </v-card>
     </v-dialog>
-</span>
+  </span>
 </template>
 <script>
 import axios from 'axios' // api
@@ -1087,6 +1081,7 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      dNows: moment(new Date()).format('YYYY-MM-DD'),
       // menu
       bookNoNoti: '',
       showMenu: 'False',
@@ -1670,6 +1665,15 @@ export default {
     }
   },
   methods: {
+    async fnChangeDate () {
+      console.log('check : ', this.formAdd.flowId)
+      this.priceMenuAdd = 0
+      this.drawerAdd = false
+      await this.checkTime()
+      await this.SetallowedDates()
+      await this.setFlowAdd()
+      this.date = this.dNows
+    },
     async addDataInsert () {
       // this.swalConfig.title = 'ต้องการ บันทึกข้อมูล ใช่หรือไม่?'
       // this.$swal(this.swalConfig)
@@ -3925,6 +3929,18 @@ export default {
           }
         }
       }
+      if (this.branch.length === 1) {
+        this.selectBranch()
+      }
+    },
+    selectBranch () {
+      this.formAdd.masBranchID = this.branch[0].value
+      this.priceMenuAdd = 0
+      this.drawerAdd = false
+      this.showMenu = 'False'
+      this.setFlowByBranchAdd()
+      this.getEmpSelectAdd()
+      this.checkEmp()
     },
     async getDataFlow () {
       let result = []
@@ -3960,6 +3976,7 @@ export default {
             resultOption = []
           }
         })
+      console.log('><><><><><><><><><>', result)
       this.DataFlowNameDefault = result
       this.DataFlowNameMenu = result.filter(el => {
         return el.menuShowStatus === 'True'
@@ -4146,18 +4163,31 @@ export default {
       // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
       if (
         this.DataFlowNameDefault.filter(el => {
+          console.log(
+            'this.DataFlowNameDefault >>>>>>>',
+            el.value
+          )
+          console.log('this.formAdd.flowId >>>>>>>', this.formAdd.flowId)
           return el.value === parseInt(this.formAdd.flowId)
         })[0].allData.setTimebyday === 'True'
       ) {
-        let timeJson = JSON.parse(
-          this.DataFlowNameDefault.filter(el => {
-            return el.value === parseInt(this.formAdd.flowId)
-          })[0].allData.setTime
-        ).filter(items => items.value === new Date(dateitem).getDay())
-        setTime = timeJson[0].setTime || []
-        console.log('IF')
+        try {
+          let timeJson = JSON.parse(
+            this.DataFlowNameDefault.filter(el => {
+              return el.value === parseInt(this.formAdd.flowId)
+            })[0].allData.setTime
+          ).filter(items => items.value === new Date(dateitem).getDay())
+          console.log('()()()()()()(()()()()()()()()()()(())())')
+
+          setTime = timeJson[0].setTime || []
+          console.log('timeJson[0].setTime :', timeJson[0].setTime)
+
+          console.log('>>>>>>>>>>IF')
+        } catch (err) {
+          setTime = []
+        }
       } else {
-        console.log('ELSE')
+        console.log('>>>>>>>>>ELSE')
         setTime =
           JSON.parse(
             this.DataFlowNameDefault.filter(el => {
@@ -4478,7 +4508,10 @@ export default {
       console.log('>>>this.empSelectStepAdd<<< ', this.empSelectStepAdd)
       if (this.empSelectStepAdd.length === 1) {
         console.log('this.empSelectStepAdd[0]: : :', this.empSelectStepAdd[0])
-        console.log('this.empSelectStepAdd[0].value : : :', this.empSelectStepAdd[0].value)
+        console.log(
+          'this.empSelectStepAdd[0].value : : :',
+          this.empSelectStepAdd[0].value
+        )
         this.empSelectAdd = this.empSelectStepAdd[0].value
         // console.log('this.empSelectAdd : : :', this.empSelectAdd)
       }
