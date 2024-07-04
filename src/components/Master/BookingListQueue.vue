@@ -43,6 +43,7 @@
             </div>
           </v-card-text>
         </v-card>
+
         <template v-else>
           <v-form
             ref="form_search"
@@ -182,7 +183,7 @@
                   Export
                 </v-btn>
               </v-col>
-              <v-col cols="12">
+              <v-col cols="12" style="text-align: end;margin-bottom: 10px;">
                 <ModelBookingList></ModelBookingList>
               </v-col>
             </v-row>
@@ -306,6 +307,10 @@
                   >
                   </v-date-picker>
                 </v-menu>
+              </v-col>
+
+              <v-col cols="12" style="text-align: center;margin-bottom: 10px;">
+                <ModelBookingList></ModelBookingList>
               </v-col>
             </v-row>
           </v-form>

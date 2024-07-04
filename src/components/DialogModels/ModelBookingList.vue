@@ -1,15 +1,14 @@
 <template>
-  <div id="ModelBookingList">
-    <div style="text-align: end;margin-bottom: 10px;">
+  <div id="ModelBookingList" class="pa-2 mb-4">
       <v-btn
         class="bottomAdd"
         style="margin-right: 0px;border-radius: 15px;color: white;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
         @click="addDataSet()"
+        x-large
       >
         เพิ่มรายการนัดหมาย
         <v-icon color="white" class="ml-4">mdi-plus-circle</v-icon>
       </v-btn>
-    </div>
 
     <v-dialog v-model="dialogAdd" max-width="600" persistent>
       <v-card class="text-center">
@@ -4695,3 +4694,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.bottomAdd {
+  background: linear-gradient(3.82deg, #1093ff 0.25%, #66baff 99.75%);
+}
+</style>
