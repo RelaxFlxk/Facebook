@@ -48,7 +48,6 @@
                     true-value="True"
                     :on-icon="'mdi-check-circle'"
                     :off-icon="'mdi-checkbox-blank-circle-outline'"
-                    @click="date = ''"
                   ></v-checkbox>
                   <v-select
                     v-model="formAdd.masBranchID"
@@ -82,8 +81,7 @@
                         (drawerAdd = false),
                         checkTime(),
                         SetallowedDates(),
-                        setFlowAdd(),
-                        (date = '')
+                        setFlowAdd()
                     "
                     :rules="[rules.required]"
                   ></v-select>
@@ -4474,13 +4472,15 @@ export default {
       await this.checkEmp()
     },
     checkEmp () {
-      console.log('>>>>')
       this.empSelectStepAdd = this.empSelectStepAdd.filter(
         i => i.masBranchID === this.formAdd.masBranchID || i.masBranchID === ''
       )
-
+      console.log('>>>this.empSelectStepAdd<<< ', this.empSelectStepAdd)
       if (this.empSelectStepAdd.length === 1) {
-        this.empSelectAdd = this.empSelectStepAdd[0].vaule
+        console.log('this.empSelectStepAdd[0]: : :', this.empSelectStepAdd[0])
+        console.log('this.empSelectStepAdd[0].value : : :', this.empSelectStepAdd[0].value)
+        this.empSelectAdd = this.empSelectStepAdd[0].value
+        // console.log('this.empSelectAdd : : :', this.empSelectAdd)
       }
     },
     async getBookingFieldText () {

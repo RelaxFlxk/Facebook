@@ -313,7 +313,7 @@
                 </v-menu>
               </v-col>
 
-              <v-col cols="12" style="text-align: center; padding-top:-10px;">
+              <v-col cols="12" class="mb-4" style="text-align: center;">
                 <ModelBookingList></ModelBookingList>
               </v-col>
             </v-row>
