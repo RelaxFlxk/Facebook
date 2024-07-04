@@ -23,16 +23,23 @@
             class="v-margit_button text-right"
             v-if="dialogwidth === '50%'"
           >
-            <v-col col="auto">
-              <v-btn
-                color="info"
-                fab
-                style="border-radius: 20px !important;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
-                @click="checkSearch()"
-              >
-                <v-icon color="white">mdi-backup-restore</v-icon>
-              </v-btn>
-            </v-col>
+            <v-item-group mandatory>
+              <v-container>
+                <v-row class="d-flex">
+                  <v-col col="auto" class="text-right">
+                    <v-btn
+                      color="info"
+                      fab
+                      style="border-radius: 20px !important;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
+                      @click="checkSearch()"
+                    >
+                      <v-icon color="white">mdi-backup-restore</v-icon>
+                    </v-btn>
+                    <ModelBookingList></ModelBookingList>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-item-group>
           </v-col>
           <v-col cols="6" v-else></v-col>
         </v-row>
@@ -183,9 +190,6 @@
                   Export
                 </v-btn>
               </v-col>
-              <v-col cols="12" style="text-align: end;margin-bottom: 10px;">
-                <ModelBookingList></ModelBookingList>
-              </v-col>
             </v-row>
             <v-row
               v-if="
@@ -309,7 +313,7 @@
                 </v-menu>
               </v-col>
 
-              <v-col cols="12" style="text-align: center;margin-bottom: 10px;">
+              <v-col cols="12" style="text-align: center; padding-top:-10px;">
                 <ModelBookingList></ModelBookingList>
               </v-col>
             </v-row>

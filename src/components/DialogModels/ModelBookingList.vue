@@ -1,5 +1,5 @@
 <template>
-  <div id="ModelBookingList" class="pa-2 mb-4">
+  <span id="ModelBookingList" >
       <v-btn
         class="bottomAdd"
         style="margin-right: 0px;border-radius: 15px;color: white;box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.4), 0px 5px 15px rgba(162, 171, 198, 0.6);"
@@ -10,7 +10,7 @@
         <v-icon color="white" class="ml-4">mdi-plus-circle</v-icon>
       </v-btn>
 
-    <v-dialog v-model="dialogAdd" max-width="600" persistent>
+    <v-dialog v-model="dialogAdd" class="pa-2" max-width="600" persistent>
       <v-card class="text-center">
         <v-form ref="form_add" v-model="validAdd" lazy-validation>
           <v-card-text>
@@ -1077,7 +1077,7 @@
         </div>
       </v-card>
     </v-dialog>
-  </div>
+</span>
 </template>
 <script>
 import axios from 'axios' // api
