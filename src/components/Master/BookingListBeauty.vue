@@ -17259,9 +17259,9 @@ export default {
             } else {
               console.log('getFirestore -> data', snapshot.data())
               if (snapshot.data().active === '1') {
-                console.log('active [start] is updateProcessOhrichUpdate')
+                console.log('active [start] is updateProcessShopUpdate')
                 await this.updateProcessShopUpdate()
-                console.log('active [end] is updateProcessOhrichUpdate')
+                console.log('active [end] is updateProcessShopUpdate')
                 console.log('snapshot data -> active is 1')
                 console.log('active [start] is get booking')
                 await this.searchBooking()
@@ -17281,7 +17281,7 @@ export default {
           userName: this.$session.getAll().data.userName,
           shopId: this.$session.getAll().data.shopId
         }
-        await axios.post('http://127.0.0.1:5003/be-linked-a7cdc/asia-southeast1/QueueOnline-ProcessNew', body)
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNew', body)
       } catch (error) {
         console.log('updateProcessShopNew error-> ', error)
       }
@@ -17292,7 +17292,7 @@ export default {
           userName: this.$session.getAll().data.userName,
           shopId: this.$session.getAll().data.shopId
         }
-        await axios.post('http://127.0.0.1:5003/be-linked-a7cdc/asia-southeast1/QueueOnline-ProcessUseNew', body)
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNew', body)
       } catch (error) {
         console.log('updateProcessShopUpdate error-> ', error)
       }
