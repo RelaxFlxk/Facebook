@@ -10,12 +10,13 @@
         <v-icon color="white" class="ml-4">mdi-plus-circle</v-icon>
       </v-btn>
     </div>
-    <v-dialog v-model="dialogAdd" max-width="50%" persistent>
+
+    <v-dialog v-model="dialogAdd" max-width="600" persistent>
       <v-card class="text-center">
         <v-form ref="form_add" v-model="validAdd" lazy-validation>
           <v-card-text>
             <v-row justify="center">
-              <v-col :cols="ColsDialogAdd === 'True' ? 4 : 10">
+              <v-col cols="12" class="p-5">
                 <v-row>
                   <v-col cols="8" class="text-left pt-10">
                     <h3><strong>เพิ่มรายการนัดหมาย</strong></h3>
@@ -1712,13 +1713,17 @@ export default {
               const _this = this
               let configDepositUpload = {
                 headers: {
-                  'bookNo': 'BK' + moment().unix()
+                  bookNo: 'BK' + moment().unix()
                 }
               }
               let params = new FormData()
               params.append('file', this.filesDepositAdd)
               await axios
-                .post(this.DNS_IP + `/file/upload/deposit`, params, configDepositUpload)
+                .post(
+                  this.DNS_IP + `/file/upload/deposit`,
+                  params,
+                  configDepositUpload
+                )
                 .then(function (response) {
                   _this.formAdd.depositImge = response.data
                   console.log('url Pic', response.data)
@@ -1741,7 +1746,9 @@ export default {
         } else {
           limitBookingCheck = 'False'
         }
-        let storeFront = this.DataFlowNameDefault.filter(item => { return item.value === this.formAdd.flowId })
+        let storeFront = this.DataFlowNameDefault.filter(item => {
+          return item.value === this.formAdd.flowId
+        })
         let storeFrontCheck = ''
         if (storeFront.length > 0) {
           storeFrontCheck = storeFront[0].allData.storeFrontCheck || 'False'
@@ -1793,16 +1800,29 @@ export default {
               update.statusVIP = 'False'
             }
             update.statusBookingForm = 'BookingForm'
-            update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+            update.address = (this.address || '')
+              .replace(/%/g, '%%')
+              .replace(/'/g, "\\'")
             update.addressLatLong = JSON.stringify(this.center)
-            if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
-              update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+            if (this.dataMenuAdd.filter(i => parseInt(i.qty) > 0).length > 0) {
+              update.menuItem = JSON.stringify(
+                this.dataMenuAdd.filter(i => parseInt(i.qty) > 0)
+              )
               update.menuPrice = this.priceMenuAdd
             }
             Add.push(update)
           } else {
-            if (fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) }).length > 0) {
-              if (d.conditionValue === fielditem.filter(row => { return row.fieldId === parseInt(d.conditionField) })[0].fieldValue) {
+            if (
+              fielditem.filter(row => {
+                return row.fieldId === parseInt(d.conditionField)
+              }).length > 0
+            ) {
+              if (
+                d.conditionValue ===
+                fielditem.filter(row => {
+                  return row.fieldId === parseInt(d.conditionField)
+                })[0].fieldValue
+              ) {
                 update.masBranchID = this.formAdd.masBranchID
                 update.bookingFieldId = d.bookingFieldId
                 update.remark = this.remark
@@ -1835,16 +1855,24 @@ export default {
                   update.statusVIP = 'False'
                 }
                 update.statusBookingForm = 'BookingForm'
-                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+                update.address = (this.address || '')
+                  .replace(/%/g, '%%')
+                  .replace(/'/g, "\\'")
                 update.addressLatLong = JSON.stringify(this.center)
-                if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
-                  update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+                if (
+                  this.dataMenuAdd.filter(i => parseInt(i.qty) > 0).length > 0
+                ) {
+                  update.menuItem = JSON.stringify(
+                    this.dataMenuAdd.filter(i => parseInt(i.qty) > 0)
+                  )
                   update.menuPrice = this.priceMenuAdd
                 }
                 Add.push(update)
               }
             } else if (d.conditionField === 'flow') {
-              if (parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)) {
+              if (
+                parseInt(d.conditionValue) === parseInt(this.formAdd.flowId)
+              ) {
                 update.masBranchID = this.formAdd.masBranchID
                 update.bookingFieldId = d.bookingFieldId
                 update.remark = this.remark
@@ -1877,10 +1905,16 @@ export default {
                   update.statusVIP = 'False'
                 }
                 update.statusBookingForm = 'BookingForm'
-                update.address = (this.address || '').replace(/%/g, '%%').replace(/'/g, "\\'")
+                update.address = (this.address || '')
+                  .replace(/%/g, '%%')
+                  .replace(/'/g, "\\'")
                 update.addressLatLong = JSON.stringify(this.center)
-                if (this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0).length > 0) {
-                  update.menuItem = JSON.stringify(this.dataMenuAdd.filter((i) => parseInt(i.qty) > 0))
+                if (
+                  this.dataMenuAdd.filter(i => parseInt(i.qty) > 0).length > 0
+                ) {
+                  update.menuItem = JSON.stringify(
+                    this.dataMenuAdd.filter(i => parseInt(i.qty) > 0)
+                  )
                   update.menuPrice = this.priceMenuAdd
                 }
                 Add.push(update)
@@ -1892,16 +1926,23 @@ export default {
         axios
           .post(this.DNS_IP + '/Booking/add', Add)
           .then(async response => {
-          // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+            // this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
             if (response.data.message === 'LimitBooking_Full') {
-              this.$swal('คิวเต็มแล้ว', 'กรุณาเลือกวันที่และเวลาใหม่อีกครั้ง', 'error')
+              this.$swal(
+                'คิวเต็มแล้ว',
+                'กรุณาเลือกวันที่และเวลาใหม่อีกครั้ง',
+                'error'
+              )
               this.date = ''
               this.time = ''
             } else {
-              let checkDeposit = this.DataFlowNameDefault.filter(el => { return el.value === parseInt(this.formAdd.flowId) })
+              let checkDeposit = this.DataFlowNameDefault.filter(el => {
+                return el.value === parseInt(this.formAdd.flowId)
+              })
               let depositCheckStatus = ''
               if (checkDeposit.length > 0) {
-                depositCheckStatus = checkDeposit[0].allData.checkDeposit || 'False'
+                depositCheckStatus =
+                  checkDeposit[0].allData.checkDeposit || 'False'
               } else {
                 depositCheckStatus = 'False'
               }
@@ -1915,12 +1956,18 @@ export default {
                 this.dialogShowDeposit = true
                 this.bookNo = response.data.bookNo
                 this.depositPrice = this.formAdd.depositPrice
-                this.depositLink = 'https://betask-linked.web.app/Thank?shopId=' + this.$session.getAll().data.shopId + '&redirectBy=BookingAdmin&flowId=' + flowIdData + '&bookNo=' + response.data.bookNo
+                this.depositLink =
+                  'https://betask-linked.web.app/Thank?shopId=' +
+                  this.$session.getAll().data.shopId +
+                  '&redirectBy=BookingAdmin&flowId=' +
+                  flowIdData +
+                  '&bookNo=' +
+                  response.data.bookNo
               } else {
                 await this.confirmChkAdd(response.data)
               }
             }
-          // console.log('addDataGlobal DNS_IP + /job/add', response)
+            // console.log('addDataGlobal DNS_IP + /job/add', response)
           })
           .catch(error => {
             console.log('error function addData : ', error)
@@ -1952,9 +1999,9 @@ export default {
         .post(this.DNS_IP + '/booking_transaction/add', dt)
         .then(async response => {
           // this.getDataCalendaBooking()
-        //   if (this.statusGoogleCalendar === 'True') {
-        //     this.connectGoogleCalendar('Add', dt.bookNo)
-        //   }
+          //   if (this.statusGoogleCalendar === 'True') {
+          //     this.connectGoogleCalendar('Add', dt.bookNo)
+          //   }
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
           // await this.getBookingList()
@@ -1977,6 +2024,8 @@ export default {
       this.checkTime()
       this.setFlowAdd()
       await this.getDataFlow()
+      //   ซ่อมปกติ
+      this.formAdd.radiosRemark = 'ซ่อมปกติ'
     },
     async clearDataAdd () {
       this.showMenu = 'False'
