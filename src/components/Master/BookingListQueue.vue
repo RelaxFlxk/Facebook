@@ -2211,10 +2211,15 @@ export default {
     // },
     setPrint (item, language) {
       let docDefinition = {}
+      // let pageWidth = 598.28
+      // let pageHeight = 'auto'
       if (this.shopImg === '') {
         if (language === 'th') {
           docDefinition = {
-            pageSize: 'A4',
+            // margin: [0, 0, 0, 0],
+            // pageMargins: [ 5, 8, 5, 8 ],
+            // pageSize: { width: pageWidth, height: pageHeight },
+            pageSize: 'A10',
             content: [
               {
                 text: this.shopName,
