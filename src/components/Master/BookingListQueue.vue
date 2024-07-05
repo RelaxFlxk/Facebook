@@ -984,6 +984,7 @@ export default {
   },
   data () {
     return {
+      userFlow: '',
       userBranch: [],
       statusBranchReadonly: false,
       checkShowTel: false,
@@ -1604,15 +1605,21 @@ export default {
               this.userBranch &&
               this.userBranch.length > 0
             ) {
-              resultOption.push({ text: 'ทั้งหมด', value: 'allFlow' })
+              // resultOption.push({ text: 'ทั้งหมด', value: 'allFlow' })
               this.statusBranchReadonly = true
               for (let i = 0; i < rs.length; i++) {
                 let d = rs[i]
                 let s = {}
-                s.text = d.flowName
-                s.value = d.flowId
-                s.allData = d
-                resultOption.push(s)
+                if (
+                  JSON.parse(this.$session.getAll().data.flowId).filter(el => {
+                    return el === d.flowId
+                  }).length > 0
+                ) {
+                  s.text = d.flowName
+                  s.value = d.flowId
+                  s.allData = d
+                  resultOption.push(s)
+                }
               }
             } else {
               resultOption.push({ text: 'ทั้งหมด', value: 'allFlow' })
@@ -1650,6 +1657,7 @@ export default {
       )
       if (this.branchItem && this.branchItem.length > 0) {
         const branchSession = this.session.data.masBranchID
+        const flowIdSession = this.session.data.flowId
         let USER_ROLE = this.session.data.USER_ROLE || ''
         if (USER_ROLE === 'user') {
           const matchBranch = this.branchItem.filter(
@@ -1658,6 +1666,7 @@ export default {
           this.userBranch = matchBranch
           this.branchItem =
             matchBranch.length > 0 ? matchBranch : this.branchItem
+          this.userFlow = flowIdSession
         }
         this.masBranchID = this.branchItem[0].value
       }
