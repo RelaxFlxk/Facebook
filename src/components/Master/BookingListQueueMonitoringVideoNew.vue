@@ -267,6 +267,25 @@ export default {
       }
       axios.post(`${this.DNS_IP}/callQueues/edit/${id}`, params)
     },
+    async isSound (typeStoreFront, numberStoreFront) {
+      let isSound = false
+      try {
+        if (typeStoreFront === 'A' && numberStoreFront <= 450) {
+          isSound = true
+        } else if (typeStoreFront === 'B' && numberStoreFront <= 400) {
+          isSound = true
+        } else if (typeStoreFront === 'C' && numberStoreFront <= 350) {
+          isSound = true
+        } else if (typeStoreFront === 'M' && numberStoreFront <= 300) {
+          isSound = true
+        } else if (typeStoreFront === 'O' && numberStoreFront <= 200) {
+          isSound = true
+        }
+      } catch (error) {
+        console.log('error isSound', error)
+      }
+      return isSound
+    },
     async generateSound (item) {
       try {
         this.tableId = item.servicePoint.replace('โต๊ะ ', '')
@@ -277,10 +296,16 @@ export default {
         storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
         storeFrontQueue = storeFrontQueue.replace('E', 'อี')
         let result
-        let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
+        // let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
         item.audioFile = null
-        if (oldSound && oldSound.length > 0) {
-          item.audioFile = oldSound[0].audioFile
+        const typeStoreFront = item.storeFrontQueue.substring(0, 1)
+        const numberStoreFront = parseInt(item.storeFrontQueue.substring(1))
+
+        console.log('typeStoreFront', typeStoreFront)
+        console.log('numberStoreFront', numberStoreFront)
+        console.log('generateSound item', item)
+        if (this.isSound(typeStoreFront, numberStoreFront)) {
+          item.audioFile = `https://storage.googleapis.com/thaiairway-sound/${item.storeFrontQueue}.wav`
         } else {
           console.log('oldSound no have')
           await axios
