@@ -1747,6 +1747,7 @@ export default {
         } else {
           limitBookingCheck = 'False'
         }
+        console.log('this.DataFlowNameDefault >>> ', this.DataFlowNameDefault)
         let storeFront = this.DataFlowNameDefault.filter(item => {
           return item.value === this.formAdd.flowId
         })
@@ -2020,11 +2021,14 @@ export default {
       this.dialogAdd = true
       if (this.branch.length === 0) {
         this.getDataBranch()
+      } else if (this.branch.length === 1) {
+        console.log(' COUNT : ', this.branch)
+        this.selectBranch()
       }
+      await this.getDataFlow()
       this.getBookingField()
       this.checkTime()
       this.setFlowAdd()
-      await this.getDataFlow()
       //   ซ่อมปกติ
       this.formAdd.radiosRemark = 'ซ่อมปกติ'
     },
@@ -2073,11 +2077,19 @@ export default {
       this.getDataCalendaBooking()
     },
     setFlowByBranchAdd () {
+      console.log(
+        '<><><><> this.formAdd.flowId <  > <> <> ',
+        this.$session.getAll().data.flowId
+      )
+      console.log(
+        '<><><><> this.DataFlowNameDefault <  > <> <> ',
+        this.DataFlowNameDefault
+      )
       this.formAdd.flowId = ''
       let DD = this.DataFlowNameDefault
-      console.log('xxxxx', DD)
       let dataFilter = []
       DD.forEach(item => {
+        // console.log('<item.text> : ', item.text)
         if (item.text !== 'ทั้งหมด') {
           let checkBranchByFlow = item.allData.masBranchID || 'All'
           if (
@@ -2089,7 +2101,22 @@ export default {
           }
         }
       })
-      if (dataFilter.length === 1) {
+
+      let newDataFillter = []
+      console.log('this.$session.getAll().data.flowId', this.$session.getAll().data.flowId)
+      try {
+        dataFilter.filter(key => {
+          for (const fId of JSON.parse(this.$session.getAll().data.flowId)) {
+            if (key.value === parseInt(fId)) {
+              newDataFillter.push(key)
+            }
+          }
+        })
+      } catch (err) {
+        newDataFillter = dataFilter
+      }
+
+      if (newDataFillter.length === 1) {
         const dateNow = new Date()
         this.priceMenuAdd = 0
         this.drawerAdd = false
@@ -2097,11 +2124,13 @@ export default {
         this.SetallowedDates()
         this.setFlowAdd()
         this.date = moment(dateNow).format('YYYY-MM-DD')
-        this.dataFlowSelectAdd = dataFilter
-        this.formAdd.flowId = dataFilter[0].value
+        this.dataFlowSelectAdd = newDataFillter
+        this.formAdd.flowId = newDataFillter[0].value
       } else {
-        this.dataFlowSelectAdd = dataFilter
+        console.log('()()()()()()()()()()()', newDataFillter)
+        this.dataFlowSelectAdd = newDataFillter
       }
+      console.log(new Date(), this.dataFlowSelectAdd)
     },
     checkTime () {
       this.timeavailable = []
@@ -3929,11 +3958,13 @@ export default {
           }
         }
       }
+      console.log('NNNNNNNNNNN : ', this.branch.length)
       if (this.branch.length === 1) {
         this.selectBranch()
       }
     },
     selectBranch () {
+      console.log('asdadsadasdasdasdasdas ')
       this.formAdd.masBranchID = this.branch[0].value
       this.priceMenuAdd = 0
       this.drawerAdd = false
@@ -3982,7 +4013,7 @@ export default {
         return el.menuShowStatus === 'True'
       })
       console.log('resultOption : ', resultOption)
-      this.dataFlowSelectAdd = resultOption
+      // this.dataFlowSelectAdd = resultOption
       this.dataFlowSelectEdit = resultOption
     },
     checkTypeSort () {
@@ -4163,10 +4194,7 @@ export default {
       // เช็คว่า เวลาในแต่ละวันเหมือนกันรึป่าว
       if (
         this.DataFlowNameDefault.filter(el => {
-          console.log(
-            'this.DataFlowNameDefault >>>>>>>',
-            el.value
-          )
+          console.log('this.DataFlowNameDefault >>>>>>>', el.value)
           console.log('this.formAdd.flowId >>>>>>>', this.formAdd.flowId)
           return el.value === parseInt(this.formAdd.flowId)
         })[0].allData.setTimebyday === 'True'
@@ -4429,19 +4457,19 @@ export default {
       }
       if (this.$route.query.bookNo) {
         // this.beforeCreateScan()
+        await this.getDataFlow()
         await this.getDataBranch()
         await this.getEmpSelectAdd()
         await this.getBookingFieldText()
         this.getCustomFieldStart()
-        await this.getDataFlow()
         await this.scanQrcode()
         // this.getBookingList()
       } else {
+        await this.getDataFlow()
         await this.getDataBranch()
         await this.getEmpSelectAdd()
         await this.getBookingFieldText()
         this.getCustomFieldStart()
-        await this.getDataFlow()
         this.getBookingList()
       }
     },
@@ -4487,14 +4515,21 @@ export default {
               }
             }
             console.log('this.empSelectStepAdd :', this.empSelectStepAdd)
+            console.log(
+              'this.$session.getAll().data.empId :',
+              this.$session.getAll().data.empId
+            )
+            // console.log('parseInt(this.$session.getAll().data.empId))[0] :', parseInt(this.$session.getAll().data.empId))[0])
             if (
               this.$session.getAll().data.empId !== '' &&
               this.$session.getAll().data.empId !== null
             ) {
-              this.empSelectAdd = this.empSelectStepAdd.filter(
-                item =>
-                  item.value === parseInt(this.$session.getAll().data.empId)
-              )[0].value
+              try {
+                this.empSelectAdd = this.empSelectStepAdd.filter(
+                  item =>
+                    item.value === parseInt(this.$session.getAll().data.empId)
+                )[0].value
+              } catch (err) {}
             }
             console.log('this.empSelectStepAdd', this.empSelectStepAdd)
           }
