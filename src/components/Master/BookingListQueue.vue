@@ -573,6 +573,7 @@
                       height="76px"
                       class="ma-2"
                       v-else
+                      @click="(flowSelect = item.value), searchBooking()"
                       :style="'border-radius: 15px 15px 15px 15px;'"
                     >
                       <v-card-text>
@@ -1075,6 +1076,7 @@ export default {
       pictureUrHistory: '',
       dialogHistory: false,
       itemBookingCount: [],
+      itemBookingCount2: [],
       setTimerCalendar: null,
       checkShowCount: false
     }
@@ -1411,6 +1413,7 @@ export default {
         if (this.checkShowCount) {
           await this.getBookingDataList(this.dateStart)
         }
+        console.log('this.flowSelect : ???????? ', this.flowSelect)
         let urlApi = {}
         if (this.flowSelect === 'allFlow') {
           urlApi =
@@ -1441,6 +1444,7 @@ export default {
         }
         await axios.get(urlApi).then(async response => {
           let rs = response.data
+          console.log('rssssssssssssssss', rs)
           if (rs.length > 0) {
             let sortData = rs.sort((a, b) => {
               if (a.storeFrontQueue < b.storeFrontQueue) return -1
@@ -1463,6 +1467,7 @@ export default {
               // s.displayFlowName = d.displayFlowName || ''
               this.itemBookingUse.push(d)
             }
+            console.log('aaaaaaaaaaaaaaa', this.itemBookingUse)
             itemBookingTem = this.itemBookingUse
             for (let i = 0; i < this.itemBookingUse.length; i++) {
               let d = this.itemBookingUse[i]
@@ -1487,6 +1492,7 @@ export default {
                 }
               }
             }
+            console.log('this.modelslide : ', itemBookingCountTem)
             if (this.modelslide === '' || this.modelslide === 'allFlow') {
               itemBookingTem = this.itemBookingUse
             } else {
@@ -1496,6 +1502,7 @@ export default {
             }
             this.itemBooking = itemBookingTem
             this.itemBookingCount = itemBookingCountTem
+            this.itemBookingCount2 = itemBookingCountTem
             if (checkNoti === 'noti') {
               console.log(
                 'item',
