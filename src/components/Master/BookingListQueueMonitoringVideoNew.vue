@@ -52,7 +52,8 @@
       <v-row v-show="hideSound === true">
             <v-col>
               <audio id="playerPrefix" controls="controls">>
-                <source src="https://storage.googleapis.com/clinic_ruangkao/queue.wav">
+                <source src="https://storage.googleapis.com/thaiairway-sound/prefix1.wav">
+                <!-- <source src="https://storage.googleapis.com/clinic_ruangkao/queue.wav"> -->
                 Your browser does not support the audio format.
               </audio>
               <audio id="playerQueue" controls="controls">>
@@ -60,7 +61,8 @@
                 Your browser does not support the audio format.
               </audio>
               <audio id="playerSuffix" controls="controls">>
-                <source src="https://storage.googleapis.com/clinic_ruangkao/invite.wav">
+                <source src="https://storage.googleapis.com/thaiairway-sound/suffix1.wav">
+                <!-- <source src="https://storage.googleapis.com/clinic_ruangkao/invite.wav"> -->
                 Your browser does not support the audio format.
               </audio>
             </v-col>
