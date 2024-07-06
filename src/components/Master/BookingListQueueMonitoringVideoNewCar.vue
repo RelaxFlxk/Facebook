@@ -1,8 +1,48 @@
 <template>
-  <div :style="{ backgroundColor: shopColor, height: '100%', width: '100%' }">
-      <div :class="`d-flex ${isPortrait ? 'flex-column':'flex-row'}`">
-          <BookingUse :bookingUse="itemBookingUse" :isPortrait="isPortrait"/>
-          <div v-if="!isPortrait"  class="col-7 d-flex flex-column">
+  <div
+    :style="{ backgroundColor: '#FBD743', height: '100%', width: '100%' }"
+    class="respons_bg"
+  >
+    <v-row class="pt-3 respons_mobie">
+      <v-col class="d-flex justify-start p-0">
+        <img
+          alt="Motor bike"
+          height="200px"
+          :src="require('../../assets/header-bike.png')"
+          class="respons_img1"
+        />
+      </v-col>
+      <v-col class="d-flex flex-column align-center p-0 respons_logo">
+        <div class="mt-3">
+          <img
+            alt="Logo"
+            height="140px"
+            :src="require('../../assets/logo-car.png')"
+          />
+        </div>
+        <div class="mb-3">
+          <span class="text-header">{{ masBranchName }}</span>
+        </div>
+      </v-col>
+      <v-col class="d-flex justify-end p-0">
+        <img
+          alt="Car"
+          height="200px"
+          :src="require('../../assets/header-car.png')"
+          class="respons_img2"
+        />
+      </v-col>
+    </v-row>
+    <BookingUseCar
+      :bookingUse="itemBookingUse"
+      :isPortrait="isPortrait"
+      :shopId="shopId"
+      :masBranchID="masBranchID"
+      :test="resPondArr"
+    />
+    <!-- <div class="d-flex flex-column col-4" v-for="(group, groupIndex) in groupedData" :key="groupIndex">
+          <BookingUseCar :bookingUse="itemBookingUse" :isPortrait="isPortrait"/> -->
+    <!-- <div v-if="!isPortrait"  class="col-7 d-flex flex-column">
               <div class="mt-5">
               <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
               <source :src="videoLinkMonition" type="video/webm">
@@ -13,24 +53,27 @@
               <CardQueueSummary class="col-4" :queueSummary="queueSummary ? queueSummary : []"/>
               <CardWaitingAll class="col" :groupQueueItem="groupQueueWaitingAll && groupQueueWaitingAll.length > 0 ?  groupQueueWaitingAll.slice(0, 12) : []"/>
             </div>
-          </div>
-      </div>
-     <div v-if="isPortrait" class="col-12 d-flex flex-row justify-content-between height-card">
+          </div> -->
+    <!-- </div> -->
+    <!-- <div v-if="isPortrait" class="col-12 d-flex flex-row justify-content-between height-card">
       <CardQueueSummary class="col-4" :queueSummary="queueSummary ? queueSummary : []"/>
       <CardWaitingAll class="col" :groupQueueItem="groupQueueWaitingAll && groupQueueWaitingAll.length > 0 ?  groupQueueWaitingAll.slice(0, 12) : []"/>
-     </div>
-      <div v-if="isPortrait" class="d-flex flex-row justify-content-between">
+     </div> -->
+    <!-- <div v-if="isPortrait" class="d-flex flex-row justify-content-between">
           <video v-if="videoLinkMonition.includes('firebasestorage')" ref="video" id="videoAds" class="col-12" width="100%" autoplay muted autopictureinpicture controls loop="true" poster="https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FbetaskMonitor.png?alt=media&token=eba79dd1-c0f3-4799-aea1-4187e2662fc6">
               <source :src="videoLinkMonition" type="video/webm">
            </video>
           <iframe v-else ref="video" id="videoAds" class="mt-15" width="90%" height="600px" :src="videoLinkMonition + '?playlist=' + videoLinkMonition.substring(videoLinkMonition.length -11) + '&autoplay=1&loop=1'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-     </div>
-      <div :class="`d-flex flex-row justify-content-between mx-3`">
-          <div class="col-6 py-0">
-            <v-icon class="mr-3" large>
-             {{ wifiIcon }}
-             </v-icon>
-             <v-btn icon
+     </div> -->
+    <div :class="`d-flex flex-row justify-content-between footer-color`">
+      <div class="col-6 p-0 d-flex align-items-center ma-2">
+        <v-icon class="ml-6" large>
+          {{ wifiIcon }}
+        </v-icon>
+        <span class="text-footer ml-3" style="opacity: 0.9;"
+          >POWER BY BETASK CONSULTING</span
+        >
+        <!-- <v-btn icon
                       large
                       color="#695988"
                       @click="changeStatusSound('off')"
@@ -45,15 +88,36 @@
                       v-else
                     >
                     <v-icon>mdi-volume-off</v-icon>
-                    </v-btn>
-                  </div>
-          <div class="col-6 py-0 d-flex justify-content-end"><span class="text-datetime">{{ formattedDateTime }}</span></div>
+                    </v-btn> -->
       </div>
-      <v-row v-show="hideSound === true">
+      <div
+        class="col-6 py-0 d-flex justify-content-end text-footer align-items-center"
+      >
+        <!-- <div class="d-flex flex-row align-items-center mr-3"> -->
+        <div class="mr-1"><v-icon color="red">mdi-map-marker</v-icon></div>
+        <div style="opacity: 0.9;"><span>Muang Thong Thani</span></div>
+        <v-divider
+          inset
+          vertical
+          class="mx-6 flex-grow-1"
+          style="height: 25px; border-left: 2px solid; opacity: 0.4;"
+        ></v-divider>
+        <!-- </div> -->
+        <!-- <span class="text-datetime mr-2">{{ userBranch.masBranchName }}</span> -->
+        <span style="opacity: 0.9;">{{ formattedDate }}</span>
+        <v-divider
+          inset
+          vertical
+          class="mx-6 flex-grow-1 "
+          style="height: 25px; border-left: 2px solid; opacity: 0.4;"
+        ></v-divider>
+        <span style="opacity: 0.9;" class="mr-8">{{ formattedTime }}</span>
+      </div>
+    </div>
+    <!-- <v-row v-show="hideSound === true">
             <v-col>
               <audio id="playerPrefix" controls="controls">>
-                <source src="https://storage.googleapis.com/thaiairway-sound/prefix1.wav">
-                <!-- <source src="https://storage.googleapis.com/clinic_ruangkao/queue.wav"> -->
+                <source src="https://storage.googleapis.com/clinic_ruangkao/queue.wav">
                 Your browser does not support the audio format.
               </audio>
               <audio id="playerQueue" controls="controls">>
@@ -61,33 +125,38 @@
                 Your browser does not support the audio format.
               </audio>
               <audio id="playerSuffix" controls="controls">>
-                <source src="https://storage.googleapis.com/thaiairway-sound/suffix1.wav">
-                <!-- <source src="https://storage.googleapis.com/clinic_ruangkao/invite.wav"> -->
+                <source src="https://storage.googleapis.com/clinic_ruangkao/invite.wav">
                 Your browser does not support the audio format.
               </audio>
             </v-col>
             <v-col>
               {{history}}
             </v-col>
-          </v-row>
+          </v-row> -->
   </div>
 </template>
 <script>
 import axios from 'axios' // api
 import adminLeftMenu from '../Sidebar.vue'
 import moment from 'moment-timezone'
-import { CardWaitingAll, BookingUse, CardQueueSummary } from '../TV'
+import { CardWaitingAll, BookingUseCar, CardQueueSummary } from '../TV'
 
 export default {
   components: {
     'left-menu-admin': adminLeftMenu,
     CardWaitingAll,
-    BookingUse,
+    BookingUseCar,
     CardQueueSummary
   },
   computed: {
-    formattedDateTime () {
-      return this.currentTime
+    formattedTime () {
+      return moment(this.currentTime, 'DD/MMM/YYYY hh:mm A').format('hh:mm A')
+    },
+    formattedDate () {
+      const dateString = this.currentTime.split(' ')[0]
+      const [day, month, year] = dateString.split('/')
+      return `${parseInt(day)} ${month} ${year}`
+      // return dateString
     },
     wifiIcon () {
       switch (this.wifiStatus) {
@@ -98,22 +167,64 @@ export default {
         default:
           return 'mdi-wifi-strength-alert-outline'
       }
+    },
+    sortedDataQueueList () {
+      // แยกข้อมูลที่มีค่าและค่าว่าง
+      const queueData = this.itemBookingUse.filter(
+        item => item.queue !== '' && item.masBranchName !== ''
+      )
+      const emptyData = this.itemBookingUse.filter(
+        item => item.queue === '' || item.masBranchName === ''
+      )
+      const sortedNonEmptyData = queueData
+        .slice()
+        .sort((a, b) => a.index - b.index)
+        .reverse()
+
+      // รวมข้อมูลที่มีค่าที่จัดเรียงแล้วและข้อมูลที่ว่าง
+      return sortedNonEmptyData.concat(emptyData)
+    },
+    groupedData () {
+      const chunkSize = 6
+      const groups = []
+      const sortedData = this.sortedDataQueueList
+      console.log('sortedData', sortedData)
+
+      // this.itemBookingUse = this.itemBookingUse.map(item => ({
+      //   storeFrontQueue: item.storeFrontQueue,
+      //   masBranchName: item.masBranchName
+      // }))
+
+      console.log('this.itemBookingUse groupedData', this.itemBookingUse)
+      for (let i = 0; i < sortedData.length; i += chunkSize) {
+        groups.push(sortedData.slice(i, i + chunkSize))
+      }
+      console.log('groups', groups)
+      return groups
     }
   },
   created () {
     this.checkWiFiStatus()
-    window.addEventListener('online', () => { this.wifiStatus = 'connected' })
-    window.addEventListener('offline', () => { this.wifiStatus = 'disconnected' })
+    window.addEventListener('online', () => {
+      this.wifiStatus = 'connected'
+    })
+    window.addEventListener('offline', () => {
+      this.wifiStatus = 'disconnected'
+    })
   },
   data () {
     return {
+      masBranchName: '',
+      // currentDate: moment().format('DD MMM YYYY'),
+      // currentTime: moment().format('HH:mm'),
       orientation: '',
       statusSound: false,
       dateStartShow: '',
-      video: 'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
+      video:
+        'https://www.youtube.com/watch?v=B5TDAXLPrRY&list=RDCMUC-4vsQo3bHMzLuHyVM_iIRA&start_radio=1',
       validSearch: true,
       itemBooking: [],
-      itemBookingUse: [],
+      itemBookingUse: this.getTempleteQueue(),
       BookingDataList: [],
       menuStart: false,
       timeavailable: [],
@@ -175,12 +286,13 @@ export default {
       countConfirm: 0,
       countConfirmList: [],
       isPortrait: true,
-      currentTime: moment().format('DD/MMM/YYYY HH:mm'),
+      currentTime: moment().format('DD/MMM/YYYY HH:mm A'),
       wifiStatus: 'unknown',
       soundQueneNo: [],
       dataListPlay: [],
       queueSummary: [],
-      groupQueueWaitingAll: []
+      groupQueueWaitingAll: [],
+      resPondArr: []
     }
   },
   async mounted () {
@@ -196,7 +308,7 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     this.setTime()
-    document.querySelector('body').requestFullscreen()
+    // document.querySelector('body').requestFullscreen()
     this.intervalSearch = setInterval(() => {
       this.searchBooking()
     }, 10000)
@@ -214,6 +326,82 @@ export default {
     this.statusSound = false
   },
   methods: {
+    getTempleteQueue () {
+      return [
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        },
+        {
+          queue: '',
+          serviceNo: ''
+        }
+      ]
+    },
     checkOrientation () {
       this.isPortrait = window.innerHeight > window.innerWidth
     },
@@ -239,12 +427,20 @@ export default {
       try {
         await axios
           .get(
-            `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` + this.$session.getAll().data.shopId
-          ).then(async (response) => {
+            `${this.DNS_IP}/callQueues/get?statusNotify=False&shopId=` +
+              this.$session.getAll().data.shopId
+          )
+          .then(async response => {
             // เช็ค this.statusSound ต้องเป็น true ถึงจะให้เล่นเสียง
             // ถ้า response.data เป็น object = ไม่มีข้อมูล | ถ้า response.data เป็น array = มีข้อมูล, response.data.status = undefined เพราะเป็นการเช็ค object แต่เอามาเช็ค array จึงทำให้ undefined
-            if ((Array.isArray(response.data) && response.data.length > 0 && this.statusSound) ||
-                (typeof response.data === 'object' && typeof response.data.status !== 'boolean' && this.statusSound)) {
+            if (
+              (Array.isArray(response.data) &&
+                response.data.length > 0 &&
+                this.statusSound) ||
+              (typeof response.data === 'object' &&
+                typeof response.data.status !== 'boolean' &&
+                this.statusSound)
+            ) {
               clearInterval(this.objInterval)
               let result = await this.generateSound(response.data[0])
               await this.updateMessage(response.data[0].id, result)
@@ -258,7 +454,7 @@ export default {
             }
           })
       } catch (e) {
-        console.log(e)
+        // console.log(e)
         setTimeout(this.getMessage, 10000)
       }
     },
@@ -268,25 +464,6 @@ export default {
         audioFile: result.audio_url
       }
       axios.post(`${this.DNS_IP}/callQueues/edit/${id}`, params)
-    },
-    async isSound (typeStoreFront, numberStoreFront) {
-      let isSound = false
-      try {
-        if (typeStoreFront === 'A' && numberStoreFront <= 450) {
-          isSound = true
-        } else if (typeStoreFront === 'B' && numberStoreFront <= 400) {
-          isSound = true
-        } else if (typeStoreFront === 'C' && numberStoreFront <= 350) {
-          isSound = true
-        } else if (typeStoreFront === 'M' && numberStoreFront <= 300) {
-          isSound = true
-        } else if (typeStoreFront === 'O' && numberStoreFront <= 200) {
-          isSound = true
-        }
-      } catch (error) {
-        console.log('error isSound', error)
-      }
-      return isSound
     },
     async generateSound (item) {
       try {
@@ -298,25 +475,30 @@ export default {
         storeFrontQueue = storeFrontQueue.replace('D', 'ดี')
         storeFrontQueue = storeFrontQueue.replace('E', 'อี')
         let result
-        // let oldSound = this.soundQueneNo.filter((row) => { return row.queue === item.storeFrontQueue })
+        let oldSound = this.soundQueneNo.filter(row => {
+          return row.queue === item.storeFrontQueue
+        })
         item.audioFile = null
-        const typeStoreFront = item.storeFrontQueue.substring(0, 1)
-        const numberStoreFront = parseInt(item.storeFrontQueue.substring(1))
-
-        console.log('typeStoreFront', typeStoreFront)
-        console.log('numberStoreFront', numberStoreFront)
-        console.log('generateSound item', item)
-        if (this.isSound(typeStoreFront, numberStoreFront)) {
-          item.audioFile = `https://storage.googleapis.com/thaiairway-sound/${item.storeFrontQueue}.wav`
+        if (oldSound && oldSound.length > 0) {
+          item.audioFile = oldSound[0].audioFile
         } else {
-          console.log('oldSound no have')
+          // console.log('oldSound no have')
           await axios
             .get(
-              `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` + this.$session.getAll().data.shopId + `&audioFile=notNull`
-            ).then(async (response) => {
-              console.log('nont oldSound callQueues', response.data)
-              if ((Array.isArray(response.data) && response.data.length > 0 && this.statusSound) ||
-                  (typeof response.data === 'object' && typeof response.data.status !== 'boolean' && this.statusSound)) {
+              `${this.DNS_IP}/callQueues/get?storeFrontQueue=${item.storeFrontQueue}&shopId=` +
+                this.$session.getAll().data.shopId +
+                `&audioFile=notNull`
+            )
+            .then(async response => {
+              // console.log('nont oldSound callQueues', response.data)
+              if (
+                (Array.isArray(response.data) &&
+                  response.data.length > 0 &&
+                  this.statusSound) ||
+                (typeof response.data === 'object' &&
+                  typeof response.data.status !== 'boolean' &&
+                  this.statusSound)
+              ) {
                 item.audioFile = response.data[0].audioFile
               }
             })
@@ -335,8 +517,14 @@ export default {
             .post(
               'https://api-voice.botnoi.ai/openapi/v1/generate_audio',
               params,
-              { headers: { 'Botnoi-Token': 'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0' } }
-            ).then((res) => {
+              {
+                headers: {
+                  'Botnoi-Token':
+                    'VTNjZDc5OTM3ZjM4MDg4NzhkYzlkMTI0ZjNiZWZlMTZkNTYxODk0'
+                }
+              }
+            )
+            .then(res => {
               this.dataListPlay.push(res.data)
               this.playSound(res.data)
               result = res.data
@@ -349,7 +537,7 @@ export default {
         }
         return result
       } catch (e) {
-        console.log(e)
+        // console.log(e)
         return null
       }
     },
@@ -377,21 +565,21 @@ export default {
         playerQueue.src = res.audio_url
         vid.pause()
         playerPrefix.play()
-        playerPrefix.onended = (event) => {
+        playerPrefix.onended = event => {
           playerQueue.load()
           playerQueue.play()
-          playerQueue.onended = (event) => {
+          playerQueue.onended = event => {
             playerSuffix.load()
             playerSuffix.play()
-            playerSuffix.onended = (event) => {
+            playerSuffix.onended = event => {
               if (this.timeCount < this.repeatRound) {
                 this.timeCount++
                 playerPrefix.play()
-                playerPrefix.onended = (event) => {
+                playerPrefix.onended = event => {
                   playerQueue.play()
-                  playerQueue.onended = (event) => {
+                  playerQueue.onended = event => {
                     playerSuffix.play()
-                    playerSuffix.onended = (event) => {
+                    playerSuffix.onended = event => {
                       vid.play()
                     }
                   }
@@ -401,7 +589,7 @@ export default {
           }
         }
       } catch (error) {
-        console.log('Error playSound', error)
+        // console.log('Error playSound', error)
       }
     },
     async getShop () {
@@ -442,68 +630,105 @@ export default {
     async searchBooking () {
       this.queueSummary = []
       this.itemBooking = []
+      // this.itemBookingUse = this.getTempleteQueue()
       if (this.validSearch === true) {
-        let urlApi = this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.shopId +
-            '&masBranchID=' +
-            this.masBranchID +
-            // '&flowId=' +
-            // this.flowSelect +
-            '&dueDate=' +
-             moment().format('YYYY-MM-DD') + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
+        let urlApi =
+          this.DNS_IP +
+          '/booking_view/get?shopId=' +
+          this.shopId +
+          '&masBranchID=' +
+          this.masBranchID +
+          // '&flowId=' +
+          // this.flowSelect +
+          '&dueDate=' +
+          moment().format('YYYY-MM-DD') +
+          '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         // '&dueDate=' +
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
-        await axios
-          .get(urlApi)
-          .then(async response => {
-            let rs = response.data
-            if (rs.length > 0) {
-              this.groupQueueWaitingAll = rs.filter(el => { return el.statusBt === 'confirm' })
-              let sortData = rs.sort((a, b) => {
-                if (a.storeFrontQueue < b.storeFrontQueue) return -1
-                return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
-              })
-              for (let i = 0; i < sortData.length; i++) {
-                let d = sortData[i]
-                d.servicePoint = d.servicePoint || ''
-                this.itemBooking.push(d)
-              }
-              let dataCon = this.itemBooking.filter(el => { return el.statusBt === 'confirmJob' })
-              let dataWain = this.itemBooking.filter(el => { return el.statusBt === 'confirm' })
-              let sortDataDataCon = dataCon.sort((a, b) => {
-                if (a.LAST_DATE > b.LAST_DATE) return -1
-                return a.LAST_DATE < b.LAST_DATE ? 1 : 0
-              })
-              this.queueSummary = await this.groupCountType(dataWain)
-              this.countConfirm = dataWain.length
-              this.countConfirmList = dataWain.filter((el, ind) => { return ind <= 11 })
-              this.itemBookingUse = sortDataDataCon.filter((el, ind) => { return ind <= 5 })
-            } else {
-              this.itemBookingUse = []
-              this.countConfirm = 0
-              this.queueSummary = []
-              this.groupQueueWaitingAll = []
-              this.countConfirmList = []
+        await axios.get(urlApi).then(async response => {
+          let rs = response.data
+          console.log('this.resPondArr : ', rs)
+          if (rs.length > 0) {
+            this.groupQueueWaitingAll = rs.filter(el => {
+              return el.statusBt === 'confirm'
+            })
+            let sortData = rs.sort((a, b) => {
+              if (a.storeFrontQueue < b.storeFrontQueue) return -1
+              return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
+            })
+            for (let i = 0; i < sortData.length; i++) {
+              let d = sortData[i]
+              d.servicePoint = d.servicePoint || ''
+              this.itemBooking.push(d)
             }
-          })
+            let dataCon = this.itemBooking.filter(el => {
+              return el.statusBt === 'confirmJob'
+            })
+            let dataWain = this.itemBooking.filter(el => {
+              return el.statusBt === 'confirm'
+            })
+            let sortDataDataCon = dataCon.sort((a, b) => {
+              if (a.LAST_DATE > b.LAST_DATE) return -1
+              return a.LAST_DATE < b.LAST_DATE ? 1 : 0
+            })
+            this.queueSummary = await this.groupCountType(dataWain)
+            this.countConfirm = dataWain.length
+            this.countConfirmList = dataWain.filter((el, ind) => {
+              return ind <= 11
+            })
+            this.itemBookingUse = sortDataDataCon.filter((el, ind) => {
+              return ind <= 5
+            })
+
+            this.resPondArr = rs.filter(el => {
+              return el.statusBt === 'confirmJob'
+            })
+
+            // this.resPondArr = this.resPondArr.sort((a, b) => {
+            //   if (a.storeFrontQueue < b.storeFrontQueue) return -1
+            //   return a.storeFrontQueue > b.storeFrontQueue ? 1 : 0
+            // })
+            this.resPondArr.sort(function (a, b) {
+              // Turn your strings into dates, and then subtract them
+              // to get a value that is either negative, positive, or zero.
+              return (
+                new Date(b.CREATE_DATE_Status) - new Date(a.CREATE_DATE_Status)
+              )
+            })
+
+            this.resPondArr = this.resPondArr.slice(0, 18)
+
+            // console.log('this.itemBookingUs book', this.itemBookingUse)
+          } else {
+            this.itemBookingUse = this.getTempleteQueue()
+            this.countConfirm = 0
+            this.queueSummary = []
+            this.groupQueueWaitingAll = []
+            this.countConfirmList = []
+          }
+        })
       }
     },
     async groupCountType (dataConfirm) {
       try {
-        const countStoreFrontText = dataConfirm.reduce((accumulator, currentValue) => {
-          const text = currentValue.storeFrontText
-          accumulator[text] = (accumulator[text] || 0) + 1
-          return accumulator
-        }, {})
-        const queueSummaryArray = Object.entries(countStoreFrontText).map(([key, value]) => {
-          return { key, value }
-        })
+        const countStoreFrontText = dataConfirm.reduce(
+          (accumulator, currentValue) => {
+            const text = currentValue.storeFrontText
+            accumulator[text] = (accumulator[text] || 0) + 1
+            return accumulator
+          },
+          {}
+        )
+        const queueSummaryArray = Object.entries(countStoreFrontText).map(
+          ([key, value]) => {
+            return { key, value }
+          }
+        )
         if (queueSummaryArray.length > 0) {
           return queueSummaryArray
         }
       } catch (error) {
-        console.log('error', error)
+        // console.log('error', error)
       }
     },
     getDataFromFieldName (data, key) {
@@ -523,23 +748,26 @@ export default {
         .get(url)
         .then(async response => {
           if (response.data.status !== false) {
-            response.data.forEach((row) => {
-              if (typeof (this.BookingDataList[row.bookNo]) === 'undefined') {
+            response.data.forEach(row => {
+              if (typeof this.BookingDataList[row.bookNo] === 'undefined') {
                 this.BookingDataList[row.bookNo] = []
               }
               this.BookingDataList[row.bookNo].push(row)
             })
           }
-        }).catch(error => {
+        })
+        .catch(error => {
           // this.dataEditReady = true
           setTimeout(() => this.getBookingDataList(dateStart), 3000)
           console.log('catch getBookingDataList : ', error)
         })
-      console.log('this.BookingDataList1', this.BookingDataList)
+      // console.log('this.BookingDataList1', this.BookingDataList)
     },
     setTime () {
       this.timeavailable = []
-      let checkFlow = this.DataFlowItem.filter(el => { return el.value === this.flowSelect })
+      let checkFlow = this.DataFlowItem.filter(el => {
+        return el.value === this.flowSelect
+      })
       if (checkFlow.length > 0) {
         this.timeavailable = JSON.parse(checkFlow[0].allData.setTime)
       } else {
@@ -549,7 +777,9 @@ export default {
     async getDataFlow () {
       let resultOption = []
       await axios
-        .get(this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True`)
+        .get(
+          this.DNS_IP + `/flow/get?shopId=${this.shopId}&storeFrontCheck=True`
+        )
         .then(response => {
           let rs = response.data
           if (rs.length > 0) {
@@ -580,19 +810,32 @@ export default {
       //   localStorage.setItem('BRANCH', JSON.stringify(temp))
       // }
       // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
-      this.branchItem = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName', '', 'masBranchNameEn')
+      this.branchItem = await this.getDataFromAPI(
+        '/master_branch/get',
+        'masBranchID',
+        'masBranchName',
+        '',
+        'masBranchNameEn'
+      )
       if (this.branchItem && this.branchItem.length > 0) {
         const branchSession = this.session.data.masBranchID
         let USER_ROLE = this.session.data.USER_ROLE || ''
         if (USER_ROLE === 'user' && branchSession) {
-          const matchBranch = this.branchItem.filter(branch => branch.allData.masBranchID === branchSession)
+          const matchBranch = this.branchItem.filter(
+            branch => branch.allData.masBranchID === branchSession
+          )
           this.userBranch = matchBranch
-          this.branchItem = matchBranch.length > 0 ? matchBranch : this.branchItem
+          this.branchItem =
+            matchBranch.length > 0 ? matchBranch : this.branchItem
           this.masBranchID = this.branchItem[0].value
+          this.masBranchName = this.branchItem[0].text
         } else {
           // (Role: admin และ user ที่ไม่ผูก branch ) จะ fix masBranchID เพื่อโชว์คิวหน้า tv เฉพาะสำนักงานใหญ่
-          const headOffice = this.branchItem.find(branch => branch.text === 'สำนักงานใหญ่')
+          const headOffice = this.branchItem.find(
+            branch => branch.text === 'สำนักงานใหญ่'
+          )
           this.masBranchID = headOffice ? headOffice.allData.masBranchID : null
+          this.masBranchName = this.branchItem[0].text
         }
       }
     },
@@ -645,7 +888,9 @@ export default {
           .then(async responses => {
             this.$swal('เรียบร้อย', 'นำเข้าสำเร็จ', 'success')
             await this.searchBooking()
-            let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
+            let bookSelect = this.itemBooking.filter((element, index) => {
+              return index <= 2
+            })
             if (bookSelect.length > 0) {
               for (let i = 0; i < bookSelect.length; i++) {
                 let d = bookSelect[i]
@@ -654,7 +899,8 @@ export default {
                 if (s.lineUserId !== '') {
                   await axios
                     .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-                    .then(async responses => {}).catch(error => {
+                    .then(async responses => {})
+                    .catch(error => {
                       console.log('error function pushMsgQueue : ', error)
                     })
                 }
@@ -671,15 +917,15 @@ export default {
 </script>
 <style scope>
 .centered-input >>> input {
-      text-align: center
-    }
+  text-align: center;
+}
 #margin {
   margin-top: 50px;
   margin-bottom: 40px;
 }
 .v_text_edit {
-  Width: 255px;
-  Height: 52px;
+  width: 255px;
+  height: 52px;
   font-size: 10px !important;
 }
 #subtext {
@@ -697,20 +943,88 @@ export default {
   height: auto;
   text-align: center;
   border: solid 1px blue;
-  padding: .5rem;
+  padding: 0.5rem;
 }
 .text-black >>> .v-input__slot {
   color: #005fcc !important;
 }
-
-.text-datetime, .text-number-waiting{
+.text-datetime,
+.text-number-waiting {
   font-weight: 700;
 }
-@media screen and (orientation: portrait) {
-  .height-card{
-    min-height: 16vh;
-  }
+.text-footer {
+  font-size: 18px;
+  font-weight: 900;
+  color: #2e263d;
+}
+.divider-footer {
+  width: 200px;
+  height: 2px;
+}
+.bg-primary {
+  background-image: linear-gradient(to bottom, #f7d142, #dfa627);
+}
+.bg-secondary {
+  background-image: linear-gradient(to top, #f7d142, #dfa627);
+}
+.footer-color {
+  background-color: #f2c300;
+}
+.text-footer .v-divider {
+  transform: translateY(30%);
+}
+.text-header {
+  font-size: 1.5vw;
+  font-weight: 900;
+  color: #2e263d;
+  opacity: 0.9;
+  display: block;
+  text-align: center;
+  margin-top: 8px; /* Adjust this value as needed */
 }
 
-@media screen and (orientation: landscape) {}
+@media screen and (max-width: 874px) {
+  .respons_mobie {
+    width: 100%; /* ปรับความกว้างของ v-row */
+    height: 30%;
+    /* margin: 0 auto; */
+    /* margin-top: -50px; */
+  }
+  .respons_mobie img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  .respons_mobie .v-col {
+    display: flex;
+    align-items: center; /* จัดให้รูปภาพอยู่ตรงกลางแนวตั้ง */
+  }
+  .respons_img1 {
+    height: auto;
+    max-height: 100px;
+    margin-top: -50px;
+  }
+  .respons_img2 {
+    height: auto;
+    max-height: 100px;
+    margin-right: -20px;
+  }
+  .respons_bg {
+    height: auto; /* ใช้ความสูงอัตโนมัติ */
+    max-height: 100%; /* ปรับให้เต็มหน้าจอ */
+  }
+  .respons_logo {
+    margin-left: 30px;
+  }
+}
+@media screen and (min-width: 1000px) {
+  .img-promot {
+    width: 85%;
+  }
+}
+@media screen and (min-width: 1500px) {
+  .img-promot {
+    width: 85%;
+  }
+}
 </style>
