@@ -1131,7 +1131,7 @@ export default {
                 { title: 'แสดงผลคิวหน้าร้าน', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoring', type: 'booking' },
                 { title: 'แสดงผลคิวหน้าร้าน วิดีโอ', icon: 'mdi-monitor-eye', to: '/Master/BookingListQueueMonitoringVideoEventCat', type: 'booking' }
               ]
-            } else if (this.$session.getAll().data.shopId === 'U46b17db406ee6976c058cb98486957c4') {
+            } else if (this.$session.getAll().data.shopId === 'Ubb80127ad92f4b69686a9a5a7aabd463') {
               this.booking = [
                 { title: 'จัดการลิ้งค์', icon: 'mdi-link-variant', to: '/Master/ManageLink', type: 'booking' },
                 // { title: 'หน้านัดหมาย', icon: 'mdi-application-settings', to: '/Master/BookingLink', type: 'booking' },

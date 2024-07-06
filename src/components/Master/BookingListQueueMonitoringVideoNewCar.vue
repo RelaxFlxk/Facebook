@@ -2,14 +2,19 @@
   <div :style="{ backgroundColor: '#FBD743', height: '100%', width: '100%' }" class="respons_bg">
     <v-row class="pt-3 respons_mobie">
       <v-col class="d-flex justify-start p-0">
-        <img alt="Motor bike" :src="require('../../assets/header-bike.png')" class="respons_img1" />
+        <img alt="Motor bike" height="200px" :src="require('../../assets/header-bike.png')" class="respons_img1" />
       </v-col>
       <v-col class="d-flex flex-column align-center p-0 respons_logo">
-        <img alt="Logo" :src="require('../../assets/logo-car.png')" />
-        <span class="text-header">รถยนต์</span>
+        <div class="mt-3">
+          <img alt="Logo" height="140px" :src="require('../../assets/logo-car.png')" />
+        </div>
+        <div class="mb-3">
+          <span class="text-header">{{masBranchName}}</span>
+        </div>
+
       </v-col>
       <v-col class="d-flex justify-end p-0">
-        <img alt="Car" :src="require('../../assets/header-car.png')" class="respons_img2" />
+        <img alt="Car" height="200px" :src="require('../../assets/header-car.png')" class="respons_img2" />
       </v-col>
     </v-row>
     <div class="row d-flex justify-content-center px-4 pb-3">
@@ -74,7 +79,7 @@
           <div class="col-6 py-0 d-flex justify-content-end text-footer align-items-center">
             <!-- <div class="d-flex flex-row align-items-center mr-3"> -->
                 <div class="mr-1"><v-icon color="red">mdi-map-marker</v-icon></div>
-                <div style="opacity: 0.9;"><span>{{ masBranchName }}</span></div>
+                <div style="opacity: 0.9;"><span>Muang Thong Thani</span></div>
                 <v-divider inset vertical class="mx-6 flex-grow-1" style="height: 25px; border-left: 2px solid; opacity: 0.4;"></v-divider>
               <!-- </div> -->
             <!-- <span class="text-datetime mr-2">{{ userBranch.masBranchName }}</span> -->
@@ -850,7 +855,7 @@ export default {
   transform: translateY(30%);
 }
 .text-header{
-  font-size: 2vw;
+  font-size: 1.5vw;
   font-weight: 900;
   color: #2E263D;
   opacity: 0.9;

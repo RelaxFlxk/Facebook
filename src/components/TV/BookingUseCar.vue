@@ -67,7 +67,7 @@ export default {
     font-size: 3vw;
   }
   .text-Header {
-    font-size: 3vw;
+    font-size: 1.5vw;
   }
   .service{
     min-height: 5vh;
@@ -85,7 +85,7 @@ export default {
     font-size: 1.8vw;
   }
   .text-Header {
-    font-size: 2vw;
+    font-size: 1.5vw;
   }
   .service{
     min-height: 10vh;
