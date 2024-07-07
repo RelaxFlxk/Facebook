@@ -1355,6 +1355,7 @@ export default {
         if (this.$session.getAll().data.flowId !== null) {
           try {
             let checkArrayFlow = JSON.parse(this.$session.getAll().data.flowId)
+            console.error('checkArrayFlow.length: ', checkArrayFlow.length)
             if (checkArrayFlow.length === 1) {
               this.flowSelect = checkArrayFlow[0]
             }
@@ -1445,9 +1446,11 @@ export default {
             if (this.modelslide === '' || this.modelslide === 'allFlow') {
               itemBookingTem = this.itemBookingUse
             } else {
-              itemBookingTem = this.itemBookingUse.filter(el => {
-                return el.flowId === this.modelslide
-              })
+              if (this.dialogwidth !== '50%') {
+                itemBookingTem = this.itemBookingUse.filter(el => {
+                  return el.flowId === this.modelslide
+                })
+              }
             }
             this.itemBooking = itemBookingTem
             this.itemBookingCount = itemBookingCountTem
@@ -1469,7 +1472,7 @@ export default {
                 }
               }
             }
-            if (this.modelslide === '') {
+            if (this.modelslide === '' && this.dialogwidth !== '50%') {
               if (this.itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 && this.dialogwidth !== '50%') {
                 let chwckFlow = this.DataFlowItem.filter(el => el.value !== 'allFlow')
                 if (chwckFlow.length > 0) {
@@ -1570,7 +1573,7 @@ export default {
               this.userBranch &&
               this.userBranch.length > 0
             ) {
-              // resultOption.push({ text: 'ทั้งหมด', value: 'allFlow' })
+              resultOption.push({ text: 'ทั้งหมด', value: 'allFlow' })
               this.statusBranchReadonly = true
               for (let i = 0; i < rs.length; i++) {
                 let d = rs[i]

@@ -592,7 +592,7 @@ export default {
         } else {
           // (Role: admin และ user ที่ไม่ผูก branch ) จะ fix masBranchID เพื่อโชว์คิวหน้า tv เฉพาะสำนักงานใหญ่
           const headOffice = this.branchItem.find(branch => branch.text === 'สำนักงานใหญ่')
-          this.masBranchID = headOffice ? headOffice.allData.masBranchID : null
+          this.masBranchID = headOffice ? headOffice.allData.masBranchID : this.branchItem[0].value
         }
       }
     },
