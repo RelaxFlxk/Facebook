@@ -2,18 +2,7 @@
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
-      <div
-        :class="
-          dialogwidth === '50%'
-            ? 'pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4'
-            : 'px-lg-4'
-        "
-        :style="
-          dialogwidth === '50%'
-            ? ''
-            : 'overflow-x: hidden;height:100vh;background-color: #1B437C;padding-bottom: 80px;'
-        "
-      >
+      <div :class="dialogwidth === '50%' ? 'pl-12 pr-12 col-md-12 ml-sm-auto col-lg-12 px-4': 'px-lg-4'" :style="dialogwidth === '50%' ? '' : 'overflow-x: hidden;height:100vh;background-color: #1B437C;padding-bottom: 80px;'">
         <v-row>
           <v-col cols="6" class="text-left" v-if="dialogwidth === '50%'">
             <v-breadcrumbs :items="breadcrumbs" id="v-step-4"></v-breadcrumbs>
@@ -150,26 +139,6 @@
                   </v-date-picker>
                 </v-menu>
               </v-col>
-              <!-- <v-col col="auto">
-              <v-select
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                v-model="time"
-                hide-details
-                background-color="white"
-                :items="timeavailable"
-                label="เวลา"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-              >
-                <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-map-marker-circle
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col> -->
               <v-col cols="4" class="pt-0">
                 <v-text-field
                   v-model="search"
@@ -250,26 +219,30 @@
             v-else
           >
             <v-row>
-              <!-- <v-col cols="12" class="pl-10 pr-10">
-              <v-select
-                style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
-                v-model="flowSelect"
-                hide-details
-                background-color="white"
-                :items="DataFlowItem"
-                outlined
-                dense
-                required
-                :rules ="[rules.required]"
-                @change="searchBooking()"
-              >
-                <template #prepend-inner>
-                  <v-icon color="#69D1FD" style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;">
-                    mdi-note-text-outline
-                  </v-icon>
-                </template>
-              </v-select>
-            </v-col> -->
+              <v-col cols="12"  class="pl-10 pr-10">
+                <v-select
+                  v-model="masBranchID"
+                  background-color="white"
+                  style="box-shadow: 0px 38px 72px 30px rgb(10 4 60 / 6%);border-radius: 40px !important;margin-bottom: 10px;"
+                  hide-details
+                  :items="branchItem"
+                  label="สาขา"
+                  outlined
+                  dense
+                  required
+                  :disabled="statusBranchReadonly"
+                  :rules="[rules.required]"
+                  @change="searchBooking(), clearTimeLoop(), getDataFlow()"
+                  ><template #prepend-inner>
+                    <v-icon
+                      color="#69D1FD"
+                      style="background-color: #E0F4FF;padding: 4px;border-radius: 50px;margin-top: -1px;margin-right: 3px;margin-bottom: 3px;"
+                    >
+                      mdi-map-marker-outline
+                    </v-icon>
+                  </template>
+                </v-select>
+              </v-col>
               <v-col cols="12" class="pl-10 pr-10">
                 <v-menu
                   ref="menu"
@@ -321,15 +294,6 @@
           <v-row v-if="dialogwidth === '50%'">
             <v-col cols="12">
               <v-card>
-                <!-- <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="ค้นหา"
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title> -->
                 <v-data-table
                   :headers="headers"
                   :items="itemBooking"
@@ -503,97 +467,72 @@
               </v-card>
             </v-col>
           </v-row>
-          <v-row
-            v-if="
-              itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 &&
-                dialogwidth !== '50%'
-            "
-            justify="center"
-          >
+          <v-row v-if="itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 &&dialogwidth !== '50%'" justify="center">
             <v-col cols="10">
               <v-row>
                 <v-slide-group mandatory>
                   <v-slide-item v-for="(item, n) in DataFlowItem" :key="n">
-                    <v-card
-                      elevation="1"
-                      class="ma-2"
-                      min-width="100px"
-                      height="76px"
-                      :style="'border-radius: 15px 15px 15px 15px;'"
-                      :color="modelslide === item.value ? '#092C4C' : ''"
-                      v-if="
-                        itemBookingCount.filter(el => {
-                          return (
-                            el.flowId === item.value || item.value === 'allFlow'
-                          );
-                        }).length > 0
-                      "
-                      @click="
-                        (modelslide = item.value),
-                          item.value === 'allFlow'
-                            ? (itemBooking = itemBookingUse)
-                            : (itemBooking = itemBookingUse.filter(el => {
-                                return el.flowId === item.value;
-                              }))
-                      "
-                    >
-                      <v-card-text>
-                        <div class="text-center">
-                          <template>
-                            <strong
-                              v-if="item.value !== 'allFlow'"
-                              style="color:#FFFFFF;background-color:#092C4C;min-height: 30px;width:30px;border-radius: 80px 80px 80px 80px;display: flex;justify-content: center;align-items: center;"
-                              >{{
-                                itemBookingCount.filter(el => {
-                                  return el.flowId === item.value;
-                                })[0].countFlow
-                              }}</strong
-                            >
-                            <strong
-                              v-if="item.value !== 'allFlow'"
-                              :class="
-                                modelslide === item.value ? 'text-white' : ''
-                              "
-                              >{{ item.text }}</strong
-                            >
-                            <strong
-                              v-else
-                              :class="
-                                modelslide === item.value ? 'text-white' : ''
-                              "
-                              >{{ item.text }}</strong
-                            >
-                          </template>
-                        </div>
-                      </v-card-text>
-                    </v-card>
-                    <v-card
-                      elevation="1"
-                      min-width="100px"
-                      height="76px"
-                      class="ma-2"
-                      v-else
-                      @click="(flowSelect = item.value), searchBooking()"
-                      :style="'border-radius: 15px 15px 15px 15px;'"
-                    >
-                      <v-card-text>
-                        <div class="text-center">
-                          <template>
-                            <strong
-                              v-if="item.value !== 'allFlow'"
-                              style="color:#FFFFFF;background-color:#092C4C;min-height: 30px;width:30px;border-radius: 80px 80px 80px 80px;display: flex;justify-content: center;align-items: center;"
-                              >0</strong
-                            >
-                            <strong v-if="item.value !== 'allFlow'">{{
-                              item.text
-                            }}</strong>
-                            <strong v-if="item.value === 'allFlow'">{{
-                              item.text
-                            }}</strong>
-                          </template>
-                        </div>
-                      </v-card-text>
-                    </v-card>
+                    <template v-if="item.value !== 'allFlow'">
+                      <v-card
+                        elevation="1"
+                        class="ma-2"
+                        min-width="100px"
+                        height="76px"
+                        :style="'border-radius: 15px 15px 15px 15px;'"
+                        :color="modelslide === item.value ? '#092C4C' : ''"
+                        v-if="itemBookingCount.filter(el => {return (el.flowId === item.value || item.value === 'allFlow');}).length > 0"
+                        @click="(modelslide = item.value),item.value === 'allFlow' ? (itemBooking = itemBookingUse) : (itemBooking = itemBookingUse.filter(el => { return el.flowId === item.value;}))">
+                        <v-card-text>
+                          <div class="text-center">
+                            <template>
+                              <strong
+                                v-if="item.value !== 'allFlow'"
+                                style="color:#FFFFFF;background-color:#092C4C;min-height: 30px;width:30px;border-radius: 80px 80px 80px 80px;display: flex;justify-content: center;align-items: center;"
+                                >{{
+                                  itemBookingCount.filter(el => {
+                                    return el.flowId === item.value;
+                                  })[0].countFlow
+                                }}</strong
+                              >
+                              <strong
+                                v-if="item.value !== 'allFlow'"
+                                :class="
+                                  modelslide === item.value ? 'text-white' : ''">{{ item.text }}</strong>
+                              <strong
+                                v-else
+                                :class="
+                                  modelslide === item.value ? 'text-white' : ''">{{ item.text }}</strong>
+                            </template>
+                          </div>
+                        </v-card-text>
+                      </v-card>
+                      <v-card
+                        elevation="1"
+                        min-width="100px"
+                        height="76px"
+                        class="ma-2"
+                        v-else
+                        :style="'border-radius: 15px 15px 15px 15px;'"
+                        >
+                        <v-card-text>
+                          <div class="text-center">
+                            <template>
+                              <strong
+                                v-if="item.value !== 'allFlow'"
+                                style="color:#FFFFFF;background-color:#092C4C;min-height: 30px;width:30px;border-radius: 80px 80px 80px 80px;display: flex;justify-content: center;align-items: center;"
+                                >0</strong
+                              >
+                              <strong v-if="item.value !== 'allFlow'">{{
+                                item.text
+                              }}</strong>
+                              <strong v-if="item.value === 'allFlow'">{{
+                                item.text
+                              }}</strong>
+                            </template>
+                          </div>
+                        </v-card-text>
+                      </v-card>
+                    </template>
                   </v-slide-item>
                 </v-slide-group>
               </v-row>
@@ -1413,6 +1352,16 @@ export default {
         if (this.checkShowCount) {
           await this.getBookingDataList(this.dateStart)
         }
+        if (this.$session.getAll().data.flowId !== null) {
+          try {
+            let checkArrayFlow = JSON.parse(this.$session.getAll().data.flowId)
+            if (checkArrayFlow.length === 1) {
+              this.flowSelect = checkArrayFlow[0]
+            }
+          } catch (error) {
+            console.error('Error parsing JSON: ', error)
+          }
+        }
         console.log('this.flowSelect : ???????? ', this.flowSelect)
         let urlApi = {}
         if (this.flowSelect === 'allFlow') {
@@ -1471,7 +1420,7 @@ export default {
             itemBookingTem = this.itemBookingUse
             for (let i = 0; i < this.itemBookingUse.length; i++) {
               let d = this.itemBookingUse[i]
-              if (d.statusBt === 'confirm') {
+              if (d.statusBt === 'confirm' || d.statusBt === 'confirmJob') {
                 let checkFlow = itemBookingCountTem.filter(el => {
                   return el.flowId === d.flowId
                 })
@@ -1492,7 +1441,7 @@ export default {
                 }
               }
             }
-            console.log('this.modelslide : ', itemBookingCountTem)
+            console.log('this.modelslide : ', this.modelslide)
             if (this.modelslide === '' || this.modelslide === 'allFlow') {
               itemBookingTem = this.itemBookingUse
             } else {
@@ -1517,6 +1466,15 @@ export default {
                     parseInt(item.storeFrontNotifySet),
                     'False'
                   )
+                }
+              }
+            }
+            if (this.modelslide === '') {
+              if (this.itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 && this.dialogwidth !== '50%') {
+                let chwckFlow = this.DataFlowItem.filter(el => el.value !== 'allFlow')
+                if (chwckFlow.length > 0) {
+                  this.modelslide = chwckFlow[0].value
+                  this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === chwckFlow[0].value })
                 }
               }
             }
@@ -2226,7 +2184,7 @@ export default {
             // margin: [0, 0, 0, 0],
             // pageMargins: [ 5, 8, 5, 8 ],
             // pageSize: { width: pageWidth, height: pageHeight },
-            pageSize: 'A10',
+            pageSize: 'A4',
             content: [
               {
                 text: this.shopName,
