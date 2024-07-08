@@ -298,6 +298,9 @@ export default {
         if (this.evenStatus === 'Add') {
           let allItem = await this.buliDataEmp('Add')
           await this.createEvent(allItem)
+          if (this.shopId === 'Ub7cbc419244731cdd682354dd0e57cef') {
+            this.sentEmailEmp(bookNo)
+          }
         } else if (this.evenStatus === 'Edit') {
           let allItem = await this.buliDataEmp('Edit')
           console.log('Edit!!')
@@ -463,6 +466,14 @@ export default {
         }
       }
       return item
+    },
+    async sentEmailEmp (bookNo) {
+      let dt = {
+        'bookNo': bookNo
+      }
+      await axios.post(this.DNS_IP + '/email_booking/confirmEnglistMunMun', dt)
+        .then(response => {})
+        .catch(error => { console.log(error) })
     },
     async getBooking () {
       await axios.get(this.DNS_IP + '/booking_view/get?bookNo=' + this.bookNo).then(response => {

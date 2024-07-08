@@ -740,7 +740,8 @@ export default {
         .get(this.DNS_IP + `/flow/get?shopId=${this.$session.getAll().data.shopId}&storeFrontCheck=True&masBranchIDAll=${this.masBranchID}`)
         .then(response => {
           let rs = response.data
-          if (rs.length > 0) {
+          if (rs && rs.length > 0) {
+            // resultOption.push({'text': 'ทั้งหมด', 'value': 'allFlow'})
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
