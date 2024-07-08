@@ -308,7 +308,7 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     this.setTime()
-    // document.querySelector('body').requestFullscreen()
+    document.querySelector('body').requestFullscreen()
     this.intervalSearch = setInterval(() => {
       this.searchBooking()
     }, 10000)
