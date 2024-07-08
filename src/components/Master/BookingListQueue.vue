@@ -2928,7 +2928,7 @@ export default {
           เลขคิว: item.storeFrontQueue || '-',
           บริการภาษาไทย: item.flowName || '-',
           บริการภาษาอังกฤษ: item.flowNameEn || '-',
-          วันที่นัดหมาย: item.dueDateText || '-',
+          วันที่นัดหมาย: item.dueDateTextDay + ' ' + item.CREATE_DATEtime || '-',
           สถานะ: statusBt || '-',
           ชื่อลูกค้า: item.bookingDataCustomerName || '-',
           เบอร์โทร: item.bookingDataCustomerTel || '-',
@@ -2936,13 +2936,13 @@ export default {
         }
         for (let a = 0; a < customField.length; a++) {
           const dt = customField[a]
-
           if (dt.bookNo === item.bookNo) {
-            if (dt.fieldValue !== null || '') {
+            if ((dt.fieldValue !== null && dt.fieldValue !== '') && dt.fieldName !== 'ชื่อ') {
               obj[dt.fieldName] = dt.fieldValue || '-'
             }
 
-            console.log('dt.bookNo', dt.fieldValue)
+            console.log('dt.fieldName', dt.fieldName)
+            console.log('dt.fieldValue', dt.fieldValue)
           }
         }
         dataExport.push(obj)
