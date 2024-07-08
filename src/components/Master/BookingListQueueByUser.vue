@@ -1262,7 +1262,7 @@ export default {
   padding: 10px 20px;
   border: none;
   cursor: pointer;
-  border-radius: 50em;
+  border-radius: 50em !important;
   width: 140px !important;
   height: 140px !important;
   box-sizing: border-box;
