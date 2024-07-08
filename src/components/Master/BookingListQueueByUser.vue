@@ -99,7 +99,7 @@
                     @click="closeJobSubmit(callQueue)"
                     :disabled="callQueue !== null && (callQueue.status === 'confirm' || callQueue.status === 'againqQueue') ? false : true"
                     dark
-                    :class="`rounded-btn justify-content-center align-items-center ${callQueue !== null && (callQueue.status === 'confirm' || callQueue.status === 'againqQueue')  ? 'rounded-btn-confirm':'rounded-btn-closejob'}`">
+                    :class="`rounded-btn-circle justify-content-center align-items-center ${callQueue !== null && (callQueue.status === 'confirm' || callQueue.status === 'againqQueue')  ? 'rounded-btn-confirm-circle':'rounded-btn-closejob-circle'}`">
                     <div class="d-flex flex-column">
                     <div><v-icon size="45">mdi-bell-ring</v-icon></div>
                     <div><span :class="`text-event ${callQueue !== null && callQueue.status === 'confirm' ? 'text-white' :'text-bell-disabled'}`">เรียกคิว</span></div>
@@ -1256,6 +1256,25 @@ export default {
   }
 }
 </script>
+<style>
+.rounded-btn-circle {
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 50em;
+  width: 140px !important;
+  height: 140px !important;
+  box-sizing: border-box;
+  border: 10px solid transparent;
+}
+.rounded-btn-confirm-circle {
+  background: linear-gradient(#25D366,  #23B091) padding-box, linear-gradient(to right,#25D366,  #23B091) border-box;
+}
+.rounded-btn-closejob-circle {
+  background: linear-gradient(#DADADA,  #A1A1A1) padding-box, linear-gradient(to right,#DADADA,  #A1A1A1) border-box;
+}
+</style>
 <style scope>
 #margin {
   margin-top: 50px;
@@ -1271,7 +1290,7 @@ export default {
   font-size: 30px !important;
   font-weight: bold;
 }
-.rounded-btn {
+/* .rounded-btn {
   color: white;
   padding: 10px 20px;
   border: none;
@@ -1287,7 +1306,7 @@ export default {
 }
 .rounded-btn-closejob {
   background: linear-gradient(#DADADA,  #A1A1A1) padding-box, linear-gradient(to right,#DADADA,  #A1A1A1) border-box;
-}
+} */
 .text-event{
   font-size: 20px;
   font-weight: bold;
