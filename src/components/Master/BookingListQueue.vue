@@ -164,7 +164,7 @@
               v-if="
                 DataFlowItem.filter(el => {
                   return el.value !== 'allFlow';
-                }).length > 0
+            }).length > 0
               "
             >
               <v-col
@@ -179,7 +179,7 @@
                   v-if="
                     itemBookingCount.filter(el => {
                       return el.flowId === item3.value;
-                    }).length > 0
+                }).length > 0
                   "
                   elevation="1"
                   :color="item3.text === search ? '#C9F2DC' : 'white'"
@@ -338,7 +338,7 @@
                       class="text-center"
                       v-if="
                         item.statusBt !== 'closeJob' &&
-                          item.statusBt !== 'cancel'
+                      item.statusBt !== 'cancel'
                       "
                     >
                       <v-col cols="3" class="pb-0">
@@ -444,9 +444,9 @@
                             class="text-ceter"
                             v-if="
                               item.userId === 'user-skip' ||
-                                item.userId === '' ||
-                                item.userId === null ||
-                                item.userId === 'data import'
+                            item.userId === '' ||
+                            item.userId === null ||
+                            item.userId === 'data import'
                             "
                           >
                             {{ item.storeFrontQueue }}
@@ -541,7 +541,7 @@
             <v-col
               cols="12"
               v-for="(item, id) in itemBooking.filter(
-                el => el.statusBt !== 'closeJob' && el.statusBt !== 'cancel'
+              el => el.statusBt !== 'closeJob' && el.statusBt !== 'cancel'
               )"
               :key="id"
             >
@@ -573,9 +573,9 @@
                         class="text-left font-weight-black mt-n1 mb-n5 pa-7 pt-0"
                         v-if="
                           item.userId === 'user-skip' ||
-                            item.userId === '' ||
-                            item.userId === null ||
-                            item.userId === 'data import'
+                          item.userId === '' ||
+                          item.userId === null ||
+                          item.userId === 'data import'
                         "
                       >
                         {{ item.storeFrontQueue }}
@@ -611,13 +611,13 @@
                       >
                         {{
                           languageSelect === 0
-                            ? item.servicePoint
-                            : JSON.parse(item.servicePointCount).filter(el => {
+                          ? item.servicePoint
+                          : JSON.parse(item.servicePointCount).filter(el => {
                                 return el.textTh === item.servicePoint;
-                              }).length > 0
+                          }).length > 0
                             ? JSON.parse(item.servicePointCount).filter(el => {
                                 return el.textTh === item.servicePoint;
-                              })[0].textEn
+                            })[0].textEn
                             : item.servicePoint
                         }}
                       </p>
@@ -628,8 +628,8 @@
                           @click="closeJobSubmit(item)"
                           :src="
                             item.statusBt === 'confirm'
-                              ? 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FselectActiveQ1.png?alt=media&token=938edfa3-26a9-4c27-94a6-208cc2e81a0f'
-                              : 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FselectInactiveQ1.png?alt=media&token=e7c25716-7e4d-4499-af94-8ef382a51185'
+                                ? 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FselectActiveQ1.png?alt=media&token=938edfa3-26a9-4c27-94a6-208cc2e81a0f'
+                                : 'https://firebasestorage.googleapis.com/v0/b/betask-linked/o/picture-app%2FselectInactiveQ1.png?alt=media&token=e7c25716-7e4d-4499-af94-8ef382a51185'
                           "
                           max-width="107px"
                           max-height="107px"
@@ -814,7 +814,7 @@
                         color="white"
                         :style="styleCloseBt"
                         @click="
-                          (dialogServicePointStatus = false), clearTimeLoop()
+                        (dialogServicePointStatus = false), clearTimeLoop()
                         "
                       >
                         X
@@ -1167,8 +1167,8 @@ export default {
       await axios
         .get(
           this.DNS_IP +
-            '/customField/get?shopId=' +
-            this.$session.getAll().data.shopId
+          '/customField/get?shopId=' +
+          this.$session.getAll().data.shopId
         )
         .then(async response => {
           let rs = response.data
@@ -1213,7 +1213,7 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-        // await this.clearConfirmJob(item.dueDate)
+          // await this.clearConfirmJob(item.dueDate)
           var dtt = {
             bookNo: item.bookNo,
             contactDate: this.format_date(new Date()),
@@ -1234,7 +1234,7 @@ export default {
             })
         })
           .catch(async err => {
-          // this.$router.push({ name: '404' })
+            // this.$router.push({ name: '404' })
             console.log(err.code, err.message)
             await this.searchBooking('unNoti')
             this.clearTimeLoop()
@@ -1431,7 +1431,7 @@ export default {
                   if (checkFlow && checkFlow.length > 0) {
                     itemBookingCountTem[checkIndexFlow].countFlow = itemBookingCountTem[checkIndexFlow].countFlow + 1
                   } else {
-                    // this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
+                  // this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
                     itemBookingCountTem.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
                   }
                 }
@@ -1458,73 +1458,73 @@ export default {
               itemBookingTem = []
               this.itemBooking = []
             }
-            // console.log('aaaaaaaaaaaaaaa', this.itemBookingUse)
-            // itemBookingTem = this.itemBookingUse
-            // for (let i = 0; i < this.itemBookingUse.length; i++) {
-            //   let d = this.itemBookingUse[i]
-            //   if (d.statusBt === 'confirm' || d.statusBt === 'confirmJob') {
-            //     let checkFlow = itemBookingCountTem.filter(el => {
-            //       return el.flowId === d.flowId
-            //     })
-            //     let checkIndexFlow = itemBookingCountTem.findIndex(el => {
-            //       return el.flowId === d.flowId
-            //     })
-            //     if (checkFlow.length > 0) {
-            //       itemBookingCountTem[checkIndexFlow].countFlow =
-            //         itemBookingCountTem[checkIndexFlow].countFlow + 1
-            //     } else {
-            //       // this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
-            //       itemBookingCountTem.push({
-            //         flowId: d.flowId,
-            //         flowName: d.flowName,
-            //         statusBt: d.statusBt,
-            //         countFlow: 1
-            //       })
-            //     }
-            //   }
-            // }
-            // console.log('this.modelslide : ', this.modelslide)
-            // if (this.modelslide === '' || this.modelslide === 'allFlow') {
-            //   itemBookingTem = this.itemBookingUse
-            // } else {
-            //   if (this.dialogwidth !== '50%') {
-            //     itemBookingTem = this.itemBookingUse.filter(el => {
-            //       return el.flowId === this.modelslide
-            //     })
-            //   }
-            // }
-            // this.itemBooking = itemBookingTem
-            // this.itemBookingCount = itemBookingCountTem
-            // this.itemBookingCount2 = itemBookingCountTem
-            // if (checkNoti === 'noti') {
-            //   console.log(
-            //     'item',
-            //     item,
-            //     checkNoti,
-            //     item.storeFrontNotifySet,
-            //     item.storeFrontNotifyStatus
-            //   )
-            //   if (item.storeFrontNotifyStatus === 'True') {
-            //     if (parseInt(item.storeFrontNotifySet) > 0) {
-            //       this.pushMessageRecallQueue(
-            //         parseInt(item.storeFrontNotifySet),
-            //         'False'
-            //       )
-            //     }
-            //   }
-            // }
-            // if (this.modelslide === '' && this.dialogwidth !== '50%') {
-            //   if (this.itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 && this.dialogwidth !== '50%') {
-            //     let chwckFlow = this.DataFlowItem.filter(el => el.value !== 'allFlow')
-            //     if (chwckFlow.length > 0) {
-            //       this.modelslide = chwckFlow[0].value
-            //       this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === chwckFlow[0].value })
-            //     }
-            //   }
-            // } else {
-            //   itemBookingTem = []
-            // }
-            // this.overlaySave = true
+          // console.log('aaaaaaaaaaaaaaa', this.itemBookingUse)
+          // itemBookingTem = this.itemBookingUse
+          // for (let i = 0; i < this.itemBookingUse.length; i++) {
+          //   let d = this.itemBookingUse[i]
+          //   if (d.statusBt === 'confirm' || d.statusBt === 'confirmJob') {
+          //     let checkFlow = itemBookingCountTem.filter(el => {
+          //       return el.flowId === d.flowId
+          //     })
+          //     let checkIndexFlow = itemBookingCountTem.findIndex(el => {
+          //       return el.flowId === d.flowId
+          //     })
+          //     if (checkFlow.length > 0) {
+          //       itemBookingCountTem[checkIndexFlow].countFlow =
+          //         itemBookingCountTem[checkIndexFlow].countFlow + 1
+          //     } else {
+          //       // this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
+          //       itemBookingCountTem.push({
+          //         flowId: d.flowId,
+          //         flowName: d.flowName,
+          //         statusBt: d.statusBt,
+          //         countFlow: 1
+          //       })
+          //     }
+          //   }
+          // }
+          // console.log('this.modelslide : ', this.modelslide)
+          // if (this.modelslide === '' || this.modelslide === 'allFlow') {
+          //   itemBookingTem = this.itemBookingUse
+          // } else {
+          //   if (this.dialogwidth !== '50%') {
+          //     itemBookingTem = this.itemBookingUse.filter(el => {
+          //       return el.flowId === this.modelslide
+          //     })
+          //   }
+          // }
+          // this.itemBooking = itemBookingTem
+          // this.itemBookingCount = itemBookingCountTem
+          // this.itemBookingCount2 = itemBookingCountTem
+          // if (checkNoti === 'noti') {
+          //   console.log(
+          //     'item',
+          //     item,
+          //     checkNoti,
+          //     item.storeFrontNotifySet,
+          //     item.storeFrontNotifyStatus
+          //   )
+          //   if (item.storeFrontNotifyStatus === 'True') {
+          //     if (parseInt(item.storeFrontNotifySet) > 0) {
+          //       this.pushMessageRecallQueue(
+          //         parseInt(item.storeFrontNotifySet),
+          //         'False'
+          //       )
+          //     }
+          //   }
+          // }
+          // if (this.modelslide === '' && this.dialogwidth !== '50%') {
+          //   if (this.itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 && this.dialogwidth !== '50%') {
+          //     let chwckFlow = this.DataFlowItem.filter(el => el.value !== 'allFlow')
+          //     if (chwckFlow.length > 0) {
+          //       this.modelslide = chwckFlow[0].value
+          //       this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === chwckFlow[0].value })
+          //     }
+          //   }
+          // } else {
+          //   itemBookingTem = []
+          // }
+          // this.overlaySave = true
           })
       } else {
         this.overlaySave = true
@@ -1587,7 +1587,7 @@ export default {
       await axios
         .get(
           this.DNS_IP +
-            `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchIDAll=${this.masBranchID}`
+          `/flow/get?shopId=${this.shopId}&storeFrontCheck=True&masBranchIDAll=${this.masBranchID}`
         )
         .then(response => {
           let rs = response.data
@@ -1890,7 +1890,7 @@ export default {
           confirmButtonText: 'ใช่',
           cancelButtonText: 'ไม่'
         }).then(async response => {
-        // await this.clearConfirmJob(item.dueDate)
+          // await this.clearConfirmJob(item.dueDate)
           var dtt = {
             bookNo: item.bookNo,
             contactDate: this.format_date(new Date()),
@@ -1907,25 +1907,25 @@ export default {
               await this.updateProcessShopNew()
               await this.searchBooking('unNoti')
               this.clearTimeLoop()
-            // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-            // if (bookSelect.length > 0) {
-            //   for (let i = 0; i < bookSelect.length; i++) {
-            //     let d = bookSelect[i]
-            //     let s = {}
-            //     s.lineUserId = d.lineUserId || ''
-            //     if (s.lineUserId !== '') {
-            //       await axios
-            //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-            //         .then(async responses => {}).catch(error => {
-            //           console.log('error function pushMsgQueue : ', error)
-            //         })
-            //     }
-            //   }
-            // }
+              // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
+              // if (bookSelect.length > 0) {
+              //   for (let i = 0; i < bookSelect.length; i++) {
+              //     let d = bookSelect[i]
+              //     let s = {}
+              //     s.lineUserId = d.lineUserId || ''
+              //     if (s.lineUserId !== '') {
+              //       await axios
+              //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
+              //         .then(async responses => {}).catch(error => {
+              //           console.log('error function pushMsgQueue : ', error)
+              //         })
+              //     }
+              //   }
+              // }
             })
         })
           .catch(async err => {
-          // this.$router.push({ name: '404' })
+            // this.$router.push({ name: '404' })
             console.log(err.code, err.message)
             await this.searchBooking('unNoti')
             this.clearTimeLoop()
@@ -1942,13 +1942,13 @@ export default {
         // .get(this.DNS_IP + '/BookingData/get?shopId=' + this.shopId + '&bookNo=' + this.bookNo)
         .get(
           this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            item.shopId +
-            '&flowId=' +
-            item.flowId +
-            '&dueDateDay=' +
-            this.dateStart +
-            '&storeFrontQueue=is not null&statusBt=confirmJob&servicePointStatus=True'
+          '/booking_view/get?shopId=' +
+          item.shopId +
+          '&flowId=' +
+          item.flowId +
+          '&dueDateDay=' +
+          this.dateStart +
+          '&storeFrontQueue=is not null&statusBt=confirmJob&servicePointStatus=True'
         )
         .then(async response => {
           let rs = response.data
@@ -2148,10 +2148,10 @@ export default {
       await axios
         .get(
           this.DNS_IP +
-            '/booking_view/get?shopId=' +
-            this.shopId +
-            '&bookNo=' +
-            bookNo
+          '/booking_view/get?shopId=' +
+          this.shopId +
+          '&bookNo=' +
+          bookNo
         )
         .then(response => {
           let rs = response.data
@@ -2198,6 +2198,12 @@ export default {
       // let pageWidth = 598.28
       // let pageHeight = 'auto'
       if (this.shopImg === '') {
+        let showTextTH = ''
+        if (this.shopName === 'Krungsri Auto Ultimate Test Drive & Ride') {
+          showTextTH = 'Krungsri Auto Ultimate\nTest Drive & Ride'
+        } else {
+          showTextTH = this.shopName
+        }
         if (language === 'th') {
           docDefinition = {
             // margin: [0, 0, 0, 0],
@@ -2206,7 +2212,7 @@ export default {
             pageSize: 'A4',
             content: [
               {
-                text: this.shopName,
+                text: showTextTH,
                 style: 'header',
                 alignment: 'center'
               },
@@ -2279,6 +2285,12 @@ export default {
                 alignment: 'center'
               },
               {
+                text: '   ',
+                fontSize: 10,
+                // style: 'subheader',
+                widths: ['*']
+              },
+              {
                 qr:
                   'https://liff.line.me/' +
                   this.dataLineConfig.liffMainID +
@@ -2286,7 +2298,7 @@ export default {
                   item.bookNo +
                   '&shopId=' +
                   item.shopId,
-                fit: '200',
+                fit: '300',
                 alignment: 'center'
               },
               {
@@ -2354,7 +2366,7 @@ export default {
             pageSize: 'A4',
             content: [
               {
-                text: this.shopName,
+                text: showTextTH,
                 style: 'header',
                 alignment: 'center'
               },
@@ -2434,6 +2446,12 @@ export default {
                 alignment: 'center'
               },
               {
+                text: '   ',
+                fontSize: 10,
+                // style: 'subheader',
+                widths: ['*']
+              },
+              {
                 qr:
                   'https://liff.line.me/' +
                   this.dataLineConfig.liffMainID +
@@ -2441,7 +2459,7 @@ export default {
                   item.bookNo +
                   '&shopId=' +
                   item.shopId,
-                fit: '200',
+                fit: '300',
                 alignment: 'center'
               },
               {
@@ -2914,12 +2932,12 @@ export default {
       const dataBooking = []
       const BookingData = await axios.get(
         this.DNS_IP +
-          '/BookingData/get?shopId=' +
-          this.shopId +
-          '&masBranchID=' +
-          this.masBranchID +
-          '&dueDate=' +
-          this.dateStart
+        '/BookingData/get?shopId=' +
+        this.shopId +
+        '&masBranchID=' +
+        this.masBranchID +
+        '&dueDate=' +
+        this.dateStart
       )
       console.log('BookingData', BookingData)
       const customField = BookingData.data
