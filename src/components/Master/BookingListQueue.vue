@@ -601,11 +601,8 @@
                       >
                         จำนวน : {{ item.countCus }}
                       </p>
-                      <p
-                        style="color:#000000;font-size: 16px;"
-                        class="text-left font-weight-medium ml-7"
-                        v-if="checkShowTel"
-                      >
+                      <p style="color:#000000;font-size: 16px;" class="text-left font-weight-medium ml-7"
+                        v-if="checkShowTel">
                         เบอร์โทร : {{ item.cusPhone }}
                       </p>
                       <p
