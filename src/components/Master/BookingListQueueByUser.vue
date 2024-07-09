@@ -78,7 +78,7 @@
               <div mb-n5>
                 <div class="text-right">
                   <v-btn
-                    v-if="callQueue.status !== 'no have type'"
+                    v-if="callQueue.status !== 'no have type' && callQueue.storeFrontQueue !== 'XXXX'"
                     color="#ECEFF1"
                     class="ma-2 white--text"
                     fab
@@ -327,7 +327,12 @@ export default {
   },
   data () {
     return {
-      callQueue: {},
+      callQueue: {
+        bookNo: '',
+        storeFrontQueue: 'XXXX',
+        status: 'no have type',
+        storeFrontQueueEmpId: null
+      },
       waitingQueue: [],
       unsubscribe: null,
       languageSelect: 0,
@@ -417,35 +422,36 @@ export default {
       this.closeSetTimeBookingListQueue()
       // let statusBooking = await this.checkBookingStatus(item.bookNo)
       // if (statusBooking === 'confirmJob') {
-      // this.$swal({
-      //   title: 'ต้องการยกเลิกคิวนี้ ใช่หรือไม่?',
-      //   type: 'question',
-      //   showCancelButton: true,
-      //   confirmButtonColor: '#1DBF73',
-      //   cancelButtonColor: '#F38383',
-      //   confirmButtonText: 'ใช่',
-      //   cancelButtonText: 'ไม่'
-      // }).then(async response => {
-      var dtt = {
-        bookNo: item.bookNo,
-        contactDate: this.format_date(new Date()),
-        status: 'cancel',
-        statusUse: 'use',
-        shopId: this.$session.getAll().data.shopId,
-        CREATE_USER: this.$session.getAll().data.userName,
-        LAST_USER: this.$session.getAll().data.userName,
-        remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
-      }
-      await axios
-        .post(this.DNS_IP + '/booking_transaction/add', dtt)
-        .then(async responses => {
-          // this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
-          await this.updateProcessShopNew()
-          await this.searchBooking('unNoti')
-          this.clearTimeLoop()
-          this.HistoryData = []
-          this.shopPhone = ''
-        })
+      this.$swal({
+        title: 'ต้องการยกเลิกคิวนี้ ใช่หรือไม่?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#1DBF73',
+        cancelButtonColor: '#F38383',
+        confirmButtonText: 'ใช่',
+        cancelButtonText: 'ไม่'
+      }).then(async response => {
+        var dtt = {
+          bookNo: item.bookNo,
+          contactDate: this.format_date(new Date()),
+          status: 'cancel',
+          statusUse: 'use',
+          shopId: this.$session.getAll().data.shopId,
+          CREATE_USER: this.$session.getAll().data.userName,
+          LAST_USER: this.$session.getAll().data.userName,
+          remarkRemove: 'เนื่องจากลูกค้าไม่มาตามคิวที่เลือก'
+        }
+        await axios
+          .post(this.DNS_IP + '/booking_transaction/add', dtt)
+          .then(async responses => {
+            // this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
+            await this.updateProcessShopNew()
+            await this.searchBooking('unNoti')
+            this.clearTimeLoop()
+            this.HistoryData = []
+            this.shopPhone = ''
+          })
+      })
         .catch(async err => {
           console.log(err.code, err.message)
           await this.searchBooking('unNoti')
@@ -609,6 +615,7 @@ export default {
             '&dueDate=' +
             this.dateStart + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
           }
+          console.log('this.flowSelect x', this.flowSelect)
           if (this.flowSelect) {
             let empIdQueue = parseInt(this.$session.getAll().data.empId) || null
             await axios
@@ -628,6 +635,7 @@ export default {
                   this.shopPhone = ''
                   return
                 }
+                console.log('rs', rs)
                 if (rs && rs.length > 0) {
                   const filterConfirmJob = rs.filter(item => item.statusBt === 'confirmJob' && parseInt(item.storeFrontQueueEmpId) === empIdQueue)
                   if (filterConfirmJob && filterConfirmJob.length > 0) {
@@ -645,7 +653,7 @@ export default {
                     }
                   } else {
                     let filterDataConfirm = rs.filter(a => a.statusBt === 'confirm')
-                    if (filterDataConfirm.length > 0) {
+                    if (filterDataConfirm && filterDataConfirm.length > 0) {
                       this.callQueue = {
                         bookNo: filterDataConfirm[0].bookNo,
                         storeFrontQueue: filterDataConfirm[0].storeFrontQueue,
@@ -953,35 +961,35 @@ export default {
       this.closeSetTimeBookingListQueue()
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       if (statusBooking === 'confirmJob') {
-        // this.$swal({
-        //   title: 'ต้องการปิดงานนี้ ใช่หรือไม่?',
-        //   type: 'question',
-        //   showCancelButton: true,
-        //   confirmButtonColor: '#1DBF73',
-        //   cancelButtonColor: '#F38383',
-        //   confirmButtonText: 'ใช่',
-        //   cancelButtonText: 'ไม่'
-        // }).then(async response => {
-        var dtt = {
-          bookNo: item.bookNo,
-          contactDate: this.format_date(new Date()),
-          status: 'closeJob',
-          statusUse: 'use',
-          shopId: this.$session.getAll().data.shopId,
-          CREATE_USER: this.$session.getAll().data.userName,
-          LAST_USER: this.$session.getAll().data.userName
-        }
-        await axios
-          .post(this.DNS_IP + '/booking_transaction/add', dtt)
-          .then(async responses => {
-            // this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
-            await this.updateProcessShopNew()
-            await this.searchBooking('unNoti')
-            this.clearTimeLoop()
-            this.HistoryData = []
-            this.shopPhone = ''
-          })
-        // })
+        this.$swal({
+          title: 'ต้องการปิดงานนี้ ใช่หรือไม่?',
+          type: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#1DBF73',
+          cancelButtonColor: '#F38383',
+          confirmButtonText: 'ใช่',
+          cancelButtonText: 'ไม่'
+        }).then(async response => {
+          var dtt = {
+            bookNo: item.bookNo,
+            contactDate: this.format_date(new Date()),
+            status: 'closeJob',
+            statusUse: 'use',
+            shopId: this.$session.getAll().data.shopId,
+            CREATE_USER: this.$session.getAll().data.userName,
+            LAST_USER: this.$session.getAll().data.userName
+          }
+          await axios
+            .post(this.DNS_IP + '/booking_transaction/add', dtt)
+            .then(async responses => {
+              // this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
+              await this.updateProcessShopNew()
+              await this.searchBooking('unNoti')
+              this.clearTimeLoop()
+              this.HistoryData = []
+              this.shopPhone = ''
+            })
+        })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking('unNoti')
