@@ -2250,7 +2250,7 @@ export default {
                   {
                     alignment: 'center',
                     text: 'หมายเลขคิวของคุณ\n',
-                    fontSize: 20,
+                    fontSize: 25,
                     color: 'black'
                   },
                   {
@@ -2281,12 +2281,12 @@ export default {
               },
               {
                 text: 'QR Code สำหรับรับการแจ้งเตือน',
-                fontSize: 15,
+                fontSize: 20,
                 alignment: 'center'
               },
               {
                 text: '   ',
-                fontSize: 10,
+                fontSize: 5,
                 // style: 'subheader',
                 widths: ['*']
               },
@@ -2303,14 +2303,14 @@ export default {
               },
               {
                 text: '   ',
-                fontSize: 15,
+                fontSize: 10,
                 // style: 'subheader',
                 widths: ['*']
               },
               {
                 text: '*ทางบริษัทขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
                 // text: '*ทางโรงพยาบาลขอสงวนสิทธิ์ในการข้ามคิว กรณีลูกค้าไม่แสดงตน',
-                fontSize: 15,
+                fontSize: 20,
                 alignment: 'center'
               },
               // {
@@ -2321,18 +2321,18 @@ export default {
               {
                 columns: [
                   {
-                    fontSize: 15,
+                    fontSize: 20,
                     alignment: 'center',
                     text: 'วันที่ ' + item.dueDateText.split(' ')[0]
                   }
                 ]
-              },
-              {
-                text: '................................................',
-                style: 'subheader',
-                widths: ['*'],
-                alignment: 'center'
               }
+              // {
+              //   text: '................................................',
+              //   style: 'subheader',
+              //   widths: ['*'],
+              //   alignment: 'center'
+              // }
             ],
             styles: {
               header: {
@@ -2407,7 +2407,7 @@ export default {
               {
                 alignment: 'center',
                 text: 'Number',
-                fontSize: 20,
+                fontSize: 23,
                 color: 'black'
               },
               {
@@ -2442,12 +2442,12 @@ export default {
               // },
               {
                 text: 'QR Code for receiving notifications',
-                fontSize: 15,
+                fontSize: 18,
                 alignment: 'center'
               },
               {
                 text: '   ',
-                fontSize: 10,
+                fontSize: 8,
                 // style: 'subheader',
                 widths: ['*']
               },
@@ -2464,32 +2464,32 @@ export default {
               },
               {
                 text: '   ',
-                fontSize: 15,
+                fontSize: 8,
                 // style: 'subheader',
                 widths: ['*']
               },
               {
                 text:
-                  "The company reserves the right to skip the queue. In case the customer doesn't come",
+                  "The company reserves the right to skip the queue.\nIn case the customer doesn't come",
                 // text: "The hospital reserves the right to skip the queue. In case the customer doesn't come",
-                fontSize: 15,
+                fontSize: 18,
                 alignment: 'center'
               },
               {
                 columns: [
                   {
-                    fontSize: 15,
+                    fontSize: 18,
                     alignment: 'center',
                     text: 'Date ' + item.dueDateText.split(' ')[0]
                   }
                 ]
-              },
-              {
-                text: '................................................',
-                style: 'subheader',
-                widths: ['*'],
-                alignment: 'center'
               }
+              // {
+              //   text: '................................................',
+              //   style: 'subheader',
+              //   widths: ['*'],
+              //   alignment: 'center'
+              // }
             ],
             styles: {
               header: {
