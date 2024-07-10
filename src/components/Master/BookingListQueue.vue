@@ -1262,6 +1262,7 @@ export default {
       })
       console.log('this.flowSelect setSearchTextValue', this.flowSelect)
       this.search = searchText[0].text
+      console.log('this.search', this.search)
       // this.searchBooking()
     },
     resetFlowSelect () {
