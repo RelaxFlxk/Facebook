@@ -1348,6 +1348,7 @@ export default {
       this.searchBooking('unNoti')
     },
     async searchBooking (checkNoti, item) {
+      console.log('searchBooking', checkNoti, item)
       if (this.validSearch1 || this.validSearch2) {
         let itemBookingTem = []
         let itemBookingCountTem = []
