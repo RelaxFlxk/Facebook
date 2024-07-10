@@ -84,7 +84,7 @@
                   dense
                   required
                   :rules="[rules.required]"
-                  @change="searchBooking(), clearTimeLoop()"
+                  @change="setSearchTextValue(), searchBooking(), clearTimeLoop()"
                 >
                   <template #prepend-inner>
                     <v-icon
@@ -131,7 +131,7 @@
                     >
                   </template>
                   <v-date-picker
-                    @input="(menuStart = false), clearTimeLoop(), checkSearch()"
+                    @input="(menuStart = false), clearTimeLoop(), checkSearch(), resetSearchText(), resetFlowSelect()"
                     v-model="dateStart"
                     no-title
                     scrollable
@@ -1253,8 +1253,35 @@ export default {
       let _this = this
       this.setTimerCalendar = _this.searchBooking('unNoti')
     },
-    searchFlow (item) {
-      this.search = item.text
+    resetSearchText () {
+      this.search = ''
+    },
+    setSearchTextValue () {
+      let searchText = this.DataFlowItem.filter(el => {
+        return el.value === this.flowSelect
+      })
+      console.log('this.flowSelect setSearchTextValue', this.flowSelect)
+      this.search = searchText[0].text
+      // this.searchBooking()
+    },
+    resetFlowSelect () {
+      this.flowSelect = 'allFlow'
+      this.searchBooking()
+    },
+    searchFlow (item3) {
+      this.itemBooking.filter(el => el.flowId === item3.value)
+      this.itemBooking.sort((a, b) => {
+        if (a.statusBt !== b.statusBt) {
+          const order = ['confirm', 'confirmJob', 'closeJob', 'cancel']
+          return order.indexOf(a.statusBt) - order.indexOf(b.statusBt)
+        }
+        // ถ้า statusBt เหมือนกัน ให้เปรียบเทียบ string storeFrontQueue (กำหนด numeric: true เพื่อกำหนดให้ localeCompare เช็คระดับตัวเลขใน string นั้นด้วย)
+        // undefined = ใช้ค่าภาษาเริ่มต้นของระบบหรือเบราว์เซอร์ที่กำลังใช้งานอยู่ในการเปรียบเทียบสตริง
+        // sensitivity: 'base' = ไม่สนใจตัวพิมพ์เล็ก/ใหญ่และสัญลักษณ์เกี่ยวกับตัวอักษร
+        return a.storeFrontQueue.localeCompare(b.storeFrontQueue, undefined, {numeric: true, sensitivity: 'base'})
+      })
+      this.search = item3.text
+      this.flowSelect = item3.value
     },
     momentThaiText (item) {
       let dt = moment(item)
