@@ -1484,73 +1484,73 @@ export default {
               itemBookingTem = []
               this.itemBooking = []
             }
-          // console.log('aaaaaaaaaaaaaaa', this.itemBookingUse)
-          // itemBookingTem = this.itemBookingUse
-          // for (let i = 0; i < this.itemBookingUse.length; i++) {
-          //   let d = this.itemBookingUse[i]
-          //   if (d.statusBt === 'confirm' || d.statusBt === 'confirmJob') {
-          //     let checkFlow = itemBookingCountTem.filter(el => {
-          //       return el.flowId === d.flowId
-          //     })
-          //     let checkIndexFlow = itemBookingCountTem.findIndex(el => {
-          //       return el.flowId === d.flowId
-          //     })
-          //     if (checkFlow.length > 0) {
-          //       itemBookingCountTem[checkIndexFlow].countFlow =
-          //         itemBookingCountTem[checkIndexFlow].countFlow + 1
-          //     } else {
-          //       // this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
-          //       itemBookingCountTem.push({
-          //         flowId: d.flowId,
-          //         flowName: d.flowName,
-          //         statusBt: d.statusBt,
-          //         countFlow: 1
-          //       })
-          //     }
-          //   }
-          // }
-          // console.log('this.modelslide : ', this.modelslide)
-          // if (this.modelslide === '' || this.modelslide === 'allFlow') {
-          //   itemBookingTem = this.itemBookingUse
-          // } else {
-          //   if (this.dialogwidth !== '50%') {
-          //     itemBookingTem = this.itemBookingUse.filter(el => {
-          //       return el.flowId === this.modelslide
-          //     })
-          //   }
-          // }
-          // this.itemBooking = itemBookingTem
-          // this.itemBookingCount = itemBookingCountTem
-          // this.itemBookingCount2 = itemBookingCountTem
-          // if (checkNoti === 'noti') {
-          //   console.log(
-          //     'item',
-          //     item,
-          //     checkNoti,
-          //     item.storeFrontNotifySet,
-          //     item.storeFrontNotifyStatus
-          //   )
-          //   if (item.storeFrontNotifyStatus === 'True') {
-          //     if (parseInt(item.storeFrontNotifySet) > 0) {
-          //       this.pushMessageRecallQueue(
-          //         parseInt(item.storeFrontNotifySet),
-          //         'False'
-          //       )
-          //     }
-          //   }
-          // }
-          // if (this.modelslide === '' && this.dialogwidth !== '50%') {
-          //   if (this.itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 && this.dialogwidth !== '50%') {
-          //     let chwckFlow = this.DataFlowItem.filter(el => el.value !== 'allFlow')
-          //     if (chwckFlow.length > 0) {
-          //       this.modelslide = chwckFlow[0].value
-          //       this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === chwckFlow[0].value })
-          //     }
-          //   }
-          // } else {
-          //   itemBookingTem = []
-          // }
-          // this.overlaySave = true
+            // console.log('aaaaaaaaaaaaaaa', this.itemBookingUse)
+            // itemBookingTem = this.itemBookingUse
+            // for (let i = 0; i < this.itemBookingUse.length; i++) {
+            //   let d = this.itemBookingUse[i]
+            //   if (d.statusBt === 'confirm' || d.statusBt === 'confirmJob') {
+            //     let checkFlow = itemBookingCountTem.filter(el => {
+            //       return el.flowId === d.flowId
+            //     })
+            //     let checkIndexFlow = itemBookingCountTem.findIndex(el => {
+            //       return el.flowId === d.flowId
+            //     })
+            //     if (checkFlow.length > 0) {
+            //       itemBookingCountTem[checkIndexFlow].countFlow =
+            //         itemBookingCountTem[checkIndexFlow].countFlow + 1
+            //     } else {
+            //       // this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
+            //       itemBookingCountTem.push({
+            //         flowId: d.flowId,
+            //         flowName: d.flowName,
+            //         statusBt: d.statusBt,
+            //         countFlow: 1
+            //       })
+            //     }
+            //   }
+            // }
+            // console.log('this.modelslide : ', this.modelslide)
+            // if (this.modelslide === '' || this.modelslide === 'allFlow') {
+            //   itemBookingTem = this.itemBookingUse
+            // } else {
+            //   if (this.dialogwidth !== '50%') {
+            //     itemBookingTem = this.itemBookingUse.filter(el => {
+            //       return el.flowId === this.modelslide
+            //     })
+            //   }
+            // }
+            // this.itemBooking = itemBookingTem
+            // this.itemBookingCount = itemBookingCountTem
+            // this.itemBookingCount2 = itemBookingCountTem
+            // if (checkNoti === 'noti') {
+            //   console.log(
+            //     'item',
+            //     item,
+            //     checkNoti,
+            //     item.storeFrontNotifySet,
+            //     item.storeFrontNotifyStatus
+            //   )
+            //   if (item.storeFrontNotifyStatus === 'True') {
+            //     if (parseInt(item.storeFrontNotifySet) > 0) {
+            //       this.pushMessageRecallQueue(
+            //         parseInt(item.storeFrontNotifySet),
+            //         'False'
+            //       )
+            //     }
+            //   }
+            // }
+            // if (this.modelslide === '' && this.dialogwidth !== '50%') {
+            //   if (this.itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 && this.dialogwidth !== '50%') {
+            //     let chwckFlow = this.DataFlowItem.filter(el => el.value !== 'allFlow')
+            //     if (chwckFlow.length > 0) {
+            //       this.modelslide = chwckFlow[0].value
+            //       this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === chwckFlow[0].value })
+            //     }
+            //   }
+            // } else {
+            //   itemBookingTem = []
+            // }
+            this.overlaySave = true
           })
       } else {
         this.overlaySave = true
