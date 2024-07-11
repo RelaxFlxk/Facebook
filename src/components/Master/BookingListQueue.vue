@@ -554,7 +554,7 @@
                   <v-row>
                     <v-col cols="12" class="pb-0 pt-0">
                       <v-btn
-                        v-if="item.statusBt === 'confirmJob'"
+                        v-if="item.statusBt === 'confirmJob' || item.statusBt === 'confirm'"
                         color="#ECEFF1"
                         class="ma-2 white--text"
                         fab
