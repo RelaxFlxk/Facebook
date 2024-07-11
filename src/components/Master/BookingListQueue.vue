@@ -396,9 +396,6 @@
                           small
                           rounded
                           block
-                          :disabled="
-                            item.statusBt === 'confirmJob' ? false : true
-                          "
                           @click="removeQueue(item)"
                           :class="
                             item.statusBt === 'confirmJob' ? 'text-white' : ''
