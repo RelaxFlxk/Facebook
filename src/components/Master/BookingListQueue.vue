@@ -1379,7 +1379,8 @@ export default {
         let itemBookingCountTem = []
         this.overlaySave = false
         this.itemBookingUse = []
-        this.modelslide = ''
+        // comment เพื่อให้ตอนคลิกที่ card แล้วมีการ searchBooking ใหม่ จะยัง active ที่ card ที่เลือกไว้อยู่
+        // this.modelslide = ''
         if (this.checkShowCount) {
           await this.getBookingDataList(this.dateStart)
         }
