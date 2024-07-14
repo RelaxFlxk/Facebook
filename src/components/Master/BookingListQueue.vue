@@ -2101,6 +2101,7 @@ export default {
                 let statusUpdateEmp = await this.updateEmp(item.bookNo, 'confirm')
                 if (statusUpdateEmp === true) {
                   await this.closeJob(item)
+                  await this.updateProcessShopNew()
                 } else {
                   this.$swal(
                     'คำเตือน',
