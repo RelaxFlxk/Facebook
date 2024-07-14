@@ -1083,6 +1083,7 @@ export default {
               }
             } else {
               this.closeJob(item)
+              await this.updateProcessShopNew()
             }
             // })
           }
