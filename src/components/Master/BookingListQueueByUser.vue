@@ -119,7 +119,7 @@
                 </div>
                 <div class="text-start ml-8 mt-2" style="display: flex;word-break: break-word;">
                   <v-icon color="#979797" class="mx-1 mr-2">mdi-map-marker-radius</v-icon>
-                  <p class="font-weight-medium mb-1" style="font-size:16px;color:#979797;" v-if="masBranchID !== ''">
+                  <p class="font-weight-medium mb-1" style="font-size:16px;color:#979797;" v-if="masBranchID !== '' && branchItem">
                   สาขา : {{branchItem.filter(el => { return masBranchID === el.value })[0].text}}
                 </p>
                 </div>
@@ -213,7 +213,7 @@
                         </v-avatar>
                       </div>
                       <br>
-                      <template v-if="HistoryData.length > 0">
+                      <template v-if="HistoryData && HistoryData.length > 0">
                         <h6 class="text-start font-weight-bold">{{format_dateThai(HistoryData[0].dueDate)}}</h6>
                         <h6 class="text-start font-weight-bold">{{HistoryData[0].flowName}}</h6>
                         <h6 class="text-start font-weight-bold">{{HistoryData[0].masBranchName}}</h6>
@@ -526,11 +526,13 @@ export default {
       if (item) {
         this.HistoryData = this.BookingDataList[item.bookNo]
         this.pictureUrHistory = item.memberPicture
-        let phoneNum = this.HistoryData.filter(item3 => { return item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร' })
-        if (phoneNum.length > 0) {
-          this.shopPhone = phoneNum[0].fieldValue.replace(/-/g, '')
-        } else {
-          this.shopPhone = ''
+        if (this.HistoryData) {
+          let phoneNum = this.HistoryData.filter(item3 => { return item3.fieldValue !== '' && item3.fieldName === 'เบอร์โทร' })
+          if (phoneNum && phoneNum.length > 0) {
+            this.shopPhone = phoneNum[0].fieldValue.replace(/-/g, '')
+          } else {
+            this.shopPhone = ''
+          }
         }
       }
     },
@@ -540,7 +542,7 @@ export default {
         .get(this.DNS_IP + '/sys_shop/get?shopId=' + this.$session.getAll().data.shopId)
         .then(async response => {
           let rs = response.data
-          if (rs.length > 0) {
+          if (rs && rs.length > 0) {
             this.shopName = rs[0].shopName
             shopImg = rs[0].imageBase64 || ''
           } else {
@@ -735,11 +737,13 @@ export default {
     },
     setTime () {
       this.timeavailable = []
-      let checkFlow = this.DataFlowItem.filter(el => { return el.value === this.flowSelect })
-      if (checkFlow.length > 0) {
-        this.timeavailable = JSON.parse(checkFlow[0].allData.setTime)
-      } else {
-        this.timeavailable = []
+      if (this.DataFlowItem) {
+        let checkFlow = this.DataFlowItem.filter(el => { return el.value === this.flowSelect })
+        if (checkFlow && checkFlow.length > 0) {
+          this.timeavailable = JSON.parse(checkFlow[0].allData.setTime)
+        } else {
+          this.timeavailable = []
+        }
       }
     },
     async getDataFlow () {
@@ -765,7 +769,7 @@ export default {
           }
         })
       this.DataFlowItem = resultOption
-      if (resultOption.length > 0) {
+      if (resultOption && resultOption.length > 0) {
         this.flowSelect = this.DataFlowItem[0].value
       }
     },
@@ -774,9 +778,9 @@ export default {
       if (this.branchItem && this.branchItem.length > 0) {
         const branchSession = this.$session.getAll().data.masBranchID
         let USER_ROLE = this.$session.getAll().data.USER_ROLE || ''
-        if (USER_ROLE === 'storeFront') {
+        if (USER_ROLE === 'storeFront' && this.branchItem) {
           const matchBranch = this.branchItem.filter(branch => branch.allData.masBranchID === branchSession)
-          this.branchItem = matchBranch.length > 0 ? matchBranch : this.branchItem
+          this.branchItem = matchBranch && matchBranch.length > 0 ? matchBranch : this.branchItem
         }
         this.masBranchID = this.branchItem[0].value
       }
@@ -787,7 +791,7 @@ export default {
         .get(this.DNS_IP + `${url}?shopId=${this.$session.getAll().data.shopId}${param}`)
         .then(response => {
           let rs = response.data
-          if (rs.length > 0) {
+          if (rs && rs.length > 0) {
             for (var i = 0; i < rs.length; i++) {
               let d = rs[i]
               let s = {}
@@ -1004,9 +1008,9 @@ export default {
         .then(async response => {
           let rs = response.data
           console.log('setservicePointCount', rs)
-          if (rs.status !== false) {
+          if (rs && rs.status !== false) {
             let servicePointItem = rs.filter(el => { return el.servicePoint !== null || el.servicePoint !== '' })
-            if (servicePointItem.length > 0) {
+            if (servicePointItem && servicePointItem.length > 0) {
               if (JSON.parse(item.servicePointCount).length > 0) {
                 for (let i = 0; i < JSON.parse(item.servicePointCount).length; i++) {
                   let d = JSON.parse(item.servicePointCount)[i]
@@ -1017,7 +1021,7 @@ export default {
                 }
                 if (servicePointItem.filter(el => { return el.servicePoint === item.servicePoint }).length > 0) {
                   let otherCounr = JSON.parse(item.servicePointCount).filter(el => { return el.textTh === item.servicePoint })
-                  if (otherCounr.length > 0) {
+                  if (otherCounr && otherCounr.length > 0) {
                     this.servicePointItem.push(otherCounr[0])
                   }
                 }
@@ -1140,7 +1144,7 @@ export default {
             '&bookNo=' + bookNo)
         .then(response => {
           let rs = response.data
-          if (rs.length > 0) {
+          if (rs && rs.length > 0) {
             result = rs[0].statusBt || ''
           } else {
             result = ''
@@ -1188,24 +1192,26 @@ export default {
         // })
     },
     async pushMessageRecallQueue (countNoti, checkGetQueue) {
-      let bookSelect = this.callQueue.filter((element, index) => { return element.statusBt === 'confirm' })
-      console.log('bookSelect', bookSelect)
-      if (bookSelect.length > 0) {
-        let bookSelectuse = bookSelect.filter((element, index) => { return index === countNoti })
-        console.log('bookSelectuse', bookSelectuse)
-        for (let i = 0; i < bookSelectuse.length; i++) {
-          let d = bookSelectuse[i]
-          let s = {}
-          s.lineUserId = d.lineUserId || ''
-          if (s.lineUserId !== '') {
-            let dtt = {
-              checkGetQueue: checkGetQueue
+      if (this.callQueue) {
+        let bookSelect = this.callQueue.filter((element, index) => { return element.statusBt === 'confirm' })
+        console.log('bookSelect', bookSelect)
+        if (bookSelect && bookSelect.length > 0) {
+          let bookSelectuse = bookSelect.filter((element, index) => { return index === countNoti })
+          console.log('bookSelectuse', bookSelectuse)
+          for (let i = 0; i < bookSelectuse.length; i++) {
+            let d = bookSelectuse[i]
+            let s = {}
+            s.lineUserId = d.lineUserId || ''
+            if (s.lineUserId !== '') {
+              let dtt = {
+                checkGetQueue: checkGetQueue
+              }
+              await axios
+                .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo, dtt)
+                .then(async responses => {}).catch(error => {
+                  console.log('error function pushMsgQueue : ', error)
+                })
             }
-            await axios
-              .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo, dtt)
-              .then(async responses => {}).catch(error => {
-                console.log('error function pushMsgQueue : ', error)
-              })
           }
         }
       }
