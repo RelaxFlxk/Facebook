@@ -887,7 +887,7 @@ export default {
           LAST_USER: this.$session.getAll().data.userName
         }
       }
-      console.log('test', checkitemSelect)
+      console.log('test', dataAdd)
       if (checkitemSelect.length === 0) {
         this.$swal('ผิดพลาด', 'กรุณาเลือกรายการแจ้งเตือน', 'error')
       } else {
@@ -978,7 +978,7 @@ export default {
               itemJS.text = v.text
               this.itemSelectEdit.push(itemJS)
             }
-            console.log('itemJS', itemJS)
+            // console.log('itemJS', itemJS)
           })
         } else {
           this.itemSelectEdit.push({ text: v.text, value: v.value })
@@ -1020,9 +1020,11 @@ export default {
     },
     fixJsonData (data) {
       return data.map(item => {
+        item.text = item.text.trim()
         if (item.text.includes('"')) {
           // แก้ไขข้อมูลในกรณีที่มี " ในข้อความ
           item.text = item.text.replace(/"/g, '\\"')
+          // item.text = item.text.trim()
         }
         return item
       })
