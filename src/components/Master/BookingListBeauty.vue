@@ -19595,13 +19595,6 @@ export default {
                 this.dialogShowDeposit = true
                 this.bookNo = response.data.bookNo
 
-                /// ------------- IF SHOP LINE NOTI ------------- ///
-                /// Ue388ea246b5b4b4419a714516b5ae54a ///
-
-                if (this.$session.getAll().data.shopId === 'U93c42b54e45cfe584473c03e35746955') {
-                  await this.pushMsgLineNotifyGroup(this.bookNo)
-                }
-
                 this.depositPrice = this.formAdd.depositPrice
                 this.depositLink =
                   'https://betask-linked.web.app/Thank?shopId=' +
