@@ -1226,7 +1226,7 @@ export default {
         this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
           .onSnapshot(async (snapshot) => {
             if (!snapshot.exists) {
-              await this.updateProcessShopNew()
+              await this.createProcessShopNew()
             } else {
               console.log('getFirestore -> data', snapshot.data())
               if (snapshot.data().active === '1') {
@@ -1246,7 +1246,18 @@ export default {
         console.log('Error getFirestore', error)
       }
     },
-    async updateProcessShopNew  () { // active = 1
+    async createProcessShopNew () { // set active = 0
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-CreateProcessNew', body)
+      } catch (error) {
+        console.log('createProcessShopNew error-> ', error)
+      }
+    },
+    async updateProcessShopNew () { // update active = 1
       try {
         let body = {
           userName: this.$session.getAll().data.userName,
@@ -1257,7 +1268,7 @@ export default {
         console.log('updateProcessShopNew error-> ', error)
       }
     },
-    async updateProcessShopUpdate  () { // active = 0
+    async updateProcessShopUpdate () { // update active = 0
       try {
         let body = {
           userName: this.$session.getAll().data.userName,
