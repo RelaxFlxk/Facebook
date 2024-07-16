@@ -87,7 +87,7 @@
                             item.conditionField === null
                         "
                       >
-                        <v-col
+                        <div
                           cols="12"
                           class="InputData"
                           v-if="item.fieldType == 'text'"
@@ -119,8 +119,8 @@
                                 : [true]
                             "
                           ></v-text-field>
-                        </v-col>
-                        <v-col
+                        </div>
+                        <div
                           cols="12"
                           class="InputData"
                           v-if="item.fieldType == 'number'"
@@ -152,7 +152,7 @@
                                 : [true]
                             "
                           ></v-text-field>
-                        </v-col>
+                        </div>
                         <v-col
                           cols="12"
                           class="InputData"
@@ -1075,12 +1075,17 @@
 import axios from 'axios' // api
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import moment from 'moment-timezone'
+import waitingAlert from '../waitingAlert.vue'
 export default {
   name: 'ModelBookingListBeauty',
+  components: {
+    waitingAlert
+  },
   data () {
     let startDate = null
     let endDate = null
     return {
+      unsubscribe: null,
       dNows: moment(new Date()).format('YYYY-MM-DD'),
       // menu
       bookNoNoti: '',
@@ -1973,7 +1978,8 @@ export default {
           })
           .catch(error => {
             console.log('error function addData : ', error)
-            setTimeout(() => this.addDataInsert(), 3000)
+            this.addDataInsert()
+            // setTimeout(() => this.addDataInsert(), 3000)
           })
         // })
         // .catch(error => {
@@ -1982,7 +1988,6 @@ export default {
         // })
       } else {
         this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
-        clearInterval(this.setTimerCalendar)
         this.setTimerCalendar = null
         this.$router.push('/Core/Login')
       }
@@ -2006,12 +2011,13 @@ export default {
           //   }
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          await this.updateProcessShopNew()
           // await this.getBookingList()
           // this.getTimesChange('update')
         })
         .catch(error => {
           console.log('error function addData : ', error)
-          setTimeout(() => this.confirmChkAdd(), 3000)
+          this.confirmChkAdd()
         })
     },
     async addDataSet () {
@@ -2060,7 +2066,6 @@ export default {
       this.address = ''
       this.center = null
       this.dataReadyAdd = true
-      clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
       if (this.statusSearch === 'no') {
         this.getBookingList()
@@ -2263,11 +2268,11 @@ export default {
           this.$swal('แจ้งเตือน', 'กรุณาเลือกเมนู', 'info')
         } else {
           this.validate('ADD')
-          setTimeout(() => this.addDataSubmit(), 500)
+          this.addDataSubmit()
         }
       } else {
         this.validate('ADD')
-        setTimeout(() => this.addDataSubmit(), 500)
+        this.addDataSubmit()
       }
     },
     async getCountFastTrack (dateS, flowId, branch) {
@@ -2402,7 +2407,6 @@ export default {
           } else {
             console.log('14')
             this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
-            clearInterval(this.setTimerCalendar)
             this.setTimerCalendar = null
             this.$router.push('/Core/Login')
           }
@@ -2536,7 +2540,6 @@ export default {
     },
     async getBookingList () {
       await this.getTagData()
-      clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
 
       if (
@@ -3235,7 +3238,7 @@ export default {
           .catch(error => {
             console.log(error)
             this.dataReady = true
-            setTimeout(() => this.searchAny(), 3000)
+            this.searchAny()
           })
       } else {
         this.$swal('ผิดพลาด', 'กรุณาใส่คำค้นหาให้มากว่า 1 ตัวอักษร', 'error')
@@ -3913,7 +3916,6 @@ export default {
       if (this.$session.id() !== undefined) {
       } else {
         this.$swal('ผิดพลาด', 'กรุณาลองอีกครั่ง', 'error')
-        clearInterval(this.setTimerCalendar)
         this.setTimerCalendar = null
         this.$router.push('/Core/Login')
       }
@@ -4440,7 +4442,6 @@ export default {
       }
     },
     closeSetTimeGetCalenda () {
-      clearInterval(this.setTimerCalendar)
       this.setTimerCalendar = null
     },
     async checkShowDataOnsite () {
@@ -4695,6 +4696,58 @@ export default {
         })
       return LimitBooking || 'ไม่แสดง'
       // return this.$session.getAll().data.showOnsite || 'ไม่แสดง'
+    },
+    async getFirestore () {
+      try {
+        console.log('getFirestore -> ', this.unsubscribe)
+        if (this.unsubscribe) {
+          this.unsubscribe()
+        }
+        this.firestore = this.$firebase.firestore()
+        this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
+          .onSnapshot(async (snapshot) => {
+            if (!snapshot.exists) {
+              await this.updateProcessShopNew()
+            } else {
+              console.log('getFirestore -> data', snapshot.data())
+              if (snapshot.data().active === '1') {
+                console.log('active [start] is updateProcessShopUpdate')
+                await this.updateProcessShopUpdate()
+                console.log('active [end] is updateProcessShopUpdate')
+                console.log('snapshot data -> active is 1')
+                console.log('active [start] is get booking')
+                // await this.searchBooking()
+                console.log('active [end] is get booking')
+              } else {
+                console.log('snapshot data -> active is 0')
+              }
+            }
+          })
+      } catch (error) {
+        console.log('Error getFirestore', error)
+      }
+    },
+    async updateProcessShopNew  () { // active = 1
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNew', body)
+      } catch (error) {
+        console.log('updateProcessShopNew error-> ', error)
+      }
+    },
+    async updateProcessShopUpdate  () { // active = 0
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNew', body)
+      } catch (error) {
+        console.log('updateProcessShopUpdate error-> ', error)
+      }
     }
   },
   async mounted () {
@@ -4730,8 +4783,14 @@ export default {
       this.closeSetTimeGetCalenda()
     })
   },
+  created () {
+    this.getFirestore()
+  },
   beforeDestroy () {
     this.$root.$off('dataReturn')
+    if (this.unsubscribe) {
+      this.unsubscribe()
+    }
   },
   watch: {
     '$route.query.bookNoNoti' (newVal, oldVal) {

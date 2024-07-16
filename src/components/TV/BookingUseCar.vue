@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row d-flex justify-content-center px-4 pb-3">
+    <div class="row d-flex justify-content-center px-4 pb-2 respons-height">
       <div
         v-bind:class="{
           'bg-primary': groupIndex % 2 === 0,
@@ -286,4 +286,33 @@ export default {
     min-height: 10vh;
   }
 }
+
+@media screen and (max-width: 874px) {
+  .row-service {
+    border-radius: 20px;
+    overflow: hidden;
+  }
+}
+
+@media screen and (max-width: 993px) {
+  .text-service {
+    font-size: 3vw;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .row-service {
+    border-radius: 20px;
+    overflow: hidden;
+    height: 100px;
+  }
+}
+
+@media screen and (max-width: 1920px) {
+  .respons-height{
+    padding-bottom: 0;
+    height: 100vh;
+  }
+}
+
 </style>

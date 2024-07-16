@@ -10524,6 +10524,7 @@ export default {
     let startDate = null
     let endDate = null
     return {
+      unsubscribe: null,
       // menu
       bookNoNoti: '',
       showMenu: 'False',
@@ -11162,10 +11163,26 @@ export default {
     })
     // await this.beforeCreate()
   },
+  created () {
+    this.getFirestore()
+  },
   beforeDestroy () {
     this.$root.$off('dataReturn')
+    if (this.unsubscribe) {
+      this.unsubscribe()
+    }
   },
   methods: {
+    async pushMsgLineNotifyGroup (bookNo) {
+      await axios
+        .post(this.DNS_IP + '/Booking/pushMsgLineNotifyGroup/' + bookNo)
+        .then(response => {
+          this.clearData()
+        })
+        .catch(error => {
+          console.log('error function pushMsgQueue : ', error)
+        })
+    },
     getRowClass (item) {
       if (this.$route.query.bookNoNoti) {
         return item.bookNo === this.$route.query.bookNoNoti
@@ -19577,6 +19594,7 @@ export default {
                 }
                 this.dialogShowDeposit = true
                 this.bookNo = response.data.bookNo
+
                 this.depositPrice = this.formAdd.depositPrice
                 this.depositLink =
                   'https://betask-linked.web.app/Thank?shopId=' +
@@ -19588,6 +19606,12 @@ export default {
               } else {
                 await this.confirmChkAdd(response.data)
               }
+            }
+            if (
+              this.$session.getAll().data.shopId ===
+              'Ue388ea246b5b4b4419a714516b5ae54a'
+            ) {
+              await this.pushMsgLineNotifyGroup(response.data.bookNo)
             }
             // console.log('addDataGlobal DNS_IP + /job/add', response)
           })
@@ -19718,6 +19742,7 @@ export default {
           }
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
+          await this.updateProcessShopNew()
           // await this.getBookingList()
           // this.getTimesChange('update')
         })
@@ -22689,6 +22714,58 @@ export default {
       this.detailInfo = await this.getBookingData(item)
       this.dataInfo = item
       this.dialogInfo = true
+    },
+    async getFirestore () {
+      try {
+        console.log('getFirestore -> ', this.unsubscribe)
+        if (this.unsubscribe) {
+          this.unsubscribe()
+        }
+        this.firestore = this.$firebase.firestore()
+        this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
+          .onSnapshot(async (snapshot) => {
+            if (!snapshot.exists) {
+              await this.updateProcessShopNew()
+            } else {
+              console.log('getFirestore -> data', snapshot.data())
+              if (snapshot.data().active === '1') {
+                console.log('active [start] is updateProcessShopUpdate')
+                await this.updateProcessShopUpdate()
+                console.log('active [end] is updateProcessShopUpdate')
+                console.log('snapshot data -> active is 1')
+                console.log('active [start] is get booking')
+                await this.searchBooking()
+                console.log('active [end] is get booking')
+              } else {
+                console.log('snapshot data -> active is 0')
+              }
+            }
+          })
+      } catch (error) {
+        console.log('Error getFirestore', error)
+      }
+    },
+    async updateProcessShopNew  () { // active = 1
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNew', body)
+      } catch (error) {
+        console.log('updateProcessShopNew error-> ', error)
+      }
+    },
+    async updateProcessShopUpdate  () { // active = 0
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNew', body)
+      } catch (error) {
+        console.log('updateProcessShopUpdate error-> ', error)
+      }
     }
   }
 }

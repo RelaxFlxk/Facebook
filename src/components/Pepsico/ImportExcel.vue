@@ -2,9 +2,9 @@
   <div>
     <!-- <left-menu-admin menuActive="0" :sessionData="session"></left-menu-admin> -->
     <v-main>
-      <div class="col-md-12 ml-sm-auto col-lg-12 px-4">
+      <div class="col-md-12 ml-sm-auto col-lg-12 px-4 ">
         <v-row>
-          <v-col cols="12" class="text-left">
+          <v-col cols="12"  class="text-left">
             <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
           </v-col>
         </v-row>

@@ -1,4 +1,5 @@
 <template>
+  <v-main class='fix-scroll'>
   <div
     :style="{ backgroundColor: '#FBD743', height: '100%', width: '100%' }"
     class="respons_bg"
@@ -12,7 +13,7 @@
           class="respons_img1"
         />
       </v-col>
-      <v-col class="d-flex flex-column align-center p-0 respons_logo">
+      <v-col class="d-flex align-center justify-center p-0 respons_logo">
         <div class="mt-3">
           <img
             alt="Logo"
@@ -134,6 +135,7 @@
             </v-col>
           </v-row> -->
   </div>
+</v-main>
 </template>
 <script>
 import axios from 'axios' // api
@@ -308,7 +310,7 @@ export default {
     await this.getDataFlow()
     await this.getDataBranch()
     this.setTime()
-    // document.querySelector('body').requestFullscreen()
+    document.querySelector('body').requestFullscreen()
     this.intervalSearch = setInterval(() => {
       this.searchBooking()
     }, 10000)
@@ -647,7 +649,7 @@ export default {
         // this.dateStart + ' ' + this.time + '&storeFrontQueue=is not null&statusBt=confirm and confirmJob'
         await axios.get(urlApi).then(async response => {
           let rs = response.data
-          console.log('this.resPondArr : ', rs)
+          console.log('rs : ', rs)
           if (rs.length > 0) {
             this.groupQueueWaitingAll = rs.filter(el => {
               return el.statusBt === 'confirm'
@@ -683,6 +685,7 @@ export default {
             this.resPondArr = rs.filter(el => {
               return el.statusBt === 'confirmJob'
             })
+            console.log('this.resPondArr', this.resPondArr)
 
             // this.resPondArr = this.resPondArr.sort((a, b) => {
             //   if (a.storeFrontQueue < b.storeFrontQueue) return -1
@@ -916,6 +919,10 @@ export default {
 }
 </script>
 <style scope>
+.fix-scroll {
+  overflow: hidden;
+  height: 100vh;
+}
 .centered-input >>> input {
   text-align: center;
 }
@@ -969,12 +976,16 @@ export default {
 }
 .footer-color {
   background-color: #f2c300;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: auto;
 }
 .text-footer .v-divider {
   transform: translateY(30%);
 }
 .text-header {
-  font-size: 1.5vw;
+  font-size: 4.5vw;
   font-weight: 900;
   color: #2e263d;
   opacity: 0.9;
@@ -982,11 +993,15 @@ export default {
   text-align: center;
   margin-top: 8px; /* Adjust this value as needed */
 }
-
+@media screen and (max-width: 793px) {
+  .text-footer {
+    font-size: 14px;
+  }
+}
 @media screen and (max-width: 874px) {
   .respons_mobie {
     width: 100%; /* ปรับความกว้างของ v-row */
-    height: 30%;
+    height: 18%;
     /* margin: 0 auto; */
     /* margin-top: -50px; */
   }
@@ -1010,21 +1025,11 @@ export default {
     margin-right: -20px;
   }
   .respons_bg {
-    height: auto; /* ใช้ความสูงอัตโนมัติ */
-    max-height: 100%; /* ปรับให้เต็มหน้าจอ */
+    height: auto;
+    max-height: 100%;
   }
   .respons_logo {
     margin-left: 30px;
-  }
-}
-@media screen and (min-width: 1000px) {
-  .img-promot {
-    width: 85%;
-  }
-}
-@media screen and (min-width: 1500px) {
-  .img-promot {
-    width: 85%;
   }
 }
 </style>

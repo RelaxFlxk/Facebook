@@ -811,6 +811,11 @@ export default {
   data () {
     return {
       itemDistance: [
+        {text: '20 เมตร', value: '0.02'},
+        {text: '40 เมตร', value: '0.04'},
+        {text: '60 เมตร', value: '0.06'},
+        {text: '80 เมตร', value: '0.08'},
+        {text: '100 เมตร', value: '0.1'},
         {text: '500 เมตร', value: '0.5'},
         {text: '1 กิโลเมตร', value: '1'},
         {text: '1 กิโลเมตรครึ่ง', value: '1.5'},
