@@ -19614,7 +19614,6 @@ export default {
                 await this.confirmChkAdd(response.data)
               }
             }
-            // Ue388ea246b5b4b4419a714516b5ae54a //
             if (
               this.$session.getAll().data.shopId ===
               'Ue388ea246b5b4b4419a714516b5ae54a'
