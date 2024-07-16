@@ -11173,16 +11173,6 @@ export default {
     }
   },
   methods: {
-    async pushMsgLineNotifyGroup (bookNo) {
-      await axios
-        .post(this.DNS_IP + '/Booking/pushMsgLineNotifyGroup/' + bookNo)
-        .then(response => {
-          this.clearData()
-        })
-        .catch(error => {
-          console.log('error function pushMsgQueue : ', error)
-        })
-    },
     getRowClass (item) {
       if (this.$route.query.bookNoNoti) {
         return item.bookNo === this.$route.query.bookNoNoti
@@ -19597,10 +19587,6 @@ export default {
 
                 /// ------------- IF SHOP LINE NOTI ------------- ///
                 /// Ue388ea246b5b4b4419a714516b5ae54a ///
-
-                if (this.$session.getAll().data.shopId === 'U93c42b54e45cfe584473c03e35746955') {
-                  await this.pushMsgLineNotifyGroup(this.bookNo)
-                }
 
                 this.depositPrice = this.formAdd.depositPrice
                 this.depositLink =
