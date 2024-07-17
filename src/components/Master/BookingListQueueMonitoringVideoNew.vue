@@ -688,9 +688,9 @@ export default {
             } else {
               console.log('getFirestore -> data', snapshot.data())
               if (snapshot.data().active === '1') {
-                console.log('active [start] is updateProcessOhrichUpdate')
+                console.log('active [start] is updateProcessShopUpdate')
                 await this.updateProcessShopUpdate()
-                console.log('active [end] is updateProcessOhrichUpdate')
+                console.log('active [end] is updateProcessShopUpdate')
                 console.log('snapshot data -> active is 1')
                 console.log('active [start] is get booking')
                 await this.searchBooking()
@@ -705,7 +705,7 @@ export default {
         console.log('Error getFirestore', error)
       }
     },
-    async createProcessShopNew () { // set active = 0
+    async createProcessShopNew () { // set active = 1
       try {
         let body = {
           userName: this.$session.getAll().data.userName,
@@ -722,8 +722,7 @@ export default {
           userName: this.$session.getAll().data.userName,
           shopId: this.$session.getAll().data.shopId
         }
-        console.log('body', body)
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNew', body)
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNewV1', body)
       } catch (error) {
         console.log('updateProcessShopNew error-> ', error)
       }
@@ -734,7 +733,7 @@ export default {
           userName: this.$session.getAll().data.userName,
           shopId: this.$session.getAll().data.shopId
         }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNew', body)
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNewV1', body)
       } catch (error) {
         console.log('updateProcessShopUpdate error-> ', error)
       }
