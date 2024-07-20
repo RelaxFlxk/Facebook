@@ -834,7 +834,7 @@ export default {
           }
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.updateProcessShopNew()
+          // await this.updateProcessShopNew()
           // await this.searchBooking('unNoti')
           // this.clearTimeLoop()
         })
@@ -1260,7 +1260,7 @@ export default {
     async updateProcessShopNew () { // update active = 1
       try {
         let body = {
-          userName: this.$session.getAll().data.userName,
+          // userName: this.$session.getAll().data.userName,
           shopId: this.$session.getAll().data.shopId
         }
         await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNew', body)

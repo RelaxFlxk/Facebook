@@ -11164,7 +11164,7 @@ export default {
     // await this.beforeCreate()
   },
   created () {
-    this.getFirestore()
+    // this.getFirestore()
   },
   beforeDestroy () {
     this.$root.$off('dataReturn')
@@ -22714,70 +22714,70 @@ export default {
       this.detailInfo = await this.getBookingData(item)
       this.dataInfo = item
       this.dialogInfo = true
-    },
-    async getFirestore () {
-      try {
-        console.log('getFirestore -> ', this.unsubscribe)
-        if (this.unsubscribe) {
-          this.unsubscribe()
-        }
-        this.firestore = this.$firebase.firestore()
-        this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
-          .onSnapshot(async (snapshot) => {
-            if (!snapshot.exists) {
-              await this.createProcessShopNew()
-            } else {
-              console.log('getFirestore -> data', snapshot.data())
-              if (snapshot.data().active === '1') {
-                console.log('active [start] is updateProcessShopUpdate')
-                await this.updateProcessShopUpdate()
-                console.log('active [end] is updateProcessShopUpdate')
-                console.log('snapshot data -> active is 1')
-                console.log('active [start] is get booking')
-                await this.searchBooking()
-                console.log('active [end] is get booking')
-              } else {
-                console.log('snapshot data -> active is 0')
-              }
-            }
-          })
-      } catch (error) {
-        console.log('Error getFirestore', error)
-      }
-    },
-    async createProcessShopNew () { // set active = 1
-      try {
-        let body = {
-          userName: this.$session.getAll().data.userName,
-          shopId: this.$session.getAll().data.shopId
-        }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-CreateProcessNew', body)
-      } catch (error) {
-        console.log('createProcessShopNew error-> ', error)
-      }
-    },
-    async updateProcessShopNew () { // update active = 1
-      try {
-        let body = {
-          userName: this.$session.getAll().data.userName,
-          shopId: this.$session.getAll().data.shopId
-        }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNewV1', body)
-      } catch (error) {
-        console.log('updateProcessShopNew error-> ', error)
-      }
-    },
-    async updateProcessShopUpdate () { // update active = 0
-      try {
-        let body = {
-          userName: this.$session.getAll().data.userName,
-          shopId: this.$session.getAll().data.shopId
-        }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNewV1', body)
-      } catch (error) {
-        console.log('updateProcessShopUpdate error-> ', error)
-      }
     }
+    // async getFirestore () {
+    //   try {
+    //     console.log('getFirestore -> ', this.unsubscribe)
+    //     if (this.unsubscribe) {
+    //       this.unsubscribe()
+    //     }
+    //     this.firestore = this.$firebase.firestore()
+    //     this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
+    //       .onSnapshot(async (snapshot) => {
+    //         if (!snapshot.exists) {
+    //           await this.createProcessShopNew()
+    //         } else {
+    //           console.log('getFirestore -> data', snapshot.data())
+    //           if (snapshot.data().active === '1') {
+    //             console.log('active [start] is updateProcessShopUpdate')
+    //             await this.updateProcessShopUpdate()
+    //             console.log('active [end] is updateProcessShopUpdate')
+    //             console.log('snapshot data -> active is 1')
+    //             console.log('active [start] is get booking')
+    //             await this.searchBooking()
+    //             console.log('active [end] is get booking')
+    //           } else {
+    //             console.log('snapshot data -> active is 0')
+    //           }
+    //         }
+    //       })
+    //   } catch (error) {
+    //     console.log('Error getFirestore', error)
+    //   }
+    // },
+    // async createProcessShopNew () { // set active = 1
+    //   try {
+    //     let body = {
+    //       userName: this.$session.getAll().data.userName,
+    //       shopId: this.$session.getAll().data.shopId
+    //     }
+    //     await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-CreateProcessNew', body)
+    //   } catch (error) {
+    //     console.log('createProcessShopNew error-> ', error)
+    //   }
+    // },
+    // async updateProcessShopNew () { // update active = 1
+    //   try {
+    //     let body = {
+    //       userName: this.$session.getAll().data.userName,
+    //       shopId: this.$session.getAll().data.shopId
+    //     }
+    //     await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNewV1', body)
+    //   } catch (error) {
+    //     console.log('updateProcessShopNew error-> ', error)
+    //   }
+    // },
+    // async updateProcessShopUpdate () { // update active = 0
+    //   try {
+    //     let body = {
+    //       userName: this.$session.getAll().data.userName,
+    //       shopId: this.$session.getAll().data.shopId
+    //     }
+    //     await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNewV1', body)
+    //   } catch (error) {
+    //     console.log('updateProcessShopUpdate error-> ', error)
+    //   }
+    // }
   }
 }
 </script>
