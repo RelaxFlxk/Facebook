@@ -1226,8 +1226,8 @@ export default {
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
               await this.updateProcessShopNew()
-              await this.searchBooking('unNoti')
-              this.clearTimeLoop()
+              // await this.searchBooking('unNoti')
+              // this.clearTimeLoop()
             })
         })
           .catch(async err => {
@@ -1756,12 +1756,12 @@ export default {
           this.dialogServicePointStatus = false
           // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
           // })
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         }
       }
     },
@@ -1795,7 +1795,7 @@ export default {
           this.dialogServicePointStatus = false
           // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking('noti', item)
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         })
     },
     async closeJobServicePoint (item) {
@@ -1831,13 +1831,13 @@ export default {
                 )
                 this.dialogServicePointStatus = false
                 await this.searchBooking('unNoti')
-                this.clearTimeLoop()
+                // this.clearTimeLoop()
               }
             } else {
               this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
               this.dialogServicePointStatus = false
               await this.searchBooking('unNoti')
-              this.clearTimeLoop()
+              // this.clearTimeLoop()
             }
           } else {
             this.closeJobServicePointSubmit(item)
@@ -1846,7 +1846,7 @@ export default {
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         }
       }
     },
@@ -1888,15 +1888,14 @@ export default {
               })
           }
           // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
-          await this.updateProcessShopNew()
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
           // })
         }
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking('unNoti')
-        this.clearTimeLoop()
+        // this.clearTimeLoop()
       }
     },
     async backHomeSubmit (item) {
@@ -1928,8 +1927,8 @@ export default {
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
               await this.updateProcessShopNew()
-              await this.searchBooking('unNoti')
-              this.clearTimeLoop()
+              // await this.searchBooking('unNoti')
+              // this.clearTimeLoop()
               // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
               // if (bookSelect.length > 0) {
               //   for (let i = 0; i < bookSelect.length; i++) {
@@ -1951,12 +1950,12 @@ export default {
             // this.$router.push({ name: '404' })
             console.log(err.code, err.message)
             await this.searchBooking('unNoti')
-            this.clearTimeLoop()
+            // this.clearTimeLoop()
           })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking('unNoti')
-        this.clearTimeLoop()
+        // this.clearTimeLoop()
       }
     },
     async setservicePointCount (item) {
@@ -2060,7 +2059,7 @@ export default {
           }
           // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking('noti', item)
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         })
     },
     async closeJobSubmit (item) {
@@ -2105,12 +2104,12 @@ export default {
                     'info'
                   )
                   await this.searchBooking('unNoti')
-                  this.clearTimeLoop()
+                  // this.clearTimeLoop()
                 }
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 await this.searchBooking('unNoti')
-                this.clearTimeLoop()
+                // this.clearTimeLoop()
               }
             } else {
               await this.closeJob(item)
@@ -2121,7 +2120,7 @@ export default {
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         }
       }
     },
@@ -3040,7 +3039,7 @@ export default {
         this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
           .onSnapshot(async (snapshot) => {
             if (!snapshot.exists) {
-              await this.updateProcessShopNew()
+              await this.createProcessShopNew()
             } else {
               console.log('getFirestore -> data', snapshot.data())
               if (snapshot.data().active === '1') {
@@ -3060,7 +3059,18 @@ export default {
         console.log('Error getFirestore', error)
       }
     },
-    async updateProcessShopNew  () { // active = 1
+    async createProcessShopNew () { // set active = 1
+      try {
+        let body = {
+          userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-CreateProcessNew', body)
+      } catch (error) {
+        console.log('createProcessShopNew error-> ', error)
+      }
+    },
+    async updateProcessShopNew () { // update active = 1
       try {
         let body = {
           userName: this.$session.getAll().data.userName,
@@ -3071,7 +3081,7 @@ export default {
         console.log('updateProcessShopNew error-> ', error)
       }
     },
-    async updateProcessShopUpdate  () { // active = 0
+    async updateProcessShopUpdate () { // update active = 0
       try {
         let body = {
           userName: this.$session.getAll().data.userName,
