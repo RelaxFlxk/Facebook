@@ -84,7 +84,7 @@
                   dense
                   required
                   :rules="[rules.required]"
-                  @change="setSearchTextValue(), searchBooking(), clearTimeLoop()"
+                  @change="setFlowSelect(); searchBooking(); clearTimeLoop()"
                 >
                   <template #prepend-inner>
                     <v-icon
@@ -1253,14 +1253,10 @@ export default {
     resetSearchText () {
       this.search = ''
     },
-    setSearchTextValue () {
-      let searchText = this.DataFlowItem.filter(el => {
+    setFlowSelect () {
+      this.DataFlowItem.filter(el => {
         return el.value === this.flowSelect
       })
-      console.log('this.flowSelect setSearchTextValue', this.flowSelect)
-      this.search = searchText[0].text
-      console.log('this.search', this.search)
-      // this.searchBooking()
     },
     resetFlowSelect () {
       this.flowSelect = 'allFlow'
