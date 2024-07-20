@@ -2020,9 +2020,9 @@ export default {
           //   if (this.statusGoogleCalendar === 'True') {
           //     this.connectGoogleCalendar('Add', dt.bookNo)
           //   }
+          await this.updateProcessShopNew()
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          await this.updateProcessShopNew()
           // await this.getBookingList()
           // this.getTimesChange('update')
         })
@@ -2078,19 +2078,19 @@ export default {
       this.center = null
       this.dataReadyAdd = true
       this.setTimerCalendar = null
-      if (this.statusSearch === 'no') {
-        this.getBookingList()
-      } else {
-        this.searchAny()
-      }
-      if (this.getSelectText) {
-        this.getSelect(
-          this.getSelectText,
-          this.getSelectCount,
-          this.filterCloseJobValue
-        )
-      }
-      this.getDataCalendaBooking()
+      // if (this.statusSearch === 'no') {
+      //   this.getBookingList()
+      // } else {
+      //   this.searchAny()
+      // }
+      // if (this.getSelectText) {
+      //   this.getSelect(
+      //     this.getSelectText,
+      //     this.getSelectCount,
+      //     this.filterCloseJobValue
+      //   )
+      // }
+      // this.getDataCalendaBooking()
     },
     setFlowByBranchAdd () {
       console.log(
@@ -4474,7 +4474,7 @@ export default {
         await this.getEmpSelectAdd()
         await this.getBookingFieldText()
         this.getCustomFieldStart()
-        await this.scanQrcode()
+        // await this.scanQrcode()
         // this.getBookingList()
       } else {
         await this.getDataFlow()
@@ -4482,7 +4482,7 @@ export default {
         await this.getEmpSelectAdd()
         await this.getBookingFieldText()
         this.getCustomFieldStart()
-        this.getBookingList()
+        // this.getBookingList()
       }
     },
     async getEmpSelectAdd () {

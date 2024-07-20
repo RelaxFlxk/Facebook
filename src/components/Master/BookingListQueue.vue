@@ -61,7 +61,7 @@
                   required
                   :disabled="statusBranchReadonly"
                   :rules="[rules.required]"
-                  @change="searchBooking(), clearTimeLoop(), getDataFlow()"
+                  @change="searchBooking(), getDataFlow()"
                   ><template #prepend-inner>
                     <v-icon
                       color="#69D1FD"
@@ -84,7 +84,7 @@
                   dense
                   required
                   :rules="[rules.required]"
-                  @change="setFlowSelect(); searchBooking(); clearTimeLoop()"
+                  @change="setFlowSelect(),searchBooking()"
                 >
                   <template #prepend-inner>
                     <v-icon
@@ -131,7 +131,7 @@
                     >
                   </template>
                   <v-date-picker
-                    @input="(menuStart = false), clearTimeLoop(), checkSearch(), resetSearchText(), resetFlowSelect()"
+                    @input="(menuStart = false),checkSearch(), resetSearchText(), resetFlowSelect()"
                     v-model="dateStart"
                     no-title
                     scrollable
@@ -160,56 +160,75 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <v-row
-              v-if="
-                DataFlowItem.filter(el => {
-                  return el.value !== 'allFlow';
-            }).length > 0
-              "
-            >
+            <v-row v-if="DataFlowItem.length > 0">
               <v-col
                 col="auto"
-                v-for="(item3, index3) in DataFlowItem.filter(el => {
-                  return el.value !== 'allFlow';
-                })"
+                v-for="(item3, index3) in DataFlowItem"
                 :key="index3"
                 style="display: flex;justify-content: center;"
               >
-                <v-card
-                  v-if="
-                    itemBookingCount.filter(el => {
-                      return el.flowId === item3.value;
-                }).length > 0
-                  "
-                  elevation="1"
-                  :color="item3.text === search ? '#C9F2DC' : 'white'"
-                  style="padding: 10px; width: 230px;"
-                  @click="searchFlow(item3)"
-                >
-                  <div style="margin: auto 0;">
-                    <strong>{{ item3.text }}</strong>
-                    <div>
-                      จำนวน :
-                      {{
-                        itemBookingCount.filter(el => {
-                          return el.flowId === item3.value;
-                        })[0].countFlow
-                      }}
+                <template v-if="item3.value === 'allFlow'">
+                    <v-card
+                    v-if="itemBookingCount.length > 0"
+                    elevation="1"
+                    :color="search === '' ? '#C9F2DC' : 'white'"
+                    style="padding: 10px; width: 230px;"
+                    @click="searchFlow(item3)">
+                    <div style="margin: auto 0;">
+                      <strong>{{ item3.text }}</strong>
+                      <div>
+                        จำนวน :
+                        {{
+                          itemBookingCount.reduce((sum, item) => sum + item.countFlow, 0)
+                        }}
+                      </div>
                     </div>
-                  </div>
-                </v-card>
-                <v-card
-                  v-else
-                  elevation="1"
-                  color="white"
-                  style="padding: 10px; width: 230px;"
-                  @click="searchFlow(item3)"
-                >
-                  <div style="margin: auto 0;">
-                    <strong>{{ item3.text }}</strong>
-                    <div>จำนวน : 0</div>
-                  </div>
-                </v-card>
+                  </v-card>
+                  <v-card
+                    v-else
+                    elevation="1"
+                    color="white"
+                    style="padding: 10px; width: 230px;"
+                    @click="searchFlow(item3)"
+                  >
+                    <div style="margin: auto 0;">
+                      <strong>{{ item3.text }}</strong>
+                      <div>จำนวน : 0</div>
+                    </div>
+                  </v-card>
+                </template>
+                 <template v-else>
+                  <v-card
+                    v-if="itemBookingCount.filter(el => { return el.flowId === item3.value}).length > 0"
+                    elevation="1"
+                    :color="item3.text === search ? '#C9F2DC' : 'white'"
+                    style="padding: 10px; width: 230px;"
+                    @click="searchFlow(item3)">
+                    <div style="margin: auto 0;">
+                      <strong>{{ item3.text }}</strong>
+                      <div>
+                        จำนวน :
+                        {{
+                          itemBookingCount.filter(el => {
+                            return el.flowId === item3.value;
+                          })[0].countFlow
+                        }}
+                      </div>
+                    </div>
+                  </v-card>
+                  <v-card
+                    v-else
+                    elevation="1"
+                    color="white"
+                    style="padding: 10px; width: 230px;"
+                    @click="searchFlow(item3)"
+                  >
+                    <div style="margin: auto 0;">
+                      <strong>{{ item3.text }}</strong>
+                      <div>จำนวน : 0</div>
+                    </div>
+                  </v-card>
+                </template>
               </v-col>
             </v-row>
           </v-form>
@@ -233,7 +252,7 @@
                   required
                   :disabled="statusBranchReadonly"
                   :rules="[rules.required]"
-                  @change="searchBooking(), clearTimeLoop(), getDataFlow()"
+                  @change="searchBooking(),getDataFlow()"
                   ><template #prepend-inner>
                     <v-icon
                       color="#69D1FD"
@@ -278,7 +297,7 @@
                     >
                   </template>
                   <v-date-picker
-                    @input="(menuStart = false), clearTimeLoop(), checkSearch()"
+                    @input="(menuStart = false), checkSearch()"
                     v-model="dateStart"
                     no-title
                     scrollable
@@ -735,7 +754,7 @@
                         dark
                         color="white"
                         :style="styleCloseBt"
-                        @click="(dialogHistory = false), clearTimeLoop()"
+                        @click="(dialogHistory = false), searchBooking()"
                       >
                         X
                       </v-btn>
@@ -811,7 +830,7 @@
                         color="white"
                         :style="styleCloseBt"
                         @click="
-                        (dialogServicePointStatus = false), clearTimeLoop()
+                        (dialogServicePointStatus = false), searchBooking()
                         "
                       >
                         X
@@ -1014,7 +1033,8 @@ export default {
       itemBookingCount: [],
       itemBookingCount2: [],
       setTimerCalendar: null,
-      checkShowCount: false
+      checkShowCount: false,
+      dataSearchFlow: null
     }
   },
   computed: {
@@ -1034,6 +1054,8 @@ export default {
     }
   },
   created () {
+    // this.dateStart = '2024-07-20'
+    this.dateStart = moment().format('YYYY-MM-DD')
     this.getFirestore()
   },
   beforeDestroy () {
@@ -1045,7 +1067,6 @@ export default {
     this.dataLineConfig = await this.getDataLineConfig(
       this.$session.getAll().data.shopId
     )
-    this.dateStart = this.momenDate_1(new Date())
     await this.getCustomFieldStart()
     if (this.checkShowCount && !this.checkShowTel) {
       this.headers = [
@@ -1148,12 +1169,8 @@ export default {
     await this.getDataBranch()
     await this.getDataFlow()
     await this.searchBooking('unNoti')
-    this.$root.$on('closeSetTimeBookingListQueue', () => {
-      // your code goes here
-      this.closeSetTimeBookingListQueue()
-    })
+    // this.dateStart = '2024-07-20'
     this.dateStart = moment().format('YYYY-MM-DD')
-    this.clearTimeLoop()
     this.setTime()
     this.getShop()
   },
@@ -1198,7 +1215,7 @@ export default {
     },
     async removeQueue (item) {
       console.log('removeQueue', item)
-      this.closeSetTimeBookingListQueue()
+      let checkCatch = 0
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       if (statusBooking === 'confirmJob' || statusBooking === 'confirm') {
         this.$swal({
@@ -1226,29 +1243,20 @@ export default {
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
               await this.updateProcessShopNew()
-              // await this.searchBooking('unNoti')
-              // this.clearTimeLoop()
             })
         })
           .catch(async err => {
             // this.$router.push({ name: '404' })
+            checkCatch = checkCatch + 1
             console.log(err.code, err.message)
-            await this.searchBooking('unNoti')
-            this.clearTimeLoop()
+            if (checkCatch < 4) {
+              await this.searchBooking('unNoti')
+            }
           })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking('unNoti')
-        this.clearTimeLoop()
       }
-    },
-    closeSetTimeBookingListQueue () {
-      this.setTimerCalendar = null
-    },
-    clearTimeLoop () {
-      this.setTimerCalendar = null
-      let _this = this
-      this.setTimerCalendar = _this.searchBooking('unNoti')
     },
     resetSearchText () {
       this.search = ''
@@ -1260,22 +1268,40 @@ export default {
     },
     resetFlowSelect () {
       this.flowSelect = 'allFlow'
-      this.searchBooking()
+      // this.searchBooking()
     },
     searchFlow (item3) {
-      this.itemBooking.filter(el => el.flowId === item3.value)
-      this.itemBooking.sort((a, b) => {
-        if (a.statusBt !== b.statusBt) {
-          const order = ['confirm', 'confirmJob', 'closeJob', 'cancel']
-          return order.indexOf(a.statusBt) - order.indexOf(b.statusBt)
-        }
-        // ถ้า statusBt เหมือนกัน ให้เปรียบเทียบ string storeFrontQueue (กำหนด numeric: true เพื่อกำหนดให้ localeCompare เช็คระดับตัวเลขใน string นั้นด้วย)
-        // undefined = ใช้ค่าภาษาเริ่มต้นของระบบหรือเบราว์เซอร์ที่กำลังใช้งานอยู่ในการเปรียบเทียบสตริง
-        // sensitivity: 'base' = ไม่สนใจตัวพิมพ์เล็ก/ใหญ่และสัญลักษณ์เกี่ยวกับตัวอักษร
-        return a.storeFrontQueue.localeCompare(b.storeFrontQueue, undefined, {numeric: true, sensitivity: 'base'})
-      })
-      this.search = item3.text
-      this.flowSelect = item3.value
+      console.log('item3', item3)
+      this.dataSearchFlow = item3
+      if (item3.value === 'allFlow') {
+        this.itemBooking = this.itemBookingUse
+        this.itemBooking.sort((a, b) => {
+          if (a.statusBt !== b.statusBt) {
+            const order = ['confirmJob', 'confirm', 'closeJob', 'cancel']
+            return order.indexOf(a.statusBt) - order.indexOf(b.statusBt)
+          }
+          // ถ้า statusBt เหมือนกัน ให้เปรียบเทียบ string storeFrontQueue (กำหนด numeric: true เพื่อกำหนดให้ localeCompare เช็คระดับตัวเลขใน string นั้นด้วย)
+          // undefined = ใช้ค่าภาษาเริ่มต้นของระบบหรือเบราว์เซอร์ที่กำลังใช้งานอยู่ในการเปรียบเทียบสตริง
+          // sensitivity: 'base' = ไม่สนใจตัวพิมพ์เล็ก/ใหญ่และสัญลักษณ์เกี่ยวกับตัวอักษร
+          return a.storeFrontQueue.localeCompare(b.storeFrontQueue, undefined, {numeric: true, sensitivity: 'base'})
+        })
+        this.search = ''
+        this.flowSelect = item3.value
+      } else {
+        this.itemBooking.filter(el => el.flowId === item3.value)
+        this.itemBooking.sort((a, b) => {
+          if (a.statusBt !== b.statusBt) {
+            const order = ['confirmJob', 'confirm', 'closeJob', 'cancel']
+            return order.indexOf(a.statusBt) - order.indexOf(b.statusBt)
+          }
+          // ถ้า statusBt เหมือนกัน ให้เปรียบเทียบ string storeFrontQueue (กำหนด numeric: true เพื่อกำหนดให้ localeCompare เช็คระดับตัวเลขใน string นั้นด้วย)
+          // undefined = ใช้ค่าภาษาเริ่มต้นของระบบหรือเบราว์เซอร์ที่กำลังใช้งานอยู่ในการเปรียบเทียบสตริง
+          // sensitivity: 'base' = ไม่สนใจตัวพิมพ์เล็ก/ใหญ่และสัญลักษณ์เกี่ยวกับตัวอักษร
+          return a.storeFrontQueue.localeCompare(b.storeFrontQueue, undefined, {numeric: true, sensitivity: 'base'})
+        })
+        this.search = item3.text
+        this.flowSelect = item3.value
+      }
     },
     momentThaiText (item) {
       let dt = moment(item)
@@ -1319,17 +1345,7 @@ export default {
         })
       this.HistoryData = BookingData || []
       this.pictureUrHistory = item.memberPicture
-      // axios.get(this.DNS_IP + '/BookingData/get_history?bookNo=' + item.bookNo)
-      //   .then(async (response) => {
-      //     let rs = response.data
-      //     if (rs.status !== false) {
-      //       this.HistoryData = response.data
       this.dialogHistory = true
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log('error function addData : ', error)
-      //   })
     },
     async getShop () {
       let shopImg = ''
@@ -1470,6 +1486,23 @@ export default {
               }
               this.itemBooking = itemBookingTem
               this.itemBookingCount = itemBookingCountTem
+              this.itemBooking.sort((a, b) => {
+                if (a.statusBt !== b.statusBt) {
+                  const order = ['confirmJob', 'confirm', 'closeJob', 'cancel']
+                  return order.indexOf(a.statusBt) - order.indexOf(b.statusBt)
+                }
+                // ถ้า statusBt เหมือนกัน ให้เปรียบเทียบ string storeFrontQueue (กำหนด numeric: true เพื่อกำหนดให้ localeCompare เช็คระดับตัวเลขใน string นั้นด้วย)
+                // undefined = ใช้ค่าภาษาเริ่มต้นของระบบหรือเบราว์เซอร์ที่กำลังใช้งานอยู่ในการเปรียบเทียบสตริง
+                // sensitivity: 'base' = ไม่สนใจตัวพิมพ์เล็ก/ใหญ่และสัญลักษณ์เกี่ยวกับตัวอักษร
+                return a.storeFrontQueue.localeCompare(b.storeFrontQueue, undefined, {numeric: true, sensitivity: 'base'})
+              })
+              console.log('item3', this.dataSearchFlow)
+              if (this.dataSearchFlow === null) {
+                this.searchFlow({
+                  'text': 'ทั้งหมด',
+                  'value': 'allFlow'
+                })
+              }
               if (checkNoti === 'noti') {
                 if (item.storeFrontNotifyStatus === 'True') {
                   if (parseInt(item.storeFrontNotifySet) > 0) {
@@ -1481,72 +1514,6 @@ export default {
               itemBookingTem = []
               this.itemBooking = []
             }
-            // console.log('aaaaaaaaaaaaaaa', this.itemBookingUse)
-            // itemBookingTem = this.itemBookingUse
-            // for (let i = 0; i < this.itemBookingUse.length; i++) {
-            //   let d = this.itemBookingUse[i]
-            //   if (d.statusBt === 'confirm' || d.statusBt === 'confirmJob') {
-            //     let checkFlow = itemBookingCountTem.filter(el => {
-            //       return el.flowId === d.flowId
-            //     })
-            //     let checkIndexFlow = itemBookingCountTem.findIndex(el => {
-            //       return el.flowId === d.flowId
-            //     })
-            //     if (checkFlow.length > 0) {
-            //       itemBookingCountTem[checkIndexFlow].countFlow =
-            //         itemBookingCountTem[checkIndexFlow].countFlow + 1
-            //     } else {
-            //       // this.itemBookingCount.push({flowId: d.flowId, flowName: d.flowName, statusBt: d.statusBt, countFlow: 1})
-            //       itemBookingCountTem.push({
-            //         flowId: d.flowId,
-            //         flowName: d.flowName,
-            //         statusBt: d.statusBt,
-            //         countFlow: 1
-            //       })
-            //     }
-            //   }
-            // }
-            // console.log('this.modelslide : ', this.modelslide)
-            // if (this.modelslide === '' || this.modelslide === 'allFlow') {
-            //   itemBookingTem = this.itemBookingUse
-            // } else {
-            //   if (this.dialogwidth !== '50%') {
-            //     itemBookingTem = this.itemBookingUse.filter(el => {
-            //       return el.flowId === this.modelslide
-            //     })
-            //   }
-            // }
-            // this.itemBooking = itemBookingTem
-            // this.itemBookingCount = itemBookingCountTem
-            // this.itemBookingCount2 = itemBookingCountTem
-            // if (checkNoti === 'noti') {
-            //   console.log(
-            //     'item',
-            //     item,
-            //     checkNoti,
-            //     item.storeFrontNotifySet,
-            //     item.storeFrontNotifyStatus
-            //   )
-            //   if (item.storeFrontNotifyStatus === 'True') {
-            //     if (parseInt(item.storeFrontNotifySet) > 0) {
-            //       this.pushMessageRecallQueue(
-            //         parseInt(item.storeFrontNotifySet),
-            //         'False'
-            //       )
-            //     }
-            //   }
-            // }
-            // if (this.modelslide === '' && this.dialogwidth !== '50%') {
-            //   if (this.itemBooking.filter(el => el.statusBt !== 'closeJob').length > 0 && this.dialogwidth !== '50%') {
-            //     let chwckFlow = this.DataFlowItem.filter(el => el.value !== 'allFlow')
-            //     if (chwckFlow.length > 0) {
-            //       this.modelslide = chwckFlow[0].value
-            //       this.itemBooking = this.itemBookingUse.filter(el => { return el.flowId === chwckFlow[0].value })
-            //     }
-            //   }
-            // } else {
-            //   itemBookingTem = []
-            // }
             this.overlaySave = true
           })
       } else {
@@ -1674,12 +1641,6 @@ export default {
       }
     },
     async getDataBranch () {
-      // if (localStorage.getItem('BRANCH') === null) {
-      //   let temp = await this.getDataFromAPI('/master_branch/get', 'masBranchID', 'masBranchName')
-      //   console.log(typeof temp)
-      //   localStorage.setItem('BRANCH', JSON.stringify(temp))
-      // }
-      // this.branch = JSON.parse(localStorage.getItem('BRANCH'))
       this.branchItem = await this.getDataFromAPI(
         '/master_branch/get',
         'masBranchID',
@@ -1756,12 +1717,10 @@ export default {
           this.dialogServicePointStatus = false
           // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking('unNoti')
-          // this.clearTimeLoop()
           // })
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking('unNoti')
-          // this.clearTimeLoop()
         }
       }
     },
@@ -1795,7 +1754,6 @@ export default {
           this.dialogServicePointStatus = false
           // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking('noti', item)
-          // this.clearTimeLoop()
         })
     },
     async closeJobServicePoint (item) {
@@ -1831,13 +1789,11 @@ export default {
                 )
                 this.dialogServicePointStatus = false
                 await this.searchBooking('unNoti')
-                // this.clearTimeLoop()
               }
             } else {
               this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
               this.dialogServicePointStatus = false
               await this.searchBooking('unNoti')
-              // this.clearTimeLoop()
             }
           } else {
             this.closeJobServicePointSubmit(item)
@@ -1846,12 +1802,10 @@ export default {
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking('unNoti')
-          // this.clearTimeLoop()
         }
       }
     },
     async closeJobSubmitReturn (item) {
-      this.closeSetTimeBookingListQueue()
       console.log('closeJobSubmit', item)
       let statusBooking = await this.checkBookingStatus(item.bookNo)
       if (statusBooking === 'confirmJob') {
@@ -1889,19 +1843,16 @@ export default {
           }
           // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking('unNoti')
-          // this.clearTimeLoop()
           // })
         }
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking('unNoti')
-        // this.clearTimeLoop()
       }
     },
     async backHomeSubmit (item) {
-      console.log('backHomeSubmit', item)
-      this.closeSetTimeBookingListQueue()
       let statusBooking = await this.checkBookingStatus(item.bookNo)
+      let checkCatch = 0
       if (statusBooking === 'confirmJob') {
         this.$swal({
           title: 'ต้องการปิดงานนี้ ใช่หรือไม่?',
@@ -1927,35 +1878,18 @@ export default {
             .then(async responses => {
               this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
               await this.updateProcessShopNew()
-              // await this.searchBooking('unNoti')
-              // this.clearTimeLoop()
-              // let bookSelect = this.itemBooking.filter((element, index) => { return index <= 2 })
-              // if (bookSelect.length > 0) {
-              //   for (let i = 0; i < bookSelect.length; i++) {
-              //     let d = bookSelect[i]
-              //     let s = {}
-              //     s.lineUserId = d.lineUserId || ''
-              //     if (s.lineUserId !== '') {
-              //       await axios
-              //         .post(this.DNS_IP + '/Booking/pushMsgQueue/' + d.bookNo)
-              //         .then(async responses => {}).catch(error => {
-              //           console.log('error function pushMsgQueue : ', error)
-              //         })
-              //     }
-              //   }
-              // }
             })
         })
           .catch(async err => {
-            // this.$router.push({ name: '404' })
+            checkCatch = checkCatch + 1
             console.log(err.code, err.message)
-            await this.searchBooking('unNoti')
-            // this.clearTimeLoop()
+            if (checkCatch < 4) {
+              await this.searchBooking('unNoti')
+            }
           })
       } else {
         this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
         await this.searchBooking('unNoti')
-        // this.clearTimeLoop()
       }
     },
     async setservicePointCount (item) {
@@ -2059,11 +1993,9 @@ export default {
           }
           // this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.searchBooking('noti', item)
-          // this.clearTimeLoop()
         })
     },
     async closeJobSubmit (item) {
-      this.closeSetTimeBookingListQueue()
       if (item.statusBt === 'confirm') {
         let statusBooking = await this.checkBookingStatus(item.bookNo)
         if (statusBooking === 'confirm') {
@@ -2104,12 +2036,10 @@ export default {
                     'info'
                   )
                   await this.searchBooking('unNoti')
-                  // this.clearTimeLoop()
                 }
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 await this.searchBooking('unNoti')
-                // this.clearTimeLoop()
               }
             } else {
               await this.closeJob(item)
@@ -2120,7 +2050,6 @@ export default {
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking('unNoti')
-          // this.clearTimeLoop()
         }
       }
     },
@@ -2141,14 +2070,6 @@ export default {
         .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
         .then(async responses => {})
     },
-    // async updateEmp (bookNo) {
-    //   var dtt = {
-    //     storeFrontQueueEmpId: parseInt(this.session.data.empId)
-    //   }
-    //   await axios
-    //     .post(this.DNS_IP + '/Booking/edit/' + bookNo, dtt)
-    //     .then(async responses => {})
-    // },
     async updateEmp (bookNo, status) {
       let result = ''
       var dtt = {
@@ -3048,7 +2969,10 @@ export default {
                 console.log('active [end] is updateProcessShopUpdate')
                 console.log('snapshot data -> active is 1')
                 console.log('active [start] is get booking')
-                await this.searchBooking()
+                this.flowSelect = 'allFlow'
+                await this.searchBooking('unNoti')
+                console.log('item3', this.dataSearchFlow)
+                this.searchFlow(this.dataSearchFlow)
                 console.log('active [end] is get booking')
               } else {
                 console.log('snapshot data -> active is 0')
