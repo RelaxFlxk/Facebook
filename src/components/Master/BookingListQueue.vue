@@ -470,7 +470,7 @@
               <v-row>
                 <v-slide-group mandatory>
                   <v-slide-item v-for="(item, n) in DataFlowItem" :key="n">
-                    <template v-if="item.value !== 'allFlow'">
+                    <template>
                       <v-card
                         elevation="1"
                         class="ma-2"
