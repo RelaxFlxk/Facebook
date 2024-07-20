@@ -679,14 +679,14 @@ export default {
           console.log('this.unsubscribe v', this.unsubscribe)
         }
         this.firestore = this.$firebase.firestore()
-        console.log('dd', this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName))
+        // console.log('dd', this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName))
         this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
           .onSnapshot(async (snapshot) => {
             console.log('snapshot', snapshot)
             if (!snapshot.exists) {
               await this.createProcessShopNew()
             } else {
-              console.log('getFirestore -> data', snapshot.data())
+              // console.log('getFirestore -> data', snapshot.data())
               if (snapshot.data().active === '1') {
                 console.log('active [start] is updateProcessShopUpdate')
                 await this.updateProcessShopUpdate()
@@ -716,24 +716,13 @@ export default {
         console.log('createProcessShopNew error-> ', error)
       }
     },
-    async updateProcessShopNew () { // update active = 1
-      try {
-        let body = {
-          userName: this.$session.getAll().data.userName,
-          shopId: this.$session.getAll().data.shopId
-        }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNewV1', body)
-      } catch (error) {
-        console.log('updateProcessShopNew error-> ', error)
-      }
-    },
     async updateProcessShopUpdate () { // update active = 0
       try {
         let body = {
           userName: this.$session.getAll().data.userName,
           shopId: this.$session.getAll().data.shopId
         }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNewV1', body)
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNew', body)
       } catch (error) {
         console.log('updateProcessShopUpdate error-> ', error)
       }

@@ -446,8 +446,8 @@ export default {
           .then(async responses => {
             // this.$swal('เรียบร้อย', 'ยกเลิกคิวสำเร็จ', 'success')
             await this.updateProcessShopNew()
-            await this.searchBooking('unNoti')
-            this.clearTimeLoop()
+            // await this.searchBooking('unNoti')
+            // this.clearTimeLoop()
             this.HistoryData = []
             this.shopPhone = ''
           })
@@ -835,8 +835,8 @@ export default {
           this.dialogServicePointStatus = false
           this.$swal('เรียบร้อย', 'เรียกคิวสำเร็จ', 'success')
           await this.updateProcessShopNew()
-          await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // await this.searchBooking('unNoti')
+          // this.clearTimeLoop()
         })
       }
     },
@@ -988,8 +988,8 @@ export default {
             .then(async responses => {
               // this.$swal('เรียบร้อย', 'ปิดงานสำเร็จ', 'success')
               await this.updateProcessShopNew()
-              await this.searchBooking('unNoti')
-              this.clearTimeLoop()
+              // await this.searchBooking('unNoti')
+              // this.clearTimeLoop()
               this.HistoryData = []
               this.shopPhone = ''
             })
@@ -1078,12 +1078,12 @@ export default {
                 } else {
                   this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                   await this.searchBooking('unNoti')
-                  this.clearTimeLoop()
+                  // this.clearTimeLoop()
                 }
               } else {
                 this.$swal('คำเตือน', 'รายการนี้มีพนักงานท่านอื่น เริ่มงานไปแล้ว', 'info')
                 await this.searchBooking('unNoti')
-                this.clearTimeLoop()
+                // this.clearTimeLoop()
               }
             } else {
               this.closeJob(item)
@@ -1094,7 +1094,7 @@ export default {
         } else {
           this.$swal('ผิดพลาด', 'รายการนี้ได้เปลี่ยนสถานะไปแล้ว', 'info')
           await this.searchBooking('unNoti')
-          this.clearTimeLoop()
+          // this.clearTimeLoop()
         }
       }
     },
@@ -1228,7 +1228,7 @@ export default {
             if (!snapshot.exists) {
               await this.createProcessShopNew()
             } else {
-              console.log('getFirestore -> data', snapshot.data())
+              // console.log('getFirestore -> data', snapshot.data())
               if (snapshot.data().active === '1') {
                 console.log('active [start] is updateProcessShopUpdate')
                 await this.updateProcessShopUpdate()
@@ -1263,7 +1263,7 @@ export default {
           userName: this.$session.getAll().data.userName,
           shopId: this.$session.getAll().data.shopId
         }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNewV1', body)
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNew', body)
       } catch (error) {
         console.log('updateProcessShopNew error-> ', error)
       }
@@ -1274,7 +1274,7 @@ export default {
           userName: this.$session.getAll().data.userName,
           shopId: this.$session.getAll().data.shopId
         }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNewV1', body)
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNew', body)
       } catch (error) {
         console.log('updateProcessShopUpdate error-> ', error)
       }
