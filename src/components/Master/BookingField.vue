@@ -738,6 +738,24 @@
                                   :rules="[rules.required]"
                                 ></v-text-field>
                               </v-col>
+                              <v-col cols="6" class="pb-0 pt-3">
+                                <v-text-field
+                                  v-model="CalendarHeader"
+                                  dense
+                                  label="ชื่อหัวข้อหน้าตรวจสอบคิวว่าง (TH)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="6" class="pb-0 pt-3">
+                                <v-text-field
+                                  v-model="CalendarHeaderEn"
+                                  dense
+                                  label="ชื่อหัวข้อหน้าตรวจสอบคิวว่าง (EN)"
+                                  required
+                                  :rules="[rules.required]"
+                                ></v-text-field>
+                              </v-col>
                               <v-col cols="6" class="pb-0 pt-1">
                                 <v-text-field
                                   v-model="bookingFormHistoryBT"
@@ -1157,6 +1175,8 @@ export default {
       dataLineConfig: [],
       bookingFormHeader: '',
       bookingFormHistoryBT: '',
+      CalendarHeader: '',
+      CalendarHeaderEn: '',
       bookingFormConfirmBT: '',
       bookingFormHeaderEn: '',
       bookingFormHistoryBTEn: '',
@@ -1222,6 +1242,8 @@ export default {
         let dt = {
           bookingFormHeader: this.bookingFormHeader,
           bookingFormHeaderEn: this.bookingFormHeaderEn,
+          CalendarHeader: this.CalendarHeader,
+          CalendarHeaderEn: this.CalendarHeaderEn,
           bookingFormHistoryBT: this.bookingFormHistoryBT,
           bookingFormHistoryBTEn: this.bookingFormHistoryBTEn,
           bookingFormConfirmBT: this.bookingFormConfirmBT,
@@ -1382,6 +1404,8 @@ export default {
               this.bookingFormHistoryBT = rs[0].bookingFormHistoryBT || 'ประวัติการเข้ารับบริการ'
               this.bookingFormConfirmBT = rs[0].bookingFormConfirmBT || 'ยืนยันนัดหมาย'
               this.bookingFormHeaderEn = rs[0].bookingFormHeaderEn || 'Booking Services'
+              this.CalendarHeader = rs[0].CalendarHeader || 'ตรวจสอบคิวนัดหมาย'
+              this.CalendarHeaderEn = rs[0].CalendarHeaderEn || 'Check queue'
               this.bookingFormHistoryBTEn = rs[0].bookingFormHistoryBTEn || 'History'
               this.bookingFormConfirmBTEn = rs[0].bookingFormConfirmBTEn || 'Confirm'
               this.shopLat = rs[0].shopLat || ''
