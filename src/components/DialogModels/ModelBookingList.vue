@@ -1957,7 +1957,7 @@ export default {
                 if (this.dataDepositAdd === 'มี') {
                   await this.confirmChkAdd(response.data)
                 } else {
-                  this.clearDataAdd()
+                  await this.confirmChkAdd(response.data)
                   this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
                 }
                 this.dialogShowDeposit = true
@@ -1992,6 +1992,17 @@ export default {
         this.$router.push('/Core/Login')
       }
     },
+    async updateProcessShopNew () { // update active = 1
+      try {
+        let body = {
+          // userName: this.$session.getAll().data.userName,
+          shopId: this.$session.getAll().data.shopId
+        }
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNew', body)
+      } catch (error) {
+        console.log('updateProcessShopNew error-> ', error)
+      }
+    },
     async confirmChkAdd (item) {
       var dt = {
         bookNo: item.bookNo,
@@ -2009,9 +2020,9 @@ export default {
           //   if (this.statusGoogleCalendar === 'True') {
           //     this.connectGoogleCalendar('Add', dt.bookNo)
           //   }
+          await this.updateProcessShopNew()
           this.clearDataAdd()
           this.$swal('เรียบร้อย', 'เพิ่มข้อมูล เรียบร้อย', 'success')
-          await this.updateProcessShopNew()
           // await this.getBookingList()
           // this.getTimesChange('update')
         })
@@ -2067,19 +2078,19 @@ export default {
       this.center = null
       this.dataReadyAdd = true
       this.setTimerCalendar = null
-      if (this.statusSearch === 'no') {
-        this.getBookingList()
-      } else {
-        this.searchAny()
-      }
-      if (this.getSelectText) {
-        this.getSelect(
-          this.getSelectText,
-          this.getSelectCount,
-          this.filterCloseJobValue
-        )
-      }
-      this.getDataCalendaBooking()
+      // if (this.statusSearch === 'no') {
+      //   this.getBookingList()
+      // } else {
+      //   this.searchAny()
+      // }
+      // if (this.getSelectText) {
+      //   this.getSelect(
+      //     this.getSelectText,
+      //     this.getSelectCount,
+      //     this.filterCloseJobValue
+      //   )
+      // }
+      // this.getDataCalendaBooking()
     },
     setFlowByBranchAdd () {
       console.log(
@@ -4463,7 +4474,7 @@ export default {
         await this.getEmpSelectAdd()
         await this.getBookingFieldText()
         this.getCustomFieldStart()
-        await this.scanQrcode()
+        // await this.scanQrcode()
         // this.getBookingList()
       } else {
         await this.getDataFlow()
@@ -4471,7 +4482,7 @@ export default {
         await this.getEmpSelectAdd()
         await this.getBookingFieldText()
         this.getCustomFieldStart()
-        this.getBookingList()
+        // this.getBookingList()
       }
     },
     async getEmpSelectAdd () {
@@ -4696,58 +4707,6 @@ export default {
         })
       return LimitBooking || 'ไม่แสดง'
       // return this.$session.getAll().data.showOnsite || 'ไม่แสดง'
-    },
-    async getFirestore () {
-      try {
-        console.log('getFirestore -> ', this.unsubscribe)
-        if (this.unsubscribe) {
-          this.unsubscribe()
-        }
-        this.firestore = this.$firebase.firestore()
-        this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
-          .onSnapshot(async (snapshot) => {
-            if (!snapshot.exists) {
-              await this.updateProcessShopNew()
-            } else {
-              console.log('getFirestore -> data', snapshot.data())
-              if (snapshot.data().active === '1') {
-                console.log('active [start] is updateProcessShopUpdate')
-                await this.updateProcessShopUpdate()
-                console.log('active [end] is updateProcessShopUpdate')
-                console.log('snapshot data -> active is 1')
-                console.log('active [start] is get booking')
-                // await this.searchBooking()
-                console.log('active [end] is get booking')
-              } else {
-                console.log('snapshot data -> active is 0')
-              }
-            }
-          })
-      } catch (error) {
-        console.log('Error getFirestore', error)
-      }
-    },
-    async updateProcessShopNew  () { // active = 1
-      try {
-        let body = {
-          userName: this.$session.getAll().data.userName,
-          shopId: this.$session.getAll().data.shopId
-        }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNew', body)
-      } catch (error) {
-        console.log('updateProcessShopNew error-> ', error)
-      }
-    },
-    async updateProcessShopUpdate  () { // active = 0
-      try {
-        let body = {
-          userName: this.$session.getAll().data.userName,
-          shopId: this.$session.getAll().data.shopId
-        }
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessUseNew', body)
-      } catch (error) {
-        console.log('updateProcessShopUpdate error-> ', error)
-      }
     }
   },
   async mounted () {
@@ -4784,7 +4743,7 @@ export default {
     })
   },
   created () {
-    this.getFirestore()
+    // this.getFirestore()
   },
   beforeDestroy () {
     this.$root.$off('dataReturn')

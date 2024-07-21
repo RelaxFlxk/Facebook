@@ -679,20 +679,18 @@ export default {
           console.log('this.unsubscribe v', this.unsubscribe)
         }
         this.firestore = this.$firebase.firestore()
-        console.log('dd', this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName))
+        // console.log('dd', this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName))
         this.unsubscribe = this.firestore.collection(`QueueOnline/shopId/${this.$session.getAll().data.shopId}`).doc(this.$session.getAll().data.userName)
           .onSnapshot(async (snapshot) => {
             console.log('snapshot', snapshot)
             if (!snapshot.exists) {
-              console.log('if')
-              await this.updateProcessShopNew()
+              await this.createProcessShopNew()
             } else {
-              console.log('else')
-              console.log('getFirestore -> data', snapshot.data())
+              // console.log('getFirestore -> data', snapshot.data())
               if (snapshot.data().active === '1') {
-                console.log('active [start] is updateProcessOhrichUpdate')
+                console.log('active [start] is updateProcessShopUpdate')
                 await this.updateProcessShopUpdate()
-                console.log('active [end] is updateProcessOhrichUpdate')
+                console.log('active [end] is updateProcessShopUpdate')
                 console.log('snapshot data -> active is 1')
                 console.log('active [start] is get booking')
                 await this.searchBooking()
@@ -707,19 +705,18 @@ export default {
         console.log('Error getFirestore', error)
       }
     },
-    async updateProcessShopNew  () { // active = 1
+    async createProcessShopNew () { // set active = 1
       try {
         let body = {
           userName: this.$session.getAll().data.userName,
           shopId: this.$session.getAll().data.shopId
         }
-        console.log('body', body)
-        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-ProcessNew', body)
+        await axios.post('https://asia-southeast1-be-linked-a7cdc.cloudfunctions.net/QueueOnline-CreateProcessNew', body)
       } catch (error) {
-        console.log('updateProcessShopNew error-> ', error)
+        console.log('createProcessShopNew error-> ', error)
       }
     },
-    async updateProcessShopUpdate  () { // active = 0
+    async updateProcessShopUpdate () { // update active = 0
       try {
         let body = {
           userName: this.$session.getAll().data.userName,
